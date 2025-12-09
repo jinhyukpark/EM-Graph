@@ -7,10 +7,14 @@ import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { Globe as GlobeIcon } from "lucide-react";
 
-import investigationImage from '@assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png';
-import supplyChainImage from '@assets/generated_images/dark_mode_supply_chain_management_dashboard_ui.png';
-import financeImage from '@assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
+import investigationImage from '@assets/generated_images/digital_network_graph_connecting_suspects_and_evidence.png';
+import supplyChainImage from '@assets/generated_images/global_supply_chain_network_with_logistics_nodes.png';
+import financeImage from '@assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png';
 import biotechImage from '@assets/generated_images/scientist_with_test_tube.png';
+
+import heroInvestigationImage from '@assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png';
+import heroSupplyChainImage from '@assets/generated_images/dark_mode_supply_chain_management_dashboard_ui.png';
+import heroFinanceImage from '@assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
 
 const caseImages: Record<string, string> = {
   investigation: investigationImage,
@@ -146,7 +150,7 @@ export default function LandingPage() {
 
                        {/* Main Content - Image */}
                        <div className="absolute top-12 left-16 right-0 bottom-0 bg-slate-950 overflow-hidden">
-                          <img src={investigationImage} className="w-full h-full object-cover" alt="Investigation Graph" />
+                          <img src={heroInvestigationImage} className="w-full h-full object-cover" alt="Investigation Graph" />
                           
                           {/* Overlay UI: Nodes */}
                           <div className="absolute top-1/3 left-1/3 w-32 h-32 border-2 border-indigo-500/50 rounded-full animate-pulse opacity-50" />
@@ -202,7 +206,7 @@ export default function LandingPage() {
                        </div>
 
                        <div className="absolute top-12 left-16 right-0 bottom-0 bg-slate-950 overflow-hidden">
-                          <img src={supplyChainImage} className="w-full h-full object-cover" alt="Supply Chain Map" />
+                          <img src={heroSupplyChainImage} className="w-full h-full object-cover" alt="Supply Chain Map" />
                           
                           <div className="absolute bottom-4 left-4 bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-lg w-80 shadow-2xl">
                              <h4 className="text-white text-sm font-medium mb-3 flex items-center gap-2 pb-2 border-b border-slate-800">
@@ -248,7 +252,7 @@ export default function LandingPage() {
                        </div>
 
                        <div className="absolute top-12 left-16 right-0 bottom-0 bg-slate-950 overflow-hidden">
-                          <img src={financeImage} className="w-full h-full object-cover" alt="Finance Graph" />
+                          <img src={heroFinanceImage} className="w-full h-full object-cover" alt="Finance Graph" />
                           
                           <div className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-lg w-64 shadow-2xl">
                              <div className="flex justify-between items-center mb-2">
