@@ -745,7 +745,7 @@ export default function LandingPage() {
                      </div>
                   </div>
                </div>
-            </div>
+            </motion.div>
           </div>
           
           <div className="mt-16 pt-8 border-t border-slate-200">
