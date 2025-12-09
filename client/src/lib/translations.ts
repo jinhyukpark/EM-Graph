@@ -40,11 +40,20 @@ export const translations = {
       badge: "Effortless Creation",
       title: "Build Complex Networks in Minutes, Not Days",
       desc: "Say goodbye to manual coding and complex scripts. With our drag-and-drop builder and AI-assisted node linking, you can construct intricate relationship networks intuitively. Just bring your data, and we'll handle the connections.",
-      list: {
-        dragDrop: "Drag-and-drop Visual Builder",
-        aiSuggest: "AI-powered Relationship Suggestions",
-        import: "One-click Data Import"
-      }
+      list: [
+        {
+          title: "Visual Builder",
+          desc: "Intuitive drag-and-drop interface for defining nodes and edges without writing a single line of code."
+        },
+        {
+          title: "AI-Powered Suggestions",
+          desc: "Smart algorithms automatically suggest potential relationships and detect schema inconsistencies."
+        },
+        {
+          title: "One-Click Import",
+          desc: "Seamlessly ingest CSV, JSON, or SQL data with intelligent field mapping and validation."
+        }
+      ]
     },
     solutions: {
       title: "Tailored for Complex Domains",
@@ -159,11 +168,20 @@ export const translations = {
       badge: "손쉬운 제작",
       title: "며칠이 아닌, 몇 분 만에 복잡한 네트워크 구축",
       desc: "수동 코딩과 복잡한 스크립트는 이제 안녕. 드래그 앤 드롭 빌더와 AI 노드 연결 지원을 통해 직관적으로 복잡한 관계망을 구축할 수 있습니다. 데이터만 가져오세요, 연결은 저희가 합니다.",
-      list: {
-        dragDrop: "드래그 앤 드롭 비주얼 빌더",
-        aiSuggest: "AI 기반 관계 제안",
-        import: "원클릭 데이터 임포트"
-      }
+      list: [
+        {
+          title: "비주얼 빌더",
+          desc: "코드 한 줄 없이 드래그 앤 드롭으로 노드와 엣지를 정의하는 직관적인 인터페이스를 제공합니다."
+        },
+        {
+          title: "AI 기반 제안",
+          desc: "스마트 알고리즘이 잠재적인 관계를 자동으로 제안하고 스키마 불일치를 감지합니다."
+        },
+        {
+          title: "원클릭 데이터 임포트",
+          desc: "지능형 필드 매핑 및 검증 기능을 통해 CSV, JSON, SQL 데이터를 원활하게 수집합니다."
+        }
+      ]
     },
     solutions: {
       title: "복잡한 도메인에 최적화",

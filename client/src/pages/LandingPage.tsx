@@ -410,20 +410,20 @@ export default function LandingPage() {
                     and AI-assisted node linking, you can construct intricate relationship networks 
                     intuitively. Just bring your data, and we'll handle the connections.
                   </p>
-                  <ul className="space-y-2 pt-2">
-                    <li className="flex items-center text-sm text-slate-700">
-                      <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-2 text-xs">✓</div>
-                      {t.creation.list.dragDrop}
-                    </li>
-                    <li className="flex items-center text-sm text-slate-700">
-                      <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-2 text-xs">✓</div>
-                      {t.creation.list.aiSuggest}
-                    </li>
-                    <li className="flex items-center text-sm text-slate-700">
-                      <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-2 text-xs">✓</div>
-                      {t.creation.list.import}
-                    </li>
-                  </ul>
+                  
+                  <div className="space-y-6 pt-4">
+                    {Array.isArray(t.creation.list) && t.creation.list.map((item: any, i: number) => (
+                      <div key={i} className="flex gap-4 group">
+                        <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-lg bg-white border shadow-sm flex items-center justify-center text-indigo-600 group-hover:bg-indigo-50 transition-colors">
+                           {i === 0 ? <LayoutGrid className="w-5 h-5" /> : i === 1 ? <Sparkles className="w-5 h-5" /> : <Upload className="w-5 h-5" />}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{item.title}</h4>
+                          <p className="text-sm text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                </div>
                <div className="flex-1 w-full max-w-md">
                  <Carousel className="w-full">
