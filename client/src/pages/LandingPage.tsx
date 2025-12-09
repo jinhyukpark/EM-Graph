@@ -74,7 +74,7 @@ export default function LandingPage() {
               className="hidden md:flex items-center gap-1.5 font-medium text-muted-foreground hover:text-foreground"
             >
               <GlobeIcon className="w-4 h-4" />
-              {lang === 'en' ? '한국어' : 'English'}
+              {lang === 'en' ? 'ENG' : 'KOR'}
             </Button>
             <Link href="/dashboard">
               <Button variant="ghost">{t.nav.login}</Button>
