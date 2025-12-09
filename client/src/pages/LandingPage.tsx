@@ -297,7 +297,7 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section id="features" className="py-24 bg-slate-50">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight mb-4">{t.features.title}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -305,7 +305,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-background p-8 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-6">
                 <Brain className="w-6 h-6" />
@@ -343,8 +343,12 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Ease of Construction Highlight */}
+      {/* Solutions Section (Renamed from Ease of Construction) */}
+      <section id="solutions" className="py-24 bg-white relative">
+        <div className="container mx-auto px-6 max-w-6xl">
           <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 lg:p-12 border border-indigo-100">
             <div className="flex flex-col md:flex-row items-center gap-8">
                <div className="flex-1 space-y-4">
@@ -478,9 +482,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Solutions / Use Cases */}
-      <section id="solutions" className="py-24 relative">
-        <div id="cases" className="absolute top-0 left-0 w-full h-1 invisible scroll-mt-24" />
+      {/* Cases Section (Renamed from Solutions) */}
+      <section id="cases" className="py-24 relative bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
