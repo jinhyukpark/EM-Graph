@@ -128,8 +128,8 @@ export const translations = {
     cta: {
       title: "Ready to uncover hidden insights?",
       desc: "Join thousands of analysts using EM-Graph to make sense of their complex data. Start your free trial today.",
-      btnPrimary: "Get Started for Free",
-      btnSecondary: "Contact Sales"
+      btnPrimary: "Sign Up",
+      btnSecondary: "Inquiry"
     },
     footer: {
       tagline: "Advanced graph analytics platform for modern data teams.",
@@ -268,8 +268,8 @@ export const translations = {
     cta: {
       title: "숨겨진 인사이트를 발견할 준비가 되셨나요?",
       desc: "수천 명의 분석가들이 EM-Graph를 사용하여 복잡한 데이터를 이해하고 있습니다. 오늘 무료 체험을 시작하세요.",
-      btnPrimary: "무료로 시작하기",
-      btnSecondary: "영업팀 문의"
+      btnPrimary: "회원가입",
+      btnSecondary: "도입문의"
     },
     footer: {
       tagline: "현대적인 데이터 팀을 위한 고급 그래프 분석 플랫폼.",

@@ -15,12 +15,14 @@ import GraphBuilder from "@/pages/GraphBuilder";
 import ResourcesManager from "@/pages/ResourcesManager";
 import Settings from "@/pages/Settings";
 import Projects from "@/pages/Projects";
+import SignUp from "@/pages/SignUp";
 
 function AppRouter() {
   return (
     <WouterRouter hook={useHashLocation}>
       <Switch>
         <Route path="/" component={LandingPage} />
+        <Route path="/signup" component={SignUp} />
         <Route path="/dashboard" component={Home} />
         <Route path="/projects" component={Projects} />
         <Route path="/create" component={CreateProject} />

@@ -897,14 +897,14 @@ export default function LandingPage() {
               {t.cta.desc}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-slate-700 hover:bg-slate-800 text-slate-100 hover:text-white">
+                {t.cta.btnSecondary}
+              </Button>
+              <Link href="/signup">
                 <Button size="lg" className="h-14 px-8 text-lg bg-primary text-primary-foreground hover:bg-primary/90">
                   {t.cta.btnPrimary}
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-slate-700 hover:bg-slate-800 text-slate-100 hover:text-white">
-                {t.cta.btnSecondary}
-              </Button>
             </div>
           </motion.div>
         </div>
