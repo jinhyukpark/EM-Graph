@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowRight, BarChart2, Brain, Database, FileSearch, Globe, Lock, Network, Share2, Zap, Plus, Sigma, Wand2, Upload, Sparkles, Check } from "lucide-react";
 import { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { Globe as GlobeIcon } from "lucide-react";
@@ -11,9 +12,17 @@ import supplyChainImage from '@assets/generated_images/dark_mode_supply_chain_ma
 import financeImage from '@assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
 import biotechImage from '@assets/generated_images/scientist_with_test_tube.png';
 
+const caseImages: Record<string, string> = {
+  investigation: investigationImage,
+  supplyChain: supplyChainImage,
+  finance: financeImage,
+  biotech: biotechImage
+};
+
 export default function LandingPage() {
-  const [lang, setLang] = useState<'en' | 'ko'>('ko'); // Default to Korean as requested
+  const [lang, setLang] = useState<'en' | 'ko'>('en'); // Default to English
   const t = translations[lang];
+  const [selectedCase, setSelectedCase] = useState<string | null>(null);
 
   const toggleLanguage = () => {
     setLang(prev => prev === 'en' ? 'ko' : 'en');
@@ -50,6 +59,7 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">{t.nav.features}</a>
             <a href="#solutions" className="hover:text-foreground transition-colors">{t.nav.solutions}</a>
+            <a href="#cases" className="hover:text-foreground transition-colors">{t.nav.cases}</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">{t.nav.pricing}</a>
           </nav>
           <div className="flex items-center gap-4">
@@ -458,7 +468,7 @@ export default function LandingPage() {
       </section>
 
       {/* Solutions / Use Cases */}
-      <section id="solutions" className="py-24">
+      <section id="cases" className="py-24">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
@@ -470,50 +480,62 @@ export default function LandingPage() {
               </p>
               
               <div className="space-y-6">
-                <div className="flex gap-4">
+                <div 
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  onClick={() => setSelectedCase('investigation')}
+                >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <FileSearch className="w-5 h-5 text-slate-700" />
+                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                      <FileSearch className="w-5 h-5 text-slate-700 group-hover:text-indigo-600 transition-colors" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold">{t.solutions.cards.investigation.title}</h4>
+                    <h4 className="text-lg font-semibold group-hover:text-indigo-700 transition-colors">{t.solutions.cards.investigation.title}</h4>
                     <p className="text-muted-foreground">{t.solutions.cards.investigation.desc}</p>
                   </div>
                 </div>
                 
-                <div className="flex gap-4">
+                <div 
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  onClick={() => setSelectedCase('supplyChain')}
+                >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <Globe className="w-5 h-5 text-slate-700" />
+                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                      <Globe className="w-5 h-5 text-slate-700 group-hover:text-emerald-600 transition-colors" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold">{t.solutions.cards.supplyChain.title}</h4>
+                    <h4 className="text-lg font-semibold group-hover:text-emerald-700 transition-colors">{t.solutions.cards.supplyChain.title}</h4>
                     <p className="text-muted-foreground">{t.solutions.cards.supplyChain.desc}</p>
                   </div>
                 </div>
                 
-                <div className="flex gap-4">
+                <div 
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  onClick={() => setSelectedCase('finance')}
+                >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <BarChart2 className="w-5 h-5 text-slate-700" />
+                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                      <BarChart2 className="w-5 h-5 text-slate-700 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold">{t.solutions.cards.finance.title}</h4>
+                    <h4 className="text-lg font-semibold group-hover:text-blue-700 transition-colors">{t.solutions.cards.finance.title}</h4>
                     <p className="text-muted-foreground">{t.solutions.cards.finance.desc}</p>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div 
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  onClick={() => setSelectedCase('biotech')}
+                >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <Network className="w-5 h-5 text-slate-700" />
+                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                      <Network className="w-5 h-5 text-slate-700 group-hover:text-purple-600 transition-colors" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold">{t.solutions.cards.biotech.title}</h4>
+                    <h4 className="text-lg font-semibold group-hover:text-purple-700 transition-colors">{t.solutions.cards.biotech.title}</h4>
                     <p className="text-muted-foreground">{t.solutions.cards.biotech.desc}</p>
                   </div>
                 </div>
@@ -722,7 +744,7 @@ export default function LandingPage() {
                 <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
                   <Network className="w-3 h-3 text-primary-foreground" />
                 </div>
-                <span className="font-bold text-lg">EM-Graph</span>
+                <span className="font-bold text-lg tracking-tight">EM-Graph</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 {t.footer.tagline}
@@ -731,35 +753,34 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold mb-4">{t.footer.product}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">{t.nav.features}</a></li>
-                <li><a href="#" className="hover:text-foreground">Integrations</a></li>
-                <li><a href="#" className="hover:text-foreground">Enterprise</a></li>
-                <li><a href="#" className="hover:text-foreground">{t.nav.pricing}</a></li>
+                <li><a href="#features" className="hover:text-foreground">{t.nav.features}</a></li>
+                <li><a href="#solutions" className="hover:text-foreground">{t.nav.solutions}</a></li>
+                <li><a href="#cases" className="hover:text-foreground">{t.nav.cases}</a></li>
+                <li><a href="#pricing" className="hover:text-foreground">{t.nav.pricing}</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">{t.footer.resources}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground">API Reference</a></li>
-                <li><a href="#" className="hover:text-foreground">Blog</a></li>
-                <li><a href="#" className="hover:text-foreground">Community</a></li>
+                <li>Documentation</li>
+                <li>API Reference</li>
+                <li>Blog</li>
+                <li>Community</li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">{t.footer.company}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">About</a></li>
-                <li><a href="#" className="hover:text-foreground">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground">Legal</a></li>
-                <li><a href="#" className="hover:text-foreground">Contact</a></li>
+                <li>About Us</li>
+                <li>Careers</li>
+                <li>Legal</li>
+                <li>Contact</li>
               </ul>
             </div>
           </div>
           <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">{t.footer.copyright}</p>
             <div className="flex gap-4">
-               {/* Social icons placeholders */}
                <div className="w-5 h-5 bg-muted rounded-full" />
                <div className="w-5 h-5 bg-muted rounded-full" />
                <div className="w-5 h-5 bg-muted rounded-full" />
@@ -767,6 +788,76 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Case Details Dialog */}
+      <Dialog open={!!selectedCase} onOpenChange={(open) => !open && setSelectedCase(null)}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              {selectedCase && (
+                <>
+                  {selectedCase === 'investigation' && <FileSearch className="w-6 h-6 text-indigo-600" />}
+                  {selectedCase === 'supplyChain' && <Globe className="w-6 h-6 text-emerald-600" />}
+                  {selectedCase === 'finance' && <BarChart2 className="w-6 h-6 text-blue-600" />}
+                  {selectedCase === 'biotech' && <Network className="w-6 h-6 text-purple-600" />}
+                  {t.solutions.cards[selectedCase as keyof typeof t.solutions.cards]?.title}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription className="text-base">
+               {selectedCase && t.solutions.cards[selectedCase as keyof typeof t.solutions.cards]?.desc}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-6 py-4">
+             {selectedCase && (
+               <>
+                 <div className="aspect-video relative rounded-lg overflow-hidden bg-slate-100 border shadow-sm">
+                    <img 
+                      src={caseImages[selectedCase]} 
+                      alt={t.solutions.cards[selectedCase as keyof typeof t.solutions.cards]?.title} 
+                      className="object-cover w-full h-full"
+                    />
+                 </div>
+                 
+                 <div className="space-y-4">
+                    <div className="bg-slate-50 p-4 rounded-lg border">
+                       <h4 className="font-semibold mb-2 text-sm uppercase text-muted-foreground tracking-wider">Use Case Overview</h4>
+                       <p className="text-sm leading-relaxed text-slate-700">
+                         {selectedCase === 'investigation' && "In criminal investigations, connecting the dots between suspects, assets, and events is crucial. EM-Graph enables investigators to ingest disparate data sources—police reports, financial records, communication logs—and automatically link entities based on shared attributes. The AI engine flags suspicious patterns, such as circular money transfers or frequent communications during key timeframes, reducing investigation time by up to 60%."}
+                         {selectedCase === 'supplyChain' && "Global supply chains are vulnerable to disruptions that can cascade through the network. By mapping multi-tier dependencies, EM-Graph helps logistics managers visualize the entire ecosystem. When a supplier in one region faces a delay (e.g., port strike or natural disaster), the system calculates the downstream impact instantly, suggesting alternative routes or suppliers to mitigate risk before it affects production lines."}
+                         {selectedCase === 'finance' && "Financial fraud is increasingly sophisticated, often involving complex networks of shell companies and mule accounts. EM-Graph's graph algorithms (like PageRank and Community Detection) identify clusters of high-risk activity that rule-based systems miss. Analysts can visually traverse transaction paths to trace the flow of illicit funds, uncovering the ultimate beneficiaries behind layered ownership structures."}
+                         {selectedCase === 'biotech' && "In drug discovery and healthcare, understanding the relationships between proteins, genes, and diseases is key. EM-Graph models these biological interactions as a massive knowledge graph. Researchers can query the graph to find potential drug targets or predict side effects based on pathway analysis. This ontology-driven approach accelerates the hypothesis generation phase of research."}
+                       </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="border p-4 rounded-lg">
+                          <h4 className="font-semibold mb-2 text-sm">Key Benefits</h4>
+                          <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                             <li>Rapid Pattern Detection</li>
+                             <li>Visual Evidence Presentation</li>
+                             <li>Automated Link Analysis</li>
+                          </ul>
+                       </div>
+                       <div className="border p-4 rounded-lg">
+                          <h4 className="font-semibold mb-2 text-sm">Applied Technologies</h4>
+                          <div className="flex flex-wrap gap-2">
+                             <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">Graph Neural Networks</span>
+                             <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">NLP</span>
+                             <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">Vector Search</span>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+               </>
+             )}
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setSelectedCase(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

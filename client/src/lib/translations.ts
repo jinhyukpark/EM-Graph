@@ -3,6 +3,7 @@ export const translations = {
     nav: {
       features: "Features",
       solutions: "Solutions",
+      cases: "Cases",
       pricing: "Pricing",
       login: "Log in",
       getStarted: "Get Started",
@@ -121,6 +122,7 @@ export const translations = {
     nav: {
       features: "주요 기능",
       solutions: "솔루션",
+      cases: "사례",
       pricing: "가격",
       login: "로그인",
       getStarted: "시작하기",
