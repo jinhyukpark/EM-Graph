@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { Globe as GlobeIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 import investigationImage from '@assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png';
 import supplyChainImage from '@assets/generated_images/large_container_ship_at_sea_with_digital_connections.png';
@@ -110,31 +111,42 @@ export default function LandingPage() {
         </div>
         
         <div className="container mx-auto px-6 text-center">
-          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20 mb-8">
-            <Zap className="w-3 h-3 mr-1" />
-            {t.hero.newBadge}
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 max-w-4xl mx-auto leading-tight">
-            {t.hero.title} <br />
-            <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-              {t.hero.subtitle}
-            </span>
-          </h1>
-          <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            {t.hero.description}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/dashboard">
-              <Button size="lg" className="h-12 px-8 text-base gap-2">
-                {t.hero.startBtn} <ArrowRight className="w-4 h-4" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary/10 text-primary hover:bg-primary/20 mb-8">
+              <Zap className="w-3 h-3 mr-1" />
+              {t.hero.newBadge}
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 max-w-4xl mx-auto leading-tight">
+              {t.hero.title} <br />
+              <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                {t.hero.subtitle}
+              </span>
+            </h1>
+            <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+              {t.hero.description}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/dashboard">
+                <Button size="lg" className="h-12 px-8 text-base gap-2">
+                  {t.hero.startBtn} <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="h-12 px-8 text-base">
+                {t.hero.demoBtn}
               </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="h-12 px-8 text-base">
-              {t.hero.demoBtn}
-            </Button>
-          </div>
+            </div>
+          </motion.div>
           
-          <div className="mt-20 relative mx-auto max-w-5xl">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mt-20 relative mx-auto max-w-5xl"
+          >
             <Carousel setApi={setApi} className="w-full">
               <CarouselContent>
                 {/* Slide 1: Investigation Dashboard */}
@@ -300,7 +312,7 @@ export default function LandingPage() {
                 ))}
               </div>
             </Carousel>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -314,8 +326,20 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.1 }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group"
+            >
               <div className="h-48 overflow-hidden bg-slate-100 relative">
                 <img 
                   src={featureAiImage} 
@@ -333,9 +357,15 @@ export default function LandingPage() {
                   {t.features.ai.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group"
+            >
               <div className="h-48 overflow-hidden bg-slate-100 relative">
                 <img 
                   src={featureOntologyImage} 
@@ -353,9 +383,15 @@ export default function LandingPage() {
                   {t.features.ontology.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group"
+            >
               <div className="h-48 overflow-hidden bg-slate-100 relative">
                 <img 
                   src={featureMetricsImage} 
@@ -373,9 +409,15 @@ export default function LandingPage() {
                   {t.features.metrics.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group"
+            >
               <div className="h-48 overflow-hidden bg-slate-100 relative">
                 <img 
                   src={featureCollabImage} 
@@ -393,7 +435,7 @@ export default function LandingPage() {
                   {t.features.collab.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -412,7 +454,13 @@ export default function LandingPage() {
 
           <div className="space-y-16">
              {/* Item 1: Visual Builder (Image Left) */}
-             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+             <motion.div 
+               initial={{ opacity: 0, x: -50 }}
+               whileInView={{ opacity: 1, x: 0 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.7 }}
+               className="flex flex-col md:flex-row items-center gap-12 lg:gap-20"
+             >
                 <div className="flex-1 w-full order-2 md:order-1">
                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
                       <img src={creationVisualBuilderImage} alt="Visual Builder" className="w-full h-auto" />
@@ -450,10 +498,16 @@ export default function LandingPage() {
                       </Button>
                    </div>
                 </div>
-             </div>
+             </motion.div>
 
              {/* Item 2: AI Suggestions (Image Right) */}
-             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+             <motion.div 
+               initial={{ opacity: 0, x: 50 }}
+               whileInView={{ opacity: 1, x: 0 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.7 }}
+               className="flex flex-col md:flex-row items-center gap-12 lg:gap-20"
+             >
                 <div className="flex-1 space-y-6 order-1 md:order-1">
                    <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
                       <Sparkles className="w-7 h-7" />
@@ -486,10 +540,16 @@ export default function LandingPage() {
                       <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
                    </div>
                 </div>
-             </div>
+             </motion.div>
 
              {/* Item 3: One-Click Import (Image Left) */}
-             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+             <motion.div 
+               initial={{ opacity: 0, x: -50 }}
+               whileInView={{ opacity: 1, x: 0 }}
+               viewport={{ once: true }}
+               transition={{ duration: 0.7 }}
+               className="flex flex-col md:flex-row items-center gap-12 lg:gap-20"
+             >
                 <div className="flex-1 w-full order-2 md:order-1">
                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
                       <img src={creationImportImage} alt="Data Import" className="w-full h-auto" />
@@ -522,7 +582,7 @@ export default function LandingPage() {
                       )}
                    </div>
                 </div>
-             </div>
+             </motion.div>
           </div>
         </div>
       </section>
@@ -531,7 +591,13 @@ export default function LandingPage() {
       <section id="cases" className="py-24 relative bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="flex flex-col md:flex-row gap-12 items-center">
-            <div className="md:w-1/2 space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="md:w-1/2 space-y-8"
+            >
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
                 {t.solutions.title}
               </h2>
@@ -602,7 +668,13 @@ export default function LandingPage() {
               </div>
             </div>
             
-            <div className="md:w-1/2">
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="md:w-1/2"
+            >
                <div className="grid grid-cols-2 gap-4">
                   {/* Investigation */}
                   <div className="relative rounded-2xl overflow-hidden aspect-square group border shadow-sm">
@@ -713,9 +785,21 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.1 }}
+            className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          >
             {/* Starter Plan */}
-            <div className="bg-white rounded-2xl p-8 border shadow-sm hover:shadow-md transition-shadow relative">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="bg-white rounded-2xl p-8 border shadow-sm hover:shadow-md transition-shadow relative"
+            >
               <h3 className="text-xl font-semibold mb-2">{t.pricing.starter.name}</h3>
               <p className="text-muted-foreground text-sm mb-6">{t.pricing.starter.desc}</p>
               <div className="mb-6">
@@ -731,10 +815,16 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Button variant="outline" className="w-full">{t.pricing.starter.btn}</Button>
-            </div>
+            </motion.div>
 
             {/* Pro Plan */}
-            <div className="bg-white rounded-2xl p-8 border-2 border-primary shadow-lg relative transform scale-105 z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-white rounded-2xl p-8 border-2 border-primary shadow-lg relative transform scale-105 z-10"
+            >
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                 {t.pricing.pro.badge}
               </div>
@@ -753,10 +843,16 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Button className="w-full">{t.pricing.pro.btn}</Button>
-            </div>
+            </motion.div>
 
             {/* Enterprise Plan */}
-            <div className="bg-white rounded-2xl p-8 border shadow-sm hover:shadow-md transition-shadow relative">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white rounded-2xl p-8 border shadow-sm hover:shadow-md transition-shadow relative"
+            >
               <h3 className="text-xl font-semibold mb-2">{t.pricing.enterprise.name}</h3>
               <p className="text-muted-foreground text-sm mb-6">{t.pricing.enterprise.desc}</p>
               <div className="mb-6">
@@ -771,28 +867,35 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Button variant="outline" className="w-full">{t.pricing.enterprise.btn}</Button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24 bg-slate-900 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.cta.title}</h2>
-          <p className="text-slate-300 max-w-2xl mx-auto mb-10 text-lg">
-            {t.cta.desc}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/dashboard">
-              <Button size="lg" className="h-14 px-8 text-lg bg-primary text-primary-foreground hover:bg-primary/90">
-                {t.cta.btnPrimary}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.cta.title}</h2>
+            <p className="text-slate-300 max-w-2xl mx-auto mb-10 text-lg">
+              {t.cta.desc}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/dashboard">
+                <Button size="lg" className="h-14 px-8 text-lg bg-primary text-primary-foreground hover:bg-primary/90">
+                  {t.cta.btnPrimary}
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-slate-700 hover:bg-slate-800 text-slate-100 hover:text-white">
+                {t.cta.btnSecondary}
               </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-slate-700 hover:bg-slate-800 text-slate-100 hover:text-white">
-              {t.cta.btnSecondary}
-            </Button>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
