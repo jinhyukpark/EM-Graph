@@ -437,7 +437,7 @@ export default function LandingPage() {
                 </p>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
