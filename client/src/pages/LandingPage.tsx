@@ -427,9 +427,22 @@ export default function LandingPage() {
                       <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
                         {Array.isArray(t.creation.list) && t.creation.list[0]?.title}
                       </h3>
-                      <p className="text-lg text-slate-600 leading-relaxed">
+                      <p className="text-lg text-slate-600 leading-relaxed mb-6">
                         {Array.isArray(t.creation.list) && t.creation.list[0]?.desc}
                       </p>
+                      
+                      {Array.isArray(t.creation.list) && t.creation.list[0]?.benefits && (
+                        <div className="flex flex-col gap-3">
+                           {t.creation.list[0].benefits.map((benefit: string, idx: number) => (
+                             <div key={idx} className="flex items-center gap-3 p-3 bg-indigo-50/50 rounded-lg border border-indigo-100 text-indigo-700 font-medium text-sm">
+                                <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                                   <Sparkles className="w-3 h-3 text-indigo-600" />
+                                </div>
+                                {benefit}
+                             </div>
+                           ))}
+                        </div>
+                      )}
                    </div>
                    <div className="pt-2">
                       <Button variant="outline" className="gap-2">
@@ -449,9 +462,22 @@ export default function LandingPage() {
                       <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
                         {Array.isArray(t.creation.list) && t.creation.list[1]?.title}
                       </h3>
-                      <p className="text-lg text-slate-600 leading-relaxed">
+                      <p className="text-lg text-slate-600 leading-relaxed mb-6">
                         {Array.isArray(t.creation.list) && t.creation.list[1]?.desc}
                       </p>
+
+                      {Array.isArray(t.creation.list) && t.creation.list[1]?.benefits && (
+                        <div className="flex flex-col gap-3">
+                           {t.creation.list[1].benefits.map((benefit: string, idx: number) => (
+                             <div key={idx} className="flex items-center gap-3 p-3 bg-purple-50/50 rounded-lg border border-purple-100 text-purple-700 font-medium text-sm">
+                                <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
+                                   <Sparkles className="w-3 h-3 text-purple-600" />
+                                </div>
+                                {benefit}
+                             </div>
+                           ))}
+                        </div>
+                      )}
                    </div>
                 </div>
                 <div className="flex-1 w-full order-2 md:order-2">
@@ -478,9 +504,22 @@ export default function LandingPage() {
                       <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
                         {Array.isArray(t.creation.list) && t.creation.list[2]?.title}
                       </h3>
-                      <p className="text-lg text-slate-600 leading-relaxed">
+                      <p className="text-lg text-slate-600 leading-relaxed mb-6">
                         {Array.isArray(t.creation.list) && t.creation.list[2]?.desc}
                       </p>
+
+                      {Array.isArray(t.creation.list) && t.creation.list[2]?.benefits && (
+                        <div className="flex flex-col gap-3">
+                           {t.creation.list[2].benefits.map((benefit: string, idx: number) => (
+                             <div key={idx} className="flex items-center gap-3 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100 text-emerald-700 font-medium text-sm">
+                                <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                   <Sparkles className="w-3 h-3 text-emerald-600" />
+                                </div>
+                                {benefit}
+                             </div>
+                           ))}
+                        </div>
+                      )}
                    </div>
                 </div>
              </div>

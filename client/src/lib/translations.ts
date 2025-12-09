@@ -43,15 +43,27 @@ export const translations = {
       list: [
         {
           title: "Visual Builder",
-          desc: "Intuitive drag-and-drop interface for defining nodes and edges without writing a single line of code."
+          desc: "Intuitive drag-and-drop interface for defining nodes and edges without writing a single line of code.",
+          benefits: [
+            "No coding required",
+            "Real-time visual feedback"
+          ]
         },
         {
           title: "AI-Powered Suggestions",
-          desc: "Smart algorithms automatically suggest potential relationships and detect schema inconsistencies."
+          desc: "Smart algorithms automatically suggest potential relationships and detect schema inconsistencies.",
+          benefits: [
+            "Auto-detect hidden links",
+            "Prevent schema errors"
+          ]
         },
         {
           title: "One-Click Import",
-          desc: "Seamlessly ingest CSV, JSON, or SQL data with intelligent field mapping and validation."
+          desc: "Seamlessly ingest CSV, JSON, or SQL data with intelligent field mapping and validation.",
+          benefits: [
+            "Support CSV, JSON, SQL",
+            "Smart field mapping"
+          ]
         }
       ]
     },
@@ -171,15 +183,27 @@ export const translations = {
       list: [
         {
           title: "비주얼 빌더",
-          desc: "코드 한 줄 없이 드래그 앤 드롭으로 노드와 엣지를 정의하는 직관적인 인터페이스를 제공합니다."
+          desc: "코드 한 줄 없이 드래그 앤 드롭으로 노드와 엣지를 정의하는 직관적인 인터페이스를 제공합니다.",
+          benefits: [
+            "코딩 없이 제작 가능",
+            "실시간 시각적 피드백"
+          ]
         },
         {
           title: "AI 기반 제안",
-          desc: "스마트 알고리즘이 잠재적인 관계를 자동으로 제안하고 스키마 불일치를 감지합니다."
+          desc: "스마트 알고리즘이 잠재적인 관계를 자동으로 제안하고 스키마 불일치를 감지합니다.",
+          benefits: [
+            "숨겨진 관계 자동 감지",
+            "스키마 오류 사전 방지"
+          ]
         },
         {
           title: "원클릭 데이터 임포트",
-          desc: "지능형 필드 매핑 및 검증 기능을 통해 CSV, JSON, SQL 데이터를 원활하게 수집합니다."
+          desc: "지능형 필드 매핑 및 검증 기능을 통해 CSV, JSON, SQL 데이터를 원활하게 수집합니다.",
+          benefits: [
+            "CSV, JSON, SQL 지원",
+            "스마트 필드 매핑"
+          ]
         }
       ]
     },
