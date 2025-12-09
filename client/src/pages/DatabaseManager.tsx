@@ -75,8 +75,9 @@ const MOCK_QUERY_DATA = [
 
 interface Tab {
   id: string;
-  type: 'table' | 'query' | 'graph' | 'preprocessing';
+  type: 'table' | 'query' | 'graph' | 'preprocessing' | 'pipeline-result';
   title: string;
+  data?: any[];
 }
 
 interface EditingCell {
@@ -206,7 +207,46 @@ export default function DatabaseManager() {
 
   const [sidebarItems, setSidebarItems] = useState(SIDEBAR_ITEMS);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isSaveResultDialogOpen, setIsSaveResultDialogOpen] = useState(false);
   const [newQueryName, setNewQueryName] = useState("");
+  const [newTableName, setNewTableName] = useState("");
+
+  const handleRunPipeline = (data: any[]) => {
+    const newTabId = `result-${Date.now()}`;
+    setTabs([...tabs, { 
+      id: newTabId, 
+      type: 'pipeline-result', 
+      title: 'Pipeline Result', 
+      data 
+    }]);
+    setActiveTabId(newTabId);
+  };
+
+  const handleSaveResult = () => {
+    if (!newTableName.trim()) return;
+
+    // 1. Add to Sidebar Items under Pre-processing
+    const newSidebarItems = [...sidebarItems];
+    const preProcCategory = newSidebarItems.find(c => c.category === "Table (Pre-processing)");
+    if (preProcCategory) {
+      preProcCategory.items.push({
+        id: `t-${Date.now()}`,
+        name: newTableName,
+        icon: TableIcon,
+        type: "table"
+      });
+    }
+    setSidebarItems(newSidebarItems);
+
+    // 2. Close Tab or Rename it? Let's just toast and close dialog.
+    setIsSaveResultDialogOpen(false);
+    setNewTableName("");
+    
+    toast({
+      title: "Table Saved",
+      description: `Result saved as '${newTableName}' in Pre-processing tables.`,
+    });
+  };
 
   const handleSaveQuery = () => {
     if (!newQueryName.trim()) return;
@@ -383,8 +423,9 @@ export default function DatabaseManager() {
                    {tab.type === 'query' && <FileCode className="w-3 h-3 shrink-0" />}
                    {tab.type === 'graph' && <Network className="w-3 h-3 shrink-0" />}
                    {tab.type === 'preprocessing' && <Workflow className="w-3 h-3 shrink-0" />}
-                   <span className="truncate flex-1">{tab.title}</span>
-                   <button 
+                  {tab.type === 'pipeline-result' && <TableIcon className="w-3 h-3 shrink-0 text-indigo-500" />}
+                  <span className="truncate flex-1">{tab.title}</span>
+                  <button 
                      onClick={(e) => closeTab(e, tab.id)}
                      className={`opacity-0 group-hover:opacity-100 p-0.5 rounded-full hover:bg-muted-foreground/20 ${activeTabId === tab.id ? "opacity-100" : ""}`}
                    >
@@ -399,7 +440,42 @@ export default function DatabaseManager() {
           <div className="flex-1 overflow-hidden relative">
             {activeTab ? (
               activeTab.type === 'preprocessing' ? (
-                <DataPreprocessingBuilder />
+                <DataPreprocessingBuilder onRun={handleRunPipeline} />
+              ) : activeTab.type === 'pipeline-result' ? (
+                <div className="flex flex-col h-full bg-background border-t-4 border-indigo-500/20">
+                  <div className="h-12 border-b border-border bg-indigo-50/10 flex items-center justify-between px-4">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 border-indigo-200">Pipeline Result</Badge>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {activeTab.data?.length || 0} rows generated
+                      </span>
+                    </div>
+                    <Button size="sm" className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => setIsSaveResultDialogOpen(true)}>
+                      <Save className="w-4 h-4" />
+                      Save to Table
+                    </Button>
+                  </div>
+                  <div className="flex-1 overflow-auto">
+                    <Table>
+                      <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+                        <TableRow>
+                          {activeTab.data && activeTab.data.length > 0 && Object.keys(activeTab.data[0]).map((key) => (
+                            <TableHead key={key} className="h-8 text-xs font-semibold uppercase tracking-wider">{key}</TableHead>
+                          ))}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {activeTab.data?.map((row, i) => (
+                          <TableRow key={i} className="hover:bg-indigo-50/10 border-b border-border/50">
+                            {Object.values(row).map((val: any, j) => (
+                              <TableCell key={j} className="py-2 text-xs">{val}</TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
               ) : activeTab.type === 'graph' ? (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
                    <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
@@ -721,6 +797,31 @@ export default function DatabaseManager() {
           </div>
         </div>
       </div>
+      <Dialog open={isSaveResultDialogOpen} onOpenChange={setIsSaveResultDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save Result Table</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+               <Label>Table Name</Label>
+               <Input 
+                 placeholder="e.g. processed_crime_data_v1" 
+                 value={newTableName}
+                 onChange={(e) => setNewTableName(e.target.value)}
+                 autoFocus
+               />
+               <p className="text-xs text-muted-foreground">
+                 This table will be saved to the "Table (Pre-processing)" category.
+               </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>Save Table</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }

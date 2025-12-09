@@ -217,7 +217,7 @@ const INITIAL_NODES: Node[] = [
   },
 ];
 
-function DataPreprocessingBuilderContent() {
+function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => void }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [draggedType, setDraggedType] = useState<string | null>(null);
@@ -228,6 +228,9 @@ function DataPreprocessingBuilderContent() {
   const [isResizing, setIsResizing] = useState(false);
   const animationFrameRef = React.useRef<number | null>(null);
   const { screenToFlowPosition } = useReactFlow();
+
+  // Check if output node exists
+  const hasOutput = nodes.some(n => n.type === 'destination');
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -402,7 +405,24 @@ function DataPreprocessingBuilderContent() {
               <Trash2 className="w-4 h-4 mr-2" />
               Clear
             </Button>
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            <Button 
+              size="sm" 
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!hasOutput}
+              onClick={() => {
+                const resultData = PREVIEW_DATA['default'].map((row, i) => ({
+                  id: i + 1,
+                  ...row,
+                  processed_at: new Date().toISOString().split('T')[0],
+                  status: 'processed'
+                }));
+                onRun?.(resultData);
+                toast({
+                  title: "Pipeline Executed",
+                  description: "Data processing complete. Check the result tab.",
+                });
+              }}
+            >
               <Play className="w-4 h-4 mr-2" />
               Run Pipeline
             </Button>
@@ -793,10 +813,10 @@ function DataPreprocessingBuilderContent() {
   );
 }
 
-export default function DataPreprocessingBuilder() {
+export default function DataPreprocessingBuilder(props: { onRun?: (data: any[]) => void }) {
   return (
     <ReactFlowProvider>
-      <DataPreprocessingBuilderContent />
+      <DataPreprocessingBuilderContent {...props} />
     </ReactFlowProvider>
   );
 }
