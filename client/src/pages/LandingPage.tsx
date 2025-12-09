@@ -16,6 +16,11 @@ import heroInvestigationImage from '@assets/generated_images/dark_mode_graph_ana
 import heroSupplyChainImage from '@assets/generated_images/dark_mode_supply_chain_management_dashboard_ui.png';
 import heroFinanceImage from '@assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
 
+import featureAiImage from '@assets/generated_images/abstract_ai_brain_network_illustration.png';
+import featureOntologyImage from '@assets/generated_images/abstract_database_ontology_illustration.png';
+import featureMetricsImage from '@assets/generated_images/abstract_graph_analytics_illustration.png';
+import featureCollabImage from '@assets/generated_images/abstract_collaboration_network_illustration.png';
+
 const caseImages: Record<string, string> = {
   investigation: investigationImage,
   supplyChain: supplyChainImage,
@@ -306,41 +311,84 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-background p-8 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-6">
-                <Brain className="w-6 h-6" />
+            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+              <div className="h-48 overflow-hidden bg-slate-100 relative">
+                <img 
+                  src={featureAiImage} 
+                  alt="AI Integration" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-60" />
               </div>
-              <h3 className="text-lg font-bold mb-3">{t.features.ai.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t.features.ai.desc}
-              </p>
+              <div className="p-6">
+                <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-4 -mt-12 relative z-10 border-2 border-background shadow-sm">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">{t.features.ai.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t.features.ai.desc}
+                </p>
+              </div>
             </div>
-            <div className="bg-background p-8 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-6">
-                <Database className="w-6 h-6" />
+            
+            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+              <div className="h-48 overflow-hidden bg-slate-100 relative">
+                <img 
+                  src={featureOntologyImage} 
+                  alt="Ontology Design" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-60" />
               </div>
-              <h3 className="text-lg font-bold mb-3">{t.features.ontology.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t.features.ontology.desc}
-              </p>
+              <div className="p-6">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mb-4 -mt-12 relative z-10 border-2 border-background shadow-sm">
+                  <Database className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">{t.features.ontology.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t.features.ontology.desc}
+                </p>
+              </div>
             </div>
-            <div className="bg-background p-8 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6">
-                <Sigma className="w-6 h-6" />
+            
+            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+              <div className="h-48 overflow-hidden bg-slate-100 relative">
+                <img 
+                  src={featureMetricsImage} 
+                  alt="Graph Metrics" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-60" />
               </div>
-              <h3 className="text-lg font-bold mb-3">{t.features.metrics.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t.features.metrics.desc}
-              </p>
+              <div className="p-6">
+                <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4 -mt-12 relative z-10 border-2 border-background shadow-sm">
+                  <Sigma className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">{t.features.metrics.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t.features.metrics.desc}
+                </p>
+              </div>
             </div>
-            <div className="bg-background p-8 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-                <Share2 className="w-6 h-6" />
+            
+            <div className="bg-background rounded-2xl shadow-sm border hover:shadow-md transition-all overflow-hidden group">
+              <div className="h-48 overflow-hidden bg-slate-100 relative">
+                <img 
+                  src={featureCollabImage} 
+                  alt="Collaboration" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-60" />
               </div>
-              <h3 className="text-lg font-bold mb-3">{t.features.collab.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t.features.collab.desc}
-              </p>
+              <div className="p-6">
+                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 -mt-12 relative z-10 border-2 border-background shadow-sm">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">{t.features.collab.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t.features.collab.desc}
+                </p>
+              </div>
             </div>
           </div>
         </div>
