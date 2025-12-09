@@ -25,6 +25,7 @@ import featureCollabImage from '@assets/generated_images/abstract_collaboration_
 import creationVisualBuilderImage from '@assets/generated_images/drag_and_drop_node_interface_ui.png';
 import creationAiSuggestImage from '@assets/generated_images/ai_suggesting_connections_ui.png';
 import creationImportImage from '@assets/generated_images/data_import_and_mapping_ui.png';
+import ctaBackgroundImage from '@assets/generated_images/abstract_dark_monochrome_ontology_network_background.png';
 
 const caseImages: Record<string, string> = {
   investigation: investigationImage,
@@ -873,8 +874,18 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-slate-900 text-white">
-        <div className="container mx-auto px-6 text-center">
+      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          <img 
+            src={ctaBackgroundImage} 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/50" />
+        </div>
+
+        <div className="container mx-auto px-6 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
