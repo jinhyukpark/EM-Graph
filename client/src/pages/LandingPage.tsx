@@ -472,7 +472,8 @@ export default function LandingPage() {
       </section>
 
       {/* Solutions / Use Cases */}
-      <section id="cases" className="py-24">
+      <section id="solutions" className="py-24 relative">
+        <div id="cases" className="absolute top-0 left-0 w-full h-1 invisible scroll-mt-24" />
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2 space-y-8">
