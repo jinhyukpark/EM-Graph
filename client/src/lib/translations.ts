@@ -51,26 +51,26 @@ export const translations = {
       subtitle: "EM-Graph provides specialized tools for industries where relationship analysis is critical.",
       cards: {
         investigation: {
-          title: "Crime & Investigation",
-          desc: "Link suspects, events, and evidence. Visualize criminal networks and timeline of events.",
+          title: "Case Study: Cyber Syndicate",
+          desc: "Operation 'Nightshade': Uncovered a hidden $50M crypto-laundering ring by visualizing connections between 5,000+ anonymous wallets and 3 offshore shell companies.",
           label: "Investigation",
           sub: "Link Analysis"
         },
         supplyChain: {
-          title: "Supply Chain Management",
-          desc: "Map global supply networks, identify bottlenecks, and assess risks in multi-tier dependencies.",
+          title: "Case Study: Global Logistics",
+          desc: "Project 'Port Flow': Mitigated a major supply shock during the 2024 port strikes by identifying 12 critical bottleneck nodes and automatically suggesting alternative shipping routes.",
           label: "Supply Chain",
           sub: "Dependency Mapping"
         },
         finance: {
-          title: "Financial Analysis",
-          desc: "Detect fraud rings, track money laundering paths, and analyze complex ownership structures.",
+          title: "Case Study: Market Manipulation",
+          desc: "Project 'Watchtower': Detected a complex wash-trading pattern in high-frequency markets, flagging a coordinated group of 20 bots before they could trigger a flash crash.",
           label: "Finance",
           sub: "Fraud Detection"
         },
         biotech: {
-          title: "Bio & Healthcare",
-          desc: "Model protein interactions, disease spread pathways, and patient-provider relationships.",
+          title: "Case Study: Drug Discovery",
+          desc: "Research 'Alpha-Target': Accelerated the identification of a novel protein inhibitor for Alzheimer's by mapping 10M+ protein interactions, cutting research time by 8 months.",
           label: "Bio-Tech",
           sub: "Interaction Graphs"
         }
@@ -170,26 +170,26 @@ export const translations = {
       subtitle: "EM-Graph는 관계 분석이 중요한 산업 분야에 특화된 도구를 제공합니다.",
       cards: {
         investigation: {
-          title: "범죄 및 수사",
-          desc: "용의자, 사건, 증거를 연결하세요. 범죄 네트워크와 사건의 타임라인을 시각화합니다.",
+          title: "케이스 스터디: 사이버 범죄 조직",
+          desc: "'나이트셰이드' 작전: 5,000개 이상의 익명 지갑과 3개의 역외 페이퍼 컴퍼니 간의 연결 고리를 시각화하여 5천만 달러 규모의 암호화폐 자금 세탁 조직을 적발했습니다.",
           label: "수사",
           sub: "링크 분석"
         },
         supplyChain: {
-          title: "공급망 관리",
-          desc: "글로벌 공급망을 매핑하고, 병목 현상을 파악하며, 다단계 의존성 리스크를 평가합니다.",
+          title: "케이스 스터디: 글로벌 물류 위기",
+          desc: "'포트 플로우' 프로젝트: 2024년 항만 파업 중 12개의 핵심 병목 지점을 식별하고 대체 운송 경로를 자동 제안하여 주요 공급 충격을 완화했습니다.",
           label: "공급망",
           sub: "의존성 매핑"
         },
         finance: {
-          title: "금융 분석",
-          desc: "사기 조직을 탐지하고, 자금 세탁 경로를 추적하며, 복잡한 소유 구조를 분석합니다.",
+          title: "케이스 스터디: 시장 조작 탐지",
+          desc: "'와치타워' 프로젝트: 고빈도 매매 시장에서 복잡한 자전 거래 패턴을 감지하여, 플래시 크래시를 유발하기 전 20개의 조직적 봇 그룹을 사전 차단했습니다.",
           label: "금융",
           sub: "사기 탐지"
         },
         biotech: {
-          title: "바이오 & 헬스케어",
-          desc: "단백질 상호작용, 질병 확산 경로, 환자-제공자 관계를 모델링합니다.",
+          title: "케이스 스터디: 신약 개발 가속화",
+          desc: "'알파-타겟' 연구: 1,000만 개 이상의 단백질 상호작용을 매핑하여 알츠하이머 신규 단백질 억제제 식별을 가속화하고, 연구 기간을 8개월 단축했습니다.",
           label: "바이오",
           sub: "상호작용 그래프"
         }
