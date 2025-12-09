@@ -7,9 +7,9 @@ import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { Globe as GlobeIcon } from "lucide-react";
 
-import investigationImage from '@assets/generated_images/digital_network_graph_connecting_suspects_and_evidence.png';
-import supplyChainImage from '@assets/generated_images/global_supply_chain_network_with_logistics_nodes.png';
-import financeImage from '@assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png';
+import investigationImage from '@assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png';
+import supplyChainImage from '@assets/generated_images/large_container_ship_at_sea_with_digital_connections.png';
+import financeImage from '@assets/generated_images/financial_stock_market_charts_and_data_visualization.png';
 import biotechImage from '@assets/generated_images/scientist_with_test_tube.png';
 
 import heroInvestigationImage from '@assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png';
