@@ -494,88 +494,65 @@ export default function LandingPage() {
                 {t.solutions.subtitle}
               </p>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div 
-                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
                   onClick={() => setSelectedCase('investigation')}
                 >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors border shadow-sm">
                       <FileSearch className="w-5 h-5 text-slate-700 group-hover:text-indigo-600 transition-colors" />
                     </div>
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold group-hover:text-indigo-700 transition-colors">{t.solutions.cards.investigation.title}</h4>
-                    <p className="text-muted-foreground">{t.solutions.cards.investigation.desc}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{t.solutions.cards.investigation.desc}</p>
                   </div>
                 </div>
                 
                 <div 
-                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
                   onClick={() => setSelectedCase('supplyChain')}
                 >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors border shadow-sm">
                       <Globe className="w-5 h-5 text-slate-700 group-hover:text-emerald-600 transition-colors" />
                     </div>
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold group-hover:text-emerald-700 transition-colors">{t.solutions.cards.supplyChain.title}</h4>
-                    <p className="text-muted-foreground">{t.solutions.cards.supplyChain.desc}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{t.solutions.cards.supplyChain.desc}</p>
                   </div>
                 </div>
                 
                 <div 
-                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
                   onClick={() => setSelectedCase('finance')}
                 >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors border shadow-sm">
                       <BarChart2 className="w-5 h-5 text-slate-700 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold group-hover:text-blue-700 transition-colors">{t.solutions.cards.finance.title}</h4>
-                    <p className="text-muted-foreground">{t.solutions.cards.finance.desc}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{t.solutions.cards.finance.desc}</p>
                   </div>
                 </div>
 
                 <div 
-                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                  className="flex gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer group"
                   onClick={() => setSelectedCase('biotech')}
                 >
                   <div className="mt-1">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors border shadow-sm">
                       <Network className="w-5 h-5 text-slate-700 group-hover:text-purple-600 transition-colors" />
                     </div>
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold group-hover:text-purple-700 transition-colors">{t.solutions.cards.biotech.title}</h4>
-                    <p className="text-muted-foreground">{t.solutions.cards.biotech.desc}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">{t.solutions.cards.biotech.desc}</p>
                   </div>
-                </div>
-
-                <div className="pt-6 border-t mt-6">
-                   <div className="flex items-start gap-4">
-                      <div className="mt-1">
-                        <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-                          <Plus className="w-5 h-5 text-indigo-600" />
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-indigo-900">{t.solutions.complexity.title}</h4>
-                        <p className="text-muted-foreground mb-3">
-                          {t.solutions.complexity.desc}
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">Cybersecurity</span>
-                           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">Legal Tech</span>
-                           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">Knowledge Graphs</span>
-                           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">Intelligence</span>
-                           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-600">Academic Research</span>
-                        </div>
-                      </div>
-                   </div>
                 </div>
               </div>
             </div>
@@ -651,6 +628,30 @@ export default function LandingPage() {
                   </div>
                </div>
             </div>
+          </div>
+          
+          <div className="mt-16 pt-8 border-t border-slate-200">
+             <div className="flex flex-col md:flex-row items-start gap-6 bg-white p-6 rounded-xl border shadow-sm">
+                <div className="mt-1">
+                  <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+                    <Plus className="w-6 h-6 text-indigo-600" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold text-slate-900 mb-2">{t.solutions.complexity.title}</h4>
+                  <p className="text-slate-600 mb-4 max-w-3xl">
+                    {t.solutions.complexity.desc}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                     <span className="px-3 py-1.5 rounded-md bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200">Cybersecurity</span>
+                     <span className="px-3 py-1.5 rounded-md bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200">Legal Tech</span>
+                     <span className="px-3 py-1.5 rounded-md bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200">Knowledge Graphs</span>
+                     <span className="px-3 py-1.5 rounded-md bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200">Intelligence</span>
+                     <span className="px-3 py-1.5 rounded-md bg-slate-100 text-xs font-medium text-slate-600 border border-slate-200">Academic Research</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="hidden md:flex whitespace-nowrap">Learn More</Button>
+             </div>
           </div>
         </div>
       </section>
