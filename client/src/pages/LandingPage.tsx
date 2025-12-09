@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { ArrowRight, BarChart2, Brain, Database, FileSearch, Globe, Lock, Network, Share2, Zap, Plus, Sigma, Wand2, Upload, Sparkles, Check } from "lucide-react";
+import { ArrowRight, BarChart2, Brain, Database, FileSearch, Globe, Lock, Network, Share2, Zap, Plus, Sigma, Wand2, Upload, Sparkles, Check, LayoutGrid } from "lucide-react";
 import { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
