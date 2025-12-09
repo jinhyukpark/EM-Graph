@@ -32,6 +32,13 @@ export default function LandingPage() {
     setLang(prev => prev === 'en' ? 'ko' : 'en');
   };
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
@@ -61,10 +68,10 @@ export default function LandingPage() {
             <span className="font-bold text-xl tracking-tight">EM-Graph</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition-colors">{t.nav.features}</a>
-            <a href="#solutions" className="hover:text-foreground transition-colors">{t.nav.solutions}</a>
-            <a href="#cases" className="hover:text-foreground transition-colors">{t.nav.cases}</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">{t.nav.pricing}</a>
+            <button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">{t.nav.features}</button>
+            <button onClick={() => scrollToSection('solutions')} className="hover:text-foreground transition-colors">{t.nav.solutions}</button>
+            <button onClick={() => scrollToSection('cases')} className="hover:text-foreground transition-colors">{t.nav.cases}</button>
+            <button onClick={() => scrollToSection('pricing')} className="hover:text-foreground transition-colors">{t.nav.pricing}</button>
           </nav>
           <div className="flex items-center gap-4">
             <Button 
@@ -758,10 +765,10 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold mb-4">{t.footer.product}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-foreground">{t.nav.features}</a></li>
-                <li><a href="#solutions" className="hover:text-foreground">{t.nav.solutions}</a></li>
-                <li><a href="#cases" className="hover:text-foreground">{t.nav.cases}</a></li>
-                <li><a href="#pricing" className="hover:text-foreground">{t.nav.pricing}</a></li>
+                <li><button onClick={() => scrollToSection('features')} className="hover:text-foreground text-left">{t.nav.features}</button></li>
+                <li><button onClick={() => scrollToSection('solutions')} className="hover:text-foreground text-left">{t.nav.solutions}</button></li>
+                <li><button onClick={() => scrollToSection('cases')} className="hover:text-foreground text-left">{t.nav.cases}</button></li>
+                <li><button onClick={() => scrollToSection('pricing')} className="hover:text-foreground text-left">{t.nav.pricing}</button></li>
               </ul>
             </div>
             <div>
