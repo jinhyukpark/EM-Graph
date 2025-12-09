@@ -21,6 +21,10 @@ import featureOntologyImage from '@assets/generated_images/abstract_database_ont
 import featureMetricsImage from '@assets/generated_images/abstract_graph_analytics_illustration.png';
 import featureCollabImage from '@assets/generated_images/abstract_collaboration_network_illustration.png';
 
+import creationVisualBuilderImage from '@assets/generated_images/drag_and_drop_node_interface_ui.png';
+import creationAiSuggestImage from '@assets/generated_images/ai_suggesting_connections_ui.png';
+import creationImportImage from '@assets/generated_images/data_import_and_mapping_ui.png';
+
 const caseImages: Record<string, string> = {
   investigation: investigationImage,
   supplyChain: supplyChainImage,
@@ -397,135 +401,89 @@ export default function LandingPage() {
       {/* Solutions Section (Renamed from Ease of Construction) */}
       <section id="solutions" className="py-24 bg-white relative">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 lg:p-12 border border-indigo-100">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-               <div className="flex-1 space-y-4">
-                  <div className="inline-flex items-center rounded-full bg-white px-3 py-1 text-xs font-semibold text-indigo-600 shadow-sm border border-indigo-100">
-                    <Wand2 className="w-3 h-3 mr-1.5" />
-                    Effortless Creation
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900">Build Complex Networks in Minutes, Not Days</h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Say goodbye to manual coding and complex scripts. With our drag-and-drop builder 
-                    and AI-assisted node linking, you can construct intricate relationship networks 
-                    intuitively. Just bring your data, and we'll handle the connections.
-                  </p>
-                  
-                  <div className="space-y-6 pt-4">
-                    {Array.isArray(t.creation.list) && t.creation.list.map((item: any, i: number) => (
-                      <div key={i} className="flex gap-4 group">
-                        <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-lg bg-white border shadow-sm flex items-center justify-center text-indigo-600 group-hover:bg-indigo-50 transition-colors">
-                           {i === 0 ? <LayoutGrid className="w-5 h-5" /> : i === 1 ? <Sparkles className="w-5 h-5" /> : <Upload className="w-5 h-5" />}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">{item.title}</h4>
-                          <p className="text-sm text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-               </div>
-               <div className="flex-1 w-full max-w-md">
-                 <Carousel className="w-full">
-                   <CarouselContent>
-                     {/* Slide 1: Drag & Drop */}
-                     <CarouselItem>
-                       <div className="bg-white rounded-xl shadow-lg border p-2 rotate-1 hover:rotate-0 transition-transform duration-500 mx-1">
-                         <div className="aspect-[4/3] bg-slate-50 rounded-lg relative overflow-hidden border border-dashed border-slate-200">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                               <div className="text-center">
-                                  <Network className="w-16 h-16 text-indigo-200 mx-auto mb-2" />
-                                  <div className="text-xs text-slate-400">Drag to Connect</div>
-                               </div>
-                            </div>
-                            <div className="absolute top-1/4 left-1/4 w-12 h-12 bg-white rounded-full shadow-md border-2 border-indigo-500 flex items-center justify-center z-10">
-                              <Brain className="w-5 h-5 text-indigo-500" />
-                            </div>
-                            <div className="absolute bottom-1/3 right-1/4 w-12 h-12 bg-white rounded-full shadow-md border-2 border-emerald-500 flex items-center justify-center z-10">
-                              <Database className="w-5 h-5 text-emerald-500" />
-                            </div>
-                            <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                              <path d="M 130 90 Q 200 150 280 180" fill="none" stroke="#6366f1" strokeWidth="2" strokeDasharray="4 4" className="opacity-50" />
-                              <circle cx="205" cy="135" r="4" fill="#6366f1" className="animate-ping opacity-75" />
-                            </svg>
-                            <div className="absolute top-1/2 left-1/2 -translate-x-4 -translate-y-4">
-                               <div className="w-4 h-4 bg-slate-900 rounded-full opacity-20 blur-sm absolute top-4 left-4" />
-                               <svg className="w-6 h-6 text-slate-900 relative z-20 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
-                                 <path d="M7 2l12 11.2-5.8.5 3.3 7.3-2.2.9-3.2-7.4-4.4 4.6z" />
-                               </svg>
-                            </div>
-                            <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-medium text-slate-500 border shadow-sm">
-                              Visual Builder
-                            </div>
-                         </div>
-                       </div>
-                     </CarouselItem>
+          <div className="text-center mb-20">
+             <div className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 mb-4 border border-indigo-100">
+               <Wand2 className="w-3 h-3 mr-1.5" />
+               {t.creation.badge}
+             </div>
+             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t.creation.title}</h2>
+             <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">{t.creation.desc}</p>
+          </div>
 
-                     {/* Slide 2: Auto-suggest */}
-                     <CarouselItem>
-                       <div className="bg-white rounded-xl shadow-lg border p-2 -rotate-1 hover:rotate-0 transition-transform duration-500 mx-1">
-                         <div className="aspect-[4/3] bg-slate-50 rounded-lg relative overflow-hidden border border-dashed border-slate-200">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                               <div className="w-16 h-16 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center shadow-lg relative z-10">
-                                  <Brain className="w-8 h-8 text-indigo-600" />
-                                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
-                                    <Sparkles className="w-3 h-3 text-yellow-900" />
-                                  </div>
-                               </div>
-                            </div>
-                            {/* Suggestions */}
-                            <div className="absolute top-1/4 right-1/4 animate-in fade-in zoom-in duration-700 delay-100">
-                               <div className="bg-white px-3 py-1.5 rounded-lg shadow-md border text-xs font-medium text-indigo-600 flex items-center gap-1">
-                                 <Plus className="w-3 h-3" /> Connect Evidence
-                               </div>
-                               <div className="w-0.5 h-8 bg-indigo-200 absolute top-full left-1/2 -translate-x-1/2 origin-top rotate-45" />
-                            </div>
-                            <div className="absolute bottom-1/4 left-1/4 animate-in fade-in zoom-in duration-700 delay-300">
-                               <div className="bg-white px-3 py-1.5 rounded-lg shadow-md border text-xs font-medium text-emerald-600 flex items-center gap-1">
-                                 <Plus className="w-3 h-3" /> Link Location
-                               </div>
-                               <div className="w-0.5 h-8 bg-emerald-200 absolute bottom-full left-1/2 -translate-x-1/2 origin-bottom -rotate-45" />
-                            </div>
-                            <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-medium text-slate-500 border shadow-sm">
-                              AI Suggestions
-                            </div>
-                         </div>
-                       </div>
-                     </CarouselItem>
-
-                     {/* Slide 3: Import */}
-                     <CarouselItem>
-                       <div className="bg-white rounded-xl shadow-lg border p-2 rotate-1 hover:rotate-0 transition-transform duration-500 mx-1">
-                         <div className="aspect-[4/3] bg-slate-50 rounded-lg relative overflow-hidden border border-dashed border-slate-200 flex flex-col items-center justify-center">
-                            <div className="flex items-center gap-4 mb-4">
-                               <div className="w-12 h-16 bg-white border rounded shadow-sm flex flex-col items-center justify-center relative group">
-                                  <div className="w-8 h-1 bg-slate-200 mb-1" />
-                                  <div className="w-8 h-1 bg-slate-200 mb-1" />
-                                  <div className="w-6 h-1 bg-slate-200" />
-                                  <div className="absolute inset-0 bg-indigo-500/10 group-hover:bg-indigo-500/20 transition-colors" />
-                               </div>
-                               <ArrowRight className="w-6 h-6 text-slate-300" />
-                               <div className="w-24 h-24 relative">
-                                  <Network className="w-full h-full text-indigo-500 animate-pulse" />
-                               </div>
-                            </div>
-                            <div className="bg-indigo-600 text-white px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 shadow-lg shadow-indigo-200">
-                               <Upload className="w-3 h-3" /> Importing CSV...
-                            </div>
-                            <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-medium text-slate-500 border shadow-sm">
-                              Data Import
-                            </div>
-                         </div>
-                       </div>
-                     </CarouselItem>
-                   </CarouselContent>
-                   <div className="flex justify-center mt-6 gap-3">
-                     <CarouselPrevious variant="outline" className="static translate-y-0 w-8 h-8 border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50" />
-                     <CarouselNext variant="outline" className="static translate-y-0 w-8 h-8 border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50" />
+          <div className="space-y-32">
+             {/* Item 1: Visual Builder (Image Left) */}
+             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <div className="flex-1 w-full order-2 md:order-1">
+                   <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
+                      <img src={creationVisualBuilderImage} alt="Visual Builder" className="w-full h-auto" />
+                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
                    </div>
-                 </Carousel>
-               </div>
-            </div>
+                </div>
+                <div className="flex-1 space-y-6 order-1 md:order-2">
+                   <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
+                      <LayoutGrid className="w-7 h-7" />
+                   </div>
+                   <div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                        {Array.isArray(t.creation.list) && t.creation.list[0]?.title}
+                      </h3>
+                      <p className="text-lg text-slate-600 leading-relaxed">
+                        {Array.isArray(t.creation.list) && t.creation.list[0]?.desc}
+                      </p>
+                   </div>
+                   <div className="pt-2">
+                      <Button variant="outline" className="gap-2">
+                        View Demo <ArrowRight className="w-4 h-4" />
+                      </Button>
+                   </div>
+                </div>
+             </div>
+
+             {/* Item 2: AI Suggestions (Image Right) */}
+             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <div className="flex-1 space-y-6 order-1 md:order-1">
+                   <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
+                      <Sparkles className="w-7 h-7" />
+                   </div>
+                   <div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                        {Array.isArray(t.creation.list) && t.creation.list[1]?.title}
+                      </h3>
+                      <p className="text-lg text-slate-600 leading-relaxed">
+                        {Array.isArray(t.creation.list) && t.creation.list[1]?.desc}
+                      </p>
+                   </div>
+                </div>
+                <div className="flex-1 w-full order-2 md:order-2">
+                   <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
+                      <img src={creationAiSuggestImage} alt="AI Suggestions" className="w-full h-auto" />
+                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
+                   </div>
+                </div>
+             </div>
+
+             {/* Item 3: One-Click Import (Image Left) */}
+             <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <div className="flex-1 w-full order-2 md:order-1">
+                   <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
+                      <img src={creationImportImage} alt="Data Import" className="w-full h-auto" />
+                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
+                   </div>
+                </div>
+                <div className="flex-1 space-y-6 order-1 md:order-2">
+                   <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm">
+                      <Upload className="w-7 h-7" />
+                   </div>
+                   <div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                        {Array.isArray(t.creation.list) && t.creation.list[2]?.title}
+                      </h3>
+                      <p className="text-lg text-slate-600 leading-relaxed">
+                        {Array.isArray(t.creation.list) && t.creation.list[2]?.desc}
+                      </p>
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
       </section>
