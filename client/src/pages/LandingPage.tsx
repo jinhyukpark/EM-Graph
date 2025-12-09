@@ -410,7 +410,7 @@ export default function LandingPage() {
              <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">{t.creation.desc}</p>
           </div>
 
-          <div className="space-y-32">
+          <div className="space-y-16">
              {/* Item 1: Visual Builder (Image Left) */}
              <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
                 <div className="flex-1 w-full order-2 md:order-1">
