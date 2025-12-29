@@ -24,12 +24,12 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       <a className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors mb-1",
         special 
-          ? "bg-gradient-to-r from-emerald-500/10 to-teal-500/10 text-emerald-700 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/20" 
+          ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-700 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/50 shadow-sm font-bold" 
           : location === href 
             ? "bg-primary/10 text-primary" 
             : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}>
-        <Icon className={cn("w-4 h-4", special ? "text-emerald-600" : "")} />
+        <Icon className={cn("w-4 h-4", special ? "text-emerald-600 stroke-[2.5px]" : "")} />
         {label}
       </a>
     </Link>
@@ -171,8 +171,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className="space-y-1 animate-in fade-in duration-300 p-4">
               <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">Menu</div>
               <NavItem href="/dashboard" icon={LayoutGrid} label="Dashboard" />
-              <NavItem href="/projects" icon={FolderOpen} label="Projects" />
               <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" special />
+              <NavItem href="/projects" icon={FolderOpen} label="Projects" />
               <NavItem href="/database" icon={Database} label="Database" />
               <NavItem href="/resources" icon={Library} label="Resources" />
             </div>
