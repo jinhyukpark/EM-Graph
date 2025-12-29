@@ -166,8 +166,16 @@ export default function ProjectView() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
+  // Multi-select state for legend items - initialize with all selected
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(LEGEND_DATA.map(d => d.label));
   
-  const [nodeMappings, setNodeMappings] = useState([
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
     { id: 1, sheet: "Sheet1", key: "id", title: "name", type: "string", image: "img_url" }
   ]);
 
@@ -285,7 +293,7 @@ export default function ProjectView() {
 
         {/* Legend Panel */}
         {legendOpen && (
-          <div className="absolute bottom-4 left-4 w-64 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-left-5 duration-300">
+          <div className="absolute bottom-4 left-4 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-left-5 duration-300">
             <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center">
                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setLegendOpen(false)}>
@@ -297,30 +305,35 @@ export default function ProjectView() {
               <table className="w-full text-xs">
                 <thead className="bg-secondary/20">
                   <tr className="text-muted-foreground">
-                    <th className="px-3 py-2 text-left font-medium w-6"></th>
+                    <th className="px-3 py-2 text-left font-medium w-8"></th>
                     <th className="px-2 py-2 text-left font-medium">Category</th>
                     <th className="px-3 py-2 text-right font-medium">Count</th>
                     <th className="px-3 py-2 text-right font-medium">%</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/50">
-                  {LEGEND_DATA.map((item, i) => (
-                    <tr key={i} className="hover:bg-secondary/30 transition-colors">
-                      <td className="px-3 py-1.5">
-                        <div className={`w-3 h-3 rounded border border-muted-foreground/30 flex items-center justify-center cursor-pointer`}>
-                          {/* Simulated Checkbox */}
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                          <span className="font-medium truncate max-w-[100px]">{item.label}</span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-1.5 text-right text-muted-foreground">{item.count}</td>
-                      <td className="px-3 py-1.5 text-right text-muted-foreground">{item.percent}</td>
-                    </tr>
-                  ))}
+                  {LEGEND_DATA.map((item, i) => {
+                    const isSelected = selectedCategories.includes(item.label);
+                    return (
+                      <tr key={i} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
+                        <td className="px-3 py-1.5">
+                          <Checkbox 
+                            checked={isSelected}
+                            onCheckedChange={() => toggleCategory(item.label)}
+                            className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-muted-foreground/50"
+                          />
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                            <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>{item.label}</span>
+                          </div>
+                        </td>
+                        <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.count}</td>
+                        <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.percent}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
