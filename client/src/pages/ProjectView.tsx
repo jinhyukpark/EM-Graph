@@ -19,6 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import CenterEdge from "@/components/graph/CenterEdge";
 
+import { cn } from "@/lib/utils";
+
 // Define custom node types
 const nodeTypes: NodeTypes = {
   imageNode: ImageNode,
@@ -192,24 +194,30 @@ export default function ProjectView() {
   };
 
   const SidebarToggle = (
-    <div className="bg-secondary/20 border border-border/50 p-1 rounded-md flex items-center shadow-sm w-fit">
+    <div className="bg-secondary/30 p-1 rounded-lg flex items-center w-full mb-4">
         <Button 
-          variant={sidebarMode === "nav" ? "secondary" : "ghost"} 
-          size="icon" 
-          className="h-7 w-7" 
+          variant="ghost" 
+          size="sm" 
+          className={cn(
+            "flex-1 shadow-none transition-all h-8", 
+            sidebarMode === "nav" ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+          )}
           onClick={() => setSidebarMode("nav")}
-          title="Project Navigation"
         >
-          <LayoutTemplate className="w-4 h-4" />
+          <LayoutTemplate className="w-4 h-4 mr-2" />
+          Navigation
         </Button>
         <Button 
-          variant={sidebarMode === "list" ? "secondary" : "ghost"} 
-          size="icon" 
-          className="h-7 w-7" 
+          variant="ghost" 
+          size="sm" 
+          className={cn(
+            "flex-1 shadow-none transition-all h-8", 
+            sidebarMode === "list" ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+          )}
           onClick={() => setSidebarMode("list")}
-          title="Node List View"
         >
-          <List className="w-4 h-4" />
+          <List className="w-4 h-4 mr-2" />
+          Node List
         </Button>
     </div>
   );
