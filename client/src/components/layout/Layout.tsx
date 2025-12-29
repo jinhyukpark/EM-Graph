@@ -73,24 +73,31 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
         {/* Navigation */}
         <nav className="flex-1 p-0 overflow-hidden flex flex-col">
-          {/* Sidebar Controls (Toggle) */}
-          {sidebarControls && (
-             <div className="px-6 pt-4 pb-2">
-               {sidebarControls}
-             </div>
+          
+          {isProjectView && (
+            <div className="px-6 pt-4 pb-2 shrink-0">
+              <Link href="/projects">
+                <Button variant="ghost" size="sm" className="-ml-2 mb-2 text-muted-foreground hover:text-foreground gap-1 pl-2 pr-4">
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Projects
+                </Button>
+              </Link>
+              
+              {sidebarControls && (
+                 <div className="mb-2">
+                   {sidebarControls}
+                 </div>
+              )}
+            </div>
           )}
 
           {sidebar ? (
-            sidebar
+            <div className="flex-1 overflow-hidden flex flex-col">
+              {sidebar}
+            </div>
           ) : isProjectView ? (
-            <div className="p-4 overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300">
+            <div className="px-4 pb-4 overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1">
               <div>
-                <Link href="/projects">
-                  <Button variant="ghost" size="sm" className="-ml-2 mb-4 text-muted-foreground hover:text-foreground gap-1 pl-2 pr-4">
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Projects
-                  </Button>
-                </Link>
                 <div className="px-1 mb-6">
                   <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
                   <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>

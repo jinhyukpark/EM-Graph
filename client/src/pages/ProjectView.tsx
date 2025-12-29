@@ -226,10 +226,10 @@ export default function ProjectView() {
     <Layout 
       sidebar={
         sidebarMode === "list" 
-          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} headerControls={SidebarToggle} /> 
+          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} /> 
           : undefined
       }
-      sidebarControls={sidebarMode === "nav" ? SidebarToggle : undefined}
+      sidebarControls={SidebarToggle}
     >
       <div className="relative h-[calc(100vh-64px)] bg-background">
         
