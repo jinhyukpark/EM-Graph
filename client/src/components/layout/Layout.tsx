@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -19,15 +19,17 @@ export default function Layout({ children, sidebar }: { children: React.ReactNod
     percent: 64
   };
 
-  const NavItem = ({ href, icon: Icon, label }: { href: string, icon: any, label: string }) => (
+  const NavItem = ({ href, icon: Icon, label, special }: { href: string, icon: any, label: string, special?: boolean }) => (
     <Link href={href}>
       <a className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors mb-1",
-        location === href 
-          ? "bg-primary/10 text-primary" 
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+        special 
+          ? "bg-gradient-to-r from-emerald-500/10 to-teal-500/10 text-emerald-700 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/20" 
+          : location === href 
+            ? "bg-primary/10 text-primary" 
+            : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}>
-        <Icon className="w-4 h-4" />
+        <Icon className={cn("w-4 h-4", special ? "text-emerald-600" : "")} />
         {label}
       </a>
     </Link>
@@ -152,17 +154,18 @@ export default function Layout({ children, sidebar }: { children: React.ReactNod
               </div>
             </div>
           ) : (
-            <div className="space-y-1 animate-in fade-in duration-300">
+            <div className="space-y-1 animate-in fade-in duration-300 p-4">
               <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">Menu</div>
               <NavItem href="/dashboard" icon={LayoutGrid} label="Dashboard" />
               <NavItem href="/projects" icon={FolderOpen} label="Projects" />
+              <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" special />
               <NavItem href="/database" icon={Database} label="Database" />
               <NavItem href="/resources" icon={Library} label="Resources" />
             </div>
           )}
           
           {!isProjectView && (
-            <div className="mt-8">
+            <div className="p-4 pt-0 mt-4">
               <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Settings</div>
               <NavItem href="/settings" icon={Settings} label="Settings" />
             </div>
