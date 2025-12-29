@@ -17,9 +17,15 @@ import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import CenterEdge from "@/components/graph/CenterEdge";
+
 // Define custom node types
 const nodeTypes: NodeTypes = {
   imageNode: ImageNode,
+};
+
+const edgeTypes = {
+  centerEdge: CenterEdge,
 };
 
 // Radial Layout Helper
@@ -115,29 +121,29 @@ const INITIAL_NODES = createRadialLayout();
 
 const INITIAL_EDGES = [
   // Boss Connections
-  { id: 'e-boss-lt1', source: 'boss', target: 'lt-1', label: 'Command', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 3 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-boss-lt2', source: 'boss', target: 'lt-2', label: 'Money Flow', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 3, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-boss-lw1', source: 'boss', target: 'lw-1', label: 'Representation', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
+  { id: 'e-boss-lt1', source: 'boss', target: 'lt-1', label: 'Command', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 3 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-boss-lt2', source: 'boss', target: 'lt-2', label: 'Money Flow', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 3, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-boss-lw1', source: 'boss', target: 'lw-1', label: 'Representation', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
   
   // Detective Connections
-  { id: 'e-dt1-boss', source: 'dt-1', target: 'boss', label: 'Investigating', type: 'straight', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-dt1-ev1', source: 'dt-1', target: 'ev-1', label: 'Found', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-dt1-dt2', source: 'dt-1', target: 'dt-2', label: 'Partners', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
-  { id: 'e-dt2-loc1', source: 'dt-2', target: 'loc-1', label: 'Raided', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
+  { id: 'e-dt1-boss', source: 'dt-1', target: 'boss', label: 'Investigating', type: 'centerEdge', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
+  { id: 'e-dt1-ev1', source: 'dt-1', target: 'ev-1', label: 'Found', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
+  { id: 'e-dt1-dt2', source: 'dt-1', target: 'dt-2', label: 'Partners', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-dt2-loc1', source: 'dt-2', target: 'loc-1', label: 'Raided', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
 
   // Crime Actions
-  { id: 'e-lt1-vc1', source: 'lt-1', target: 'vc-1', label: 'Assaulted', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-lt2-vc2', source: 'lt-2', target: 'vc-2', label: 'Defrauded', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-lt2-loc2', source: 'lt-2', target: 'loc-2', label: 'Hidden Assets', type: 'straight', style: { stroke: '#10b981', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
-  { id: 'e-lt1-loc1', source: 'lt-1', target: 'loc-1', label: 'Base', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-lt1-vc1', source: 'lt-1', target: 'vc-1', label: 'Assaulted', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-lt2-vc2', source: 'lt-2', target: 'vc-2', label: 'Defrauded', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-lt2-loc2', source: 'lt-2', target: 'loc-2', label: 'Hidden Assets', type: 'centerEdge', style: { stroke: '#10b981', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
+  { id: 'e-lt1-loc1', source: 'lt-1', target: 'loc-1', label: 'Base', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
 
   // Legal / Witness
-  { id: 'e-wit1-dt1', source: 'wit-1', target: 'dt-1', label: 'Testimony', type: 'straight', animated: true, style: { stroke: '#fbbf24', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#fbbf24' } },
-  { id: 'e-lw1-case1', source: 'lw-1', target: 'case-1', label: 'Filing', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
-  { id: 'e-vc3-case1', source: 'vic-3', target: 'case-1', label: 'Plaintiff', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
+  { id: 'e-wit1-dt1', source: 'wit-1', target: 'dt-1', label: 'Testimony', type: 'centerEdge', animated: true, style: { stroke: '#fbbf24', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#fbbf24' } },
+  { id: 'e-lw1-case1', source: 'lw-1', target: 'case-1', label: 'Filing', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
+  { id: 'e-vc3-case1', source: 'vic-3', target: 'case-1', label: 'Plaintiff', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
   
   // Associates
-  { id: 'e-asn1-lt1', source: 'asn-1', target: 'lt-1', label: 'Henchman', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-asn1-lt1', source: 'asn-1', target: 'lt-1', label: 'Henchman', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
 ];
 
 // Mock Legend Data (Updated)
@@ -257,6 +263,7 @@ export default function ProjectView() {
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           className="bg-background"
           minZoom={0.5}
