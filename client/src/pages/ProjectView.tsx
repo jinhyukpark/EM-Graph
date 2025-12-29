@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, MiniMap, BackgroundVariant } from "@xyflow/react";
+import ImageNode from "@/components/graph/ImageNode";
+import { ReactFlow, Background, Controls, useNodesState, useEdgesState, MiniMap, BackgroundVariant, NodeTypes } from "@xyflow/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -16,51 +17,138 @@ import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// Pre-generated complex graph data
-const INITIAL_NODES = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: 'Central Hub', type: 'Core' }, style: { background: 'hsl(var(--primary))', color: '#fff', border: 'none', width: 90, height: 90, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', fontSize: '12px', textAlign: 'center', fontWeight: 'bold' } },
-  
-  { id: '2', position: { x: -250, y: 150 }, data: { label: 'Sector A', type: 'District' }, style: { background: 'hsl(var(--card))', color: 'hsl(var(--foreground))', border: '2px solid hsl(var(--border))', borderRadius: '50%', width: 70, height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' } },
-  { id: '3', position: { x: 0, y: 200 }, data: { label: 'Sector B', type: 'District' }, style: { background: 'hsl(var(--card))', color: 'hsl(var(--foreground))', border: '2px solid hsl(var(--border))', borderRadius: '50%', width: 70, height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' } },
-  { id: '4', position: { x: 250, y: 150 }, data: { label: 'Sector C', type: 'District' }, style: { background: 'hsl(var(--card))', color: 'hsl(var(--foreground))', border: '2px solid hsl(var(--border))', borderRadius: '50%', width: 70, height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' } },
-  
-  // Incidents under Sector A
-  { id: '5', position: { x: -320, y: 300 }, data: { label: 'Incident #402', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
-  { id: '6', position: { x: -180, y: 320 }, data: { label: 'Incident #405', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
+// Define custom node types
+const nodeTypes: NodeTypes = {
+  imageNode: ImageNode,
+};
 
-  // Incidents under Sector B
-  { id: '7', position: { x: -60, y: 350 }, data: { label: 'Incident #551', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
-  { id: '8', position: { x: 60, y: 350 }, data: { label: 'Incident #552', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
+// Radial Layout Helper
+const createRadialLayout = () => {
+  const center = { x: 0, y: 0 };
+  const radius1 = 250;
+  const radius2 = 450;
+  
+  // Central Hubs
+  const nodes = [
+    { 
+      id: 'center-1', 
+      type: 'imageNode',
+      position: { x: 0, y: 0 }, 
+      data: { label: 'K-Sports Foundation', type: 'Foundation', image: 'https://github.com/shadcn.png', highlight: true, borderColor: '#8b5cf6' },
+      style: { width: 80, height: 80 }
+    },
+    { 
+      id: 'center-2', 
+      type: 'imageNode',
+      position: { x: 0, y: 150 }, 
+      data: { label: 'Mir Foundation', type: 'Foundation', image: 'https://github.com/shadcn.png', highlight: true, borderColor: '#8b5cf6' },
+      style: { width: 80, height: 80 }
+    }
+  ];
 
-  // Incidents under Sector C
-  { id: '9', position: { x: 180, y: 320 }, data: { label: 'Incident #991', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
-  { id: '10', position: { x: 320, y: 300 }, data: { label: 'Incident #995', type: 'Event' }, style: { background: 'hsl(var(--accent))', color: '#fff', borderRadius: '50%', width: 50, height: 50, fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } },
-];
+  // Inner Circle Entities (Companies)
+  const innerEntities = [
+    { label: 'Samsung Group', sub: '7.9B Won', color: '#3b82f6' },
+    { label: 'Hyundai Motor', sub: '4.8B Won', color: '#22c55e' },
+    { label: 'SK Group', sub: '4.3B Won', color: '#ef4444' },
+    { label: 'LG Group', sub: '3.0B Won', color: '#ec4899' },
+    { label: 'Lotte Group', sub: '1.5B Won', color: '#eab308' },
+    { label: 'POSCO', sub: '1.9B Won', color: '#06b6d4' },
+    { label: 'KT', sub: '1.1B Won', color: '#f97316' },
+    { label: 'CJ Group', sub: '0.8B Won', color: '#8b5cf6' },
+  ];
+
+  innerEntities.forEach((entity, i) => {
+    const angle = (i / innerEntities.length) * 2 * Math.PI;
+    nodes.push({
+      id: `c1-${i}`,
+      type: 'imageNode',
+      position: {
+        x: center.x + radius1 * Math.cos(angle),
+        y: center.y + radius1 * Math.sin(angle)
+      },
+      data: { 
+        label: entity.label, 
+        subLabel: entity.sub,
+        type: 'Corporation',
+        borderColor: entity.color 
+      },
+      style: { width: 60, height: 60 }
+    });
+  });
+
+  // Outer Circle Entities (People/Gov)
+  const outerEntities = [
+    { label: 'President Park', sub: 'Impeached', type: 'Government', image: 'https://github.com/shadcn.png' },
+    { label: 'Choi Soon-sil', sub: 'Key Suspect', type: 'Suspect', image: 'https://github.com/shadcn.png' },
+    { label: 'An Chong-bum', sub: 'Policy Advisor', type: 'Government', image: 'https://github.com/shadcn.png' },
+    { label: 'Cha Eun-taek', sub: 'Director', type: 'Suspect', image: 'https://github.com/shadcn.png' },
+    { label: 'Lee Jae-yong', sub: 'Samsung Vice', type: 'Suspect', image: 'https://github.com/shadcn.png' },
+    { label: 'Blue House', sub: 'Government', type: 'Location' },
+    { label: 'FKI', sub: 'Federation', type: 'Organization' },
+  ];
+
+  outerEntities.forEach((entity, i) => {
+    // Place them in specific spots or distribute
+    const angle = (i / outerEntities.length) * 2 * Math.PI + (Math.PI / 4); // Offset
+    nodes.push({
+      id: `c2-${i}`,
+      type: 'imageNode',
+      position: {
+        x: center.x + radius2 * Math.cos(angle),
+        y: center.y + radius2 * Math.sin(angle)
+      },
+      data: { 
+        label: entity.label, 
+        subLabel: entity.sub,
+        type: entity.type,
+        image: entity.image,
+        borderColor: entity.type === 'Suspect' ? '#ef4444' : '#64748b'
+      },
+      style: { width: 70, height: 70 }
+    });
+  });
+
+  return nodes;
+};
+
+const INITIAL_NODES = createRadialLayout();
 
 const INITIAL_EDGES = [
-  { id: 'e1-2', source: '1', target: '2', type: 'straight', animated: true, style: { stroke: 'hsl(var(--muted-foreground))', strokeDasharray: '5,5', opacity: 0.7 } },
-  { id: 'e1-3', source: '1', target: '3', type: 'straight', animated: true, style: { stroke: 'hsl(var(--muted-foreground))', strokeDasharray: '5,5', opacity: 0.7 } },
-  { id: 'e1-4', source: '1', target: '4', type: 'straight', animated: true, style: { stroke: 'hsl(var(--muted-foreground))', strokeDasharray: '5,5', opacity: 0.7 } },
-  
-  { id: 'e2-5', source: '2', target: '5', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
-  { id: 'e2-6', source: '2', target: '6', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
-  
-  { id: 'e3-7', source: '3', target: '7', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
-  { id: 'e3-8', source: '3', target: '8', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
+  // Links to Center 1 (K-Sports)
+  { id: 'e-c1-0', source: 'c1-0', target: 'center-1', label: 'Funding', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 2 } },
+  { id: 'e-c1-1', source: 'c1-1', target: 'center-1', type: 'straight', style: { stroke: '#22c55e', strokeWidth: 1.5 } },
+  { id: 'e-c1-2', source: 'c1-2', target: 'center-1', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 } },
+  { id: 'e-c1-6', source: 'c1-6', target: 'center-1', type: 'straight', style: { stroke: '#f97316', strokeWidth: 1.5 } },
 
-  { id: 'e4-9', source: '4', target: '9', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
-  { id: 'e4-10', source: '4', target: '10', type: 'straight', style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 } },
+  // Links to Center 2 (Mir)
+  { id: 'e-c1-3', source: 'c1-3', target: 'center-2', type: 'straight', style: { stroke: '#ec4899', strokeWidth: 1.5 } },
+  { id: 'e-c1-4', source: 'c1-4', target: 'center-2', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5 } },
+  { id: 'e-c1-5', source: 'c1-5', target: 'center-2', type: 'straight', style: { stroke: '#06b6d4', strokeWidth: 1.5 } },
+  { id: 'e-c1-7', source: 'c1-7', target: 'center-2', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1.5 } },
+
+  // Center connection
+  { id: 'e-centers', source: 'center-1', target: 'center-2', type: 'straight', animated: true, style: { stroke: '#8b5cf6', strokeWidth: 4, strokeDasharray: '5,5' } },
+
+  // Outer Connections (People to Centers/Companies)
+  { id: 'e-p-1', source: 'c2-1', target: 'center-1', label: 'Control', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '4' } }, // Choi to K-Sports
+  { id: 'e-p-2', source: 'c2-1', target: 'center-2', label: 'Control', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '4' } }, // Choi to Mir
+  
+  { id: 'e-p-0', source: 'c2-0', target: 'c2-1', label: 'Associate', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // Park to Choi
+  { id: 'e-p-2-0', source: 'c2-2', target: 'c2-0', label: 'Advisor', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // An to Park
+  
+  { id: 'e-sam-lee', source: 'c1-0', target: 'c2-4', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 2 } }, // Samsung to Lee Jae-yong
+  
+  { id: 'e-bh', source: 'c2-5', target: 'c2-0', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // Blue House to Park
+  { id: 'e-fki', source: 'c2-6', target: 'center-2', label: 'Support', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1 } }, // FKI to Mir
 ];
 
 // Mock Legend Data
 const LEGEND_DATA = [
-  { label: "Severe Crimes", color: "bg-purple-500", count: 1, percent: "0.14%" },
-  { label: "Major Theft", color: "bg-blue-500", count: 3, percent: "0.42%" },
-  { label: "Minor Theft", color: "bg-green-400", count: 27, percent: "3.77%" },
-  { label: "Vandalism", color: "bg-orange-500", count: 21, percent: "2.93%" },
-  { label: "Petty Crime", color: "bg-lime-400", count: 120, percent: "16.74%" },
-  { label: "Disturbance", color: "bg-pink-600", count: 86, percent: "11.99%" },
-  { label: "Traffic", color: "bg-yellow-400", count: 143, percent: "19.94%" },
+  { label: "Foundation", color: "bg-violet-500", count: 2, percent: "10%" },
+  { label: "Corporation", color: "bg-blue-500", count: 8, percent: "40%" },
+  { label: "Suspect", color: "bg-red-500", count: 3, percent: "15%" },
+  { label: "Government", color: "bg-slate-500", count: 3, percent: "15%" },
 ];
 
 export default function ProjectView() {
@@ -169,6 +257,7 @@ export default function ProjectView() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
           fitView
           className="bg-background"
           minZoom={0.5}
