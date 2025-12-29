@@ -194,32 +194,18 @@ export default function ProjectView() {
   };
 
   const SidebarToggle = (
-    <div className="bg-secondary/30 p-1 rounded-lg flex items-center w-full mb-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className={cn(
-            "flex-1 shadow-none transition-all h-8", 
-            sidebarMode === "nav" ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-          )}
-          onClick={() => setSidebarMode("nav")}
-        >
-          <LayoutTemplate className="w-4 h-4 mr-2" />
+    <Tabs value={sidebarMode} onValueChange={(v) => setSidebarMode(v as "nav" | "list")} className="w-full mb-4">
+      <TabsList className="w-full grid grid-cols-2 bg-secondary/30 h-9 p-1">
+        <TabsTrigger value="nav" className="flex items-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all h-full">
+          <LayoutTemplate className="w-3.5 h-3.5" />
           Navigation
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className={cn(
-            "flex-1 shadow-none transition-all h-8", 
-            sidebarMode === "list" ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-          )}
-          onClick={() => setSidebarMode("list")}
-        >
-          <List className="w-4 h-4 mr-2" />
+        </TabsTrigger>
+        <TabsTrigger value="list" className="flex items-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all h-full">
+          <List className="w-3.5 h-3.5" />
           Node List
-        </Button>
-    </div>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 
   return (
