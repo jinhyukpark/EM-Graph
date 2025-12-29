@@ -22,7 +22,7 @@ import {
   CircleDot
 } from "lucide-react";
 
-export default function GraphToolsSidebar({ className }: { className?: string }) {
+export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
   return (
     <div className={`w-80 border-l border-border bg-card/50 backdrop-blur-sm flex flex-col h-full ${className}`}>
       <div className="p-4 border-b border-border flex items-center justify-between">
@@ -43,19 +43,19 @@ export default function GraphToolsSidebar({ className }: { className?: string })
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-secondary/30 p-2 rounded border border-border/50">
                 <div className="text-[10px] text-muted-foreground">Nodes</div>
-                <div className="text-lg font-mono font-bold">24</div>
+                <div className="text-lg font-mono font-bold">{stats?.nodes ?? 0}</div>
               </div>
               <div className="bg-secondary/30 p-2 rounded border border-border/50">
                 <div className="text-[10px] text-muted-foreground">Edges</div>
-                <div className="text-lg font-mono font-bold">48</div>
+                <div className="text-lg font-mono font-bold">{stats?.edges ?? 0}</div>
+              </div>
+              <div className="bg-secondary/30 p-2 rounded border border-border/50">
+                <div className="text-[10px] text-muted-foreground">Node Types</div>
+                <div className="text-lg font-mono font-bold">{stats?.types ?? 0}</div>
               </div>
               <div className="bg-secondary/30 p-2 rounded border border-border/50">
                 <div className="text-[10px] text-muted-foreground">Density</div>
-                <div className="text-lg font-mono font-bold">0.18</div>
-              </div>
-              <div className="bg-secondary/30 p-2 rounded border border-border/50">
-                <div className="text-[10px] text-muted-foreground">Modularity</div>
-                <div className="text-lg font-mono font-bold">0.42</div>
+                <div className="text-lg font-mono font-bold">{stats?.density ?? "0.00"}</div>
               </div>
             </div>
           </div>

@@ -354,7 +354,14 @@ export default function ProjectView() {
         </div>
 
         {/* Right Sidebar - Graph Tools */}
-        <GraphToolsSidebar />
+        <GraphToolsSidebar 
+          stats={{
+            nodes: nodes.length,
+            edges: edges.length,
+            types: new Set(nodes.map(n => n.data.type)).size,
+            density: (2 * edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
+          }}
+        />
       </div>
 
       {/* Node Details Panel (Floating) */}
@@ -684,7 +691,6 @@ export default function ProjectView() {
             </div>
           </SheetContent>
         </Sheet>
-      </div>
     </Layout>
   );
 }
