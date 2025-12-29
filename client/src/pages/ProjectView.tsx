@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
+import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, MiniMap, BackgroundVariant } from "@xyflow/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -69,6 +70,7 @@ export default function ProjectView() {
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(true);
+  const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
   
   const [nodeMappings, setNodeMappings] = useState([
     { id: 1, sheet: "Sheet1", key: "id", title: "name", type: "string", image: "img_url" }
@@ -86,17 +88,51 @@ export default function ProjectView() {
     setSelectedNode(node);
   };
 
+  const handleSidebarNodeSelect = (node: any) => {
+    // In a real app, you'd select the node in the graph. 
+    // Here we just set selectedNode to show the panel
+    setSelectedNode({ 
+      id: node.id, 
+      data: { label: node.name, type: node.category }, 
+      position: { x: 0, y: 0 } // dummy position
+    });
+  };
+
   return (
-    <Layout>
+    <Layout sidebar={sidebarMode === "list" ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} /> : undefined}>
       <div className="relative h-[calc(100vh-64px)] bg-background">
         
         {/* Toolbar Overlay */}
         <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
           <div className="flex gap-2 pointer-events-auto">
+            {/* Sidebar Toggle */}
             <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
+               <div className="flex items-center gap-1 bg-secondary/20 rounded p-0.5">
+                  <Button 
+                    variant={sidebarMode === "nav" ? "secondary" : "ghost"} 
+                    size="icon" 
+                    className="h-7 w-7" 
+                    onClick={() => setSidebarMode("nav")}
+                    title="Project Navigation"
+                  >
+                    <LayoutTemplate className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant={sidebarMode === "list" ? "secondary" : "ghost"} 
+                    size="icon" 
+                    className="h-7 w-7" 
+                    onClick={() => setSidebarMode("list")}
+                    title="Node List View"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+               </div>
+            </div>
+
+            <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm ml-2">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-2 top-2.5 text-muted-foreground" />
-                <Input placeholder="Search nodes..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />
+                <Input placeholder="Search nodes in graph..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />
               </div>
             </div>
             

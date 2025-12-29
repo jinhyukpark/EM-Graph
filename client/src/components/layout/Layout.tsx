@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children, sidebar }: { children: React.ReactNode, sidebar?: React.ReactNode }) {
   const [location] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
@@ -70,9 +70,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto">
-          {isProjectView ? (
-            <div className="space-y-6 animate-in slide-in-from-left-5 duration-300">
+        <nav className="flex-1 p-0 overflow-hidden flex flex-col">
+          {sidebar ? (
+            sidebar
+          ) : isProjectView ? (
+            <div className="p-4 overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300">
               <div>
                 <Link href="/projects">
                   <Button variant="ghost" size="sm" className="-ml-2 mb-4 text-muted-foreground hover:text-foreground gap-1 pl-2 pr-4">
