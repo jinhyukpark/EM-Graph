@@ -172,7 +172,7 @@
 
 /* React Flow Customization */
 .react-flow__node {
-  @apply rounded-md border border-border bg-card shadow-sm transition-colors;
+  @apply border-none bg-transparent shadow-none;
 }
 
 .react-flow__node-custom {

@@ -15,13 +15,22 @@ interface ImageNodeProps {
 
 export default function ImageNode({ data, selected }: ImageNodeProps) {
   return (
-    <div className="relative flex flex-col items-center justify-center">
-      <Handle type="target" position={Position.Top} className="opacity-0 pointer-events-none" />
+    <div className="relative flex flex-col items-center justify-center w-full h-full">
+      {/* 
+        Central Source/Target Handles 
+        Placing handles in the center allows edges to radiate naturally from the node center.
+        We hide them visually but they function as connection points.
+      */}
+      <Handle 
+        type="target" 
+        position={Position.Top} 
+        style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0, width: 1, height: 1, background: 'transparent' }} 
+      />
       
       {/* Circle Container - Strictly Circular with overflow-visible to show border but inner content hidden */}
       <div 
         className={cn(
-          "relative rounded-full transition-all duration-300 bg-background",
+          "relative rounded-full transition-all duration-300 bg-background z-10",
           selected ? "ring-4 ring-primary/30 scale-105" : "hover:ring-4 hover:ring-muted/30",
           data.highlight && "shadow-[0_0_20px_rgba(var(--primary),0.2)]"
         )}
@@ -57,21 +66,25 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
       </div>
 
       {/* Floating Label (Strictly Outside) */}
-      <div className="absolute top-full mt-2 flex flex-col items-center pointer-events-none w-[200%]">
+      <div className="absolute top-full mt-2 flex flex-col items-center pointer-events-none w-[200%] z-20">
         <span className={cn(
-          "text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm bg-background/90 backdrop-blur-sm border border-border/50 whitespace-nowrap z-50",
+          "text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm bg-background/90 backdrop-blur-sm border border-border/50 whitespace-nowrap",
           selected ? "text-primary border-primary/30" : "text-foreground/80"
         )}>
           {data.label}
         </span>
         {data.subLabel && (
-          <span className="text-[9px] text-muted-foreground font-medium mt-0.5 bg-secondary/50 px-1.5 rounded-sm z-50">
+          <span className="text-[9px] text-muted-foreground font-medium mt-0.5 bg-secondary/50 px-1.5 rounded-sm">
             {data.subLabel}
           </span>
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className="opacity-0 pointer-events-none" />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
+        style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0, width: 1, height: 1, background: 'transparent' }} 
+      />
     </div>
   );
 }
