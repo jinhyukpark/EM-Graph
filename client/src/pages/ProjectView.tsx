@@ -158,6 +158,8 @@ const LEGEND_DATA = [
   { label: "Evidence", color: "bg-slate-500", count: 1, percent: "6%" },
 ];
 
+import GraphToolsSidebar from "@/components/graph/GraphToolsSidebar";
+
 export default function ProjectView() {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
@@ -233,124 +235,131 @@ export default function ProjectView() {
       }
       sidebarControls={SidebarToggle}
     >
-      <div className="relative h-[calc(100vh-64px)] bg-background">
+      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+        {/* Main Graph Area */}
+        <div className="relative flex-1 bg-background h-full">
         
-        {/* Toolbar Overlay */}
-        <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
-          <div className="flex gap-2 pointer-events-auto">
-            
-            <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-2 top-2.5 text-muted-foreground" />
-                <Input placeholder="Search nodes in graph..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />
+          {/* Toolbar Overlay */}
+          <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
+            <div className="flex gap-2 pointer-events-auto">
+              
+              <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-2 top-2.5 text-muted-foreground" />
+                  <Input placeholder="Search nodes in graph..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />
+                </div>
+              </div>
+              
+              <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm ml-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setSettingsOpen(true)}>
+                  <Settings className="w-4 h-4 text-muted-foreground" />
+                </Button>
+                <div className="h-4 w-px bg-border mx-1" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setLegendOpen(!legendOpen)}>
+                  <Layers className="w-4 h-4 text-muted-foreground" />
+                </Button>
               </div>
             </div>
-            
-            <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm ml-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setSettingsOpen(true)}>
-                <Settings className="w-4 h-4 text-muted-foreground" />
+
+            <div className="flex gap-2 pointer-events-auto">
+              <Button 
+                onClick={() => setAiDrawerOpen(true)}
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-purple-500/20 border-none"
+              >
+                <Bot className="w-4 h-4 mr-2" />
+                Nexus AI
               </Button>
-              <div className="h-4 w-px bg-border mx-1" />
-              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setLegendOpen(!legendOpen)}>
-                <Layers className="w-4 h-4 text-muted-foreground" />
+              <Button variant="outline" className="bg-card/90 backdrop-blur shadow-sm">
+                <Share2 className="w-4 h-4 mr-2" />
+                Export
               </Button>
             </div>
           </div>
 
-          <div className="flex gap-2 pointer-events-auto">
-            <Button 
-              onClick={() => setAiDrawerOpen(true)}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-purple-500/20 border-none"
-            >
-              <Bot className="w-4 h-4 mr-2" />
-              Nexus AI
-            </Button>
-            <Button variant="outline" className="bg-card/90 backdrop-blur shadow-sm">
-              <Share2 className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </div>
+          {/* Graph Visualization */}
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            className="bg-background"
+            minZoom={0.5}
+            maxZoom={2}
+          >
+            <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
+            <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20" />
+            <MiniMap 
+              nodeColor={(n) => {
+                if (n.type === 'Core') return 'hsl(var(--primary))';
+                if (n.type === 'Event') return 'hsl(var(--accent))';
+                return 'hsl(var(--secondary))';
+              }}
+              className="!bg-card !border-border !shadow-md"
+              maskColor="hsl(var(--background) / 0.8)"
+            />
+          </ReactFlow>
+
+          {/* Legend Panel */}
+          {legendOpen && (
+            <div className="absolute bottom-4 left-4 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-left-5 duration-300">
+              <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center">
+                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
+                 <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setLegendOpen(false)}>
+                   <span className="sr-only">Close</span>
+                   <span className="text-lg leading-none">×</span>
+                 </Button>
+              </div>
+              <div className="p-0">
+                <table className="w-full text-xs">
+                  <thead className="bg-secondary/20">
+                    <tr className="text-muted-foreground">
+                      <th className="px-3 py-2 text-left font-medium w-8"></th>
+                      <th className="px-2 py-2 text-left font-medium">Category</th>
+                      <th className="px-3 py-2 text-right font-medium">Count</th>
+                      <th className="px-3 py-2 text-right font-medium">%</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {LEGEND_DATA.map((item, i) => {
+                      const isSelected = selectedCategories.includes(item.label);
+                      return (
+                        <tr key={i} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
+                          <td className="px-3 py-1.5">
+                            <Checkbox 
+                              checked={isSelected}
+                              onCheckedChange={() => toggleCategory(item.label)}
+                              className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-muted-foreground/50"
+                            />
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                              <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>{item.label}</span>
+                            </div>
+                          </td>
+                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.count}</td>
+                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.percent}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Graph Visualization */}
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={onNodeClick}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-          className="bg-background"
-          minZoom={0.5}
-          maxZoom={2}
-        >
-          <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-          <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20" />
-          <MiniMap 
-            nodeColor={(n) => {
-              if (n.type === 'Core') return 'hsl(var(--primary))';
-              if (n.type === 'Event') return 'hsl(var(--accent))';
-              return 'hsl(var(--secondary))';
-            }}
-            className="!bg-card !border-border !shadow-md"
-            maskColor="hsl(var(--background) / 0.8)"
-          />
-        </ReactFlow>
+        {/* Right Sidebar - Graph Tools */}
+        <GraphToolsSidebar />
+      </div>
 
-        {/* Legend Panel */}
-        {legendOpen && (
-          <div className="absolute bottom-4 left-4 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-left-5 duration-300">
-            <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center">
-               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
-               <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setLegendOpen(false)}>
-                 <span className="sr-only">Close</span>
-                 <span className="text-lg leading-none">×</span>
-               </Button>
-            </div>
-            <div className="p-0">
-              <table className="w-full text-xs">
-                <thead className="bg-secondary/20">
-                  <tr className="text-muted-foreground">
-                    <th className="px-3 py-2 text-left font-medium w-8"></th>
-                    <th className="px-2 py-2 text-left font-medium">Category</th>
-                    <th className="px-3 py-2 text-right font-medium">Count</th>
-                    <th className="px-3 py-2 text-right font-medium">%</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
-                  {LEGEND_DATA.map((item, i) => {
-                    const isSelected = selectedCategories.includes(item.label);
-                    return (
-                      <tr key={i} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
-                        <td className="px-3 py-1.5">
-                          <Checkbox 
-                            checked={isSelected}
-                            onCheckedChange={() => toggleCategory(item.label)}
-                            className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-muted-foreground/50"
-                          />
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                            <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>{item.label}</span>
-                          </div>
-                        </td>
-                        <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.count}</td>
-                        <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.percent}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Node Details Panel (Floating) */}
-        {selectedNode && (
-          <div className="absolute top-20 right-4 w-80 bg-card/95 backdrop-blur border border-border shadow-xl rounded-lg overflow-hidden z-20 animate-in slide-in-from-right-10 duration-300">
+      {/* Node Details Panel (Floating) */}
+      {selectedNode && (
+        <div className="absolute top-20 right-[340px] w-80 bg-card/95 backdrop-blur border border-border shadow-xl rounded-lg overflow-hidden z-20 animate-in slide-in-from-right-10 duration-300">
             <div className="h-2 bg-primary w-full" />
             <div className="p-4">
               <div className="flex justify-between items-start mb-4">
