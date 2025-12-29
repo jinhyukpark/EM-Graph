@@ -28,40 +28,38 @@ const createRadialLayout = () => {
   const radius1 = 250;
   const radius2 = 450;
   
-  // Central Hubs
-  const nodes = [
-    { 
-      id: 'center-1', 
-      type: 'imageNode',
-      position: { x: 0, y: 0 }, 
-      data: { label: 'K-Sports Foundation', type: 'Foundation', image: 'https://github.com/shadcn.png', highlight: true, borderColor: '#8b5cf6' },
-      style: { width: 80, height: 80 }
+  const nodes: any[] = [];
+
+  // Central Boss (The Kingpin)
+  nodes.push({ 
+    id: 'boss', 
+    type: 'imageNode',
+    position: { x: 0, y: 0 }, 
+    data: { 
+      label: 'Kang "The Viper"', 
+      subLabel: 'Crime Boss', 
+      type: 'Criminal', 
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop', 
+      highlight: true, 
+      borderColor: '#ef4444' // Red for criminal
     },
-    { 
-      id: 'center-2', 
-      type: 'imageNode',
-      position: { x: 0, y: 150 }, 
-      data: { label: 'Mir Foundation', type: 'Foundation', image: 'https://github.com/shadcn.png', highlight: true, borderColor: '#8b5cf6' },
-      style: { width: 80, height: 80 }
-    }
+    style: { width: 100, height: 100 }
+  });
+
+  // Inner Circle (Lieutenants & Key Associates)
+  const innerCircle = [
+    { id: 'lt-1', label: 'Park "Razor"', sub: 'Enforcer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop' },
+    { id: 'lt-2', label: 'Kim "ledger"', sub: 'Money Launderer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop' },
+    { id: 'vc-1', label: 'Victim A', sub: 'Assault', type: 'Victim', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop' },
+    { id: 'vc-2', label: 'Victim B', sub: 'Fraud', type: 'Victim', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1554151228-14d9def656ec?w=150&h=150&fit=crop' },
+    { id: 'dt-1', label: 'Det. Choi', sub: 'Lead Investigator', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop' },
+    { id: 'lw-1', label: 'Lawyer Han', sub: 'Defense Attorney', type: 'Lawyer', color: '#8b5cf6', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop' },
   ];
 
-  // Inner Circle Entities (Companies)
-  const innerEntities = [
-    { label: 'Samsung Group', sub: '7.9B Won', color: '#3b82f6' },
-    { label: 'Hyundai Motor', sub: '4.8B Won', color: '#22c55e' },
-    { label: 'SK Group', sub: '4.3B Won', color: '#ef4444' },
-    { label: 'LG Group', sub: '3.0B Won', color: '#ec4899' },
-    { label: 'Lotte Group', sub: '1.5B Won', color: '#eab308' },
-    { label: 'POSCO', sub: '1.9B Won', color: '#06b6d4' },
-    { label: 'KT', sub: '1.1B Won', color: '#f97316' },
-    { label: 'CJ Group', sub: '0.8B Won', color: '#8b5cf6' },
-  ];
-
-  innerEntities.forEach((entity, i) => {
-    const angle = (i / innerEntities.length) * 2 * Math.PI;
+  innerCircle.forEach((entity, i) => {
+    const angle = (i / innerCircle.length) * 2 * Math.PI;
     nodes.push({
-      id: `c1-${i}`,
+      id: entity.id,
       type: 'imageNode',
       position: {
         x: center.x + radius1 * Math.cos(angle),
@@ -70,29 +68,30 @@ const createRadialLayout = () => {
       data: { 
         label: entity.label, 
         subLabel: entity.sub,
-        type: 'Corporation',
+        type: entity.type,
+        image: entity.img,
         borderColor: entity.color 
       },
-      style: { width: 60, height: 60 }
+      style: { width: 70, height: 70 }
     });
   });
 
-  // Outer Circle Entities (People/Gov)
-  const outerEntities = [
-    { label: 'President Park', sub: 'Impeached', type: 'Government', image: 'https://github.com/shadcn.png' },
-    { label: 'Choi Soon-sil', sub: 'Key Suspect', type: 'Suspect', image: 'https://github.com/shadcn.png' },
-    { label: 'An Chong-bum', sub: 'Policy Advisor', type: 'Government', image: 'https://github.com/shadcn.png' },
-    { label: 'Cha Eun-taek', sub: 'Director', type: 'Suspect', image: 'https://github.com/shadcn.png' },
-    { label: 'Lee Jae-yong', sub: 'Samsung Vice', type: 'Suspect', image: 'https://github.com/shadcn.png' },
-    { label: 'Blue House', sub: 'Government', type: 'Location' },
-    { label: 'FKI', sub: 'Federation', type: 'Organization' },
+  // Outer Circle (Evidence, Locations, Lower Associates, Court)
+  const outerCircle = [
+    { id: 'ev-1', label: 'Burner Phone', sub: 'Evidence', type: 'Evidence', color: '#64748b' },
+    { id: 'loc-1', label: 'Warehouse 4', sub: 'Crime Scene', type: 'Location', color: '#10b981' },
+    { id: 'loc-2', label: 'Offshore Account', sub: 'Asset', type: 'Asset', color: '#10b981' },
+    { id: 'case-1', label: 'Case #22-004', sub: 'Lawsuit', type: 'Lawsuit', color: '#8b5cf6' },
+    { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop' },
+    { id: 'wit-1', label: 'Witness Kim', sub: 'Observer', type: 'Witness', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop' },
+    { id: 'dt-2', label: 'Det. Lee', sub: 'Partner', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop' },
+    { id: 'vic-3', label: 'Company X', sub: 'Fraud Victim', type: 'Victim', color: '#fbbf24' },
   ];
 
-  outerEntities.forEach((entity, i) => {
-    // Place them in specific spots or distribute
-    const angle = (i / outerEntities.length) * 2 * Math.PI + (Math.PI / 4); // Offset
+  outerCircle.forEach((entity, i) => {
+    const angle = (i / outerCircle.length) * 2 * Math.PI + (Math.PI / 8); 
     nodes.push({
-      id: `c2-${i}`,
+      id: entity.id,
       type: 'imageNode',
       position: {
         x: center.x + radius2 * Math.cos(angle),
@@ -102,10 +101,10 @@ const createRadialLayout = () => {
         label: entity.label, 
         subLabel: entity.sub,
         type: entity.type,
-        image: entity.image,
-        borderColor: entity.type === 'Suspect' ? '#ef4444' : '#64748b'
+        image: (entity as any).img,
+        borderColor: entity.color 
       },
-      style: { width: 70, height: 70 }
+      style: { width: 60, height: 60 }
     });
   });
 
@@ -115,40 +114,40 @@ const createRadialLayout = () => {
 const INITIAL_NODES = createRadialLayout();
 
 const INITIAL_EDGES = [
-  // Links to Center 1 (K-Sports)
-  { id: 'e-c1-0', source: 'c1-0', target: 'center-1', label: 'Funding', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 2 } },
-  { id: 'e-c1-1', source: 'c1-1', target: 'center-1', type: 'straight', style: { stroke: '#22c55e', strokeWidth: 1.5 } },
-  { id: 'e-c1-2', source: 'c1-2', target: 'center-1', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 } },
-  { id: 'e-c1-6', source: 'c1-6', target: 'center-1', type: 'straight', style: { stroke: '#f97316', strokeWidth: 1.5 } },
-
-  // Links to Center 2 (Mir)
-  { id: 'e-c1-3', source: 'c1-3', target: 'center-2', type: 'straight', style: { stroke: '#ec4899', strokeWidth: 1.5 } },
-  { id: 'e-c1-4', source: 'c1-4', target: 'center-2', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5 } },
-  { id: 'e-c1-5', source: 'c1-5', target: 'center-2', type: 'straight', style: { stroke: '#06b6d4', strokeWidth: 1.5 } },
-  { id: 'e-c1-7', source: 'c1-7', target: 'center-2', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1.5 } },
-
-  // Center connection
-  { id: 'e-centers', source: 'center-1', target: 'center-2', type: 'straight', animated: true, style: { stroke: '#8b5cf6', strokeWidth: 4, strokeDasharray: '5,5' } },
-
-  // Outer Connections (People to Centers/Companies)
-  { id: 'e-p-1', source: 'c2-1', target: 'center-1', label: 'Control', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '4' } }, // Choi to K-Sports
-  { id: 'e-p-2', source: 'c2-1', target: 'center-2', label: 'Control', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '4' } }, // Choi to Mir
+  // Boss Connections
+  { id: 'e-boss-lt1', source: 'boss', target: 'lt-1', label: 'Command', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 3 } },
+  { id: 'e-boss-lt2', source: 'boss', target: 'lt-2', label: 'Money Flow', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 3, strokeDasharray: '5,5' } },
+  { id: 'e-boss-lw1', source: 'boss', target: 'lw-1', label: 'Representation', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 2 } },
   
-  { id: 'e-p-0', source: 'c2-0', target: 'c2-1', label: 'Associate', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // Park to Choi
-  { id: 'e-p-2-0', source: 'c2-2', target: 'c2-0', label: 'Advisor', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // An to Park
+  // Detective Connections
+  { id: 'e-dt1-boss', source: 'dt-1', target: 'boss', label: 'Investigating', type: 'straight', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 } },
+  { id: 'e-dt1-ev1', source: 'dt-1', target: 'ev-1', label: 'Found', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-dt1-dt2', source: 'dt-1', target: 'dt-2', label: 'Partners', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-dt2-loc1', source: 'dt-2', target: 'loc-1', label: 'Raided', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+
+  // Crime Actions
+  { id: 'e-lt1-vc1', source: 'lt-1', target: 'vc-1', label: 'Assaulted', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 } },
+  { id: 'e-lt2-vc2', source: 'lt-2', target: 'vc-2', label: 'Defrauded', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 } },
+  { id: 'e-lt2-loc2', source: 'lt-2', target: 'loc-2', label: 'Hidden Assets', type: 'straight', style: { stroke: '#10b981', strokeWidth: 1 } },
+  { id: 'e-lt1-loc1', source: 'lt-1', target: 'loc-1', label: 'Base', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 } },
+
+  // Legal / Witness
+  { id: 'e-wit1-dt1', source: 'wit-1', target: 'dt-1', label: 'Testimony', type: 'straight', animated: true, style: { stroke: '#fbbf24', strokeWidth: 1 } },
+  { id: 'e-lw1-case1', source: 'lw-1', target: 'case-1', label: 'Filing', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1 } },
+  { id: 'e-vc3-case1', source: 'vic-3', target: 'case-1', label: 'Plaintiff', type: 'straight', style: { stroke: '#8b5cf6', strokeWidth: 1 } },
   
-  { id: 'e-sam-lee', source: 'c1-0', target: 'c2-4', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 2 } }, // Samsung to Lee Jae-yong
-  
-  { id: 'e-bh', source: 'c2-5', target: 'c2-0', type: 'straight', style: { stroke: '#64748b', strokeWidth: 1 } }, // Blue House to Park
-  { id: 'e-fki', source: 'c2-6', target: 'center-2', label: 'Support', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1 } }, // FKI to Mir
+  // Associates
+  { id: 'e-asn1-lt1', source: 'asn-1', target: 'lt-1', label: 'Henchman', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1 } },
 ];
 
-// Mock Legend Data
+// Mock Legend Data (Updated)
 const LEGEND_DATA = [
-  { label: "Foundation", color: "bg-violet-500", count: 2, percent: "10%" },
-  { label: "Corporation", color: "bg-blue-500", count: 8, percent: "40%" },
-  { label: "Suspect", color: "bg-red-500", count: 3, percent: "15%" },
-  { label: "Government", color: "bg-slate-500", count: 3, percent: "15%" },
+  { label: "Criminal", color: "bg-red-500", count: 4, percent: "25%" },
+  { label: "Detective", color: "bg-blue-500", count: 2, percent: "12%" },
+  { label: "Victim/Witness", color: "bg-amber-400", count: 4, percent: "25%" },
+  { label: "Legal/Lawsuit", color: "bg-violet-500", count: 2, percent: "12%" },
+  { label: "Asset/Location", color: "bg-emerald-500", count: 3, percent: "18%" },
+  { label: "Evidence", color: "bg-slate-500", count: 1, percent: "6%" },
 ];
 
 export default function ProjectView() {
