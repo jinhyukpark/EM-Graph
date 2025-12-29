@@ -191,38 +191,45 @@ export default function ProjectView() {
     });
   };
 
+  const SidebarToggle = (
+    <div className="bg-secondary/20 border border-border/50 p-1 rounded-md flex items-center shadow-sm w-fit">
+        <Button 
+          variant={sidebarMode === "nav" ? "secondary" : "ghost"} 
+          size="icon" 
+          className="h-7 w-7" 
+          onClick={() => setSidebarMode("nav")}
+          title="Project Navigation"
+        >
+          <LayoutTemplate className="w-4 h-4" />
+        </Button>
+        <Button 
+          variant={sidebarMode === "list" ? "secondary" : "ghost"} 
+          size="icon" 
+          className="h-7 w-7" 
+          onClick={() => setSidebarMode("list")}
+          title="Node List View"
+        >
+          <List className="w-4 h-4" />
+        </Button>
+    </div>
+  );
+
   return (
-    <Layout sidebar={sidebarMode === "list" ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} /> : undefined}>
+    <Layout 
+      sidebar={
+        sidebarMode === "list" 
+          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} headerControls={SidebarToggle} /> 
+          : undefined
+      }
+      sidebarControls={sidebarMode === "nav" ? SidebarToggle : undefined}
+    >
       <div className="relative h-[calc(100vh-64px)] bg-background">
         
         {/* Toolbar Overlay */}
         <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
           <div className="flex gap-2 pointer-events-auto">
-            {/* Sidebar Toggle */}
+            
             <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
-               <div className="flex items-center gap-1 bg-secondary/20 rounded p-0.5">
-                  <Button 
-                    variant={sidebarMode === "nav" ? "secondary" : "ghost"} 
-                    size="icon" 
-                    className="h-7 w-7" 
-                    onClick={() => setSidebarMode("nav")}
-                    title="Project Navigation"
-                  >
-                    <LayoutTemplate className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    variant={sidebarMode === "list" ? "secondary" : "ghost"} 
-                    size="icon" 
-                    className="h-7 w-7" 
-                    onClick={() => setSidebarMode("list")}
-                    title="Node List View"
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-               </div>
-            </div>
-
-            <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm ml-2">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-2 top-2.5 text-muted-foreground" />
                 <Input placeholder="Search nodes in graph..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />

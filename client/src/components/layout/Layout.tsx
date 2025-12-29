@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 
-export default function Layout({ children, sidebar }: { children: React.ReactNode, sidebar?: React.ReactNode }) {
+export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
   const [location] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
@@ -73,6 +73,13 @@ export default function Layout({ children, sidebar }: { children: React.ReactNod
 
         {/* Navigation */}
         <nav className="flex-1 p-0 overflow-hidden flex flex-col">
+          {/* Sidebar Controls (Toggle) */}
+          {sidebarControls && (
+             <div className="px-6 pt-4 pb-2">
+               {sidebarControls}
+             </div>
+          )}
+
           {sidebar ? (
             sidebar
           ) : isProjectView ? (

@@ -38,9 +38,10 @@ export const MOCK_COMPANY_NODES: NodeData[] = [
 interface NodeListSidebarProps {
   onNodeSelect?: (node: NodeData) => void;
   selectedNodeId?: string;
+  headerControls?: React.ReactNode;
 }
 
-export default function NodeListSidebar({ onNodeSelect, selectedNodeId }: NodeListSidebarProps) {
+export default function NodeListSidebar({ onNodeSelect, selectedNodeId, headerControls }: NodeListSidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [displayFields, setDisplayFields] = useState({
     category: true,
@@ -57,6 +58,13 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId }: NodeLi
 
   return (
     <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
+      {/* Header Controls (Toggle) */}
+      {headerControls && (
+         <div className="px-4 pt-4 pb-0">
+           {headerControls}
+         </div>
+      )}
+      
       {/* Search Header */}
       <div className="p-4 border-b border-border space-y-4">
         <div>
