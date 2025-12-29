@@ -176,6 +176,8 @@ export default function ProjectView() {
         : [...prev, category]
     );
   };
+
+  const [nodeMappings, setNodeMappings] = useState([
     { id: 1, sheet: "Sheet1", key: "id", title: "name", type: "string", image: "img_url" }
   ]);
 
