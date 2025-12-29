@@ -263,7 +263,7 @@ export default function ProjectView() {
           maxZoom={2}
         >
           <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-          <Controls className="!bg-card !border-border !fill-foreground !shadow-md" />
+          <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-2 !mt-16" />
           <MiniMap 
             nodeColor={(n) => {
               if (n.type === 'Core') return 'hsl(var(--primary))';
