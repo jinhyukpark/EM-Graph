@@ -17,6 +17,8 @@ import Settings from "@/pages/Settings";
 import Projects from "@/pages/Projects";
 import SignUp from "@/pages/SignUp";
 
+import KnowledgeGarden from "@/pages/KnowledgeGarden";
+
 function AppRouter() {
   return (
     <WouterRouter hook={useHashLocation}>
@@ -25,6 +27,7 @@ function AppRouter() {
         <Route path="/signup" component={SignUp} />
         <Route path="/dashboard" component={Home} />
         <Route path="/projects" component={Projects} />
+        <Route path="/knowledge-garden" component={KnowledgeGarden} />
         <Route path="/create" component={CreateProject} />
         <Route path="/project/:id/setup" component={ProjectSetup} />
         <Route path="/project/:id/view" component={ProjectView} />
