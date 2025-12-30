@@ -9,18 +9,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2, Send, Headphones } from "lucide-react";
+import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import abstractNetworkBg from '@assets/generated_images/abstract_network_background.png';
-import subtleGraphBg from '@assets/generated_images/subtle_graph_network_pattern_background.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -35,15 +32,9 @@ export default function OrganizationSelect() {
   const [newOrgName, setNewOrgName] = useState("");
   const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
   
-  // Contact Form State
-  const [contactTitle, setContactTitle] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactContent, setContactContent] = useState("");
-
   const filteredOrgs = orgs.filter(org => 
     org.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -85,273 +76,146 @@ export default function OrganizationSelect() {
     setLocation("/dashboard");
   };
 
-  const handleContactSubmit = () => {
-    // Mock submission logic
-    console.log("Contact Form Submitted:", { title: contactTitle, email: contactEmail, content: contactContent });
-    
-    // Reset form
-    setContactTitle("");
-    setContactEmail("");
-    setContactContent("");
-    setIsContactDialogOpen(false);
-
-    // Show success message
-    toast.success("문의가 접수되었습니다.", {
-      description: "담당자가 확인 후 빠르게 연락드리겠습니다.",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
-      <div className="w-full max-w-5xl space-y-8 relative z-10">
+      <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-2 mb-10">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">참여할 조직을 선택해주세요.</h1>
           <p className="text-slate-500">온톨로지 기반 데이터 분석을 위해 참여할 조직을 선택하거나 새로 생성할 수 있습니다</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-stretch">
-          
-          {/* Organization List */}
-          <Card className="md:col-span-1 shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm flex flex-col h-full">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-indigo-500" />
-                내 조직
-              </CardTitle>
-              <CardDescription>
-                현재 <span className="text-indigo-600 font-bold text-base">{orgs.length}개</span> 조직에 참여중입니다.
-              </CardDescription>
-              <div className="relative mt-2">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-                <Input
-                  type="search"
-                  placeholder="조직 검색..."
-                  className="pl-8 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500/20"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-[280px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-              {filteredOrgs.length > 0 ? (
-                filteredOrgs.map((org) => (
-                  <div 
-                    key={org.id}
-                    onClick={() => handleSelectOrg(org.id)}
-                    className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50/30 hover:border-indigo-200 transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                        <AvatarFallback className={`font-bold ${
-                          org.plan === 'Enterprise' ? 'bg-indigo-100 text-indigo-600' : 
-                          org.plan === 'Pro' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'
-                        }`}>
-                          {org.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-semibold text-slate-800 group-hover:text-indigo-700 transition-colors">{org.name}</div>
-                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">{org.role}</span>
-                          <span className="text-slate-300">•</span>
-                          <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}명</span>
-                        </div>
+        {/* Organization List */}
+        <Card className="shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm flex flex-col">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-indigo-500" />
+              내 조직
+            </CardTitle>
+            <CardDescription>
+              현재 <span className="text-indigo-600 font-bold text-base">{orgs.length}개</span> 조직에 참여중입니다.
+            </CardDescription>
+            <div className="relative mt-2">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+              <Input
+                type="search"
+                placeholder="조직 검색..."
+                className="pl-8 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500/20"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 max-h-[400px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+            {filteredOrgs.length > 0 ? (
+              filteredOrgs.map((org) => (
+                <div 
+                  key={org.id}
+                  onClick={() => handleSelectOrg(org.id)}
+                  className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50/30 hover:border-indigo-200 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                      <AvatarFallback className={`font-bold ${
+                        org.plan === 'Enterprise' ? 'bg-indigo-100 text-indigo-600' : 
+                        org.plan === 'Pro' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {org.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-semibold text-slate-800 group-hover:text-indigo-700 transition-colors">{org.name}</div>
+                      <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                        <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">{org.role}</span>
+                        <span className="text-slate-300">•</span>
+                        <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}명</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
-                          onClick={(e) => handleDeleteOrg(e, org.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                    </div>
                   </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                     <Search className="w-5 h-5 text-slate-300" />
-                   </div>
-                   <p className="text-slate-500 text-sm">"{searchTerm}"와(과) 일치하는 조직이 없습니다</p>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
-              
-              <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>조직을 삭제하시겠습니까?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      이 작업은 되돌릴 수 없습니다. 조직과 관련된 모든 데이터가 영구적으로 삭제됩니다.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>취소</AlertDialogCancel>
-                    <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
-                      삭제 확인
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
-                    <Plus className="w-4 h-4" /> 새 조직 만들기
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>조직 생성</DialogTitle>
-                    <DialogDescription>
-                      팀원들과 함께 그래프 분석을 협업할 새로운 워크스페이스를 만듭니다.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="org-name">조직 이름</Label>
-                      <Input 
-                        id="org-name" 
-                        placeholder="예: 보안 분석 팀" 
-                        value={newOrgName}
-                        onChange={(e) => setNewOrgName(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="org-id">조직 아이디</Label>
-                      <Input 
-                        id="org-id" 
-                        placeholder="예: security-team-01" 
-                        value={newOrgId}
-                        onChange={(e) => setNewOrgId(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">영문, 숫자, 하이픈(-)만 사용 가능합니다.</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                        onClick={(e) => handleDeleteOrg(e, org.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                   </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
-                    <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>조직 생성</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </CardFooter>
-          </Card>
-
-          {/* Feature / Info Section - Enhanced Design */}
-          <div className="md:col-span-1 space-y-6">
-            <div className="relative overflow-hidden rounded-2xl shadow-md border border-white bg-gradient-to-br from-indigo-900 to-slate-900">
-              <div className="relative p-8 text-white">
-                <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mb-8 shadow-[0_0_15px_rgba(165,180,252,0.5)] border border-white/20 relative">
-                  <div className="absolute inset-0 bg-indigo-400/20 blur-xl rounded-full animate-pulse" />
-                  {/* Custom AI Mark SVG */}
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-100 relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" className="animate-[pulse_3s_ease-in-out_infinite]"/>
-                    <path d="M19 2L20 5L23 6L20 7L19 10L18 7L15 6L18 5L19 2Z" opacity="0.7" className="animate-[pulse_2s_ease-in-out_infinite]"/>
-                    <path d="M5 18L6 20L9 21L6 22L5 24L4 22L1 21L4 20L5 18Z" opacity="0.7" className="animate-[pulse_4s_ease-in-out_infinite]"/>
-                  </svg>
                 </div>
-                
-                <div className="border-l-4 border-indigo-400 pl-4 mb-8">
-                  <h3 className="text-2xl font-bold mb-2 tracking-tight">EM-Graph를 통한 강력한 협업</h3>
-                  <p className="text-indigo-200 text-sm leading-relaxed">
-                    AI 기반의 그래프 분석 엔진과 팀 단위 협업 도구로 데이터의 숨겨진 패턴을 함께 발견하세요.
-                  </p>
-                </div>
-
-                <ul className="space-y-4">
-                  {[
-                    "팀원들과 실시간 그래프 공동 편집",
-                    "프로젝트별 권한 관리 및 보안 설정",
-                    "분석 리포트 및 인사이트 자동 공유",
-                    "중앙화된 리소스 및 빌링 관리"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm group">
-                      <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500/30 transition-colors">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-300" />
-                      </div>
-                      <span className="text-indigo-50 font-medium group-hover:text-white transition-colors">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                 <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                   <Search className="w-5 h-5 text-slate-300" />
+                 </div>
+                 <p className="text-slate-500 text-sm">"{searchTerm}"와(과) 일치하는 조직이 없습니다</p>
               </div>
-            </div>
+            )}
+          </CardContent>
+          <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
+            
+            <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>조직을 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    이 작업은 되돌릴 수 없습니다. 조직과 관련된 모든 데이터가 영구적으로 삭제됩니다.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                    삭제 확인
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
-            <div className="relative p-6 rounded-2xl border border-slate-300 bg-white shadow-sm overflow-hidden group hover:border-indigo-300 transition-colors">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full -mr-8 -mt-8" />
-               
-               <div className="flex items-start gap-4 relative z-10">
-                 <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                    <Headphones className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
-                 </div>
-                 <div>
-                    <h4 className="font-bold text-slate-800 mb-1">더 많은 팀원, 더 많은 자원이 필요하신가요?</h4>
-                    <p className="text-sm text-slate-500 mb-4 leading-relaxed">
-                      SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
-                    </p>
-                    <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="w-full border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
-                          영업팀 문의하기
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px]">
-                        <DialogHeader>
-                          <DialogTitle>영업팀 문의하기</DialogTitle>
-                          <DialogDescription>
-                            도입 문의나 파트너십 제안 등 궁금한 점을 남겨주세요.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="contact-title">제목</Label>
-                            <Input 
-                              id="contact-title" 
-                              placeholder="문의 제목을 입력해주세요" 
-                              value={contactTitle}
-                              onChange={(e) => setContactTitle(e.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="contact-email">담당자 이메일</Label>
-                            <Input 
-                              id="contact-email" 
-                              type="email"
-                              placeholder="contact@company.com" 
-                              value={contactEmail}
-                              onChange={(e) => setContactEmail(e.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="contact-content">문의 내용</Label>
-                            <Textarea 
-                              id="contact-content" 
-                              placeholder="궁금하신 내용을 자세히 적어주세요." 
-                              className="min-h-[120px] resize-none"
-                              value={contactContent}
-                              onChange={(e) => setContactContent(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>취소</Button>
-                          <Button onClick={handleContactSubmit} disabled={!contactTitle || !contactEmail || !contactContent} className="gap-2 bg-indigo-600 hover:bg-indigo-700">
-                            <Send className="w-4 h-4" /> 문의하기
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                 </div>
-               </div>
-            </div>
-          </div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
+                  <Plus className="w-4 h-4" /> 새 조직 만들기
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>조직 생성</DialogTitle>
+                  <DialogDescription>
+                    팀원들과 함께 그래프 분석을 협업할 새로운 워크스페이스를 만듭니다.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="org-name">조직 이름</Label>
+                    <Input 
+                      id="org-name" 
+                      placeholder="예: 보안 분석 팀" 
+                      value={newOrgName}
+                      onChange={(e) => setNewOrgName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="org-id">조직 아이디</Label>
+                    <Input 
+                      id="org-id" 
+                      placeholder="예: security-team-01" 
+                      value={newOrgId}
+                      onChange={(e) => setNewOrgId(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">영문, 숫자, 하이픈(-)만 사용 가능합니다.</p>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
+                  <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>조직 생성</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardFooter>
+        </Card>
 
-        </div>
       </div>
     </div>
   );
