@@ -20,6 +20,7 @@ export default function OrganizationSelect() {
   const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [newOrgName, setNewOrgName] = useState("");
+  const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
 
@@ -28,9 +29,9 @@ export default function OrganizationSelect() {
   );
 
   const handleCreateOrg = () => {
-    if (newOrgName.trim()) {
+    if (newOrgName.trim() && newOrgId.trim()) {
       const newOrg = {
-        id: `org-${Date.now()}`,
+        id: newOrgId,
         name: newOrgName,
         members: 1,
         role: "Admin",
@@ -38,6 +39,7 @@ export default function OrganizationSelect() {
       };
       setOrgs([...orgs, newOrg]);
       setNewOrgName("");
+      setNewOrgId("");
       setIsDialogOpen(false);
       // Optional: Auto-redirect to dashboard
       // setLocation("/dashboard"); 
@@ -149,10 +151,20 @@ export default function OrganizationSelect() {
                         onChange={(e) => setNewOrgName(e.target.value)}
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="org-id">조직 아이디</Label>
+                      <Input 
+                        id="org-id" 
+                        placeholder="예: security-team-01" 
+                        value={newOrgId}
+                        onChange={(e) => setNewOrgId(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">영문, 숫자, 하이픈(-)만 사용 가능합니다.</p>
+                    </div>
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
-                    <Button onClick={handleCreateOrg}>조직 생성</Button>
+                    <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>조직 생성</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
