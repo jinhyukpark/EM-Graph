@@ -554,6 +554,27 @@ export default function Settings() {
 
           {/* Usage Tab */}
           <TabsContent value="usage" className="space-y-6">
+            <Card className="bg-primary/5 border-primary/20">
+              <CardHeader className="flex flex-row items-center justify-between pb-4">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg text-primary flex items-center gap-2">
+                    <Zap className="w-5 h-5" /> Pro Plan
+                  </CardTitle>
+                  <CardDescription className="text-primary/80">
+                    You are currently on the Pro tier. Your plan renews on January 15, 2026.
+                  </CardDescription>
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
+                    Manage Subscription
+                  </Button>
+                  <Button onClick={() => document.getElementById("trigger-billing")?.click()}>
+                    Upgrade Plan
+                  </Button>
+                </div>
+              </CardHeader>
+            </Card>
+
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader className="pb-2">
