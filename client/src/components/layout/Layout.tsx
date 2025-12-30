@@ -227,7 +227,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("space-y-1 animate-in fade-in duration-300", isCollapsed ? "p-2" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">Menu</div>}
               <NavItem href="/dashboard" icon={LayoutGrid} label="Dashboard" />
-              <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" />
               <NavItem href="/projects" icon={FolderOpen} label="Projects" />
               <NavItem href="/database" icon={Database} label="Database" />
               <NavItem href="/resources" icon={Library} label="Resources" />
@@ -237,6 +236,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Ontology</div>}
+              <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" />
               <NavItem href="/settings" icon={Settings} label="MyPage" />
             </div>
           )}
