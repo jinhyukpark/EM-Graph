@@ -94,10 +94,10 @@ export default function LandingPage() {
               <GlobeIcon className="w-4 h-4" />
               {lang === 'en' ? 'ENG' : 'KOR'}
             </Button>
-            <Link href="/login">
+            <Link href="/dashboard">
               <Button variant="ghost">{t.nav.login}</Button>
             </Link>
-            <Link href="/signup">
+            <Link href="/organization-select">
               <Button>{t.nav.getStarted}</Button>
             </Link>
           </div>

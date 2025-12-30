@@ -3,9 +3,7 @@ import { useHashLocation } from "wouter/use-hash-location";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { OrganizationProvider } from "@/context/OrganizationContext";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import LandingPage from "@/pages/LandingPage";
@@ -18,7 +16,6 @@ import ResourcesManager from "@/pages/ResourcesManager";
 import Settings from "@/pages/Settings";
 import Projects from "@/pages/Projects";
 import SignUp from "@/pages/SignUp";
-import Login from "@/pages/Login";
 import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 
@@ -27,7 +24,6 @@ function AppRouter() {
     <WouterRouter hook={useHashLocation}>
       <Switch>
         <Route path="/" component={LandingPage} />
-        <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <Route path="/organization-select" component={OrganizationSelect} />
         <Route path="/dashboard" component={Home} />
@@ -49,13 +45,10 @@ function AppRouter() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <OrganizationProvider>
-        <TooltipProvider>
-          <Toaster />
-          <SonnerToaster />
-          <AppRouter />
-        </TooltipProvider>
-      </OrganizationProvider>
+      <TooltipProvider>
+        <Toaster />
+        <AppRouter />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

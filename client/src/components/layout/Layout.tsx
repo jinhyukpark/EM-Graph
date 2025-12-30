@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, Building2, ChevronDown, Check } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -16,25 +16,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useOrganization } from "@/context/OrganizationContext";
 
-export default function Layout({ children, sidebar, sidebarControls, defaultCollapsed = false }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode, defaultCollapsed?: boolean }) {
+export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
   const projectId = params?.id;
-  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
-  const [isOrgPopoverOpen, setIsOrgPopoverOpen] = useState(false);
-  
-  const orgContext = useOrganization();
-  const currentOrg = orgContext?.currentOrg;
-  const organizations = orgContext?.organizations || [];
+
+  useEffect(() => {
+    if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
+      setIsCollapsed(true);
+    }
+  }, [location]);
 
   // Mock Usage Data for Sidebar
   const usage = {
@@ -122,78 +117,6 @@ export default function Layout({ children, sidebar, sidebarControls, defaultColl
             <Menu className="w-4 h-4" />
           </Button>
         </div>
-
-        {/* Workspace Switcher */}
-        {currentOrg && !isCollapsed && (
-          <div className="px-4 py-3 border-b border-border/50">
-            <Popover open={isOrgPopoverOpen} onOpenChange={setIsOrgPopoverOpen}>
-              <PopoverTrigger asChild>
-                <button 
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-left group"
-                  data-testid="workspace-switcher"
-                >
-                  <div className="w-7 h-7 rounded-md bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold shrink-0">
-                    {currentOrg.name.substring(0, 2).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">{currentOrg.name}</div>
-                    <div className="text-[10px] text-muted-foreground">워크스페이스</div>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-64 p-2" align="start">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 py-1.5">워크스페이스 전환</div>
-                <div className="space-y-1">
-                  {organizations.map((org) => (
-                    <button
-                      key={org.id}
-                      onClick={() => {
-                        orgContext?.setCurrentOrg(org);
-                        setIsOrgPopoverOpen(false);
-                      }}
-                      className={cn(
-                        "w-full flex items-center gap-2 px-2 py-2 rounded-md text-sm transition-colors",
-                        currentOrg.id === org.id 
-                          ? "bg-primary/10 text-primary" 
-                          : "hover:bg-secondary text-foreground"
-                      )}
-                    >
-                      <div className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">
-                        {org.name.substring(0, 2).toUpperCase()}
-                      </div>
-                      <span className="flex-1 text-left truncate">{org.name}</span>
-                      {currentOrg.id === org.id && <Check className="w-4 h-4" />}
-                    </button>
-                  ))}
-                </div>
-                <div className="border-t border-border mt-2 pt-2">
-                  <Link href="/organization-select">
-                    <button 
-                      className="w-full flex items-center gap-2 px-2 py-2 rounded-md text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-                      onClick={() => setIsOrgPopoverOpen(false)}
-                    >
-                      <Plus className="w-4 h-4" />
-                      새 워크스페이스 만들기
-                    </button>
-                  </Link>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        )}
-        {currentOrg && isCollapsed && (
-          <div className="py-3 flex justify-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="w-8 h-8 rounded-md bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold cursor-pointer hover:bg-indigo-200 transition-colors">
-                  {currentOrg.name.substring(0, 2).toUpperCase()}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right">{currentOrg.name}</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
 
         {/* Navigation */}
         <nav className="flex-1 p-0 overflow-hidden flex flex-col">

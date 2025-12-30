@@ -13,7 +13,7 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Bot, Database, FileCode
 } from "lucide-react";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
+import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 // --- Mock Data ---
@@ -41,11 +41,11 @@ const FILE_TREE = [
 ];
 
 const INITIAL_NODES = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: 'LG Energy Solution' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
-  { id: '2', position: { x: 200, y: -100 }, data: { label: 'SK Innovation' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
-  { id: '3', position: { x: 200, y: 100 }, data: { label: 'Battery Patent' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 50, height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
-  { id: '4', position: { x: 400, y: 0 }, data: { label: 'Trade Secrets' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' } },
-  { id: '5', position: { x: 100, y: 200 }, data: { label: 'EV Market' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' } },
+  { id: '1', position: { x: 0, y: 0 }, data: { label: 'LG Energy Solution' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
+  { id: '2', position: { x: 200, y: -100 }, data: { label: 'SK Innovation' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
+  { id: '3', position: { x: 200, y: 100 }, data: { label: 'Battery Patent' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 50, height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
+  { id: '4', position: { x: 400, y: 0 }, data: { label: 'Trade Secrets' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
+  { id: '5', position: { x: 100, y: 200 }, data: { label: 'EV Market' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
 ];
 
 const INITIAL_EDGES = [
@@ -125,7 +125,7 @@ export default function KnowledgeGarden() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
 
   return (
-    <Layout defaultCollapsed={true}>
+    <Layout>
       <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
         {/* Top Bar */}
         <div className="h-10 border-b border-border flex items-center px-4 justify-between bg-card/50">
@@ -246,24 +246,20 @@ export default function KnowledgeGarden() {
             <div className="absolute top-2 left-2 z-10 flex gap-1">
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
             </div>
-            <div className="absolute inset-0 z-0">
-              <ReactFlowProvider>
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  onNodesChange={onNodesChange}
-                  onEdgesChange={onEdgesChange}
-                  fitView
-                  className="bg-background"
-                >
-                  <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-                  <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-                </ReactFlow>
-              </ReactFlowProvider>
-            </div>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              fitView
+              className="bg-background"
+            >
+              <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+              <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+            </ReactFlow>
             
             {/* Mini Analytics Overlay */}
-            <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1 z-10">
+            <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
                <div className="flex justify-between text-muted-foreground">
                  <span>Nodes</span>
                  <span className="font-mono text-foreground">5</span>
