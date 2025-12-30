@@ -8,6 +8,7 @@ import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shi
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import abstractNetworkBg from '@assets/generated_images/abstract_network_background.png';
+import subtleGraphBg from '@assets/generated_images/subtle_graph_network_pattern_background.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -53,8 +54,19 @@ export default function OrganizationSelect() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-5xl space-y-8">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+       {/* Subtle Background Pattern */}
+       <div 
+        className="absolute inset-0 opacity-40 pointer-events-none"
+        style={{
+          backgroundImage: `url(${subtleGraphBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
+      <div className="w-full max-w-5xl space-y-8 relative z-10">
         
         <div className="text-center space-y-2 mb-10">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">조직 선택</h1>
@@ -90,7 +102,7 @@ export default function OrganizationSelect() {
                   <div 
                     key={org.id}
                     onClick={() => handleSelectOrg(org.id)}
-                    className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-white hover:bg-indigo-50/30 hover:border-indigo-100 transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50/30 hover:border-indigo-200 transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
@@ -212,7 +224,7 @@ export default function OrganizationSelect() {
               </div>
             </div>
 
-            <div className="relative p-6 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden group hover:border-indigo-200 transition-colors">
+            <div className="relative p-6 rounded-2xl border border-slate-300 bg-white shadow-sm overflow-hidden group hover:border-indigo-300 transition-colors">
                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full -mr-8 -mt-8" />
                
                <div className="flex items-start gap-4 relative z-10">
@@ -224,7 +236,7 @@ export default function OrganizationSelect() {
                     <p className="text-sm text-slate-500 mb-4 leading-relaxed">
                       SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
                     </p>
-                    <Button variant="outline" size="sm" className="w-full border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
+                    <Button variant="outline" size="sm" className="w-full border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
                       영업팀 문의하기
                     </Button>
                  </div>
