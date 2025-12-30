@@ -4,7 +4,7 @@ import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertDialog,
@@ -24,6 +24,12 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
+
+  useEffect(() => {
+    if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
+      setIsCollapsed(true);
+    }
+  }, [location]);
 
   // Mock Usage Data for Sidebar
   const usage = {
