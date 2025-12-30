@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Network, Calendar, MoreVertical, ArrowRight } from "lucide-react";
 import { MOCK_PROJECTS } from "@/lib/mockData";
-import generatedImage from "@assets/generated_images/clean_white_data_network_background.png";
+import generatedImage from "../assets/generated_images/clean_white_data_network_background.png";
 
 export default function Projects() {
   return (

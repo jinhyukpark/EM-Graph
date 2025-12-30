@@ -8,24 +8,24 @@ import { translations } from "@/lib/translations";
 import { Globe as GlobeIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
-import investigationImage from '@assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png';
-import supplyChainImage from '@assets/generated_images/large_container_ship_at_sea_with_digital_connections.png';
-import financeImage from '@assets/generated_images/financial_stock_market_charts_and_data_visualization.png';
-import biotechImage from '@assets/generated_images/scientist_with_test_tube.png';
+import investigationImage from '../assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png';
+import supplyChainImage from '../assets/generated_images/large_container_ship_at_sea_with_digital_connections.png';
+import financeImage from '../assets/generated_images/financial_stock_market_charts_and_data_visualization.png';
+import biotechImage from '../assets/generated_images/scientist_with_test_tube.png';
 
-import heroInvestigationImage from '@assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png';
-import heroSupplyChainImage from '@assets/generated_images/dark_mode_supply_chain_management_dashboard_ui.png';
-import heroFinanceImage from '@assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
+import heroInvestigationImage from '../assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png';
+import heroSupplyChainImage from '../assets/generated_images/dark_mode_supply_chain_management_dashboard_ui.png';
+import heroFinanceImage from '../assets/generated_images/dark_mode_financial_fraud_detection_dashboard_ui.png';
 
-import featureAiImage from '@assets/generated_images/abstract_ai_brain_network_illustration.png';
-import featureOntologyImage from '@assets/generated_images/abstract_database_ontology_illustration.png';
-import featureMetricsImage from '@assets/generated_images/abstract_graph_analytics_illustration.png';
-import featureCollabImage from '@assets/generated_images/abstract_collaboration_network_illustration.png';
+import featureAiImage from '../assets/generated_images/abstract_ai_brain_network_illustration.png';
+import featureOntologyImage from '../assets/generated_images/abstract_database_ontology_illustration.png';
+import featureMetricsImage from '../assets/generated_images/abstract_graph_analytics_illustration.png';
+import featureCollabImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
 
-import creationVisualBuilderImage from '@assets/generated_images/drag_and_drop_node_interface_ui.png';
-import creationAiSuggestImage from '@assets/generated_images/ai_suggesting_connections_ui.png';
-import creationImportImage from '@assets/generated_images/data_import_and_mapping_ui.png';
-import ctaBackgroundImage from '@assets/generated_images/abstract_dark_monochrome_ontology_network_background.png';
+import creationVisualBuilderImage from '../assets/generated_images/drag_and_drop_node_interface_ui.png';
+import creationAiSuggestImage from '../assets/generated_images/ai_suggesting_connections_ui.png';
+import creationImportImage from '../assets/generated_images/data_import_and_mapping_ui.png';
+import ctaBackgroundImage from '../assets/generated_images/abstract_dark_monochrome_ontology_network_background.png';
 
 const caseImages: Record<string, string> = {
   investigation: investigationImage,
