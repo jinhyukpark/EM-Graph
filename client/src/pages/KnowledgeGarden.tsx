@@ -246,7 +246,7 @@ export default function KnowledgeGarden() {
             <div className="absolute top-2 left-2 z-10 flex gap-1">
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
             </div>
-            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <div className="absolute inset-0 z-0">
               <ReactFlowProvider>
                 <ReactFlow
                   nodes={nodes}
@@ -255,7 +255,6 @@ export default function KnowledgeGarden() {
                   onEdgesChange={onEdgesChange}
                   fitView
                   className="bg-background"
-                  proOptions={{ hideAttribution: true }}
                 >
                   <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
                   <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
@@ -264,7 +263,7 @@ export default function KnowledgeGarden() {
             </div>
             
             {/* Mini Analytics Overlay */}
-            <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
+            <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1 z-10">
                <div className="flex justify-between text-muted-foreground">
                  <span>Nodes</span>
                  <span className="font-mono text-foreground">5</span>
