@@ -18,7 +18,7 @@ import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import subtleGraphBg from '@assets/generated_images/subtle_graph_network_pattern_background.png';
+import networkBg from '@assets/generated_images/abstract_blue_network_connection_background_with_glowing_nodes.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -73,13 +73,27 @@ export default function OrganizationSelect() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
+      {/* Background Pattern */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-slate-950/80 z-10" />
+        <div 
+          className="absolute inset-0 z-0 opacity-60"
+          style={{ 
+            backgroundImage: `url(${networkBg})`, 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }} 
+        />
+      </div>
+
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">워크스페이스 선택</h1>
-          <p className="text-slate-500">
+          <h1 className="text-3xl font-bold tracking-tight text-white">워크스페이스 선택</h1>
+          <p className="text-slate-300">
             협업 중인 조직을 선택하여 분석을 시작하세요.<br />
             또는 새로운 팀을 만들어보세요.
           </p>
