@@ -62,7 +62,7 @@ export default function OrganizationSelect() {
         <div className="grid md:grid-cols-2 gap-8 items-start">
           
           {/* Organization List */}
-          <Card className="md:col-span-1 shadow-xl shadow-slate-200/50 border-slate-200/60 bg-white/80 backdrop-blur-sm">
+          <Card className="md:col-span-1 shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-indigo-500" />
@@ -88,7 +88,7 @@ export default function OrganizationSelect() {
                   <div 
                     key={org.id}
                     onClick={() => handleSelectOrg(org.id)}
-                    className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-white shadow-sm hover:shadow-md hover:border-indigo-100 hover:bg-indigo-50/30 transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-white hover:bg-indigo-50/30 hover:border-indigo-100 transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
@@ -128,7 +128,7 @@ export default function OrganizationSelect() {
             <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200" size="lg">
+                  <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
                     <Plus className="w-4 h-4" /> 새 조직 만들기
                   </Button>
                 </DialogTrigger>
@@ -161,7 +161,7 @@ export default function OrganizationSelect() {
 
           {/* Feature / Info Section - Enhanced Design */}
           <div className="md:col-span-1 space-y-6">
-            <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-indigo-100 border border-white">
+            <div className="relative overflow-hidden rounded-2xl shadow-md border border-white">
               {/* Background Image */}
               <div className="absolute inset-0">
                 <img 
@@ -200,7 +200,7 @@ export default function OrganizationSelect() {
               </div>
             </div>
 
-            <div className="relative p-6 rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-100 overflow-hidden group hover:border-indigo-200 transition-colors">
+            <div className="relative p-6 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden group hover:border-indigo-200 transition-colors">
                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full -mr-8 -mt-8" />
                
                <div className="flex items-start gap-4 relative z-10">
