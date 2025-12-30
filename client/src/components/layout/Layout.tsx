@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
   const projectId = params?.id;
@@ -260,19 +260,29 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
           {/* User Profile */}
           <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3 px-1")}>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-background shadow-sm shrink-0">
-              JD
-            </div>
-            {!isCollapsed && (
-              <>
+            <div 
+              className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer group"
+              onClick={() => setLocation("/settings")}
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-background shadow-sm shrink-0 group-hover:ring-primary/50 transition-all">
+                JD
+              </div>
+              {!isCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">John Doe</div>
+                  <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">John Doe</div>
                   <div className="text-xs text-muted-foreground truncate">john@emgraph.ai</div>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
+              )}
+            </div>
+            {!isCollapsed && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                onClick={() => setLocation("/organization-select")}
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             )}
           </div>
         </div>
