@@ -436,13 +436,13 @@ export default function Settings() {
                  </CardFooter>
                </Card>
 
-               {/* Enterprise Plan */}
+               {/* Premium Plan */}
                <Card className="border-border/50 bg-slate-900 text-slate-50 relative overflow-hidden">
                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 pointer-events-none" />
                  <CardHeader>
                    <CardTitle className="flex items-center gap-2">
                      <Shield className="w-5 h-5 text-indigo-400" />
-                     <span className="text-xl">Enterprise</span>
+                     <span className="text-xl">Premium</span>
                    </CardTitle>
                    <CardDescription className="text-slate-400">For large organizations requiring scale.</CardDescription>
                  </CardHeader>
