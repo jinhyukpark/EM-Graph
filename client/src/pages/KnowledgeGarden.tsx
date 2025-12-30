@@ -125,7 +125,7 @@ export default function KnowledgeGarden() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
 
   return (
-    <Layout>
+    <Layout defaultCollapsed={true}>
       <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
         {/* Top Bar */}
         <div className="h-10 border-b border-border flex items-center px-4 justify-between bg-card/50">

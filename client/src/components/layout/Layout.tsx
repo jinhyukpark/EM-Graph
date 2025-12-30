@@ -17,19 +17,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
+export default function Layout({ children, sidebar, sidebarControls, defaultCollapsed = false }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode, defaultCollapsed?: boolean }) {
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
   const projectId = params?.id;
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
-
-  useEffect(() => {
-    if ((location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) && !isCollapsed) {
-      setIsCollapsed(true);
-    }
-  }, [location]);
 
   // Mock Usage Data for Sidebar
   const usage = {
