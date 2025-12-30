@@ -32,13 +32,7 @@ export default function Layout({ children, sidebar, sidebarControls, defaultColl
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
   const [isOrgPopoverOpen, setIsOrgPopoverOpen] = useState(false);
   
-  let orgContext: ReturnType<typeof useOrganization> | null = null;
-  try {
-    orgContext = useOrganization();
-  } catch (e) {
-    // Context not available (e.g., on landing page)
-  }
-  
+  const orgContext = useOrganization();
   const currentOrg = orgContext?.currentOrg;
   const organizations = orgContext?.organizations || [];
 
