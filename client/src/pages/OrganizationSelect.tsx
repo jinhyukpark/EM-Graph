@@ -18,7 +18,6 @@ import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import networkBg from '@assets/generated_images/abstract_blue_network_connection_background_with_glowing_nodes.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -75,20 +74,6 @@ export default function OrganizationSelect() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Background Pattern */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute inset-0 z-0 opacity-[0.03] mix-blend-multiply"
-          style={{ 
-            backgroundImage: `url(${networkBg})`, 
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }} 
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/50 to-slate-50" />
-      </div>
-
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
