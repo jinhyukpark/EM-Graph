@@ -29,7 +29,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
     if ((location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) && !isCollapsed) {
       setIsCollapsed(true);
     }
-  }, [location, isCollapsed]);
+  }, [location]);
 
   // Mock Usage Data for Sidebar
   const usage = {
