@@ -177,12 +177,13 @@ export default function OrganizationSelect() {
           <div className="md:col-span-1 space-y-6">
             <div className="relative overflow-hidden rounded-2xl shadow-md border border-white bg-gradient-to-br from-indigo-900 to-slate-900">
               <div className="relative p-8 text-white">
-                <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mb-8 shadow-inner border border-white/20">
+                <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mb-8 shadow-[0_0_15px_rgba(165,180,252,0.5)] border border-white/20 relative">
+                  <div className="absolute inset-0 bg-indigo-400/20 blur-xl rounded-full animate-pulse" />
                   {/* Custom AI Mark SVG */}
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-200" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
-                    <path d="M19 2L20 5L23 6L20 7L19 10L18 7L15 6L18 5L19 2Z" opacity="0.7" />
-                    <path d="M5 18L6 20L9 21L6 22L5 24L4 22L1 21L4 20L5 18Z" opacity="0.7" />
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-100 relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" className="animate-[pulse_3s_ease-in-out_infinite]"/>
+                    <path d="M19 2L20 5L23 6L20 7L19 10L18 7L15 6L18 5L19 2Z" opacity="0.7" className="animate-[pulse_2s_ease-in-out_infinite]"/>
+                    <path d="M5 18L6 20L9 21L6 22L5 24L4 22L1 21L4 20L5 18Z" opacity="0.7" className="animate-[pulse_4s_ease-in-out_infinite]"/>
                   </svg>
                 </div>
                 
