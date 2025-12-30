@@ -55,16 +55,6 @@ export default function OrganizationSelect() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-       {/* Subtle Background Pattern */}
-       <div 
-        className="absolute inset-0 opacity-40 pointer-events-none"
-        style={{
-          backgroundImage: `url(${subtleGraphBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
       
       <div className="w-full max-w-5xl space-y-8 relative z-10">
         
