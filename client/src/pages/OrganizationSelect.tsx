@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2, Send } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 import abstractNetworkBg from '@assets/generated_images/abstract_network_background.png';
 import subtleGraphBg from '@assets/generated_images/subtle_graph_network_pattern_background.png';
 
@@ -23,7 +25,13 @@ export default function OrganizationSelect() {
   const [newOrgName, setNewOrgName] = useState("");
   const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
+  
+  // Contact Form State
+  const [contactTitle, setContactTitle] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactContent, setContactContent] = useState("");
 
   const filteredOrgs = orgs.filter(org => 
     org.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -56,6 +64,22 @@ export default function OrganizationSelect() {
     // In a real app, you'd set the active organization context here
     console.log("Selected Org:", orgId);
     setLocation("/dashboard");
+  };
+
+  const handleContactSubmit = () => {
+    // Mock submission logic
+    console.log("Contact Form Submitted:", { title: contactTitle, email: contactEmail, content: contactContent });
+    
+    // Reset form
+    setContactTitle("");
+    setContactEmail("");
+    setContactContent("");
+    setIsContactDialogOpen(false);
+
+    // Show success message
+    toast.success("문의가 접수되었습니다.", {
+      description: "담당자가 확인 후 빠르게 연락드리겠습니다.",
+    });
   };
 
   return (
@@ -234,9 +258,58 @@ export default function OrganizationSelect() {
                     <p className="text-sm text-slate-500 mb-4 leading-relaxed">
                       SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
                     </p>
-                    <Button variant="outline" size="sm" className="w-full border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
-                      영업팀 문의하기
-                    </Button>
+                    <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full border-slate-300 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
+                          영업팀 문의하기
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[500px]">
+                        <DialogHeader>
+                          <DialogTitle>영업팀 문의하기</DialogTitle>
+                          <DialogDescription>
+                            도입 문의나 파트너십 제안 등 궁금한 점을 남겨주세요.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="contact-title">제목</Label>
+                            <Input 
+                              id="contact-title" 
+                              placeholder="문의 제목을 입력해주세요" 
+                              value={contactTitle}
+                              onChange={(e) => setContactTitle(e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="contact-email">담당자 이메일</Label>
+                            <Input 
+                              id="contact-email" 
+                              type="email"
+                              placeholder="contact@company.com" 
+                              value={contactEmail}
+                              onChange={(e) => setContactEmail(e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="contact-content">문의 내용</Label>
+                            <Textarea 
+                              id="contact-content" 
+                              placeholder="궁금하신 내용을 자세히 적어주세요." 
+                              className="min-h-[120px] resize-none"
+                              value={contactContent}
+                              onChange={(e) => setContactContent(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>취소</Button>
+                          <Button onClick={handleContactSubmit} disabled={!contactTitle || !contactEmail || !contactContent} className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+                            <Send className="w-4 h-4" /> 문의하기
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                  </div>
                </div>
             </div>
