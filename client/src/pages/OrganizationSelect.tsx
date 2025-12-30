@@ -63,10 +63,10 @@ export default function OrganizationSelect() {
           <p className="text-slate-500">온톨로지 기반 데이터 분석을 위해 참여할 조직을 선택하거나 새로 생성할 수 있습니다</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-start">
+        <div className="grid md:grid-cols-2 gap-8 items-stretch">
           
           {/* Organization List */}
-          <Card className="md:col-span-1 shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm">
+          <Card className="md:col-span-1 shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm flex flex-col h-full">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-indigo-500" />
@@ -86,7 +86,7 @@ export default function OrganizationSelect() {
                 />
               </div>
             </CardHeader>
-            <CardContent className="h-[320px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+            <CardContent className="flex-1 min-h-[280px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
               {filteredOrgs.length > 0 ? (
                 filteredOrgs.map((org) => (
                   <div 
