@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2, Send } from "lucide-react";
+import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2, Send, Headphones } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -287,7 +287,7 @@ export default function OrganizationSelect() {
                
                <div className="flex items-start gap-4 relative z-10">
                  <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                    <Shield className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
+                    <Headphones className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
                  </div>
                  <div>
                     <h4 className="font-bold text-slate-800 mb-1">더 많은 팀원, 더 많은 자원이 필요하신가요?</h4>
