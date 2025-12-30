@@ -447,7 +447,7 @@ export default function Settings() {
                    <CardDescription className="text-slate-400">For large organizations requiring scale.</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold mb-2">Custom</div>
+                   <div className="text-3xl font-bold mb-2">$299<span className="text-base font-normal text-slate-400">/mo</span></div>
                    <div className="space-y-3 mt-6 text-slate-300">
                      <div className="flex items-center gap-2 text-sm">
                        <Check className="w-4 h-4 text-indigo-400" /> Unlimited Everything
