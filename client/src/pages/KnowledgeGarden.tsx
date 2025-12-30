@@ -246,17 +246,19 @@ export default function KnowledgeGarden() {
             <div className="absolute top-2 left-2 z-10 flex gap-1">
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
             </div>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              fitView
-              className="bg-background"
-            >
-              <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-              <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-            </ReactFlow>
+            <div className="w-full h-full">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                fitView
+                className="bg-background"
+              >
+                <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+                <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+              </ReactFlow>
+            </div>
             
             {/* Mini Analytics Overlay */}
             <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
