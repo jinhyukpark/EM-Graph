@@ -16,6 +16,7 @@ import ResourcesManager from "@/pages/ResourcesManager";
 import Settings from "@/pages/Settings";
 import Projects from "@/pages/Projects";
 import SignUp from "@/pages/SignUp";
+import Login from "@/pages/Login";
 import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 
@@ -24,6 +25,7 @@ function AppRouter() {
     <WouterRouter hook={useHashLocation}>
       <Switch>
         <Route path="/" component={LandingPage} />
+        <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <Route path="/organization-select" component={OrganizationSelect} />
         <Route path="/dashboard" component={Home} />
