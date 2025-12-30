@@ -54,8 +54,8 @@ export default function OrganizationSelect() {
       <div className="w-full max-w-4xl space-y-8">
         
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Select Organization</h1>
-          <p className="text-muted-foreground">Choose an organization to start analyzing or create a new one.</p>
+          <h1 className="text-3xl font-bold tracking-tight">조직 선택</h1>
+          <p className="text-muted-foreground">분석을 시작할 조직을 선택하거나 새로운 조직을 생성하세요.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
@@ -63,15 +63,15 @@ export default function OrganizationSelect() {
           {/* Organization List */}
           <Card className="md:col-span-1 shadow-lg border-primary/10">
             <CardHeader>
-              <CardTitle className="text-lg">Your Organizations</CardTitle>
+              <CardTitle className="text-lg">내 조직</CardTitle>
               <CardDescription>
-                You are a member of {orgs.length} organizations.
+                현재 {orgs.length}개 조직의 멤버입니다.
               </CardDescription>
               <div className="relative mt-2">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search organizations..."
+                  placeholder="조직 검색..."
                   className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -106,7 +106,7 @@ export default function OrganizationSelect() {
                 ))
               ) : (
                 <div className="text-center py-10 text-muted-foreground text-sm">
-                  No organizations found matching "{searchTerm}"
+                  "{searchTerm}"와(과) 일치하는 조직이 없습니다
                 </div>
               )}
             </CardContent>
@@ -114,30 +114,30 @@ export default function OrganizationSelect() {
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="w-full gap-2" size="lg">
-                    <Plus className="w-4 h-4" /> Create New Organization
+                    <Plus className="w-4 h-4" /> 새 조직 만들기
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Create Organization</DialogTitle>
+                    <DialogTitle>조직 생성</DialogTitle>
                     <DialogDescription>
-                      Create a new workspace for your team to collaborate on graph analysis.
+                      팀원들과 함께 그래프 분석을 협업할 새로운 워크스페이스를 만듭니다.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label htmlFor="org-name">Organization Name</Label>
+                      <Label htmlFor="org-name">조직 이름</Label>
                       <Input 
                         id="org-name" 
-                        placeholder="e.g. Acme Security Team" 
+                        placeholder="예: 보안 분석 팀" 
                         value={newOrgName}
                         onChange={(e) => setNewOrgName(e.target.value)}
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleCreateOrg}>Create Organization</Button>
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
+                    <Button onClick={handleCreateOrg}>조직 생성</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -150,13 +150,13 @@ export default function OrganizationSelect() {
               <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center mb-4">
                 <Building2 className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Why Organizations?</h3>
+              <h3 className="text-xl font-bold mb-2">조직을 사용하는 이유</h3>
               <ul className="space-y-3">
                 {[
-                  "Collaborate with your team in real-time",
-                  "Share graph projects and analysis reports",
-                  "Manage permissions and access controls",
-                  "Centralized billing and resource usage"
+                  "팀원들과 실시간 협업",
+                  "그래프 프로젝트 및 분석 리포트 공유",
+                  "권한 및 접근 제어 관리",
+                  "중앙화된 결제 및 리소스 관리"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
@@ -167,11 +167,11 @@ export default function OrganizationSelect() {
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card/50">
-               <h4 className="font-semibold mb-2">Need Enterprise features?</h4>
+               <h4 className="font-semibold mb-2">엔터프라이즈 기능이 필요하신가요?</h4>
                <p className="text-sm text-muted-foreground mb-4">
-                 Get SSO, advanced audit logs, and dedicated support for your large organization.
+                 SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
                </p>
-               <Button variant="outline" size="sm" className="w-full">Contact Sales</Button>
+               <Button variant="outline" size="sm" className="w-full">영업팀 문의</Button>
             </div>
           </div>
 
