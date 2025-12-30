@@ -270,7 +270,10 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           {/* User Profile */}
           <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3 px-1")}>
             <div 
-              className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer group"
+              className={cn(
+                "flex items-center cursor-pointer group",
+                isCollapsed ? "justify-center" : "gap-3 flex-1 min-w-0"
+              )}
               onClick={() => setLocation("/settings")}
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-background shadow-sm shrink-0 group-hover:ring-primary/50 transition-all">
