@@ -236,7 +236,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           
           {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">MyPage</div>}
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Ontology</div>}
               <NavItem href="/settings" icon={Settings} label="MyPage" />
             </div>
           )}
