@@ -2,13 +2,13 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+// import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
 export default defineConfig({
   plugins: [
     react(),
-    runtimeErrorOverlay(),
+    // runtimeErrorOverlay(), // 비활성화 - 잘못된 에러 감지 문제
     tailwindcss(),
     metaImagesPlugin(),
     ...(process.env.NODE_ENV !== "production" &&

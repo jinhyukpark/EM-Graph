@@ -13,7 +13,7 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Bot, Database, FileCode
 } from "lucide-react";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant } from "@xyflow/react";
+import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 // --- Mock Data ---
@@ -87,10 +87,10 @@ const CHAT_HISTORY = [
 
 const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
   const [expanded, setExpanded] = useState(true);
-  
+
   return (
     <div className="select-none">
-      <div 
+      <div
         className={`flex items-center gap-1 py-1 px-2 hover:bg-secondary/50 cursor-pointer text-sm ${node.active ? 'bg-secondary text-primary font-medium' : 'text-muted-foreground'}`}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={() => setExpanded(!expanded)}
@@ -100,7 +100,7 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
             {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
           </span>
         ) : <span className="w-4" />}
-        
+
         {node.type === 'folder' || node.type === 'root' ? (
           expanded ? <FolderOpen className="w-4 h-4 text-blue-400/80" /> : <Folder className="w-4 h-4 text-blue-400/80" />
         ) : (
@@ -108,7 +108,7 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
         )}
         <span className="truncate">{node.name}</span>
       </div>
-      
+
       {expanded && node.children && (
         <div>
           {node.children.map((child: any) => (
@@ -120,9 +120,37 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
   );
 };
 
+// Separate GraphView component for ReactFlow
+function GraphView() {
+  console.log("[GraphView] Component rendering...");
+
+  try {
+    const [nodes, , onNodesChange] = useNodesState(INITIAL_NODES);
+    const [edges, , onEdgesChange] = useEdgesState(INITIAL_EDGES);
+
+    console.log("[GraphView] Hooks initialized successfully", { nodesCount: nodes.length, edgesCount: edges.length });
+
+    return (
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView
+        className="bg-background"
+      >
+        <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+        <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+      </ReactFlow>
+    );
+  } catch (error) {
+    console.error("[GraphView] Error:", error);
+    return <div className="p-4 text-red-500">GraphView Error: {String(error)}</div>;
+  }
+}
+
 export default function KnowledgeGarden() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+  console.log("[KnowledgeGarden] Component rendering...");
 
   return (
     <Layout>
@@ -247,17 +275,9 @@ export default function KnowledgeGarden() {
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
             </div>
             <div className="w-full h-full">
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                fitView
-                className="bg-background"
-              >
-                <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-                <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-              </ReactFlow>
+              <ReactFlowProvider>
+                <GraphView />
+              </ReactFlowProvider>
             </div>
             
             {/* Mini Analytics Overlay */}
