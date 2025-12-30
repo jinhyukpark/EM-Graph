@@ -16,7 +16,7 @@ import ResourcesManager from "@/pages/ResourcesManager";
 import Settings from "@/pages/Settings";
 import Projects from "@/pages/Projects";
 import SignUp from "@/pages/SignUp";
-
+import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 
 function AppRouter() {
@@ -25,6 +25,7 @@ function AppRouter() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/signup" component={SignUp} />
+        <Route path="/organization-select" component={OrganizationSelect} />
         <Route path="/dashboard" component={Home} />
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />

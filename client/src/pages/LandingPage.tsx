@@ -97,7 +97,7 @@ export default function LandingPage() {
             <Link href="/dashboard">
               <Button variant="ghost">{t.nav.login}</Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/organization-select">
               <Button>{t.nav.getStarted}</Button>
             </Link>
           </div>
@@ -131,7 +131,7 @@ export default function LandingPage() {
               {t.hero.description}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard">
+              <Link href="/organization-select">
                 <Button size="lg" className="h-12 px-8 text-base gap-2">
                   {t.hero.startBtn} <ArrowRight className="w-4 h-4" />
                 </Button>
