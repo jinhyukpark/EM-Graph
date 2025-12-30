@@ -469,6 +469,25 @@ export default function Settings() {
                </Card>
              </div>
 
+             {/* Custom Solutions Section */}
+             <Card className="mt-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 border-indigo-500/30">
+               <CardContent className="flex items-center justify-between p-6">
+                 <div className="space-y-1">
+                   <h3 className="text-lg font-semibold flex items-center gap-2">
+                     <Server className="w-5 h-5 text-indigo-400" />
+                     Need a custom solution?
+                   </h3>
+                   <p className="text-slate-400 text-sm max-w-2xl">
+                     For large-scale deployments, on-premise requirements, or custom integrations beyond the Premium plan, 
+                     our sales team can build a tailored package for your organization.
+                   </p>
+                 </div>
+                 <Button className="bg-white text-slate-900 hover:bg-slate-100 shrink-0 ml-4">
+                   Contact Sales Team
+                 </Button>
+               </CardContent>
+             </Card>
+
              <Separator className="my-6" />
 
              <div className="grid gap-6 md:grid-cols-2">
