@@ -60,7 +60,7 @@ export default function OrganizationSelect() {
         
         <div className="text-center space-y-2 mb-10">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">조직 선택</h1>
-          <p className="text-slate-500">분석을 시작할 조직을 선택하거나 새로운 조직을 생성하세요.</p>
+          <p className="text-slate-500">지금 참여할 조직을 선택해주세요</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
