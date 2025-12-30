@@ -18,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 
 export default function Settings() {
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
+  const [activeTab, setActiveTab] = useState("account");
   
   const copyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -35,7 +36,7 @@ export default function Settings() {
           <p className="text-muted-foreground mt-2">Manage your account, team, billing, and system configurations.</p>
         </div>
 
-        <Tabs defaultValue="account" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 lg:w-[800px]">
             <TabsTrigger value="account">Account & Security</TabsTrigger>
             <TabsTrigger value="team">Team & Roles</TabsTrigger>
@@ -568,7 +569,7 @@ export default function Settings() {
                   <Button variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
                     Manage Subscription
                   </Button>
-                  <Button onClick={() => document.getElementById("trigger-billing")?.click()}>
+                  <Button onClick={() => setActiveTab("billing")}>
                     Upgrade Plan
                   </Button>
                 </div>
