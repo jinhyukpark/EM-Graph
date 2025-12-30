@@ -13,7 +13,7 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Bot, Database, FileCode
 } from "lucide-react";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant } from "@xyflow/react";
+import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 // --- Mock Data ---
@@ -246,18 +246,21 @@ export default function KnowledgeGarden() {
             <div className="absolute top-2 left-2 z-10 flex gap-1">
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
             </div>
-            <div style={{ width: '100%', height: '100%' }}>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                fitView
-                className="bg-background"
-              >
-                <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-                <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-              </ReactFlow>
+            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+              <ReactFlowProvider>
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  fitView
+                  className="bg-background"
+                  proOptions={{ hideAttribution: true }}
+                >
+                  <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+                  <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+                </ReactFlow>
+              </ReactFlowProvider>
             </div>
             
             {/* Mini Analytics Overlay */}
