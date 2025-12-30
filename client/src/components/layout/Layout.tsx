@@ -90,13 +90,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               </a>
             </Link>
           )}
-          {isCollapsed && (
-            <Link href="/dashboard">
-              <a className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors">
-                <Share2 className="w-5 h-5" />
-              </a>
-            </Link>
-          )}
           
           <Button 
             variant="ghost" 
