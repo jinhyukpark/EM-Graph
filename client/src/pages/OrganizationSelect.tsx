@@ -121,7 +121,7 @@ export default function OrganizationSelect() {
                 내 조직
               </CardTitle>
               <CardDescription>
-                현재 {orgs.length}개 조직의 멤버입니다.
+                현재 <span className="text-indigo-600 font-bold text-base">{orgs.length}개</span> 조직에 참여중입니다.
               </CardDescription>
               <div className="relative mt-2">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
