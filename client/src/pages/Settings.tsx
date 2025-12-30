@@ -32,7 +32,7 @@ export default function Settings() {
     <Layout>
       <div className="container mx-auto px-6 py-8 max-w-5xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">MyPage</h1>
           <p className="text-muted-foreground mt-2">Manage your account, team, billing, and system configurations.</p>
         </div>
 
