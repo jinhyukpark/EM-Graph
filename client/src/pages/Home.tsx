@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Activity, ArrowRight, BarChart3, Clock, Database, FileText, Play, Plus, ShieldAlert, Zap } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
-import generatedImage from "@assets/generated_images/clean_white_data_network_background.png";
+import generatedImage from "../assets/generated_images/clean_white_data_network_background.png";
 
 const DATA_INGESTION = [
   { name: "Mon", value: 240 },
