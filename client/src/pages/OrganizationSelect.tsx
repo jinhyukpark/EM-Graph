@@ -28,17 +28,12 @@ const MOCK_ORGS = [
 
 export default function OrganizationSelect() {
   const [, setLocation] = useLocation();
-  const [searchTerm, setSearchTerm] = useState("");
   const [newOrgName, setNewOrgName] = useState("");
   const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
   
-  const filteredOrgs = orgs.filter(org => 
-    org.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const handleCreateOrg = () => {
     if (newOrgName.trim() && newOrgId.trim()) {
       const newOrg = {
@@ -96,20 +91,10 @@ export default function OrganizationSelect() {
             <CardDescription>
               현재 <span className="text-indigo-600 font-bold text-base">{orgs.length}개</span> 조직에 참여중입니다.
             </CardDescription>
-            <div className="relative mt-2">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-              <Input
-                type="search"
-                placeholder="조직 검색..."
-                className="pl-8 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500/20"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
           </CardHeader>
           <CardContent className="flex-1 max-h-[400px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-            {filteredOrgs.length > 0 ? (
-              filteredOrgs.map((org) => (
+            {orgs.length > 0 ? (
+              orgs.map((org) => (
                 <div 
                   key={org.id}
                   onClick={() => handleSelectOrg(org.id)}
@@ -147,10 +132,7 @@ export default function OrganizationSelect() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                 <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                   <Search className="w-5 h-5 text-slate-300" />
-                 </div>
-                 <p className="text-slate-500 text-sm">"{searchTerm}"와(과) 일치하는 조직이 없습니다</p>
+                 <p className="text-slate-500 text-sm">참여중인 조직이 없습니다.</p>
               </div>
             )}
           </CardContent>
