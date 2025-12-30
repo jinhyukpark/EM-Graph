@@ -464,7 +464,18 @@ export default function Settings() {
                    </div>
                  </CardContent>
                  <CardFooter>
-                   <Button variant="secondary" className="w-full hover:bg-white hover:text-slate-900">Contact Sales</Button>
+                   <Button 
+                     variant="secondary" 
+                     className="w-full hover:bg-white hover:text-slate-900"
+                     onClick={() => {
+                       toast({
+                         title: "Upgrade Initiated",
+                         description: "Proceeding to checkout for Premium Plan ($299/mo).",
+                       });
+                     }}
+                   >
+                     Upgrade to Premium
+                   </Button>
                  </CardFooter>
                </Card>
              </div>
