@@ -18,6 +18,7 @@ import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import subtleGraphBg from '@assets/generated_images/subtle_graph_network_pattern_background.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -74,6 +75,19 @@ export default function OrganizationSelect() {
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
+      {/* Background Pattern */}
+      <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-start overflow-hidden">
+        <div className="absolute left-[-10%] top-1/2 -translate-y-1/2 w-[70%] h-[120%] opacity-[0.05]" 
+             style={{ 
+               backgroundImage: `url(${subtleGraphBg})`, 
+               backgroundSize: 'contain', 
+               backgroundPosition: 'center left',
+               backgroundRepeat: 'no-repeat',
+               maskImage: 'linear-gradient(to right, black, transparent)'
+             }} 
+        />
+      </div>
+
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
