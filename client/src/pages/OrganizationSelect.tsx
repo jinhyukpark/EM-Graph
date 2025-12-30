@@ -8,68 +8,90 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
+import { Building2, Plus, Users, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-
-// Mock Organizations
-const MOCK_ORGS = [
-  { id: "org-1", name: "Acme Corp", members: 12, role: "Admin", plan: "Enterprise" },
-  { id: "org-2", name: "CyberSec Team", members: 5, role: "Member", plan: "Pro" },
-  { id: "org-3", name: "Data Lab", members: 3, role: "Viewer", plan: "Free" }
-];
+import { organizations as orgsAPI, auth as authAPI } from "@/lib/api";
+import { type Organization } from "@shared/schema";
 
 export default function OrganizationSelect() {
   const [, setLocation] = useLocation();
   const [newOrgName, setNewOrgName] = useState("");
-  const [newOrgId, setNewOrgId] = useState("");
+  const [newOrgDescription, setNewOrgDescription] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
-  const [orgs, setOrgs] = useState(MOCK_ORGS);
-  
-  const handleCreateOrg = () => {
-    if (newOrgName.trim() && newOrgId.trim()) {
-      const newOrg = {
-        id: newOrgId,
-        name: newOrgName,
-        members: 1,
-        role: "Admin",
-        plan: "Free"
-      };
-      setOrgs([...orgs, newOrg]);
-      setNewOrgName("");
-      setNewOrgId("");
-      setIsDialogOpen(false);
-      // Optional: Auto-redirect to dashboard
-      // setLocation("/dashboard"); 
+  const [orgs, setOrgs] = useState<Organization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    loadOrganizations();
+  }, []);
+
+  const loadOrganizations = async () => {
+    try {
+      const data = await orgsAPI.list();
+      setOrgs(data);
+    } catch (error) {
+      toast.error("Failed to load organizations");
+      // Check if user is authenticated
+      try {
+        await authAPI.me();
+      } catch {
+        setLocation("/");
+      }
+    } finally {
+      setLoading(false);
     }
   };
+  
+  const handleCreateOrg = async () => {
+    if (!newOrgName.trim()) {
+      toast.error("조직 이름을 입력해주세요");
+      return;
+    }
 
-  const handleDeleteOrg = (e: React.MouseEvent, orgId: string) => {
-    e.stopPropagation();
-    setDeleteOrgId(orgId);
-  };
-
-  const confirmDelete = () => {
-    if (deleteOrgId) {
-      setOrgs(orgs.filter(org => org.id !== deleteOrgId));
-      setDeleteOrgId(null);
-      toast.success("조직이 삭제되었습니다.");
+    setCreating(true);
+    try {
+      const newOrg = await orgsAPI.create({
+        name: newOrgName,
+        description: newOrgDescription || undefined,
+      });
+      
+      setOrgs([...orgs, newOrg]);
+      setNewOrgName("");
+      setNewOrgDescription("");
+      setIsDialogOpen(false);
+      toast.success("조직이 생성되었습니다");
+      
+      // Auto-redirect to dashboard with new organization
+      localStorage.setItem("selectedOrgId", newOrg.id);
+      setLocation("/dashboard");
+    } catch (error) {
+      toast.error("조직 생성에 실패했습니다");
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleSelectOrg = (orgId: string) => {
-    // In a real app, you'd set the active organization context here
-    console.log("Selected Org:", orgId);
+    localStorage.setItem("selectedOrgId", orgId);
     setLocation("/dashboard");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -84,7 +106,6 @@ export default function OrganizationSelect() {
           </p>
         </div>
 
-        {/* Organization List */}
         <Card className="shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm flex flex-col">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -105,59 +126,27 @@ export default function OrganizationSelect() {
                 >
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                      <AvatarFallback className={`font-bold ${
-                        org.plan === 'Enterprise' ? 'bg-indigo-100 text-indigo-600' : 
-                        org.plan === 'Pro' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'
-                      }`}>
+                      <AvatarFallback className="font-bold bg-indigo-100 text-indigo-600">
                         {org.name.substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-semibold text-slate-800 group-hover:text-indigo-700 transition-colors">{org.name}</div>
-                      <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                        <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">{org.role}</span>
-                        <span className="text-slate-300">•</span>
-                        <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}명</span>
-                      </div>
+                      {org.description && (
+                        <div className="text-xs text-slate-500 mt-0.5">{org.description}</div>
+                      )}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
-                        onClick={(e) => handleDeleteOrg(e, org.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
                   </div>
                 </div>
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                  <p className="text-slate-500 text-sm">참여중인 조직이 없습니다.</p>
+                 <p className="text-slate-400 text-xs mt-1">새 조직을 만들어 시작하세요.</p>
               </div>
             )}
           </CardContent>
           <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
-            
-            <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>조직을 삭제하시겠습니까?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    이 작업은 되돌릴 수 없습니다. 조직과 관련된 모든 데이터가 영구적으로 삭제됩니다.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>취소</AlertDialogCancel>
-                  <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
-                    삭제 확인
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
@@ -182,19 +171,21 @@ export default function OrganizationSelect() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="org-id">조직 아이디</Label>
+                    <Label htmlFor="org-description">설명 (선택사항)</Label>
                     <Input 
-                      id="org-id" 
-                      placeholder="예: security-team-01" 
-                      value={newOrgId}
-                      onChange={(e) => setNewOrgId(e.target.value)}
+                      id="org-description" 
+                      placeholder="조직에 대한 간단한 설명" 
+                      value={newOrgDescription}
+                      onChange={(e) => setNewOrgDescription(e.target.value)}
                     />
-                    <p className="text-xs text-muted-foreground">영문, 숫자, 하이픈(-)만 사용 가능합니다.</p>
                   </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
-                  <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>조직 생성</Button>
+                  <Button onClick={handleCreateOrg} disabled={!newOrgName || creating}>
+                    {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    조직 생성
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
