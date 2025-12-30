@@ -392,7 +392,13 @@ export default function Settings() {
                    </div>
                  </CardContent>
                  <CardFooter>
-                   <Button variant="outline" className="w-full">Current Plan</Button>
+                   <Button variant="outline" className="w-full" onClick={() => {
+                     toast({
+                       variant: "destructive",
+                       title: "Plan Downgrade Failed",
+                       description: "Current usage (12 projects) exceeds the limit for the Free plan (3 projects). Please archive or delete projects before downgrading."
+                     });
+                   }}>Select Free Plan</Button>
                  </CardFooter>
                </Card>
 
@@ -426,7 +432,7 @@ export default function Settings() {
                    </div>
                  </CardContent>
                  <CardFooter>
-                   <Button className="w-full shadow-md">Upgrade to Pro</Button>
+                   <Button className="w-full shadow-md" disabled>Current Plan</Button>
                  </CardFooter>
                </Card>
 
