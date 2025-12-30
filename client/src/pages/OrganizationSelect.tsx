@@ -59,8 +59,8 @@ export default function OrganizationSelect() {
       <div className="w-full max-w-5xl space-y-8 relative z-10">
         
         <div className="text-center space-y-2 mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">조직 선택</h1>
-          <p className="text-slate-500">지금 참여할 조직을 선택해주세요</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">참여할 조직을 선택해주세요.</h1>
+          <p className="text-slate-500">온톨로지 데이터 분석을 위한 조직 생성및 참여</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
