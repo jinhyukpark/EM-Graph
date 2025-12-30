@@ -208,9 +208,9 @@ export default function OrganizationSelect() {
                     <Shield className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
                  </div>
                  <div>
-                    <h4 className="font-bold text-slate-800 mb-1">엔터프라이즈 기능</h4>
+                    <h4 className="font-bold text-slate-800 mb-1">더 많은 팀원, 더 많은 자원이 필요하신가요?</h4>
                     <p className="text-sm text-slate-500 mb-4 leading-relaxed">
-                      SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원이 필요하신가요?
+                      SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
                     </p>
                     <Button variant="outline" size="sm" className="w-full border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
                       영업팀 문의하기
