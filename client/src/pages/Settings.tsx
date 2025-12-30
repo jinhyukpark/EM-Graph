@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
@@ -40,6 +40,7 @@ export default function Settings() {
             <TabsTrigger value="account">Account & Security</TabsTrigger>
             <TabsTrigger value="team">Team & Roles</TabsTrigger>
             <TabsTrigger value="billing">Billing & License</TabsTrigger>
+            <TabsTrigger value="usage">Usage</TabsTrigger>
             <TabsTrigger value="mcp">MCP Integrations</TabsTrigger>
           </TabsList>
 
@@ -549,6 +550,86 @@ export default function Settings() {
                  </Table>
                </CardContent>
              </Card>
+          </TabsContent>
+
+          {/* Usage Tab */}
+          <TabsContent value="usage" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Projects</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">12 / 20</div>
+                  <p className="text-xs text-muted-foreground mt-1">Projects created across all users</p>
+                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
+                    <div className="h-full bg-primary w-[60%]" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Data Usage</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">3.2 GB / 5.0 GB</div>
+                  <p className="text-xs text-muted-foreground mt-1">Storage used by uploaded files and databases</p>
+                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
+                    <div className="h-full bg-indigo-500 w-[64%]" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>User Usage Statistics</CardTitle>
+                <CardDescription>Breakdown of resource consumption by team member.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="text-right">Projects Created</TableHead>
+                      <TableHead className="text-right">Data Usage</TableHead>
+                      <TableHead className="text-right">Last Active</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[
+                      { name: "John Doe", email: "john@emgraph.ai", role: "Owner", projects: 5, storage: "1.2 GB", lastActive: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
+                      { name: "Alice Smith", email: "alice@emgraph.ai", role: "Editor", projects: 4, storage: "1.5 GB", lastActive: "2 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+                      { name: "Mike Kim", email: "mike@partner.com", role: "Viewer", projects: 0, storage: "0 GB", lastActive: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
+                      { name: "Sarah Lee", email: "sarah@emgraph.ai", role: "Editor", projects: 3, storage: "500 MB", lastActive: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
+                    ].map((user, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback className={`${user.color} text-xs`}>{user.avatar}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{user.name}</div>
+                              <div className="text-xs text-muted-foreground">{user.email}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-normal">
+                            {user.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-medium">{user.projects}</TableCell>
+                        <TableCell className="text-right font-medium">{user.storage}</TableCell>
+                        <TableCell className="text-right text-muted-foreground text-sm">{user.lastActive}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* MCP Integrations Tab */}
