@@ -187,13 +187,18 @@ export default function OrganizationSelect() {
               </div>
 
               <div className="relative p-8 text-white">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-6 shadow-inner border border-white/30">
-                  <Sparkles className="w-6 h-6 text-indigo-100" />
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-6 shadow-inner border border-white/30">
+                  {/* Custom AI Mark SVG */}
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+                    <path d="M19 2L20 5L23 6L20 7L19 10L18 7L15 6L18 5L19 2Z" opacity="0.7" />
+                    <path d="M5 18L6 20L9 21L6 22L5 24L4 22L1 21L4 20L5 18Z" opacity="0.7" />
+                  </svg>
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-3 tracking-tight">조직을 사용하는 이유</h3>
+                <h3 className="text-2xl font-bold mb-3 tracking-tight">EM-Graph를 통한 강력한 협업</h3>
                 <p className="text-indigo-100 mb-6 text-sm leading-relaxed">
-                  팀 단위의 강력한 협업 기능으로 복잡한 네트워크 데이터를 더 빠르고 정확하게 분석하세요.
+                  AI 기반의 그래프 분석 엔진과 팀 단위 협업 도구로 데이터의 숨겨진 패턴을 함께 발견하세요.
                 </p>
 
                 <ul className="space-y-4">
