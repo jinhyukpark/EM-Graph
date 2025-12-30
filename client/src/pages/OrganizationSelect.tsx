@@ -1,3 +1,13 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -26,6 +36,7 @@ export default function OrganizationSelect() {
   const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
   
   // Contact Form State
@@ -57,7 +68,15 @@ export default function OrganizationSelect() {
 
   const handleDeleteOrg = (e: React.MouseEvent, orgId: string) => {
     e.stopPropagation();
-    setOrgs(orgs.filter(org => org.id !== orgId));
+    setDeleteOrgId(orgId);
+  };
+
+  const confirmDelete = () => {
+    if (deleteOrgId) {
+      setOrgs(orgs.filter(org => org.id !== deleteOrgId));
+      setDeleteOrgId(null);
+      toast.success("조직이 삭제되었습니다.");
+    }
   };
 
   const handleSelectOrg = (orgId: string) => {
@@ -150,7 +169,6 @@ export default function OrganizationSelect() {
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
-                        <ArrowRight className="w-4 h-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 ))
@@ -164,6 +182,24 @@ export default function OrganizationSelect() {
               )}
             </CardContent>
             <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
+              
+              <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>조직을 삭제하시겠습니까?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      이 작업은 되돌릴 수 없습니다. 조직과 관련된 모든 데이터가 영구적으로 삭제됩니다.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>취소</AlertDialogCancel>
+                    <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+                      삭제 확인
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
