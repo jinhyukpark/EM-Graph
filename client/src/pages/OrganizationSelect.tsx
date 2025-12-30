@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users } from "lucide-react";
+import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import abstractNetworkBg from '@assets/generated_images/abstract_network_background.png';
 
 // Mock Organizations
 const MOCK_ORGS = [
@@ -50,70 +51,84 @@ export default function OrganizationSelect() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-4xl space-y-8">
+    <div className="min-h-screen bg-slate-50/50 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-5xl space-y-8">
         
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">조직 선택</h1>
-          <p className="text-muted-foreground">분석을 시작할 조직을 선택하거나 새로운 조직을 생성하세요.</p>
+        <div className="text-center space-y-2 mb-10">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">조직 선택</h1>
+          <p className="text-slate-500">분석을 시작할 조직을 선택하거나 새로운 조직을 생성하세요.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
           
           {/* Organization List */}
-          <Card className="md:col-span-1 shadow-lg border-primary/10">
+          <Card className="md:col-span-1 shadow-xl shadow-slate-200/50 border-slate-200/60 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-lg">내 조직</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-indigo-500" />
+                내 조직
+              </CardTitle>
               <CardDescription>
                 현재 {orgs.length}개 조직의 멤버입니다.
               </CardDescription>
               <div className="relative mt-2">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
                 <Input
                   type="search"
                   placeholder="조직 검색..."
-                  className="pl-8"
+                  className="pl-8 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500/20"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             </CardHeader>
-            <CardContent className="h-[300px] overflow-y-auto pr-2 space-y-3">
+            <CardContent className="h-[320px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
               {filteredOrgs.length > 0 ? (
                 filteredOrgs.map((org) => (
                   <div 
                     key={org.id}
                     onClick={() => handleSelectOrg(org.id)}
-                    className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-secondary/50 hover:border-primary/30 transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-white shadow-sm hover:shadow-md hover:border-indigo-100 hover:bg-indigo-50/30 transition-all cursor-pointer group"
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10 border border-border">
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                        <AvatarFallback className={`font-bold ${
+                          org.plan === 'Enterprise' ? 'bg-indigo-100 text-indigo-600' : 
+                          org.plan === 'Pro' ? 'bg-purple-100 text-purple-600' : 'bg-slate-100 text-slate-600'
+                        }`}>
                           {org.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium group-hover:text-primary transition-colors">{org.name}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-2">
-                          <span>{org.role}</span>
-                          <span>•</span>
-                          <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}</span>
+                        <div className="font-semibold text-slate-800 group-hover:text-indigo-700 transition-colors">{org.name}</div>
+                        <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">{org.role}</span>
+                          <span className="text-slate-300">•</span>
+                          <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}명</span>
                         </div>
                       </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" />
+                    <div className="flex items-center gap-3">
+                        {org.plan === 'Enterprise' && (
+                            <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full shadow-sm shadow-indigo-200">ENT</span>
+                        )}
+                        <ArrowRight className="w-4 h-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
+                    </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-10 text-muted-foreground text-sm">
-                  "{searchTerm}"와(과) 일치하는 조직이 없습니다
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                     <Search className="w-5 h-5 text-slate-300" />
+                   </div>
+                   <p className="text-slate-500 text-sm">"{searchTerm}"와(과) 일치하는 조직이 없습니다</p>
                 </div>
               )}
             </CardContent>
-            <CardFooter className="border-t pt-4">
+            <CardFooter className="border-t border-slate-100 pt-4 bg-slate-50/30 rounded-b-xl">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="w-full gap-2" size="lg">
+                  <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200" size="lg">
                     <Plus className="w-4 h-4" /> 새 조직 만들기
                   </Button>
                 </DialogTrigger>
@@ -144,34 +159,64 @@ export default function OrganizationSelect() {
             </CardFooter>
           </Card>
 
-          {/* Feature / Info Section */}
+          {/* Feature / Info Section - Enhanced Design */}
           <div className="md:col-span-1 space-y-6">
-            <div className="bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 rounded-xl p-6 border border-indigo-500/20">
-              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg flex items-center justify-center mb-4">
-                <Building2 className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+            <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-indigo-100 border border-white">
+              {/* Background Image */}
+              <div className="absolute inset-0">
+                <img 
+                  src={abstractNetworkBg} 
+                  alt="Background" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-indigo-900/80 backdrop-blur-[2px]" />
               </div>
-              <h3 className="text-xl font-bold mb-2">조직을 사용하는 이유</h3>
-              <ul className="space-y-3">
-                {[
-                  "팀원들과 실시간 협업",
-                  "그래프 프로젝트 및 분석 리포트 공유",
-                  "권한 및 접근 제어 관리",
-                  "중앙화된 결제 및 리소스 관리"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+
+              <div className="relative p-8 text-white">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-6 shadow-inner border border-white/30">
+                  <Sparkles className="w-6 h-6 text-indigo-100" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-3 tracking-tight">조직을 사용하는 이유</h3>
+                <p className="text-indigo-100 mb-6 text-sm leading-relaxed">
+                  팀 단위의 강력한 협업 기능으로 복잡한 네트워크 데이터를 더 빠르고 정확하게 분석하세요.
+                </p>
+
+                <ul className="space-y-4">
+                  {[
+                    "팀원들과 실시간 그래프 공동 편집",
+                    "프로젝트별 권한 관리 및 보안 설정",
+                    "분석 리포트 및 인사이트 자동 공유",
+                    "중앙화된 리소스 및 빌링 관리"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm group">
+                      <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 group-hover:bg-emerald-500/30 transition-colors">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-300" />
+                      </div>
+                      <span className="text-indigo-50 font-medium group-hover:text-white transition-colors">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div className="p-6 rounded-xl border border-border bg-card/50">
-               <h4 className="font-semibold mb-2">엔터프라이즈 기능이 필요하신가요?</h4>
-               <p className="text-sm text-muted-foreground mb-4">
-                 SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원을 받아보세요.
-               </p>
-               <Button variant="outline" size="sm" className="w-full">영업팀 문의</Button>
+            <div className="relative p-6 rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-100 overflow-hidden group hover:border-indigo-200 transition-colors">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full -mr-8 -mt-8" />
+               
+               <div className="flex items-start gap-4 relative z-10">
+                 <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                    <Shield className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
+                 </div>
+                 <div>
+                    <h4 className="font-bold text-slate-800 mb-1">엔터프라이즈 기능</h4>
+                    <p className="text-sm text-slate-500 mb-4 leading-relaxed">
+                      SSO, 고급 감사 로그, 대규모 조직을 위한 전담 지원이 필요하신가요?
+                    </p>
+                    <Button variant="outline" size="sm" className="w-full border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all font-medium">
+                      영업팀 문의하기
+                    </Button>
+                 </div>
+               </div>
             </div>
           </div>
 
