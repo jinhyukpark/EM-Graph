@@ -73,13 +73,12 @@ export default function OrganizationSelect() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
       {/* Background Pattern */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-slate-950/80 z-10" />
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute inset-0 z-0 opacity-60"
+          className="absolute inset-0 z-0 opacity-[0.03] mix-blend-multiply"
           style={{ 
             backgroundImage: `url(${networkBg})`, 
             backgroundSize: 'cover', 
@@ -87,13 +86,14 @@ export default function OrganizationSelect() {
             backgroundRepeat: 'no-repeat',
           }} 
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/50 to-slate-50" />
       </div>
 
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-white">워크스페이스 선택</h1>
-          <p className="text-slate-300">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">워크스페이스 선택</h1>
+          <p className="text-slate-500">
             협업 중인 조직을 선택하여 분석을 시작하세요.<br />
             또는 새로운 팀을 만들어보세요.
           </p>
