@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield } from "lucide-react";
+import { Building2, Plus, ArrowRight, CheckCircle2, Search, Users, Sparkles, Shield, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import abstractNetworkBg from '@assets/generated_images/abstract_network_background.png';
@@ -45,6 +45,11 @@ export default function OrganizationSelect() {
       // Optional: Auto-redirect to dashboard
       // setLocation("/dashboard"); 
     }
+  };
+
+  const handleDeleteOrg = (e: React.MouseEvent, orgId: string) => {
+    e.stopPropagation();
+    setOrgs(orgs.filter(org => org.id !== orgId));
   };
 
   const handleSelectOrg = (orgId: string) => {
@@ -112,10 +117,15 @@ export default function OrganizationSelect() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        {org.plan === 'Enterprise' && (
-                            <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full shadow-sm shadow-indigo-200">ENT</span>
-                        )}
+                    <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                          onClick={(e) => handleDeleteOrg(e, org.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                         <ArrowRight className="w-4 h-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
                     </div>
                   </div>
