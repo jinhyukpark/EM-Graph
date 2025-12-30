@@ -77,7 +77,7 @@ export default function OrganizationSelect() {
       
       {/* Background Pattern */}
       <div className="absolute inset-y-0 left-0 w-[60%] pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 opacity-40 mix-blend-multiply" 
+        <div className="absolute inset-0 opacity-80 mix-blend-multiply" 
              style={{ 
                backgroundImage: `url(${subtleGraphBg})`, 
                backgroundSize: 'cover', 
@@ -85,7 +85,7 @@ export default function OrganizationSelect() {
                backgroundRepeat: 'no-repeat',
              }} 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-50/50 to-slate-50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-50/20 to-slate-50" />
       </div>
 
       <div className="w-full max-w-lg space-y-8 relative z-10">
