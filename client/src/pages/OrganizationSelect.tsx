@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Building2, Plus, Search, Users, Trash2, Database, Send } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -31,9 +32,15 @@ export default function OrganizationSelect() {
   const [newOrgName, setNewOrgName] = useState("");
   const [newOrgId, setNewOrgId] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
   
+  // Contact Form State
+  const [contactTitle, setContactTitle] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactContent, setContactContent] = useState("");
+
   const handleCreateOrg = () => {
     if (newOrgName.trim() && newOrgId.trim()) {
       const newOrg = {
@@ -69,6 +76,22 @@ export default function OrganizationSelect() {
     // In a real app, you'd set the active organization context here
     console.log("Selected Org:", orgId);
     setLocation("/dashboard");
+  };
+
+  const handleContactSubmit = () => {
+    // Mock submission logic
+    console.log("Contact Form Submitted:", { title: contactTitle, email: contactEmail, content: contactContent });
+    
+    // Reset form
+    setContactTitle("");
+    setContactEmail("");
+    setContactContent("");
+    setIsContactDialogOpen(false);
+
+    // Show success message
+    toast.success("문의가 접수되었습니다.", {
+      description: "담당자가 확인 후 빠르게 연락드리겠습니다.",
+    });
   };
 
   return (
@@ -200,6 +223,75 @@ export default function OrganizationSelect() {
             </Dialog>
           </CardFooter>
         </Card>
+
+        {/* Custom Solution Banner */}
+        <div className="bg-slate-900 rounded-xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+            
+            <div className="p-3 bg-indigo-500/20 rounded-lg shrink-0">
+                <Database className="w-6 h-6 text-indigo-400" />
+            </div>
+            
+            <div className="flex-1 text-center md:text-left">
+                <h3 className="font-semibold text-lg mb-1">Need a custom solution?</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                    For large-scale deployments, on-premise requirements, or custom integrations beyond the Premium plan, our sales team can build a tailored package for your organization.
+                </p>
+            </div>
+            
+            <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="secondary" className="whitespace-nowrap font-medium shrink-0">
+                        Contact Sales Team
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                    <DialogTitle>영업팀 문의하기</DialogTitle>
+                    <DialogDescription>
+                    도입 문의나 파트너십 제안 등 궁금한 점을 남겨주세요.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="contact-title">제목</Label>
+                    <Input 
+                        id="contact-title" 
+                        placeholder="문의 제목을 입력해주세요" 
+                        value={contactTitle}
+                        onChange={(e) => setContactTitle(e.target.value)}
+                    />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="contact-email">담당자 이메일</Label>
+                    <Input 
+                        id="contact-email" 
+                        type="email"
+                        placeholder="contact@company.com" 
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                    />
+                    </div>
+                    <div className="space-y-2">
+                    <Label htmlFor="contact-content">문의 내용</Label>
+                    <Textarea 
+                        id="contact-content" 
+                        placeholder="궁금하신 내용을 자세히 적어주세요." 
+                        className="min-h-[120px] resize-none"
+                        value={contactContent}
+                        onChange={(e) => setContactContent(e.target.value)}
+                    />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>취소</Button>
+                    <Button onClick={handleContactSubmit} disabled={!contactTitle || !contactEmail || !contactContent} className="gap-2 bg-indigo-600 hover:bg-indigo-700">
+                    <Send className="w-4 h-4" /> 문의하기
+                    </Button>
+                </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
 
       </div>
     </div>
