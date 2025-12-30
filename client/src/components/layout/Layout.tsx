@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
   const [location, setLocation] = useLocation();
@@ -13,6 +23,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const isProjectView = match;
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
 
   // Mock Usage Data for Sidebar
   const usage = {
@@ -272,7 +283,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                onClick={() => setLocation("/organization-select")}
+                onClick={() => setIsLogoutAlertOpen(true)}
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -302,6 +313,26 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
            {children}
         </main>
       </div>
+
+      <AlertDialog open={isLogoutAlertOpen} onOpenChange={setIsLogoutAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+            <AlertDialogDescription>
+              If you leave this page, any unsaved changes will be lost. Are you sure you want to switch organizations?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setIsLogoutAlertOpen(false);
+              setLocation("/organization-select");
+            }}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
