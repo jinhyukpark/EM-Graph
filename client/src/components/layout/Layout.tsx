@@ -26,10 +26,10 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
 
   useEffect(() => {
-    if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
+    if ((location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) && !isCollapsed) {
       setIsCollapsed(true);
     }
-  }, [location]);
+  }, [location, isCollapsed]);
 
   // Mock Usage Data for Sidebar
   const usage = {

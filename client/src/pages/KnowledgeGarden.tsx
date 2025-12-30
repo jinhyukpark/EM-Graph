@@ -41,11 +41,11 @@ const FILE_TREE = [
 ];
 
 const INITIAL_NODES = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: 'LG Energy Solution' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '2', position: { x: 200, y: -100 }, data: { label: 'SK Innovation' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '3', position: { x: 200, y: 100 }, data: { label: 'Battery Patent' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 50, height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '4', position: { x: 400, y: 0 }, data: { label: 'Trade Secrets' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
-  { id: '5', position: { x: 100, y: 200 }, data: { label: 'EV Market' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
+  { id: '1', position: { x: 0, y: 0 }, data: { label: 'LG Energy Solution' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
+  { id: '2', position: { x: 200, y: -100 }, data: { label: 'SK Innovation' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
+  { id: '3', position: { x: 200, y: 100 }, data: { label: 'Battery Patent' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 50, height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' } },
+  { id: '4', position: { x: 400, y: 0 }, data: { label: 'Trade Secrets' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' } },
+  { id: '5', position: { x: 100, y: 200 }, data: { label: 'EV Market' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px' } },
 ];
 
 const INITIAL_EDGES = [
