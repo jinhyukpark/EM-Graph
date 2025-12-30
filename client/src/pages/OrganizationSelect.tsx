@@ -77,19 +77,10 @@ export default function OrganizationSelect() {
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                <Building2 className="w-7 h-7" />
-              </div>
-              <div className="absolute -bottom-1 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">참여할 조직을 선택해주세요.</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">워크스페이스 선택</h1>
           <p className="text-slate-500">
-            온톨로지 기반 데이터 분석을 위해 참여할 조직을<br />
-            선택하거나 새로 생성할 수 있습니다
+            협업 중인 조직을 선택하여 분석을 시작하세요.<br />
+            또는 새로운 팀을 만들어보세요.
           </p>
         </div>
 
