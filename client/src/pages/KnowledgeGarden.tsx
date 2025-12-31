@@ -169,8 +169,8 @@ export default function KnowledgeGarden() {
           {/* 1. File Tree */}
           {showExplorer && (
             <>
-              <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-secondary/5 flex flex-col border-r border-border">
-                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0 bg-secondary/5 relative z-10">
+              <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-background flex flex-col border-r border-border">
+                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0 bg-background relative z-10">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
                     <Button 
@@ -219,7 +219,7 @@ export default function KnowledgeGarden() {
           {/* 2. Document Editor */}
           <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col">
             {/* Document Breadcrumb Header */}
-            <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-card/50 shrink-0">
+            <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-background shrink-0">
               <div className="flex items-center gap-2">
                  <Button 
                     variant="ghost" 
@@ -328,9 +328,9 @@ export default function KnowledgeGarden() {
           {showGraph && (
             <>
               <ResizableHandle />
-              <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative flex flex-col">
+              <ResizablePanel defaultSize={25} minSize={20} className="bg-background border-r border-border relative flex flex-col">
                  {/* Graph Header - Empty but height aligned */}
-                 <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-card/30 shrink-0">
+                 <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                    <div className="flex items-center gap-2 px-2">
                       <div className="p-1.5 bg-primary/10 rounded-md">
                         <Share2 className="w-4 h-4 text-primary" />
@@ -365,8 +365,8 @@ export default function KnowledgeGarden() {
           {showCopilot && (
             <>
               <ResizableHandle />
-              <ResizablePanel defaultSize={20} minSize={15} className="bg-card flex flex-col">
-                <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0">
+              <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
+                <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-purple-500" />
                     <span className="font-semibold text-sm">Copilot</span>
