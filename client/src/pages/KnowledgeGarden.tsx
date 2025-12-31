@@ -262,28 +262,28 @@ const INITIAL_NODES = [
 
 const INITIAL_EDGES = [
   // Red Arrows (Criminal/Hostile)
-  { id: 'e-kang-park', source: 'kang', target: 'park_razor', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-park-warehouse', source: 'park_razor', target: 'warehouse_4', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-park-warehouse', source: 'park_razor', target: 'warehouse_4', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
   
   // Blue Lines (Police/Investigation)
-  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-lee-warehouse', source: 'det_lee', target: 'warehouse_4', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
+  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-lee-warehouse', source: 'det_lee', target: 'warehouse_4', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
   
   // Purple (Legal)
-  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },
-  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', style: { stroke: '#a855f7', strokeWidth: 1.5 } },
+  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },
+  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 1.5 } },
   
   // Green (Money/Asset)
-  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', style: { stroke: '#10b981', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
+  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', type: 'straight', style: { stroke: '#10b981', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
   
   // Misc
-  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', style: { stroke: '#eab308', strokeWidth: 1.5, strokeDasharray: '5,5' } },
-  { id: 'e-company-kang', source: 'company_x', target: 'kang', style: { stroke: '#eab308', strokeWidth: 1.5 } },
+  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5, strokeDasharray: '5,5' } },
+  { id: 'e-company-kang', source: 'company_x', target: 'kang', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5 } },
 ];
 
 const CHAT_HISTORY = [
@@ -314,6 +314,44 @@ const CHAT_HISTORY = [
 ];
 
 // --- Components ---
+
+function GraphLegend() {
+    return (
+        <div className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20">
+                <span className="text-xs font-semibold text-muted-foreground">매출</span>
+                <div className="flex gap-4 text-xs font-semibold text-muted-foreground">
+                    <span>개수</span>
+                    <span>비중(%)</span>
+                </div>
+            </div>
+            <div className="py-1">
+                {[
+                    { color: 'bg-red-500', label: '1000억원 이상', count: 154, ratio: '8%' },
+                    { color: 'bg-orange-500', label: '1000억원 이하', count: 42, ratio: '2%' },
+                    { color: 'bg-amber-500', label: '500억원 이하', count: 133, ratio: '7%' },
+                    { color: 'bg-green-500', label: '100억원 이하', count: 90, ratio: '5%' },
+                    { color: 'bg-emerald-500', label: '50억원 이하', count: 237, ratio: '12%' },
+                    { color: 'bg-blue-600', label: '10억원 이하', count: 84, ratio: '4%' },
+                    { color: 'bg-indigo-500', label: '5억원 이하', count: 144, ratio: '7%' },
+                    { color: 'bg-purple-500', label: '1억원 이하', count: 36, ratio: '2%' },
+                ].map((item, i) => (
+                    <div key={i} className="flex items-center justify-between px-3 py-1.5 hover:bg-muted/50 cursor-pointer text-xs group">
+                        <div className="flex items-center gap-2 flex-1">
+                            <input type="checkbox" className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary" defaultChecked />
+                            <div className={cn("w-2.5 h-2.5 rounded-full shrink-0", item.color)} />
+                            <span className="text-foreground truncate">{item.label}</span>
+                        </div>
+                        <div className="flex gap-4 tabular-nums w-20 justify-end text-muted-foreground group-hover:text-foreground">
+                            <span className="w-8 text-right">{item.count}</span>
+                            <span className="w-8 text-right">{item.ratio}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
 
 const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
   const [expanded, setExpanded] = useState(true);
@@ -372,6 +410,7 @@ function GraphView() {
       >
         <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
         <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+        <GraphLegend />
       </ReactFlow>
     );
   } catch (error) {

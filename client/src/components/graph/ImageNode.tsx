@@ -42,7 +42,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
         }}
       >
         {/* Inner overflow hidden container for image */}
-        <div className="w-full h-full rounded-full overflow-hidden">
+        <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-white">
           {data.image ? (
             <img 
               src={data.image} 
@@ -57,10 +57,15 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
           
           {/* Fallback content (shown if no image or image error) */}
           <div className={cn(
-            "w-full h-full bg-secondary/50 flex flex-col items-center justify-center p-2 text-center",
+            "w-full h-full flex flex-col items-center justify-center p-2 text-center",
             data.image ? "hidden" : ""
           )}>
-             <span className="text-[10px] font-bold text-muted-foreground leading-tight">{data.label.substring(0, 2).toUpperCase()}</span>
+             <span 
+              className="text-[14px] font-bold leading-tight"
+              style={{ color: data.borderColor || 'hsl(var(--foreground))' }}
+             >
+                {data.label.substring(0, 2).toUpperCase()}
+             </span>
           </div>
         </div>
       </div>
