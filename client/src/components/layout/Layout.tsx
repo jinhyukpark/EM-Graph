@@ -403,7 +403,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           </Button>
         </header>
 
-        <main className="flex-1 overflow-auto relative">
+        <main className="flex-1 overflow-hidden relative">
            {children}
         </main>
       </div>
