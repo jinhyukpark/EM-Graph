@@ -12,7 +12,8 @@ import {
     ArrowRight,
     CheckCircle2,
     Calendar,
-    Download
+    Download,
+    Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +30,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
+// Import Generated Images
+import semiconductorImg from '@assets/generated_images/semiconductor_supply_chain_network.png';
+import fraudImg from '@assets/generated_images/financial_fraud_detection_graph.png';
+import rareEarthImg from '@assets/generated_images/rare_earth_mining_map.png';
+import cyberImg from '@assets/generated_images/cybersecurity_threat_network.png';
+import biotechImg from '@assets/generated_images/biotech_innovation_graph.png';
+
 // Mock Data for Brains
 const BRAINS = [
     {
@@ -44,7 +52,7 @@ const BRAINS = [
         tags: ['Supply Chain', 'Semiconductors', 'Tech', 'Hardware'],
         nodes: 5240,
         edges: 12150,
-        image: 'bg-blue-500'
+        imageSrc: semiconductorImg
     },
     {
         id: 'b2',
@@ -59,7 +67,7 @@ const BRAINS = [
         tags: ['Finance', 'Fraud Detection', 'Security', 'Compliance'],
         nodes: 3100,
         edges: 8400,
-        image: 'bg-emerald-500'
+        imageSrc: fraudImg
     },
     {
         id: 'b3',
@@ -74,7 +82,7 @@ const BRAINS = [
         tags: ['Geopolitics', 'Mining', 'Resources', 'Energy'],
         nodes: 1500,
         edges: 3200,
-        image: 'bg-amber-500'
+        imageSrc: rareEarthImg
     },
     {
         id: 'b4',
@@ -89,7 +97,7 @@ const BRAINS = [
         tags: ['Cybersecurity', 'Threat Intel', 'APT', 'Malware'],
         nodes: 8900,
         edges: 25000,
-        image: 'bg-rose-500'
+        imageSrc: cyberImg
     },
     {
         id: 'b5',
@@ -104,7 +112,7 @@ const BRAINS = [
         tags: ['Biotech', 'Pharma', 'Healthcare', 'Innovation'],
         nodes: 4200,
         edges: 9800,
-        image: 'bg-purple-500'
+        imageSrc: biotechImg
     },
     {
         id: 'b6',
@@ -119,7 +127,7 @@ const BRAINS = [
         tags: ['EV', 'Batteries', 'Automotive', 'Energy'],
         nodes: 2800,
         edges: 6500,
-        image: 'bg-cyan-500'
+        imageSrc: null // Empty case
     }
 ];
 
@@ -188,13 +196,28 @@ export default function BrainMarket() {
                         {filteredBrains.map(brain => (
                             <Card key={brain.id} className="group hover:shadow-lg transition-all duration-300 border-border/60 hover:border-primary/50 flex flex-col overflow-hidden">
                                 {/* Card Header Image Area */}
-                                <div className={`h-32 ${brain.image} relative overflow-hidden`}>
-                                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                                    <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-white">
-                                        <Badge variant="secondary" className="bg-black/30 backdrop-blur-md text-white border-none hover:bg-black/50">
+                                <div className="h-32 relative overflow-hidden bg-muted">
+                                    {brain.imageSrc ? (
+                                        <>
+                                            <img 
+                                                src={brain.imageSrc} 
+                                                alt={brain.title} 
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                                        </>
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/50">
+                                            <ImageIcon className="w-10 h-10 mb-2" />
+                                            <span className="text-xs font-medium">No Preview</span>
+                                        </div>
+                                    )}
+                                    
+                                    <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-white z-10">
+                                        <Badge variant="secondary" className="bg-black/40 backdrop-blur-md text-white border-white/10 hover:bg-black/60">
                                             {brain.nodes.toLocaleString()} Nodes
                                         </Badge>
-                                        <div className="flex items-center gap-1 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md text-xs font-medium">
+                                        <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-md text-xs font-medium border border-white/10">
                                             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                                             {brain.rating} ({brain.reviews})
                                         </div>
@@ -216,7 +239,7 @@ export default function BrainMarket() {
                                         </Avatar>
                                         <span className="font-medium text-foreground/80">{brain.author}</span>
                                         <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-                                        <span className="flex items-center gap-1">
+                                        <span className="flex items-center gap-1 ml-auto">
                                             <Clock className="w-3 h-3" /> {brain.updated}
                                         </span>
                                     </div>
