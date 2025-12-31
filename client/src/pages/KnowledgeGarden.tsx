@@ -757,7 +757,7 @@ export default function KnowledgeGarden() {
                                     <ChevronDown className="w-3.5 h-3.5 opacity-70" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-48">
+                            <DropdownMenuContent align="start" className="w-56">
                                 <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Select Status</DropdownMenuLabel>
                                 {allStatuses.map(status => (
                                     <DropdownMenuItem 
@@ -765,7 +765,10 @@ export default function KnowledgeGarden() {
                                         className="justify-between group cursor-pointer"
                                         onClick={() => setDocStatus(status)}
                                     >
-                                        <span>{status.label}</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                            <span>{status.label}</span>
+                                        </div>
                                         {status.id.startsWith('custom-') && (
                                             <Trash2 
                                                 className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
@@ -778,7 +781,16 @@ export default function KnowledgeGarden() {
                                     </DropdownMenuItem>
                                 ))}
                                 <DropdownMenuSeparator />
-                                <div className="p-2">
+                                <div className="p-2 space-y-2">
+                                    <div className="flex gap-1 mb-1 justify-between">
+                                        {['bg-slate-500', 'bg-red-500', 'bg-orange-500', 'bg-green-500', 'bg-blue-500', 'bg-purple-500'].map(color => (
+                                            <div 
+                                                key={color}
+                                                className={cn("w-4 h-4 rounded-full cursor-pointer hover:scale-110 transition-transform ring-offset-background", color === 'bg-blue-500' ? "ring-2 ring-primary ring-offset-1" : "")}
+                                                // Simplified color selection - in a real app this would update a state
+                                            />
+                                        ))}
+                                    </div>
                                     <div className="flex gap-2">
                                         <Input 
                                             placeholder="New Status..." 
