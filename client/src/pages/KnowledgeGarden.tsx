@@ -428,6 +428,7 @@ export default function KnowledgeGarden() {
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
   const [docTags, setDocTags] = useState<string[]>(['Battery', 'EV']);
   const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
@@ -435,6 +436,26 @@ export default function KnowledgeGarden() {
   const [newTagName, setNewTagName] = useState("");
 
   const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
+
+  // Helper function to toggle views safely
+  const toggleView = (
+    viewState: boolean, 
+    setViewState: (val: boolean) => void,
+    otherViews: boolean[]
+  ) => {
+    // If we are trying to hide the view (viewState is true)
+    if (viewState) {
+        // Check if all other views are hidden
+        const allOthersHidden = otherViews.every(v => !v);
+        if (allOthersHidden) {
+            // Prevent hiding and show warning
+            setShowWarning(true);
+            setTimeout(() => setShowWarning(false), 3000);
+            return;
+        }
+    }
+    setViewState(!viewState);
+  };
 
   const handleAddStatus = () => {
     if (newStatusName.trim()) {
@@ -524,7 +545,27 @@ export default function KnowledgeGarden() {
 
   return (
     <Layout>
-      <div className="h-full bg-background flex flex-col">
+      <div className="h-full bg-background flex flex-col relative">
+        {/* Warning Toast */}
+        <AnimatePresence>
+            {showWarning && (
+                <motion.div
+                    initial={{ y: -50, opacity: 0 }}
+                    animate={{ y: 20, opacity: 1 }}
+                    exit={{ y: -50, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    className="absolute top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none"
+                >
+                    <div className="bg-background border border-border/50 shadow-lg rounded-full px-4 py-2 flex items-center gap-2 text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center">
+                            <span className="text-amber-600 text-xs font-bold">!</span>
+                        </div>
+                        한개의 뷰화면은 존재해야합니다.
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+
         {/* Main Workspace */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           
@@ -591,7 +632,7 @@ export default function KnowledgeGarden() {
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
-                    onClick={() => setShowDocDetails(!showDocDetails)}
+                    onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
                   >
                     <div className="flex items-center">
                         <FileText className="w-3.5 h-3.5 mr-2" />
@@ -608,7 +649,7 @@ export default function KnowledgeGarden() {
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
-                    onClick={() => setShowGraph(!showGraph)}
+                    onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
                   >
                     <div className="flex items-center">
                         <Share2 className="w-3.5 h-3.5 mr-2" />
@@ -625,7 +666,7 @@ export default function KnowledgeGarden() {
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
-                    onClick={() => setShowCopilot(!showCopilot)}
+                    onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
                   >
                     <div className="flex items-center">
                         <Sparkles className="w-3.5 h-3.5 mr-2" />
@@ -674,7 +715,7 @@ export default function KnowledgeGarden() {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        onClick={() => setShowDocDetails(false)}
+                        onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
                     >
                         <X className="w-4 h-4" />
                     </Button>
@@ -851,7 +892,12 @@ export default function KnowledgeGarden() {
                           </div>
                           <span className="font-semibold text-sm">Ontology</span>
                        </div>
-                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowGraph(false)}>
+                       <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8" 
+                        onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
+                       >
                          <X className="w-4 h-4 text-muted-foreground" />
                        </Button>
                      </div>
@@ -886,7 +932,12 @@ export default function KnowledgeGarden() {
                         <span className="font-semibold text-sm">Copilot</span>
                       </div>
                       <div className="flex gap-1">
-                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowCopilot(false)}>
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8" 
+                            onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
+                         >
                             <X className="w-4 h-4 text-muted-foreground" />
                          </Button>
                       </div>
