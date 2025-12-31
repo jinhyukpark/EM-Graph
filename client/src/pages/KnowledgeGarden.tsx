@@ -240,8 +240,6 @@ export default function KnowledgeGarden() {
                     <Sparkles className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="h-4 w-px bg-border mx-1" />
-                <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
               </div>
             </div>
