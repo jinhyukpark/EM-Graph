@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Newspaper, Smile, Layout as LayoutIcon, BadgeCheck,
+  Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -818,10 +818,16 @@ export default function KnowledgeGarden() {
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
-                          <Avatar className="h-5 w-5">
-                              <AvatarImage src="https://github.com/shadcn.png" />
-                              <AvatarFallback>CN</AvatarFallback>
-                          </Avatar>
+                          {/* Author Info */}
+                          <div className="flex items-center gap-2 mr-2">
+                             <div className="h-5 w-5 rounded-full bg-secondary flex items-center justify-center">
+                                <User className="h-3 w-3 text-muted-foreground" />
+                             </div>
+                             <span className="text-sm font-medium text-foreground/80">Analyst_Kim</span>
+                          </div>
+                          
+                          <span className="w-1 h-1 rounded-full bg-border shrink-0" />
+
                           <span className="flex items-center gap-1.5 shrink-0">
                             <CalendarIcon className="w-3.5 h-3.5" />
                             <Popover>
