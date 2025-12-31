@@ -55,13 +55,29 @@ const BRAINS = [
         price: 49.99,
         author: 'TechInsights Pro',
         authorInitials: 'TI',
+        authorRole: 'Supply Chain Analytics Firm',
+        authorBio: 'Leading provider of advanced technology analysis and intellectual property services, specializing in microelectronics.',
+        authorHistory: '20+ years analyzing semiconductor markets. Data used by Fortune 500 tech companies.',
         rating: 4.8,
         reviews: 124,
         updated: '2 days ago',
+        updateFrequency: 'Weekly',
         tags: ['Supply Chain', 'Semiconductors', 'Tech', 'Hardware'],
         nodes: 5240,
         edges: 12150,
-        imageSrc: semiconductorImg
+        features: [
+            'Full tier-1 to tier-3 supplier mapping',
+            'Geopolitical risk indicators for each node',
+            'Production capacity data for major fabs',
+            'Lead time historical trends'
+        ],
+        datasetStats: {
+            entityTypes: 45,
+            relationTypes: 12,
+            dataSources: 150
+        },
+        imageSrc: semiconductorImg,
+        ontologyImageSrc: semiconductorImg // Reusing for demo
     },
     {
         id: 'b2',
@@ -70,13 +86,29 @@ const BRAINS = [
         price: 89.00,
         author: 'FinSec Lab',
         authorInitials: 'FS',
+        authorRole: 'Financial Security Research Institute',
+        authorBio: 'A collaborative research hub focusing on emerging threats in the digital finance space.',
+        authorHistory: 'Founded by ex-FBI cyber division agents and banking CISO veterans.',
         rating: 4.9,
         reviews: 85,
         updated: '1 week ago',
+        updateFrequency: 'Daily',
         tags: ['Finance', 'Fraud Detection', 'Security', 'Compliance'],
         nodes: 3100,
         edges: 8400,
-        imageSrc: fraudImg
+        features: [
+            'Real-time transaction anomaly patterns',
+            'Crypto mixer address tagging',
+            'Synthetic identity graph heuristics',
+            'Sanctions list integration'
+        ],
+        datasetStats: {
+            entityTypes: 30,
+            relationTypes: 18,
+            dataSources: 75
+        },
+        imageSrc: fraudImg,
+        ontologyImageSrc: fraudImg
     },
     {
         id: 'b3',
@@ -85,13 +117,29 @@ const BRAINS = [
         price: 29.99,
         author: 'GeoStrat Analyst',
         authorInitials: 'GS',
+        authorRole: 'Geopolitical Risk Consultancy',
+        authorBio: 'Specialists in resource scarcity and international trade conflicts.',
+        authorHistory: 'Advisors to energy ministries and defense contractors.',
         rating: 4.5,
         reviews: 42,
         updated: '3 days ago',
+        updateFrequency: 'Monthly',
         tags: ['Geopolitics', 'Mining', 'Resources', 'Energy'],
         nodes: 1500,
         edges: 3200,
-        imageSrc: rareEarthImg
+        features: [
+            'Mine ownership structures & subsidiaries',
+            'Processing facility locations & capacity',
+            'Export restriction policies by country',
+            'Alternative sourcing routes'
+        ],
+        datasetStats: {
+            entityTypes: 25,
+            relationTypes: 8,
+            dataSources: 40
+        },
+        imageSrc: rareEarthImg,
+        ontologyImageSrc: rareEarthImg
     },
     {
         id: 'b4',
@@ -100,13 +148,29 @@ const BRAINS = [
         price: 120.00,
         author: 'Cyber Threat Intel',
         authorInitials: 'CT',
+        authorRole: 'Threat Intelligence Provider',
+        authorBio: 'Curating actionable intelligence on state-sponsored and criminal hacking groups.',
+        authorHistory: 'Team includes certified SANS instructors and former red team leads.',
         rating: 5.0,
         reviews: 210,
         updated: '12 hours ago',
+        updateFrequency: 'Hourly',
         tags: ['Cybersecurity', 'Threat Intel', 'APT', 'Malware'],
         nodes: 8900,
         edges: 25000,
-        imageSrc: cyberImg
+        features: [
+            'Mapped to MITRE ATT&CK v14',
+            'IOCs (Indicators of Compromise) included',
+            'Campaign timelines and attribution confidence',
+            'Malware strain evolution graphs'
+        ],
+        datasetStats: {
+            entityTypes: 60,
+            relationTypes: 25,
+            dataSources: 500
+        },
+        imageSrc: cyberImg,
+        ontologyImageSrc: cyberImg
     },
     {
         id: 'b5',
@@ -115,13 +179,29 @@ const BRAINS = [
         price: 75.00,
         author: 'BioTrend Watch',
         authorInitials: 'BT',
+        authorRole: 'Life Sciences Market Research',
+        authorBio: 'Tracking the pulse of innovation in pharmaceuticals and biotechnology.',
+        authorHistory: 'Publishers of the "Annual Biotech Outlook" report.',
         rating: 4.7,
         reviews: 67,
         updated: '5 days ago',
+        updateFrequency: 'Bi-weekly',
         tags: ['Biotech', 'Pharma', 'Healthcare', 'Innovation'],
         nodes: 4200,
         edges: 9800,
-        imageSrc: biotechImg
+        features: [
+            'Clinical trial phase tracking',
+            'Patent citation networks',
+            'VC funding rounds & investor connections',
+            'Drug mechanism of action (MoA) linking'
+        ],
+        datasetStats: {
+            entityTypes: 35,
+            relationTypes: 15,
+            dataSources: 90
+        },
+        imageSrc: biotechImg,
+        ontologyImageSrc: biotechImg
     },
     {
         id: 'b6',
@@ -130,13 +210,29 @@ const BRAINS = [
         price: 39.99,
         author: 'Clean Energy Data',
         authorInitials: 'CE',
+        authorRole: 'Renewable Energy Analysts',
+        authorBio: 'Data-driven insights into the transition to green energy.',
+        authorHistory: 'Partnered with major automotive OEMs for supply chain transparency.',
         rating: 4.6,
         reviews: 98,
         updated: '1 month ago',
+        updateFrequency: 'Monthly',
         tags: ['EV', 'Batteries', 'Automotive', 'Energy'],
         nodes: 2800,
         edges: 6500,
-        imageSrc: null // Empty case
+        features: [
+            'Gigafactory locations & planned capacity',
+            'Chemistry types (LFP, NMC, NCA) tracking',
+            'Recycling facility network',
+            'Raw material contract flows'
+        ],
+        datasetStats: {
+            entityTypes: 28,
+            relationTypes: 10,
+            dataSources: 60
+        },
+        imageSrc: null, // Empty case
+        ontologyImageSrc: null
     }
 ];
 
@@ -301,10 +397,11 @@ export default function BrainMarket() {
 
             {/* Preview Dialog */}
             <Dialog open={!!selectedBrain} onOpenChange={(open) => !open && setSelectedBrain(null)}>
-                <DialogContent className="max-w-2xl p-0 overflow-hidden gap-0">
+                <DialogContent className="max-w-3xl p-0 overflow-hidden gap-0 h-[85vh] flex flex-col">
                     {selectedBrain && (
                         <>
-                            <div className="h-48 relative bg-muted">
+                            {/* Hero Section */}
+                            <div className="h-48 shrink-0 relative bg-muted">
                                 {selectedBrain.imageSrc ? (
                                     <>
                                         <img 
@@ -312,71 +409,192 @@ export default function BrainMarket() {
                                             alt={selectedBrain.title} 
                                             className="w-full h-full object-cover"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                                     </>
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/50">
                                         <ImageIcon className="w-16 h-16 mb-2" />
                                     </div>
                                 )}
-                                <div className="absolute bottom-6 left-6 right-6">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Badge className="bg-primary hover:bg-primary text-primary-foreground border-none">
+                                <div className="absolute bottom-6 left-8 right-8">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Badge className="bg-primary hover:bg-primary text-primary-foreground border-none px-3 py-1">
                                             {selectedBrain.nodes.toLocaleString()} Nodes
                                         </Badge>
-                                        <Badge variant="outline" className="bg-black/40 backdrop-blur text-white border-white/20">
+                                        <Badge variant="outline" className="bg-background/20 backdrop-blur text-foreground border-foreground/10 px-3 py-1">
                                             {selectedBrain.edges.toLocaleString()} Edges
                                         </Badge>
+                                        <Badge variant="secondary" className="bg-background/80 backdrop-blur px-3 py-1">
+                                            {selectedBrain.updateFrequency} Updates
+                                        </Badge>
                                     </div>
-                                    <h2 className="text-2xl font-bold text-white shadow-sm">{selectedBrain.title}</h2>
+                                    <h2 className="text-3xl font-bold text-foreground shadow-sm mb-1">{selectedBrain.title}</h2>
+                                    <div className="flex items-center gap-4 text-muted-foreground text-sm">
+                                        <span className="flex items-center gap-1.5">
+                                            <User className="w-4 h-4" />
+                                            {selectedBrain.author}
+                                        </span>
+                                        <span className="flex items-center gap-1.5">
+                                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                            {selectedBrain.rating} ({selectedBrain.reviews} reviews)
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div className="p-6 space-y-6">
-                                <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <Avatar className="w-10 h-10 border border-border">
-                                            <AvatarFallback className="bg-primary/10 text-primary font-bold">{selectedBrain.authorInitials}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <div className="font-medium">{selectedBrain.author}</div>
-                                            <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                                {selectedBrain.rating} ({selectedBrain.reviews} reviews)
-                                                <span>•</span>
-                                                Last updated {selectedBrain.updated}
+                            {/* Content Tabs */}
+                            <div className="flex-1 overflow-hidden flex flex-col bg-background">
+                                <Tabs defaultValue="overview" className="flex-1 flex flex-col">
+                                    <div className="px-8 border-b border-border">
+                                        <TabsList className="bg-transparent h-12 w-full justify-start gap-6 p-0">
+                                            <TabsTrigger 
+                                                value="overview" 
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                            >
+                                                Overview
+                                            </TabsTrigger>
+                                            <TabsTrigger 
+                                                value="dataspecs" 
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                            >
+                                                Data & Ontology
+                                            </TabsTrigger>
+                                            <TabsTrigger 
+                                                value="author" 
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                            >
+                                                Author Info
+                                            </TabsTrigger>
+                                            <TabsTrigger 
+                                                value="reviews" 
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                            >
+                                                Reviews ({selectedBrain.reviews})
+                                            </TabsTrigger>
+                                        </TabsList>
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto p-8">
+                                        <TabsContent value="overview" className="m-0 space-y-8 animate-in fade-in-50 duration-300">
+                                            <div className="space-y-4">
+                                                <h3 className="font-semibold text-lg flex items-center gap-2">
+                                                    About this Brain
+                                                </h3>
+                                                <p className="text-muted-foreground leading-relaxed text-base">
+                                                    {selectedBrain.description}
+                                                </p>
+                                                <div className="flex flex-wrap gap-2 pt-2">
+                                                    {selectedBrain.tags.map(tag => (
+                                                        <Badge key={tag} variant="secondary" className="px-3 py-1">
+                                                            #{tag}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-2xl font-bold text-primary">${selectedBrain.price}</div>
-                                </div>
 
-                                <div className="space-y-4">
-                                    <div>
-                                        <h3 className="font-medium mb-2 text-sm uppercase text-muted-foreground tracking-wider">Description</h3>
-                                        <p className="text-muted-foreground leading-relaxed">
-                                            {selectedBrain.description}
-                                        </p>
-                                    </div>
+                                            <div className="space-y-4">
+                                                <h3 className="font-semibold text-lg flex items-center gap-2">
+                                                    Key Features
+                                                </h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {selectedBrain.features.map((feature, idx) => (
+                                                        <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50">
+                                                            <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                                                            <span className="text-sm text-foreground/90">{feature}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </TabsContent>
 
-                                    <div>
-                                        <h3 className="font-medium mb-2 text-sm uppercase text-muted-foreground tracking-wider">Tags</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {selectedBrain.tags.map(tag => (
-                                                <Badge key={tag} variant="secondary" className="font-normal text-muted-foreground">
-                                                    #{tag}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+                                        <TabsContent value="dataspecs" className="m-0 space-y-8 animate-in fade-in-50 duration-300">
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
+                                                    <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.entityTypes}</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Entity Types</div>
+                                                </div>
+                                                <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
+                                                    <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.relationTypes}</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Relation Types</div>
+                                                </div>
+                                                <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
+                                                    <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.dataSources}</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data Sources</div>
+                                                </div>
+                                            </div>
 
-                                <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-border/50">
-                                    <Button variant="outline" onClick={() => setSelectedBrain(null)}>Close</Button>
-                                    <Button className="gap-2 w-full sm:w-auto">
-                                        Subscribe Now
-                                        <ArrowRight className="w-4 h-4" />
-                                    </Button>
+                                            <div className="space-y-4">
+                                                <h3 className="font-semibold text-lg flex items-center gap-2">
+                                                    Ontology Structure Preview
+                                                </h3>
+                                                <div className="aspect-video w-full rounded-xl overflow-hidden border border-border bg-muted relative group">
+                                                    {selectedBrain.ontologyImageSrc ? (
+                                                        <img 
+                                                            src={selectedBrain.ontologyImageSrc} 
+                                                            alt="Ontology Structure" 
+                                                            className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" 
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                                                            <Brain className="w-16 h-16 opacity-20 mb-4" />
+                                                            <p>Ontology visualization not available</p>
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                                                </div>
+                                                <p className="text-sm text-muted-foreground italic">
+                                                    * This is a visualization of the core ontology structure showing major entity classes and their relationships.
+                                                </p>
+                                            </div>
+                                        </TabsContent>
+
+                                        <TabsContent value="author" className="m-0 space-y-8 animate-in fade-in-50 duration-300">
+                                            <div className="flex items-start gap-6">
+                                                <Avatar className="w-20 h-20 border-2 border-primary/20">
+                                                    <AvatarFallback className="text-2xl bg-primary/10 text-primary font-bold">
+                                                        {selectedBrain.authorInitials}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="space-y-2">
+                                                    <h3 className="text-xl font-bold">{selectedBrain.author}</h3>
+                                                    <Badge variant="secondary" className="font-normal">{selectedBrain.authorRole}</Badge>
+                                                    <p className="text-muted-foreground leading-relaxed max-w-lg pt-2">
+                                                        {selectedBrain.authorBio}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <Separator />
+                                            
+                                            <div className="space-y-4">
+                                                <h4 className="font-medium text-sm uppercase text-muted-foreground tracking-wider">History & Credibility</h4>
+                                                <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+                                                    <p className="text-sm leading-relaxed">{selectedBrain.authorHistory}</p>
+                                                </div>
+                                            </div>
+                                        </TabsContent>
+
+                                        <TabsContent value="reviews" className="m-0 animate-in fade-in-50 duration-300">
+                                            <div className="flex flex-col items-center justify-center h-48 text-muted-foreground space-y-4">
+                                                <Star className="w-12 h-12 opacity-20" />
+                                                <p>Reviews will be available soon.</p>
+                                            </div>
+                                        </TabsContent>
+                                    </div>
+                                </Tabs>
+
+                                <DialogFooter className="p-6 border-t border-border bg-muted/5 mt-auto shrink-0 flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4 mr-auto">
+                                        <div className="text-3xl font-bold text-primary">${selectedBrain.price}</div>
+                                        <span className="text-sm text-muted-foreground">/ month</span>
+                                    </div>
+                                    <div className="flex gap-3 w-full sm:w-auto">
+                                        <Button variant="outline" size="lg" onClick={() => setSelectedBrain(null)}>Close</Button>
+                                        <Button size="lg" className="gap-2 px-8">
+                                            Subscribe Now
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+                                    </div>
                                 </DialogFooter>
                             </div>
                         </>
