@@ -59,20 +59,20 @@ const STATUS_OPTIONS = [
 const INITIAL_FILE_TREE = [
   {
     id: "root",
-    name: "Knowledge Garden",
+    name: "지식 가든",
     type: "root",
     children: [
-      { id: "f1", name: "Test folder 1", type: "folder", children: [] },
-      { id: "f2", name: "New Folder 2", type: "folder", children: [] },
-      { id: "f3", name: "New Folder", type: "folder", children: [] },
-      { id: "f4", name: "Research", type: "folder", children: [
-        { id: "n1", name: "Note 1", type: "note" },
-        { id: "n2", name: "Note 2", type: "note" },
-        { id: "n3", name: "Note 3", type: "note" }
+      { id: "f1", name: "테스트 폴더 1", type: "folder", children: [] },
+      { id: "f2", name: "새 폴더 2", type: "folder", children: [] },
+      { id: "f3", name: "새 폴더", type: "folder", children: [] },
+      { id: "f4", name: "리서치", type: "folder", children: [
+        { id: "n1", name: "메모 1", type: "note" },
+        { id: "n2", name: "메모 2", type: "note" },
+        { id: "n3", name: "메모 3", type: "note" }
       ]},
-      { id: "f5", name: "test", type: "folder", children: [] },
-      { id: "f6", name: "Analysis 2024", type: "folder", children: [
-         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true }
+      { id: "f5", name: "테스트", type: "folder", children: [] },
+      { id: "f6", name: "2024년 분석", type: "folder", children: [
+         { id: "n4", name: "LG 에너지솔루션 & SK 이노베이션", type: "note", active: true }
       ]}
     ]
   }
@@ -295,13 +295,13 @@ const INITIAL_EDGES = [
 const CHAT_HISTORY = [
   {
     role: "user",
-    content: "Summarize the key patents in this document.",
-    time: "Today"
+    content: "이 문서의 주요 특허를 요약해 줘.",
+    time: "오늘"
   },
   {
     role: "assistant",
     content: "LG 에너지솔루션과 SK이노베이션의 최근 특허 동향을 분석한 결과, 양사는 배터리 안전성과 수명 향상을 위한 기술 개발에 집중하고 있습니다. 특히 LG 에너지솔루션은 하이니켈 양극재 및 실리콘 음극재 관련 특허 출원이 두드러지며, SK이노베이션은 분리막 기술 및 배터리 재활용 기술 관련 특허를 다수 확보하고 있는 것으로 파악됩니다. 또한, 전고체 배터리 등 차세대 배터리 기술 선점을 위한 경쟁도 치열해지고 있습니다. 이 문서는 이러한 기술적 흐름을 바탕으로 향후 시장 점유율 변화 및 기술 분쟁 가능성을 시사하고 있습니다.",
-    tool: "MCP Tool • Patent_search",
+    tool: "MCP 도구 • Patent_search",
     data: [
       { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
       { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" },
@@ -317,25 +317,25 @@ const CHAT_HISTORY = [
   },
   {
     role: "user",
-    content: "Find related cases in US market.",
-    time: "Today"
+    content: "미국 시장의 관련 사례를 찾아줘.",
+    time: "오늘"
   },
   {
     role: "assistant",
-    content: "Searching for related litigation in US district courts...",
-    tool: "MCP Tool • Legal_search"
+    content: "미국 지방 법원의 관련 소송을 검색 중입니다...",
+    tool: "MCP 도구 • Legal_search"
   }
 ];
 
 const INITIAL_SESSIONS = [
   {
     id: 's1',
-    title: 'Patent Analysis',
+    title: '특허 분석',
     messages: CHAT_HISTORY
   },
   {
     id: 's2',
-    title: 'Legal Review',
+    title: '법률 검토',
     messages: []
   }
 ];
@@ -549,7 +549,7 @@ export default function KnowledgeGarden() {
     const newId = `s${Date.now()}`;
     const newSession = {
       id: newId,
-      title: 'New Chat',
+      title: '새 채팅',
       messages: []
     };
     setChatSessions([...chatSessions, newSession]);
@@ -569,7 +569,7 @@ export default function KnowledgeGarden() {
       if (newSessions.length === 0) {
           // If all deleted, add a new empty one
           const newId = `s${Date.now()}`;
-          setChatSessions([{ id: newId, title: 'New Chat', messages: [] }]);
+          setChatSessions([{ id: newId, title: '새 채팅', messages: [] }]);
           setActiveSessionId(newId);
       } else {
           setChatSessions(newSessions);
@@ -725,7 +725,7 @@ export default function KnowledgeGarden() {
                 <div className="h-16 border-b border-border flex items-center px-4 shrink-0 justify-between">
                   <div className="flex items-center gap-2 text-foreground/80">
                      <Folder className="w-5 h-5 text-blue-500" />
-                     <span className="font-semibold text-sm">Explorer</span>
+                     <span className="font-semibold text-sm">탐색기</span>
                   </div>
                   <div className="flex gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleAddNewFile}>
@@ -771,11 +771,11 @@ export default function KnowledgeGarden() {
                         <FileText className="w-4 h-4 text-blue-600" />
                      </div>
                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="hover:text-foreground cursor-pointer transition-colors">Knowledge Garden</span>
+                        <span className="hover:text-foreground cursor-pointer transition-colors">지식 가든</span>
                         <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="hover:text-foreground cursor-pointer transition-colors">Analysis 2024</span>
+                        <span className="hover:text-foreground cursor-pointer transition-colors">2024년 분석</span>
                         <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="font-medium text-foreground">LG Energy Solution & SK Innovation</span>
+                        <span className="font-medium text-foreground">LG 에너지솔루션 & SK 이노베이션</span>
                      </div>
                   </div>
                   
@@ -819,7 +819,7 @@ export default function KnowledgeGarden() {
                           suppressContentEditableWarning 
                           className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text"
                         >
-                          Patent Dispute Analysis: LG Energy Solution vs SK Innovation
+                          특허 분쟁 분석: LG 에너지솔루션 vs SK 이노베이션
                         </h1>
                       </div>
 
@@ -989,129 +989,135 @@ export default function KnowledgeGarden() {
                       <div 
                         contentEditable 
                         suppressContentEditableWarning 
-                        className="prose prose-slate max-w-none prose-sm prose-headings:font-semibold prose-a:text-blue-600 outline-none min-h-[500px] cursor-text"
+                        className="prose prose-slate max-w-none prose-sm prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:leading-relaxed outline-none min-h-[500px] cursor-text px-2"
                       >
-                        <p className="lead text-foreground/80">
-                           A comprehensive analysis of the ongoing patent dispute between two major EV battery manufacturers, examining key patents, legal arguments, and potential market impact.
+                        <p className="lead text-lg text-foreground/80 mb-8 leading-relaxed tracking-wide">
+                           두 주요 EV 배터리 제조업체 간의 진행 중인 특허 분쟁에 대한 포괄적 분석으로, 주요 특허, 법적 주장 및 잠재적 시장 영향을 검토합니다.
                         </p>
 
-                        <h3 className="mt-8 mb-4">1. Executive Summary</h3>
-                        <div className="pl-5">
-                            <p>
+                        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 개요</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <p className="mb-3">
                               The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
                               This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
                             </p>
-                            <ul className="list-disc pl-5 space-y-1">
+                            <ul className="list-disc pl-5 space-y-2 text-foreground/90">
                                 <li><strong>Consolidated Analysis:</strong> Summary of trade secret misappropriation claims.</li>
                                 <li><strong>Patent Infringement:</strong> Details on specific technology infringements.</li>
                                 <li><strong>Court Filings:</strong> Review of recent legal documentation.</li>
                             </ul>
                         </div>
 
-                        <h3 className="mt-8 mb-4">2. Key Patents in Dispute</h3>
-                        <div className="pl-5">
-                            <div className="not-prose my-6 rounded-lg border border-border bg-card">
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 주요 쟁점 특허</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <div className="not-prose my-6 rounded-lg border border-border bg-card shadow-sm overflow-hidden">
                               <table className="w-full text-sm text-left">
-                                <thead className="bg-muted/40 text-muted-foreground font-medium">
+                                <thead className="bg-muted/40 text-muted-foreground font-medium border-b border-border">
                                   <tr>
-                                    <th className="px-4 py-3">No.</th>
-                                    <th className="px-4 py-3">Patent ID</th>
-                                    <th className="px-4 py-3">Title</th>
-                                    <th className="px-4 py-3">Date</th>
-                                    <th className="px-4 py-3">Status</th>
+                                    <th className="px-4 py-3 font-semibold">번호</th>
+                                    <th className="px-4 py-3 font-semibold">특허 ID</th>
+                                    <th className="px-4 py-3 font-semibold">제목</th>
+                                    <th className="px-4 py-3 font-semibold">날짜</th>
+                                    <th className="px-4 py-3 font-semibold">상태</th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
-                                  <tr>
-                                    <td className="px-4 py-3">1</td>
-                                    <td className="px-4 py-3 font-mono text-xs">1020250175306</td>
-                                    <td className="px-4 py-3">Secondary battery including cathode active material</td>
-                                    <td className="px-4 py-3 text-muted-foreground">2025-11-18</td>
-                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                <tbody className="divide-y divide-border/50">
+                                  <tr className="hover:bg-muted/30 transition-colors">
+                                    <td className="px-4 py-3 text-muted-foreground">1</td>
+                                    <td className="px-4 py-3 font-mono text-xs text-foreground/80">1020250175306</td>
+                                    <td className="px-4 py-3 font-medium text-foreground">Secondary battery including cathode active material</td>
+                                    <td className="px-4 py-3 text-muted-foreground text-xs">2025-11-18</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px] font-normal bg-green-50 text-green-700 hover:bg-green-100 border-green-200">Public</Badge></td>
                                   </tr>
-                                  <tr>
-                                    <td className="px-4 py-3">2</td>
-                                    <td className="px-4 py-3 font-mono text-xs">1020250170023</td>
-                                    <td className="px-4 py-3">Battery module and battery pack including same</td>
-                                    <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  <tr className="hover:bg-muted/30 transition-colors">
+                                    <td className="px-4 py-3 text-muted-foreground">2</td>
+                                    <td className="px-4 py-3 font-mono text-xs text-foreground/80">1020250170023</td>
+                                    <td className="px-4 py-3 font-medium text-foreground">Battery module and battery pack including same</td>
+                                    <td className="px-4 py-3 text-muted-foreground text-xs">2025-11-12</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px] font-normal bg-green-50 text-green-700 hover:bg-green-100 border-green-200">Public</Badge></td>
                                   </tr>
-                                  <tr>
-                                    <td className="px-4 py-3">3</td>
-                                    <td className="px-4 py-3 font-mono text-xs">1020250170024</td>
-                                    <td className="px-4 py-3">Battery management system and method</td>
-                                    <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  <tr className="hover:bg-muted/30 transition-colors">
+                                    <td className="px-4 py-3 text-muted-foreground">3</td>
+                                    <td className="px-4 py-3 font-mono text-xs text-foreground/80">1020250170024</td>
+                                    <td className="px-4 py-3 font-medium text-foreground">Battery management system and method</td>
+                                    <td className="px-4 py-3 text-muted-foreground text-xs">2025-11-12</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px] font-normal bg-green-50 text-green-700 hover:bg-green-100 border-green-200">Public</Badge></td>
                                   </tr>
-                                   <tr>
-                                    <td className="px-4 py-3">4</td>
-                                    <td className="px-4 py-3 font-mono text-xs">1020250167131</td>
-                                    <td className="px-4 py-3">Thermal management system for electric vehicles</td>
-                                    <td className="px-4 py-3 text-muted-foreground">2025-11-07</td>
-                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                   <tr className="hover:bg-muted/30 transition-colors">
+                                    <td className="px-4 py-3 text-muted-foreground">4</td>
+                                    <td className="px-4 py-3 font-mono text-xs text-foreground/80">1020250167131</td>
+                                    <td className="px-4 py-3 font-medium text-foreground">Thermal management system for electric vehicles</td>
+                                    <td className="px-4 py-3 text-muted-foreground text-xs">2025-11-07</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px] font-normal bg-green-50 text-green-700 hover:bg-green-100 border-green-200">Public</Badge></td>
                                   </tr>
                                 </tbody>
                               </table>
                             </div>
                         </div>
 
-                        <h3 className="mt-8 mb-4">3. Key Arguments & Evidence ⚖️</h3>
-                        <div className="pl-5">
-                            <p>The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
-                            <ul>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 핵심 주장 및 증거 ⚖️</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <p className="mb-3">The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
+                            <ul className="list-disc pl-5 space-y-2 text-foreground/90">
                                 <li><strong>Separator Technology:</strong> Claims regarding the misappropriation of ceramic coated separator (CCS) technology.</li>
                                 <li><strong>Cathode Materials:</strong> Infringement allegations related to high-nickel content cathode manufacturing processes.</li>
                                 <li><strong>Manufacturing Data:</strong> Disputes over the transfer of yield rate data and production line schematics. 📉</li>
                             </ul>
                         </div>
 
-                        <h3>4. Analysis Process (Step-by-Step)</h3>
-                        <ol>
-                            <li>Collect all public court filings from the <strong>US ITC</strong> and <strong>Delaware District Court</strong>.</li>
-                            <li>Compare patent claims against the technical specifications of the <a href="#">SK Innovation Battery Module</a>.</li>
-                            <li>Evaluate the validity of the "prior art" defense strategy using the database.</li>
-                            <li>Assess potential damages and royalty models based on market share projections.</li>
-                        </ol>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 분석 과정 (단계별)</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
+                                <li>Collect all public court filings from the <strong>US ITC</strong> and <strong>Delaware District Court</strong>.</li>
+                                <li>Compare patent claims against the technical specifications of the <a href="#" className="no-underline hover:underline text-blue-600">SK Innovation Battery Module</a>.</li>
+                                <li>Evaluate the validity of the "prior art" defense strategy using the database.</li>
+                                <li>Assess potential damages and royalty models based on market share projections.</li>
+                            </ol>
+                        </div>
 
-                        <h3>5. Visual Evidence</h3>
-                        <p>Comparison of the disputed battery cell structures and the diagrams found in the patent filings.</p>
-                        
-                        <div className="grid grid-cols-2 gap-4 my-6 not-prose">
-                            <div className="rounded-lg border border-border overflow-hidden bg-muted/20">
-                                <div className="aspect-video bg-slate-200 flex items-center justify-center text-slate-400">
-                                    <ImageIcon className="w-8 h-8 opacity-50" />
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">5. 시각적 증거</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <p className="mb-4">Comparison of the disputed battery cell structures and the diagrams found in the patent filings.</p>
+                            
+                            <div className="grid grid-cols-2 gap-6 my-6 not-prose">
+                                <div className="rounded-xl border border-border overflow-hidden bg-muted/10 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="aspect-video bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <ImageIcon className="w-10 h-10 opacity-40" />
+                                    </div>
+                                    <div className="p-3 text-xs text-muted-foreground bg-card border-t border-border font-medium">
+                                        Fig 1. LGES Patent Diagram (US 10,123,456)
+                                    </div>
                                 </div>
-                                <div className="p-2 text-xs text-muted-foreground bg-card border-t border-border">
-                                    Fig 1. LGES Patent Diagram (US 10,123,456)
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-border overflow-hidden bg-muted/20">
-                                <div className="aspect-video bg-slate-200 flex items-center justify-center text-slate-400">
-                                    <ImageIcon className="w-8 h-8 opacity-50" />
-                                </div>
-                                <div className="p-2 text-xs text-muted-foreground bg-card border-t border-border">
-                                    Fig 2. SKI Battery Cell Cross-section
+                                <div className="rounded-xl border border-border overflow-hidden bg-muted/10 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="aspect-video bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <ImageIcon className="w-10 h-10 opacity-40" />
+                                    </div>
+                                    <div className="p-3 text-xs text-muted-foreground bg-card border-t border-border font-medium">
+                                        Fig 2. SKI Battery Cell Cross-section
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <h3>6. Action Items</h3>
-                        <ul className="contains-task-list task-list list-none pl-0">
-                            <li className="flex items-center gap-2 mb-1">
-                                <input type="checkbox" checked readOnly className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
-                                <span>Review initial court filings (Completed 2024-12-01)</span>
-                            </li>
-                            <li className="flex items-center gap-2 mb-1">
-                                <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
-                                <span>Analyze technical diagrams of SK's battery modules</span>
-                            </li>
-                            <li className="flex items-center gap-2 mb-1">
-                                <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
-                                <span>Prepare counter-arguments for cross-licensing proposal</span>
-                            </li>
-                        </ul>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">6. 조치 항목</h3>
+                        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+                            <ul className="contains-task-list task-list list-none pl-0 space-y-2">
+                                <li className="flex items-start gap-3 group">
+                                    <input type="checkbox" checked readOnly className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-default" /> 
+                                    <span className="text-foreground/80 group-hover:text-foreground transition-colors line-through decoration-muted-foreground/50">초기 법원 제출 서류 검토 (2024-12-01 완료)</span>
+                                </li>
+                                <li className="flex items-start gap-3 group">
+                                    <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-pointer" /> 
+                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">SK 배터리 모듈 기술 도면 분석</span>
+                                </li>
+                                <li className="flex items-start gap-3 group">
+                                    <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-pointer" /> 
+                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">상호 라이선스 제안에 대한 반박 논리 준비</span>
+                                </li>
+                            </ul>
+                        </div>
 
-                        <h3>7. References & Attachments</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">7. 참고 자료 및 첨부 파일</h3>
                         <p>
                             For more details, refer to the <a href="https://www.usitc.gov" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">US ITC Case Details</a> page.
                             Related internal analysis can be found in <span className="text-blue-600 bg-blue-50 px-1 rounded cursor-pointer hover:bg-blue-100 font-medium">[[Previous Litigation History]]</span>.
@@ -1158,7 +1164,7 @@ export default function KnowledgeGarden() {
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
                               <Share2 className="w-4 h-4 text-blue-500" />
-                              <span className="font-semibold text-sm">Ontology</span>
+                              <span className="font-semibold text-sm">온톨로지</span>
                            </div>
                            <Button 
                             variant="ghost" 
@@ -1186,7 +1192,7 @@ export default function KnowledgeGarden() {
                         <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-500" />
-                            <span className="font-semibold text-sm">Copilot</span>
+                            <span className="font-semibold text-sm">AI 코파일럿</span>
                           </div>
                           <div className="flex gap-1">
                              <Button 
@@ -1250,13 +1256,13 @@ export default function KnowledgeGarden() {
                            {activeSession.messages.length === 0 ? (
                              <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
                                <Bot className="w-8 h-8 mb-2 opacity-20" />
-                               <p>Start a new conversation</p>
+                               <p>새로운 대화를 시작하세요</p>
                              </div>
                            ) : (
                              activeSession.messages.map((msg, i) => (
                              <div key={i} className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
+                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? '나' : 'Nexus AI'}</span>
                                    {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
                                 </div>
                                 
