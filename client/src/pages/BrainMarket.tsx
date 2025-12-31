@@ -57,7 +57,14 @@ const BRAINS = [
         authorInitials: 'TI',
         authorRole: 'Supply Chain Analytics Firm',
         authorBio: 'Leading provider of advanced technology analysis and intellectual property services, specializing in microelectronics.',
-        authorHistory: '20+ years analyzing semiconductor markets. Data used by Fortune 500 tech companies.',
+        authorHistory: [
+            '2024: Released comprehensive GPU supply chain report',
+            '2023: Awarded "Best Data Provider" at Semicon West',
+            '2020: Established dedicated AI-chip monitoring division',
+            '20+ years analyzing semiconductor markets',
+            'Data sourced from 50+ localized research teams in Asia, US, and Europe'
+        ],
+        authorCredibility: 'Data trusted by Fortune 500 tech companies including Apple, Nvidia, and Intel.',
         rating: 4.8,
         reviews: 124,
         updated: '2 days ago',
@@ -77,7 +84,12 @@ const BRAINS = [
             dataSources: 150
         },
         imageSrc: semiconductorImg,
-        ontologyImageSrc: semiconductorImg // Reusing for demo
+        ontologyImageSrc: semiconductorImg, // Reusing for demo
+        reviewList: [
+            { id: 1, user: 'Sarah Chen', role: 'Procurement Manager', rating: 5, date: '2 days ago', comment: 'Absolutely essential for our sourcing strategy. The tier-2 supplier mapping is incredibly detailed.' },
+            { id: 2, user: 'Marcus Weber', role: 'Investment Analyst', rating: 4, date: '1 week ago', comment: 'Great data quality. Would love to see more frequent updates on pricing trends, but the structural data is solid.' },
+            { id: 3, user: 'David Kim', role: 'Hardware Engineer', rating: 5, date: '2 weeks ago', comment: 'Saved us months of research time. The ontology is very intuitive to query.' }
+        ]
     },
     {
         id: 'b2',
@@ -88,7 +100,13 @@ const BRAINS = [
         authorInitials: 'FS',
         authorRole: 'Financial Security Research Institute',
         authorBio: 'A collaborative research hub focusing on emerging threats in the digital finance space.',
-        authorHistory: 'Founded by ex-FBI cyber division agents and banking CISO veterans.',
+        authorHistory: [
+            'Founded by ex-FBI cyber division agents',
+            'Key contributors to the SWIFT security framework updates',
+            'Published "The State of DeFi Laundering" report (2023)',
+            'Advisors to major European Central Banks'
+        ],
+        authorCredibility: 'Certified by ACAMS (Association of Certified Anti-Money Laundering Specialists).',
         rating: 4.9,
         reviews: 85,
         updated: '1 week ago',
@@ -108,7 +126,11 @@ const BRAINS = [
             dataSources: 75
         },
         imageSrc: fraudImg,
-        ontologyImageSrc: fraudImg
+        ontologyImageSrc: fraudImg,
+        reviewList: [
+            { id: 1, user: 'Alex Morgan', role: 'Compliance Officer', rating: 5, date: '3 days ago', comment: 'The synthetic identity patterns are spot on. Helped us catch a major ring last week.' },
+            { id: 2, user: 'Priya Patel', role: 'Risk Analyst', rating: 5, date: '2 weeks ago', comment: 'Best ontology for graph databases I have used. Integration with Neo4j was seamless.' }
+        ]
     },
     {
         id: 'b3',
@@ -119,7 +141,13 @@ const BRAINS = [
         authorInitials: 'GS',
         authorRole: 'Geopolitical Risk Consultancy',
         authorBio: 'Specialists in resource scarcity and international trade conflicts.',
-        authorHistory: 'Advisors to energy ministries and defense contractors.',
+        authorHistory: [
+            'Advisors to energy ministries in G7 nations',
+            'Regular contributors to Foreign Affairs magazine',
+            'Track record of predicting 3 major export ban events',
+            'Specialized in China-Africa resource relations'
+        ],
+        authorCredibility: 'Cited in multiple government defense white papers.',
         rating: 4.5,
         reviews: 42,
         updated: '3 days ago',
@@ -139,7 +167,11 @@ const BRAINS = [
             dataSources: 40
         },
         imageSrc: rareEarthImg,
-        ontologyImageSrc: rareEarthImg
+        ontologyImageSrc: rareEarthImg,
+        reviewList: [
+            { id: 1, user: 'Dr. James Wilson', role: 'Policy Researcher', rating: 4, date: '1 month ago', comment: 'Very thorough on the ownership structures. Some processing capacity data feels slightly outdated.' },
+            { id: 2, user: 'Elena Rodriguez', role: 'Supply Chain Strategist', rating: 5, date: '1 month ago', comment: 'Invaluable for our risk assessment. The geopolitical dependency map is an eye-opener.' }
+        ]
     },
     {
         id: 'b4',
@@ -150,7 +182,13 @@ const BRAINS = [
         authorInitials: 'CT',
         authorRole: 'Threat Intelligence Provider',
         authorBio: 'Curating actionable intelligence on state-sponsored and criminal hacking groups.',
-        authorHistory: 'Team includes certified SANS instructors and former red team leads.',
+        authorHistory: [
+            'Team includes certified SANS instructors',
+            'Former Red Team leads from top defense contractors',
+            'Maintains one of the largest private malware zoos',
+            'First to identify the "DarkCavalry" APT group'
+        ],
+        authorCredibility: 'Partnered with major endpoint security vendors.',
         rating: 5.0,
         reviews: 210,
         updated: '12 hours ago',
@@ -170,7 +208,12 @@ const BRAINS = [
             dataSources: 500
         },
         imageSrc: cyberImg,
-        ontologyImageSrc: cyberImg
+        ontologyImageSrc: cyberImg,
+        reviewList: [
+            { id: 1, user: 'SecOps Lead', role: 'Enterprise Security', rating: 5, date: '4 hours ago', comment: 'The hourly updates are critical for us. Caught a C2 communication thanks to this feed.' },
+            { id: 2, user: 'Malware Hunter', role: 'Independent Researcher', rating: 5, date: '1 day ago', comment: 'The depth of the TTP mapping is impressive. Worth every penny.' },
+            { id: 3, user: 'CISO', role: 'Financial Services', rating: 5, date: '3 days ago', comment: 'Finally, a structured graph view of APTs instead of just flat PDF reports.' }
+        ]
     },
     {
         id: 'b5',
@@ -181,7 +224,13 @@ const BRAINS = [
         authorInitials: 'BT',
         authorRole: 'Life Sciences Market Research',
         authorBio: 'Tracking the pulse of innovation in pharmaceuticals and biotechnology.',
-        authorHistory: 'Publishers of the "Annual Biotech Outlook" report.',
+        authorHistory: [
+            'Publishers of the "Annual Biotech Outlook" report',
+            'Data team includes PhDs in Molecular Biology',
+            '10 years tracking FDA approval pipelines',
+            'Exclusive partnerships with patent data aggregators'
+        ],
+        authorCredibility: 'Data used by top VC firms in the life sciences sector.',
         rating: 4.7,
         reviews: 67,
         updated: '5 days ago',
@@ -201,7 +250,11 @@ const BRAINS = [
             dataSources: 90
         },
         imageSrc: biotechImg,
-        ontologyImageSrc: biotechImg
+        ontologyImageSrc: biotechImg,
+        reviewList: [
+            { id: 1, user: 'Dr. Emily Chen', role: 'Venture Capitalist', rating: 5, date: '1 week ago', comment: 'The patent citation network helped us identify a key acquisition target.' },
+            { id: 2, user: 'Pharma Scout', role: 'R&D', rating: 4, date: '2 weeks ago', comment: 'Great for tracking early-stage startups. Would like more coverage on European markets.' }
+        ]
     },
     {
         id: 'b6',
@@ -212,7 +265,13 @@ const BRAINS = [
         authorInitials: 'CE',
         authorRole: 'Renewable Energy Analysts',
         authorBio: 'Data-driven insights into the transition to green energy.',
-        authorHistory: 'Partnered with major automotive OEMs for supply chain transparency.',
+        authorHistory: [
+            'Partnered with major automotive OEMs',
+            'Contributors to the IEA Global EV Outlook',
+            'Specialists in battery chemistry supply chains',
+            'Tracking gigafactory announcements since 2015'
+        ],
+        authorCredibility: 'Trusted by government energy departments.',
         rating: 4.6,
         reviews: 98,
         updated: '1 month ago',
@@ -232,7 +291,11 @@ const BRAINS = [
             dataSources: 60
         },
         imageSrc: null, // Empty case
-        ontologyImageSrc: null
+        ontologyImageSrc: null,
+        reviewList: [
+            { id: 1, user: 'Auto Analyst', role: 'Market Research', rating: 5, date: '3 weeks ago', comment: 'The recycling facility network data is unique and hard to find elsewhere.' },
+            { id: 2, user: 'Green Investor', role: 'Asset Management', rating: 4, date: '1 month ago', comment: 'Good overview, but needs faster updates on raw material spot prices.' }
+        ]
     }
 ];
 
@@ -561,24 +624,73 @@ export default function BrainMarket() {
                                                     <p className="text-muted-foreground leading-relaxed max-w-lg pt-2">
                                                         {selectedBrain.authorBio}
                                                     </p>
+                                                    {selectedBrain.authorCredibility && (
+                                                        <div className="flex items-center gap-2 text-sm text-primary font-medium mt-1">
+                                                            <CheckCircle2 className="w-4 h-4" />
+                                                            {selectedBrain.authorCredibility}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             
                                             <Separator />
                                             
                                             <div className="space-y-4">
-                                                <h4 className="font-medium text-sm uppercase text-muted-foreground tracking-wider">History & Credibility</h4>
-                                                <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
-                                                    <p className="text-sm leading-relaxed">{selectedBrain.authorHistory}</p>
+                                                <h4 className="font-medium text-sm uppercase text-muted-foreground tracking-wider">History & Track Record</h4>
+                                                <div className="grid gap-3">
+                                                    {Array.isArray(selectedBrain.authorHistory) ? (
+                                                        selectedBrain.authorHistory.map((history, idx) => (
+                                                            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50">
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                                                                <p className="text-sm leading-relaxed text-foreground/90">{history}</p>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+                                                            <p className="text-sm leading-relaxed">{selectedBrain.authorHistory}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </TabsContent>
 
-                                        <TabsContent value="reviews" className="m-0 animate-in fade-in-50 duration-300">
-                                            <div className="flex flex-col items-center justify-center h-48 text-muted-foreground space-y-4">
-                                                <Star className="w-12 h-12 opacity-20" />
-                                                <p>Reviews will be available soon.</p>
-                                            </div>
+                                        <TabsContent value="reviews" className="m-0 animate-in fade-in-50 duration-300 space-y-6">
+                                            {selectedBrain.reviewList && selectedBrain.reviewList.length > 0 ? (
+                                                <div className="space-y-4">
+                                                    {selectedBrain.reviewList.map((review) => (
+                                                        <div key={review.id} className="p-4 rounded-lg border border-border/50 bg-muted/10 hover:bg-muted/30 transition-colors">
+                                                            <div className="flex items-start justify-between mb-2">
+                                                                <div className="flex items-center gap-2">
+                                                                    <Avatar className="w-8 h-8">
+                                                                        <AvatarFallback className="text-xs bg-primary/5 text-primary">
+                                                                            {review.user.substring(0, 1)}
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                    <div>
+                                                                        <div className="font-medium text-sm">{review.user}</div>
+                                                                        <div className="text-xs text-muted-foreground">{review.role}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-1 text-xs font-medium bg-secondary/50 px-2 py-1 rounded">
+                                                                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                                                    {review.rating}
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-sm text-muted-foreground leading-relaxed pl-10">
+                                                                "{review.comment}"
+                                                            </p>
+                                                            <div className="text-xs text-muted-foreground/50 text-right mt-2">
+                                                                {review.date}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center h-48 text-muted-foreground space-y-4">
+                                                    <Star className="w-12 h-12 opacity-20" />
+                                                    <p>Reviews will be available soon.</p>
+                                                </div>
+                                            )}
                                         </TabsContent>
                                     </div>
                                 </Tabs>
