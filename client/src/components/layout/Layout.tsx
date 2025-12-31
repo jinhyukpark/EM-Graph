@@ -162,31 +162,11 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           
           {!isCollapsed && !isProjectView && (
             <div className="px-3 pt-6 pb-2">
-               <div className="flex items-center justify-between mb-2 px-1">
+               <div className="flex items-center mb-2 px-1">
                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
-                 <div className="flex gap-1">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={handleOrgClick} className="cursor-pointer">
-                          Change Workspace
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setLocation('/settings')} className="cursor-pointer">
-                          Workspace Settings
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button variant="ghost" size="icon" className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground">
-                       <Search className="w-4 h-4" />
-                    </Button>
-                 </div>
                </div>
                <div className="flex items-center gap-2">
-                 <Button variant="outline" className="flex-1 justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50" onClick={handleOrgClick}>
+                 <Button variant="outline" className="w-full justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50" onClick={handleOrgClick}>
                    <div className="flex items-center gap-2 truncate min-w-0">
                      <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
                        {selectedOrg.name.substring(0,1)}
@@ -194,9 +174,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                      <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
                    </div>
                    <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
-                 </Button>
-                 <Button variant="default" size="icon" className="h-10 w-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white shadow-sm" onClick={() => setLocation("/organization-select")}>
-                   <Plus className="w-5 h-5" />
                  </Button>
                </div>
             </div>
