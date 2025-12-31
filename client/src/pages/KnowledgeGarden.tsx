@@ -298,8 +298,8 @@ const CHAT_HISTORY = [
     content: "LG 에너지솔루션과 SK이노베이션의 최근 특허 동향을 분석한 결과, 양사는 배터리 안전성과 수명 향상을 위한 기술 개발에 집중하고 있습니다. 특히 LG 에너지솔루션은 하이니켈 양극재 및 실리콘 음극재 관련 특허 출원이 두드러지며, SK이노베이션은 분리막 기술 및 배터리 재활용 기술 관련 특허를 다수 확보하고 있는 것으로 파악됩니다. 또한, 전고체 배터리 등 차세대 배터리 기술 선점을 위한 경쟁도 치열해지고 있습니다. 이 문서는 이러한 기술적 흐름을 바탕으로 향후 시장 점유율 변화 및 기술 분쟁 가능성을 시사하고 있습니다.",
     tool: "MCP Tool • Patent_search",
     data: [
-      { id: "1020250175306", title: "Cathode Active Material", date: "2025-11-18" },
-      { id: "1020250170023", title: "Battery Module", date: "2025-11-12" }
+      { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
+      { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" }
     ]
   },
   {
@@ -1050,10 +1050,13 @@ export default function KnowledgeGarden() {
                             {msg.data && (
                                <div className="space-y-1 mt-1">
                                  {msg.data.map((item: any, idx: number) => (
-                                   <div key={idx} className="bg-card border border-border rounded p-2 text-xs hover:bg-secondary/50 cursor-pointer transition-colors">
-                                      <div className="font-medium text-primary mb-0.5">{item.title}</div>
+                                   <div key={idx} className="bg-card border border-border rounded p-2 text-xs hover:bg-secondary/50 cursor-pointer transition-colors group">
+                                      <div className="font-medium text-blue-600 dark:text-blue-400 mb-1 line-clamp-1 underline-offset-2 group-hover:underline flex items-center gap-1">
+                                        <Globe className="w-3 h-3 shrink-0" />
+                                        {item.title}
+                                      </div>
                                       <div className="flex justify-between text-muted-foreground text-[10px]">
-                                        <span className="font-mono">{item.id}</span>
+                                        <span className="font-medium text-foreground/80">{item.id}</span>
                                         <span>{item.date}</span>
                                       </div>
                                    </div>
