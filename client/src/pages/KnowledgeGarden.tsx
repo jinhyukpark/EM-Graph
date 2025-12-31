@@ -995,69 +995,75 @@ export default function KnowledgeGarden() {
                            A comprehensive analysis of the ongoing patent dispute between two major EV battery manufacturers, examining key patents, legal arguments, and potential market impact.
                         </p>
 
-                        <h3>1. Executive Summary</h3>
-                        <p>
-                          The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
-                          This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
-                        </p>
-                        <ul className="list-disc pl-5 space-y-1">
-                            <li><strong>Consolidated Analysis:</strong> Summary of trade secret misappropriation claims.</li>
-                            <li><strong>Patent Infringement:</strong> Details on specific technology infringements.</li>
-                            <li><strong>Court Filings:</strong> Review of recent legal documentation.</li>
-                        </ul>
-
-                        <h3>2. Key Patents in Dispute</h3>
-                        <div className="not-prose my-6 rounded-lg border border-border bg-card">
-                          <table className="w-full text-sm text-left">
-                            <thead className="bg-muted/40 text-muted-foreground font-medium">
-                              <tr>
-                                <th className="px-4 py-3">No.</th>
-                                <th className="px-4 py-3">Patent ID</th>
-                                <th className="px-4 py-3">Title</th>
-                                <th className="px-4 py-3">Date</th>
-                                <th className="px-4 py-3">Status</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                              <tr>
-                                <td className="px-4 py-3">1</td>
-                                <td className="px-4 py-3 font-mono text-xs">1020250175306</td>
-                                <td className="px-4 py-3">Secondary battery including cathode active material</td>
-                                <td className="px-4 py-3 text-muted-foreground">2025-11-18</td>
-                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-3">2</td>
-                                <td className="px-4 py-3 font-mono text-xs">1020250170023</td>
-                                <td className="px-4 py-3">Battery module and battery pack including same</td>
-                                <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-3">3</td>
-                                <td className="px-4 py-3 font-mono text-xs">1020250170024</td>
-                                <td className="px-4 py-3">Battery management system and method</td>
-                                <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                              </tr>
-                               <tr>
-                                <td className="px-4 py-3">4</td>
-                                <td className="px-4 py-3 font-mono text-xs">1020250167131</td>
-                                <td className="px-4 py-3">Thermal management system for electric vehicles</td>
-                                <td className="px-4 py-3 text-muted-foreground">2025-11-07</td>
-                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                              </tr>
-                            </tbody>
-                          </table>
+                        <h3 className="mt-8 mb-4">1. Executive Summary</h3>
+                        <div className="pl-5">
+                            <p>
+                              The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
+                              This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
+                            </p>
+                            <ul className="list-disc pl-5 space-y-1">
+                                <li><strong>Consolidated Analysis:</strong> Summary of trade secret misappropriation claims.</li>
+                                <li><strong>Patent Infringement:</strong> Details on specific technology infringements.</li>
+                                <li><strong>Court Filings:</strong> Review of recent legal documentation.</li>
+                            </ul>
                         </div>
 
-                        <h3>3. Key Arguments & Evidence ⚖️</h3>
-                        <p>The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
-                        <ul>
-                            <li><strong>Separator Technology:</strong> Claims regarding the misappropriation of ceramic coated separator (CCS) technology.</li>
-                            <li><strong>Cathode Materials:</strong> Infringement allegations related to high-nickel content cathode manufacturing processes.</li>
-                            <li><strong>Manufacturing Data:</strong> Disputes over the transfer of yield rate data and production line schematics. 📉</li>
-                        </ul>
+                        <h3 className="mt-8 mb-4">2. Key Patents in Dispute</h3>
+                        <div className="pl-5">
+                            <div className="not-prose my-6 rounded-lg border border-border bg-card">
+                              <table className="w-full text-sm text-left">
+                                <thead className="bg-muted/40 text-muted-foreground font-medium">
+                                  <tr>
+                                    <th className="px-4 py-3">No.</th>
+                                    <th className="px-4 py-3">Patent ID</th>
+                                    <th className="px-4 py-3">Title</th>
+                                    <th className="px-4 py-3">Date</th>
+                                    <th className="px-4 py-3">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                  <tr>
+                                    <td className="px-4 py-3">1</td>
+                                    <td className="px-4 py-3 font-mono text-xs">1020250175306</td>
+                                    <td className="px-4 py-3">Secondary battery including cathode active material</td>
+                                    <td className="px-4 py-3 text-muted-foreground">2025-11-18</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  </tr>
+                                  <tr>
+                                    <td className="px-4 py-3">2</td>
+                                    <td className="px-4 py-3 font-mono text-xs">1020250170023</td>
+                                    <td className="px-4 py-3">Battery module and battery pack including same</td>
+                                    <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  </tr>
+                                  <tr>
+                                    <td className="px-4 py-3">3</td>
+                                    <td className="px-4 py-3 font-mono text-xs">1020250170024</td>
+                                    <td className="px-4 py-3">Battery management system and method</td>
+                                    <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  </tr>
+                                   <tr>
+                                    <td className="px-4 py-3">4</td>
+                                    <td className="px-4 py-3 font-mono text-xs">1020250167131</td>
+                                    <td className="px-4 py-3">Thermal management system for electric vehicles</td>
+                                    <td className="px-4 py-3 text-muted-foreground">2025-11-07</td>
+                                    <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+
+                        <h3 className="mt-8 mb-4">3. Key Arguments & Evidence ⚖️</h3>
+                        <div className="pl-5">
+                            <p>The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
+                            <ul>
+                                <li><strong>Separator Technology:</strong> Claims regarding the misappropriation of ceramic coated separator (CCS) technology.</li>
+                                <li><strong>Cathode Materials:</strong> Infringement allegations related to high-nickel content cathode manufacturing processes.</li>
+                                <li><strong>Manufacturing Data:</strong> Disputes over the transfer of yield rate data and production line schematics. 📉</li>
+                            </ul>
+                        </div>
 
                         <h3>4. Analysis Process (Step-by-Step)</h3>
                         <ol>
