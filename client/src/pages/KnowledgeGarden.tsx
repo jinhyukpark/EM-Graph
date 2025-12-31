@@ -21,6 +21,7 @@ import "@xyflow/react/dist/style.css";
 import ImageNode from "@/components/graph/ImageNode";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -817,6 +818,10 @@ export default function KnowledgeGarden() {
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
+                          <Avatar className="h-5 w-5">
+                              <AvatarImage src="https://github.com/shadcn.png" />
+                              <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
                           <span className="flex items-center gap-1.5 shrink-0">
                             <CalendarIcon className="w-3.5 h-3.5" />
                             <Popover>
