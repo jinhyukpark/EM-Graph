@@ -778,6 +778,48 @@ export default function KnowledgeGarden() {
                      ))}
                    </div>
                 </ScrollArea>
+                
+                <div className="p-3 border-t border-border bg-muted/5 space-y-2.5">
+                    <div className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-1">View Options</div>
+                    <div className="flex flex-col gap-1">
+                         <Button 
+                            variant={showDocDetails ? "secondary" : "ghost"} 
+                            size="sm" 
+                            className={cn("justify-between h-8 px-2 w-full font-normal", showDocDetails && "bg-white shadow-sm border border-border/50")}
+                            onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
+                         >
+                            <div className="flex items-center gap-2">
+                                <FileText className="w-3.5 h-3.5 text-blue-500" />
+                                <span className="text-xs">Editor</span>
+                            </div>
+                            <div className={cn("w-2 h-2 rounded-full", showDocDetails ? "bg-blue-500" : "bg-border")} />
+                         </Button>
+                         <Button 
+                            variant={showGraph ? "secondary" : "ghost"} 
+                            size="sm" 
+                            className={cn("justify-between h-8 px-2 w-full font-normal", showGraph && "bg-white shadow-sm border border-border/50")}
+                            onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
+                         >
+                            <div className="flex items-center gap-2">
+                                <Network className="w-3.5 h-3.5 text-purple-500" />
+                                <span className="text-xs">Ontology</span>
+                            </div>
+                             <div className={cn("w-2 h-2 rounded-full", showGraph ? "bg-purple-500" : "bg-border")} />
+                         </Button>
+                         <Button 
+                            variant={showCopilot ? "secondary" : "ghost"} 
+                            size="sm" 
+                            className={cn("justify-between h-8 px-2 w-full font-normal", showCopilot && "bg-white shadow-sm border border-border/50")}
+                            onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
+                         >
+                            <div className="flex items-center gap-2">
+                                <Bot className="w-3.5 h-3.5 text-green-500" />
+                                <span className="text-xs">AI Copilot</span>
+                            </div>
+                             <div className={cn("w-2 h-2 rounded-full", showCopilot ? "bg-green-500" : "bg-border")} />
+                         </Button>
+                    </div>
+                </div>
               </ResizablePanel>
               <ResizableHandle />
             </>
