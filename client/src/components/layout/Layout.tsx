@@ -126,7 +126,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                   <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
                 </div>
               </div>
-              <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-1 opacity-50 shrink-0" />
             </Button>
           ) : (
             <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
