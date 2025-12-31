@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -329,6 +329,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Ontology</div>}
               <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" />
+              <NavItem href="/brain-market" icon={Brain} label="Brain Market" />
             </div>
           )}
         </nav>

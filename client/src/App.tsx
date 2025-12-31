@@ -18,6 +18,7 @@ import Projects from "@/pages/Projects";
 import SignUp from "@/pages/SignUp";
 import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
+import BrainMarket from "@/pages/BrainMarket";
 
 function AppRouter() {
   return (
@@ -29,6 +30,7 @@ function AppRouter() {
         <Route path="/dashboard" component={Home} />
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
+        <Route path="/brain-market" component={BrainMarket} />
         <Route path="/create" component={CreateProject} />
         <Route path="/project/:id/setup" component={ProjectSetup} />
         <Route path="/project/:id/view" component={ProjectView} />
