@@ -1033,22 +1033,6 @@ export default function KnowledgeGarden() {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
-                                        <Bot className="w-3.5 h-3.5" />
-                                        <span className="hidden sm:inline">Agent</span>
-                                        <ChevronDown className="w-3 h-3 opacity-50" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start">
-                                    <DropdownMenuItem>Agent</DropdownMenuItem>
-                                    <DropdownMenuItem>Chat</DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-
-                              <div className="w-px h-3 bg-border mx-1" />
-
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
                                         <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
                                         <ChevronDown className="w-3 h-3 opacity-50" />
                                     </Button>
@@ -1066,10 +1050,7 @@ export default function KnowledgeGarden() {
                                 <AtSign className="w-4 h-4" />
                               </Button>
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                <Globe className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                <ImageIcon className="w-4 h-4" />
+                                <FileText className="w-4 h-4" />
                               </Button>
                               <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm">
                                 <ArrowUp className="w-4 h-4" />
