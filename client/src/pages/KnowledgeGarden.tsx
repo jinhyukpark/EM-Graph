@@ -953,7 +953,7 @@ export default function KnowledgeGarden() {
                            </button>
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <MessageSquare className="w-3.5 h-3.5" />
-                             <span>Add Comment</span>
+                             <span>문서정리</span>
                            </button>
                         </div>
                         
