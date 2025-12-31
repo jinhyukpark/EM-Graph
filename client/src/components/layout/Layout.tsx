@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, PanelLeftClose, PanelLeftOpen, ChevronLeft } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -106,33 +106,21 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       
       {/* Sidebar */}
       <aside className={cn(
-        "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300 relative group/sidebar",
+        "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}>
-        {/* Sidebar Toggle Button - Tag Style on Edge */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={cn(
-            "absolute -right-3 top-20 z-50 h-6 w-6 rounded-full border border-border bg-background flex items-center justify-center shadow-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-200 opacity-0 group-hover/sidebar:opacity-100",
-            isCollapsed && "opacity-100" // Always show when collapsed so user can find it
-          )}
-          aria-label="Toggle Sidebar"
-        >
-          {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
-        </button>
-
         {/* Workspace Switcher / Logo Area */}
-        <div className={cn("h-16 flex items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-3")}>
+        <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between px-2 hover:bg-secondary/50 h-12 min-w-0">
+                <Button variant="ghost" className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1">
                   <div className="flex items-center gap-2 text-left min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                       <Share2 className="w-5 h-5" />
                     </div>
                     <div className="flex flex-col items-start leading-none min-w-0">
-                      <span className="font-bold text-sm truncate w-32">{selectedOrg.name}</span>
+                      <span className="font-bold text-sm truncate w-24">{selectedOrg.name}</span>
                       <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
                     </div>
                   </div>
@@ -166,6 +154,15 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               <Share2 className="w-5 h-5" />
             </div>
           )}
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex shrink-0"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+             {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </Button>
         </div>
 
         {/* Navigation */}
