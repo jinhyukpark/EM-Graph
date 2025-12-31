@@ -821,78 +821,6 @@ export default function KnowledgeGarden() {
                     <div className="space-y-6">
                       <div className="flex items-start justify-between gap-4">
                         <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
-                        
-                        {/* Status Dropdown moved here */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className={cn(
-                                        "h-8 gap-2 px-3 border-transparent text-white hover:text-white/90 shadow-sm transition-all shrink-0 mt-1",
-                                        docStatus.color
-                                    )}
-                                >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                                    <span className="text-xs font-medium">{docStatus.label}</span>
-                                    <ChevronDown className="w-3 h-3 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48">
-                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2 py-1.5">Change Status</DropdownMenuLabel>
-                                {allStatuses.map(status => (
-                                    <DropdownMenuItem 
-                                        key={status.id} 
-                                        onClick={() => setDocStatus(status)}
-                                        className="gap-2 focus:bg-accent cursor-pointer"
-                                    >
-                                        <div className={cn("w-2 h-2 rounded-full", status.color)} />
-                                        <span className="text-sm">{status.label}</span>
-                                        {docStatus.id === status.id && <div className="ml-auto text-primary text-xs">Active</div>}
-                                    </DropdownMenuItem>
-                                ))}
-                                <DropdownMenuSeparator />
-                                <div className="p-2">
-                                    <div className="flex items-center gap-2">
-                                        <Input 
-                                            placeholder="New status..." 
-                                            className="h-7 text-xs" 
-                                            value={newStatusName}
-                                            onChange={(e) => setNewStatusName(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && handleAddStatus()}
-                                        />
-                                        <Button size="icon" className="h-7 w-7" onClick={handleAddStatus}>
-                                            <Plus className="w-3 h-3" />
-                                        </Button>
-                                    </div>
-                                </div>
-                                {customStatuses.length > 0 && (
-                                    <>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2">Manage Custom</DropdownMenuLabel>
-                                        {customStatuses.map(status => (
-                                            <div key={status.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-muted/50 rounded-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={cn("w-2 h-2 rounded-full", status.color)} />
-                                                    <span>{status.label}</span>
-                                                </div>
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="icon" 
-                                                    className="h-5 w-5 hover:text-red-500"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeleteStatus(status.id);
-                                                    }}
-                                                >
-                                                    <Trash2 className="w-3 h-3" />
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
@@ -905,6 +833,80 @@ export default function KnowledgeGarden() {
                             <Tag className="w-3.5 h-3.5" />
                             Legal, IP, Battery
                           </span>
+                          
+                          <div className="ml-auto flex items-center gap-2">
+                             {/* Status Dropdown moved here */}
+                             <DropdownMenu>
+                                 <DropdownMenuTrigger asChild>
+                                     <Button 
+                                         variant="outline" 
+                                         size="sm" 
+                                         className={cn(
+                                             "h-7 gap-2 px-2.5 border-transparent text-white hover:text-white/90 shadow-sm transition-all",
+                                             docStatus.color
+                                         )}
+                                     >
+                                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                         <span className="text-xs font-medium">{docStatus.label}</span>
+                                         <ChevronDown className="w-3 h-3 opacity-50" />
+                                     </Button>
+                                 </DropdownMenuTrigger>
+                                 <DropdownMenuContent align="end" className="w-48">
+                                     <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2 py-1.5">Change Status</DropdownMenuLabel>
+                                     {allStatuses.map(status => (
+                                         <DropdownMenuItem 
+                                             key={status.id} 
+                                             onClick={() => setDocStatus(status)}
+                                             className="gap-2 focus:bg-accent cursor-pointer"
+                                         >
+                                             <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                             <span className="text-sm">{status.label}</span>
+                                             {docStatus.id === status.id && <div className="ml-auto text-primary text-xs">Active</div>}
+                                         </DropdownMenuItem>
+                                     ))}
+                                     <DropdownMenuSeparator />
+                                     <div className="p-2">
+                                         <div className="flex items-center gap-2">
+                                             <Input 
+                                                 placeholder="New status..." 
+                                                 className="h-7 text-xs" 
+                                                 value={newStatusName}
+                                                 onChange={(e) => setNewStatusName(e.target.value)}
+                                                 onKeyDown={(e) => e.key === 'Enter' && handleAddStatus()}
+                                             />
+                                             <Button size="icon" className="h-7 w-7" onClick={handleAddStatus}>
+                                                 <Plus className="w-3 h-3" />
+                                             </Button>
+                                         </div>
+                                     </div>
+                                     {customStatuses.length > 0 && (
+                                         <>
+                                             <DropdownMenuSeparator />
+                                             <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2">Manage Custom</DropdownMenuLabel>
+                                             {customStatuses.map(status => (
+                                                 <div key={status.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-muted/50 rounded-sm">
+                                                     <div className="flex items-center gap-2">
+                                                         <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                                         <span>{status.label}</span>
+                                                     </div>
+                                                     <Button 
+                                                         variant="ghost" 
+                                                         size="icon" 
+                                                         className="h-5 w-5 hover:text-red-500"
+                                                         onClick={(e) => {
+                                                             e.stopPropagation();
+                                                             handleDeleteStatus(status.id);
+                                                         }}
+                                                     >
+                                                         <Trash2 className="w-3 h-3" />
+                                                     </Button>
+                                                 </div>
+                                             ))}
+                                         </>
+                                     )}
+                                 </DropdownMenuContent>
+                             </DropdownMenu>
+                          </div>
                         </div>
                       </div>
 
