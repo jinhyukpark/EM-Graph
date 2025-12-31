@@ -279,7 +279,7 @@ export default function KnowledgeGarden() {
         {/* Main Workspace */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           
-          {/* 1. File Tree */}
+          {/* 1. File Tree (Outer Group) */}
           {showExplorer && (
             <>
               <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-background flex flex-col border-r border-border">
@@ -390,38 +390,42 @@ export default function KnowledgeGarden() {
             </>
           )}
 
-          {/* 2. Document Editor */}
-          <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col">
-            {/* Document Breadcrumb Header */}
-            <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-background shrink-0">
-              <div className="flex items-center gap-2">
-                 <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className={cn("h-8 w-8 mr-1 text-muted-foreground", !showExplorer && "text-primary bg-primary/10")}
-                    onClick={() => setShowExplorer(!showExplorer)}
-                    title="Toggle Explorer"
-                 >
-                   <PanelLeft className="w-4 h-4" />
-                 </Button>
-
-                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                   <span className="font-semibold text-foreground">Knowledge Garden</span>
-                   <ChevronRight className="w-4 h-4" />
-                   <span>Analysis 2024</span>
-                   <ChevronRight className="w-4 h-4" />
-                   <span className="text-foreground">LG Energy Solution & SK Innovation</span>
-                 </div>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
-              </div>
-            </div>
-
-            <ScrollArea className="flex-1">
-              <div className="max-w-3xl mx-auto p-8 space-y-8">
+          {/* Content Wrapper (Inner Group) */}
+          <ResizablePanel defaultSize={85}>
+            <ResizablePanelGroup direction="horizontal">
+            
+              {/* 2. Document Editor */}
+              <ResizablePanel defaultSize={50} minSize={30} className="bg-background flex flex-col">
+                {/* Document Breadcrumb Header */}
+                <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-background shrink-0">
+                  <div className="flex items-center gap-2">
+                     <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-8 w-8 mr-1 text-muted-foreground", !showExplorer && "text-primary bg-primary/10")}
+                        onClick={() => setShowExplorer(!showExplorer)}
+                        title="Toggle Explorer"
+                     >
+                       <PanelLeft className="w-4 h-4" />
+                     </Button>
+    
+                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                       <span className="font-semibold text-foreground">Knowledge Garden</span>
+                       <ChevronRight className="w-4 h-4" />
+                       <span>Analysis 2024</span>
+                       <ChevronRight className="w-4 h-4" />
+                       <span className="text-foreground">LG Energy Solution & SK Innovation</span>
+                     </div>
+                  </div>
+    
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
+                  </div>
+                </div>
+    
+                <ScrollArea className="flex-1">
+                  <div className="max-w-3xl mx-auto p-8 space-y-8">
                 {/* Document Header */}
                 <div className="space-y-4 border-b border-border pb-6">
                    <div className="flex items-center justify-between mb-4">
@@ -569,131 +573,135 @@ export default function KnowledgeGarden() {
             </ScrollArea>
           </ResizablePanel>
 
-          <ResizableHandle />
-
-          {/* 3. Graph View */}
-          {showGraph && (
-            <>
-              <ResizableHandle />
-              <ResizablePanel defaultSize={25} minSize={20} className="bg-background border-r border-border relative flex flex-col">
-                 {/* Graph Header - Empty but height aligned */}
-                 <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
-                   <div className="flex items-center gap-2 px-2">
-                      <div className="p-1.5 bg-primary/10 rounded-md">
-                        <Share2 className="w-4 h-4 text-primary" />
-                      </div>
-                      <span className="font-semibold text-sm">Ontology</span>
-                   </div>
-                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowGraph(false)}>
-                     <X className="w-4 h-4 text-muted-foreground" />
-                   </Button>
-                 </div>
-                <div className="flex-1 w-full relative">
-                  <ReactFlowProvider>
-                    <GraphView />
-                  </ReactFlowProvider>
-                  {/* Mini Analytics Overlay */}
-                  <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
-                     <div className="flex justify-between text-muted-foreground">
-                       <span>Nodes</span>
-                       <span className="font-mono text-foreground">5</span>
-                     </div>
-                     <div className="flex justify-between text-muted-foreground">
-                       <span>Density</span>
-                       <span className="font-mono text-foreground">0.45</span>
-                     </div>
-                  </div>
-                </div>
-              </ResizablePanel>
-            </>
-          )}
-
-          {/* 4. AI Copilot */}
-          {showCopilot && (
-            <>
-              <ResizableHandle />
-              <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
-                <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-purple-500" />
-                    <span className="font-semibold text-sm">Copilot</span>
-                  </div>
-                  <div className="flex gap-1">
-                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowCopilot(false)}>
-                        <X className="w-4 h-4 text-muted-foreground" />
-                     </Button>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-               {/* New Chat Tabs */}
-               <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                 <Button variant="secondary" size="sm" className="h-7 text-xs whitespace-nowrap bg-primary/10 text-primary border border-primary/20">
-                   <Plus className="w-3 h-3 mr-1" /> New Chat
-                 </Button>
-                 <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
-                   Patent Analysis
-                 </Button>
-                  <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
-                   Legal Review
-                 </Button>
-               </div>
-
-               {/* Chat Messages */}
-               {CHAT_HISTORY.map((msg, i) => (
-                 <div key={i} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                       <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
-                       {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
-                    </div>
-                    <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {msg.content}
-                    </div>
-                    {msg.tool && (
-                      <div className="bg-secondary/30 border border-border rounded p-2 text-xs flex items-center gap-2 text-muted-foreground">
-                        <Database className="w-3 h-3" />
-                        {msg.tool}
-                      </div>
-                    )}
-                    {msg.data && (
-                       <div className="space-y-1 mt-1">
-                         {msg.data.map((item: any, idx: number) => (
-                           <div key={idx} className="bg-card border border-border rounded p-2 text-xs hover:bg-secondary/50 cursor-pointer transition-colors">
-                              <div className="font-medium text-primary mb-0.5">{item.title}</div>
-                              <div className="flex justify-between text-muted-foreground text-[10px]">
-                                <span className="font-mono">{item.id}</span>
-                                <span>{item.date}</span>
-                              </div>
-                           </div>
-                         ))}
-                       </div>
-                    )}
-                    {i < CHAT_HISTORY.length - 1 && <Separator className="my-4" />}
-                 </div>
-               ))}
-            </div>
-
-            {/* Input Area */}
-            <div className="p-3 border-t border-border bg-background">
-              <div className="relative">
-                <Input placeholder="Ask about this document..." className="pr-10 bg-secondary/30 border-transparent focus:bg-background focus:border-primary/50" />
-                <Button size="icon" className="absolute right-1 top-1 h-7 w-7 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm">
-                  <Send className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-              <div className="flex items-center gap-2 mt-2 px-1">
-                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Paperclip className="w-3.5 h-3.5" /></Button>
-                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Mic className="w-3.5 h-3.5" /></Button>
-                 <div className="flex-1" />
-                 <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                   <Bot className="w-3 h-3" /> Gemini 2.0
-                 </span>
-              </div>
-            </div>
           </ResizablePanel>
-          </>
-          )}
 
+            <ResizablePanelGroup direction="horizontal">
+            
+              {/* 3. Graph View */}
+              {showGraph && (
+                <>
+                  <ResizableHandle />
+                  <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col">
+                     {/* Graph Header - Empty but height aligned */}
+                     <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
+                       <div className="flex items-center gap-2 px-2">
+                          <div className="p-1.5 bg-primary/10 rounded-md">
+                            <Share2 className="w-4 h-4 text-primary" />
+                          </div>
+                          <span className="font-semibold text-sm">Ontology</span>
+                       </div>
+                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowGraph(false)}>
+                         <X className="w-4 h-4 text-muted-foreground" />
+                       </Button>
+                     </div>
+                    <div className="flex-1 w-full relative">
+                      <ReactFlowProvider>
+                        <GraphView />
+                      </ReactFlowProvider>
+                      {/* Mini Analytics Overlay */}
+                      <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
+                         <div className="flex justify-between text-muted-foreground">
+                           <span>Nodes</span>
+                           <span className="font-mono text-foreground">5</span>
+                         </div>
+                         <div className="flex justify-between text-muted-foreground">
+                           <span>Density</span>
+                           <span className="font-mono text-foreground">0.45</span>
+                         </div>
+                      </div>
+                    </div>
+                  </ResizablePanel>
+                </>
+              )}
+
+              {/* 4. AI Copilot */}
+              {showCopilot && (
+                <>
+                  <ResizableHandle />
+                  <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
+                    <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-purple-500" />
+                        <span className="font-semibold text-sm">Copilot</span>
+                      </div>
+                      <div className="flex gap-1">
+                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowCopilot(false)}>
+                            <X className="w-4 h-4 text-muted-foreground" />
+                         </Button>
+                      </div>
+                    </div>
+                    {/* ... Copilot Content ... */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                       {/* New Chat Tabs */}
+                       <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+                         <Button variant="secondary" size="sm" className="h-7 text-xs whitespace-nowrap bg-primary/10 text-primary border border-primary/20">
+                           <Plus className="w-3 h-3 mr-1" /> New Chat
+                         </Button>
+                         <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
+                           Patent Analysis
+                         </Button>
+                          <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
+                           Legal Review
+                         </Button>
+                       </div>
+        
+                       {/* Chat Messages */}
+                       {CHAT_HISTORY.map((msg, i) => (
+                         <div key={i} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                               <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
+                               {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
+                            </div>
+                            <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                              {msg.content}
+                            </div>
+                            {msg.tool && (
+                              <div className="bg-secondary/30 border border-border rounded p-2 text-xs flex items-center gap-2 text-muted-foreground">
+                                <Database className="w-3 h-3" />
+                                {msg.tool}
+                              </div>
+                            )}
+                            {msg.data && (
+                               <div className="space-y-1 mt-1">
+                                 {msg.data.map((item: any, idx: number) => (
+                                   <div key={idx} className="bg-card border border-border rounded p-2 text-xs hover:bg-secondary/50 cursor-pointer transition-colors">
+                                      <div className="font-medium text-primary mb-0.5">{item.title}</div>
+                                      <div className="flex justify-between text-muted-foreground text-[10px]">
+                                        <span className="font-mono">{item.id}</span>
+                                        <span>{item.date}</span>
+                                      </div>
+                                   </div>
+                                 ))}
+                               </div>
+                            )}
+                            {i < CHAT_HISTORY.length - 1 && <Separator className="my-4" />}
+                         </div>
+                       ))}
+                    </div>
+        
+                    {/* Input Area */}
+                    <div className="p-3 border-t border-border bg-background">
+                      <div className="relative">
+                        <Input placeholder="Ask about this document..." className="pr-10 bg-secondary/30 border-transparent focus:bg-background focus:border-primary/50" />
+                        <Button size="icon" className="absolute right-1 top-1 h-7 w-7 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm">
+                          <Send className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2 px-1">
+                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Paperclip className="w-3.5 h-3.5" /></Button>
+                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Mic className="w-3.5 h-3.5" /></Button>
+                         <div className="flex-1" />
+                         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                           <Bot className="w-3 h-3" /> Gemini 2.0
+                         </span>
+                      </div>
+                    </div>
+                  </ResizablePanel>
+                </>
+              )}
+
+            </ResizablePanelGroup>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </div>
     </Layout>
