@@ -283,28 +283,43 @@ export default function KnowledgeGarden() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={cn("w-full justify-start h-8 text-xs font-normal", true && "bg-secondary/50 text-foreground")}
+                    className={cn(
+                      "w-full justify-start h-8 text-xs font-normal border",
+                      true 
+                        ? "bg-background border-primary text-primary" 
+                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
+                    )}
                     onClick={() => {}}
                   >
-                    <FileText className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    <FileText className="w-3.5 h-3.5 mr-2" />
                     Document Details
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={cn("w-full justify-start h-8 text-xs font-normal", showGraph && "bg-secondary/50 text-foreground")}
+                    className={cn(
+                      "w-full justify-start h-8 text-xs font-normal border",
+                      showGraph 
+                        ? "bg-background border-primary text-primary" 
+                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
+                    )}
                     onClick={() => setShowGraph(!showGraph)}
                   >
-                    <Share2 className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    <Share2 className="w-3.5 h-3.5 mr-2" />
                     Ontology
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className={cn("w-full justify-start h-8 text-xs font-normal", showCopilot && "bg-secondary/50 text-foreground")}
+                    className={cn(
+                      "w-full justify-start h-8 text-xs font-normal border",
+                      showCopilot 
+                        ? "bg-background border-primary text-primary" 
+                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
+                    )}
                     onClick={() => setShowCopilot(!showCopilot)}
                   >
-                    <Sparkles className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    <Sparkles className="w-3.5 h-3.5 mr-2" />
                     Copilot
                   </Button>
                 </div>
