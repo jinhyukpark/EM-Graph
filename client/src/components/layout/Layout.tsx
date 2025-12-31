@@ -136,7 +136,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       )}>
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
-          {!isCollapsed ? (
+          {!isCollapsed && (
             <Link href="/dashboard">
               <a className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
@@ -145,10 +145,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <span className="text-lg font-bold tracking-tight">EM-Graph</span>
               </a>
             </Link>
-          ) : (
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
-              <Share2 className="w-5 h-5" />
-            </div>
           )}
           
           <Button 
@@ -164,23 +160,33 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         {/* Navigation */}
         <nav className="flex-1 p-0 overflow-hidden flex flex-col">
           
-          {!isCollapsed && !isProjectView && (
-            <div className="px-3 pt-6 pb-2">
-               <div className="flex items-center mb-2 px-1">
-                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
-               </div>
-               <div className="flex items-center gap-2">
+          {(!isCollapsed || (!isCollapsed && !isProjectView)) && !isProjectView && (
+            <div className={cn("px-3 pt-6 pb-2", isCollapsed && "px-0 text-center")}>
+               {!isCollapsed && (
+                 <div className="flex items-center mb-2 px-1">
+                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
+                 </div>
+               )}
+               <div className={cn("flex items-center gap-2", isCollapsed && "justify-center")}>
                  <DropdownMenu>
                    <DropdownMenuTrigger asChild>
-                     <Button variant="outline" className="w-full justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50">
-                       <div className="flex items-center gap-2 truncate min-w-0">
-                         <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
-                           {selectedOrg.name.substring(0,1)}
+                     {isCollapsed ? (
+                       <Button variant="ghost" size="icon" className="w-10 h-10 p-0 rounded-lg hover:bg-accent/50">
+                          <div className="w-8 h-8 rounded bg-rose-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                             {selectedOrg.name.substring(0,1)}
+                          </div>
+                       </Button>
+                     ) : (
+                       <Button variant="outline" className="w-full justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50">
+                         <div className="flex items-center gap-2 truncate min-w-0">
+                           <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+                             {selectedOrg.name.substring(0,1)}
+                           </div>
+                           <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
                          </div>
-                         <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
-                       </div>
-                       <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
-                     </Button>
+                         <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
+                       </Button>
+                     )}
                    </DropdownMenuTrigger>
                    <DropdownMenuContent className="w-[200px]" align="start">
                      <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Switch Workspace</DropdownMenuLabel>
