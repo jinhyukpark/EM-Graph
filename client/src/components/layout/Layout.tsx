@@ -39,8 +39,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
-  const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
+  const [pendingOrg, setPendingOrg] = useState<typeof MOCK_ORGS[0] | null>(null);
 
   useEffect(() => {
     if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
@@ -57,15 +56,18 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
   const handleAlertConfirm = () => {
     setIsAlertOpen(false);
-    if (alertAction === 'switch-org') {
-      setLocation("/organization-select");
+    if (alertAction === 'switch-org' && pendingOrg) {
+      setSelectedOrg(pendingOrg);
+      setPendingOrg(null);
     } else if (alertAction === 'logout') {
       setLocation("/");
     }
     setAlertAction(null);
   };
 
-  const handleOrgClick = () => {
+  const handleOrgSelect = (org: typeof MOCK_ORGS[0]) => {
+    if (org.id === selectedOrg.id) return;
+    setPendingOrg(org);
     setAlertAction('switch-org');
     setIsAlertOpen(true);
   };
@@ -166,15 +168,33 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
                </div>
                <div className="flex items-center gap-2">
-                 <Button variant="outline" className="w-full justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50" onClick={handleOrgClick}>
-                   <div className="flex items-center gap-2 truncate min-w-0">
-                     <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
-                       {selectedOrg.name.substring(0,1)}
-                     </div>
-                     <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
-                   </div>
-                   <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
-                 </Button>
+                 <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button variant="outline" className="w-full justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50">
+                       <div className="flex items-center gap-2 truncate min-w-0">
+                         <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+                           {selectedOrg.name.substring(0,1)}
+                         </div>
+                         <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
+                       </div>
+                       <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
+                     </Button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent className="w-[200px]" align="start">
+                     <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Switch Workspace</DropdownMenuLabel>
+                     {MOCK_ORGS.map((org) => (
+                       <DropdownMenuItem key={org.id} onClick={() => handleOrgSelect(org)} className="flex items-center justify-between gap-2 cursor-pointer">
+                         <div className="flex items-center gap-2">
+                           <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                             {org.name.substring(0, 1)}
+                           </div>
+                           <span>{org.name}</span>
+                         </div>
+                         {selectedOrg.id === org.id && <Check className="w-4 h-4 text-primary" />}
+                       </DropdownMenuItem>
+                     ))}
+                   </DropdownMenuContent>
+                 </DropdownMenu>
                </div>
             </div>
           )}
