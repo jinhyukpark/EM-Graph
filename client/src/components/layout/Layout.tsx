@@ -290,7 +290,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <div>
                   {!isCollapsed && (
                     <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Graph</span>
+                      <span>그래프 분석</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   )}
