@@ -965,7 +965,6 @@ export default function KnowledgeGarden() {
                         </div>
                       </div>
                     </div>
-                  </div>
                 </ScrollArea>
               </ResizablePanel>
                   )}
