@@ -884,21 +884,25 @@ export default function KnowledgeGarden() {
                           <span className="w-1 h-1 rounded-full bg-border shrink-0" />
                           
                           {/* Dynamic Tag Area */}
-                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0 mr-4">
                              <Tag className="w-3.5 h-3.5 shrink-0" />
                              
                              {!isEditingTags ? (
                                 <div 
-                                    className="hover:bg-secondary/50 px-2 py-1 rounded-md cursor-pointer transition-colors -ml-1 flex items-center gap-2 group/tags"
+                                    className="hover:bg-secondary/50 px-2 py-1 rounded-md cursor-pointer transition-colors -ml-1 flex items-center gap-2 group/tags max-w-full overflow-hidden"
                                     onClick={() => setIsEditingTags(true)}
                                 >
-                                    <span className="truncate">{docTags.join(', ')}</span>
-                                    <Edit3 className="w-3 h-3 opacity-0 group-hover/tags:opacity-50" />
+                                    <span className="truncate block">
+                                      {docTags.length > 3 
+                                        ? `${docTags.slice(0, 3).join(', ')} +${docTags.length - 3}` 
+                                        : docTags.join(', ')}
+                                    </span>
+                                    <Edit3 className="w-3 h-3 opacity-0 group-hover/tags:opacity-50 shrink-0" />
                                 </div>
                              ) : (
-                                <div className="flex flex-wrap gap-2 items-center animate-in fade-in slide-in-from-left-2 duration-200">
+                                <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2 duration-200 overflow-x-auto scrollbar-hide max-w-[400px] flex-nowrap pr-2">
                                     {docTags.map(tag => (
-                                        <Badge key={tag} variant="secondary" className="px-2 py-0.5 h-6 text-xs bg-secondary/50 hover:bg-secondary text-foreground/80 gap-1 pr-1">
+                                        <Badge key={tag} variant="secondary" className="px-2 py-0.5 h-6 text-xs bg-secondary/50 hover:bg-secondary text-foreground/80 gap-1 pr-1 whitespace-nowrap shrink-0">
                                             {tag}
                                             <Button 
                                                 variant="ghost" 
@@ -913,28 +917,30 @@ export default function KnowledgeGarden() {
                                             </Button>
                                         </Badge>
                                     ))}
-                                    <div className="relative group/tag flex items-center gap-1">
-                                        <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:border-primary/50 hover:text-primary transition-colors cursor-text bg-transparent">
-                                            <Plus className="w-3 h-3" />
-                                            <input 
-                                                type="text" 
-                                                className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full"
-                                                placeholder="Add tag"
-                                                value={newTagName}
-                                                onChange={(e) => setNewTagName(e.target.value)}
-                                                onKeyDown={handleAddTag}
-                                                autoFocus
-                                            />
+                                    {docTags.length < 5 && (
+                                        <div className="relative group/tag flex items-center gap-1 shrink-0">
+                                            <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:border-primary/50 hover:text-primary transition-colors cursor-text bg-transparent whitespace-nowrap">
+                                                <Plus className="w-3 h-3" />
+                                                <input 
+                                                    type="text" 
+                                                    className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full text-xs"
+                                                    placeholder="Add tag"
+                                                    value={newTagName}
+                                                    onChange={(e) => setNewTagName(e.target.value)}
+                                                    onKeyDown={handleAddTag}
+                                                    autoFocus
+                                                />
+                                            </div>
                                         </div>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
-                                            className="h-6 w-6 rounded-full"
-                                            onClick={() => setIsEditingTags(false)}
-                                        >
-                                            <X className="w-3.5 h-3.5" />
-                                        </Button>
-                                    </div>
+                                    )}
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-6 w-6 rounded-full shrink-0"
+                                        onClick={() => setIsEditingTags(false)}
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </Button>
                                 </div>
                              )}
                           </div>
