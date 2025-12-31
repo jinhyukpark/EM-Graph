@@ -171,21 +171,13 @@ export default function KnowledgeGarden() {
                 <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
-                    {/* Toggle Buttons Removed */}
-                  </div>
-                </div>
-                {/* Search Bar */}
-                <div className="flex items-center gap-1 p-2 border-b border-border/50">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-muted-foreground" />
-                        <Input 
-                            className="h-8 text-xs pl-8 bg-background/50 border-border/50 focus-visible:ring-1" 
-                            placeholder="Search..." 
-                        />
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
-                        <Plus className="w-4 h-4" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                      <Search className="w-4 h-4" />
                     </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
                 <ScrollArea className="flex-1 py-2">
                   {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
