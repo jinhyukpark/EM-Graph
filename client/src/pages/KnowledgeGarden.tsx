@@ -155,31 +155,16 @@ export default function KnowledgeGarden() {
   return (
     <Layout>
       <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
-        {/* Top Bar */}
-        <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-card/50">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-             <span className="font-semibold text-foreground">Knowledge Garden</span>
-             <ChevronRight className="w-4 h-4" />
-             <span>Analysis 2024</span>
-             <ChevronRight className="w-4 h-4" />
-             <span className="text-foreground">LG Energy Solution & SK Innovation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
-          </div>
-        </div>
-
         {/* Main Workspace */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           
           {/* 1. File Tree */}
           <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-secondary/5 flex flex-col border-r border-border">
-            <div className="p-2 flex items-center justify-between border-b border-border/50">
+            <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
               <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
               <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="h-6 w-6"><Plus className="w-3.5 h-3.5" /></Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6"><Search className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="w-4 h-4" /></Button>
               </div>
             </div>
             <ScrollArea className="flex-1 py-2">
@@ -191,6 +176,21 @@ export default function KnowledgeGarden() {
 
           {/* 2. Document Editor */}
           <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col">
+            {/* Document Breadcrumb Header */}
+            <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-card/50 shrink-0">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                 <span className="font-semibold text-foreground">Knowledge Garden</span>
+                 <ChevronRight className="w-4 h-4" />
+                 <span>Analysis 2024</span>
+                 <ChevronRight className="w-4 h-4" />
+                 <span className="text-foreground">LG Energy Solution & SK Innovation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
+              </div>
+            </div>
+
             <ScrollArea className="flex-1">
               <div className="max-w-3xl mx-auto p-8 space-y-8">
                 {/* Document Header */}
@@ -270,26 +270,26 @@ export default function KnowledgeGarden() {
           <ResizableHandle />
 
           {/* 3. Graph View */}
-          <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative">
-            <div className="absolute top-2 left-2 z-10 flex gap-1">
+          <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative flex flex-col">
+             {/* Graph Header - Empty but height aligned */}
+             <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-card/30 shrink-0">
                <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
-            </div>
-            <div className="w-full h-full">
+             </div>
+            <div className="flex-1 w-full relative">
               <ReactFlowProvider>
                 <GraphView />
               </ReactFlowProvider>
-            </div>
-            
-            {/* Mini Analytics Overlay */}
-            <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
-               <div className="flex justify-between text-muted-foreground">
-                 <span>Nodes</span>
-                 <span className="font-mono text-foreground">5</span>
-               </div>
-               <div className="flex justify-between text-muted-foreground">
-                 <span>Density</span>
-                 <span className="font-mono text-foreground">0.45</span>
-               </div>
+              {/* Mini Analytics Overlay */}
+              <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
+                 <div className="flex justify-between text-muted-foreground">
+                   <span>Nodes</span>
+                   <span className="font-mono text-foreground">5</span>
+                 </div>
+                 <div className="flex justify-between text-muted-foreground">
+                   <span>Density</span>
+                   <span className="font-mono text-foreground">0.45</span>
+                 </div>
+              </div>
             </div>
           </ResizablePanel>
 
@@ -297,13 +297,13 @@ export default function KnowledgeGarden() {
 
           {/* 4. AI Copilot */}
           <ResizablePanel defaultSize={20} minSize={15} className="bg-card flex flex-col">
-            <div className="h-10 border-b border-border flex items-center px-3 justify-between">
+            <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-purple-500" />
                 <span className="font-semibold text-sm">Copilot</span>
               </div>
               <div className="flex gap-1">
-                 <Button variant="ghost" size="icon" className="h-6 w-6"><Maximize2 className="w-3 h-3" /></Button>
+                 <Button variant="ghost" size="icon" className="h-8 w-8"><Maximize2 className="w-4 h-4" /></Button>
               </div>
             </div>
 
