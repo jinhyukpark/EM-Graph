@@ -980,7 +980,11 @@ export default function KnowledgeGarden() {
                         </div>
                       </div>
 
-                      <div className="prose prose-slate max-w-none prose-sm prose-headings:font-semibold prose-a:text-blue-600">
+                      <div 
+                        contentEditable 
+                        suppressContentEditableWarning 
+                        className="prose prose-slate max-w-none prose-sm prose-headings:font-semibold prose-a:text-blue-600 outline-none min-h-[500px] cursor-text"
+                      >
                         <p className="lead text-foreground/80">
                            A comprehensive analysis of the ongoing patent dispute between two major EV battery manufacturers, examining key patents, legal arguments, and potential market impact.
                         </p>
