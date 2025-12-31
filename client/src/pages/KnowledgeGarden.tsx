@@ -161,7 +161,7 @@ export default function KnowledgeGarden() {
 
   return (
     <Layout>
-      <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
+      <div className="h-full bg-background flex flex-col">
         {/* Main Workspace */}
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           
