@@ -298,10 +298,9 @@ export default function DatabaseManager() {
         
         {/* Sidebar: Navigation */}
         <div className="w-64 border-r border-border bg-card/30 flex flex-col">
-          <div className="p-4 border-b border-border">
-            <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Project</Label>
+          <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Select defaultValue="project-alpha">
-              <SelectTrigger className="w-full bg-background/50">
+              <SelectTrigger className="w-full bg-background/50 h-9 text-sm">
                 <SelectValue placeholder="Select project" />
               </SelectTrigger>
               <SelectContent>
@@ -368,9 +367,9 @@ export default function DatabaseManager() {
         <div className="flex-1 flex flex-col min-w-0 bg-background">
           
           {/* Tab Bar & Toolbar */}
-          <div className="border-b border-border bg-background flex flex-col">
-             {/* Action Toolbar - Styled like the screenshot */}
-             <div className="flex items-center gap-1 p-2 px-4">
+          <div className="flex flex-col bg-background">
+             {/* Action Toolbar - Styled like the screenshot - Aligned to h-16 */}
+             <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0">
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('table')}>
                   <Database className="w-4 h-4" />
                   <span className="font-medium">Database</span>
@@ -404,10 +403,8 @@ export default function DatabaseManager() {
                 </Button>
              </div>
 
-             <Separator />
-
              {/* Tabs */}
-             <div className="flex items-center overflow-x-auto no-scrollbar px-2 pt-2 bg-secondary/5">
+             <div className="flex items-center overflow-x-auto no-scrollbar px-2 pt-2 bg-secondary/5 border-b border-border">
                {tabs.map((tab) => (
                  <div 
                    key={tab.id}
