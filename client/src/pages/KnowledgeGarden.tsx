@@ -846,13 +846,13 @@ export default function KnowledgeGarden() {
                         <h1 
                           contentEditable 
                           suppressContentEditableWarning 
-                          className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text"
+                          className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text pr-24 relative"
                         >
                           Patent Dispute Analysis: LG Energy Solution vs SK Innovation
                         </h1>
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px] relative">
                           {/* Author Info */}
                           <div className="flex items-center gap-2 mr-2">
                              <div className="h-5 w-5 rounded-full bg-secondary flex items-center justify-center">
@@ -884,7 +884,7 @@ export default function KnowledgeGarden() {
                           <span className="w-1 h-1 rounded-full bg-border shrink-0" />
                           
                           {/* Dynamic Tag Area */}
-                          <div className="flex items-center gap-1.5 flex-1 min-w-0 mr-4">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0 mr-32">
                              <Tag className="w-3.5 h-3.5 shrink-0" />
                              
                              {!isEditingTags ? (
@@ -945,7 +945,7 @@ export default function KnowledgeGarden() {
                              )}
                           </div>
                           
-                          <div className="ml-auto flex items-center gap-2 shrink-0">
+                          <div className="absolute right-0 bottom-6 flex items-center gap-2">
                              {/* Status Dropdown moved here */}
                              <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
