@@ -127,7 +127,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex font-sans selection:bg-primary/20 selection:text-primary">
+    <div className="h-screen overflow-hidden bg-background text-foreground flex font-sans selection:bg-primary/20 selection:text-primary">
       
       {/* Sidebar */}
       <aside className={cn(
