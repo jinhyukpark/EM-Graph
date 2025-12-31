@@ -333,7 +333,7 @@ function GraphLegend() {
     return (
         <div className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20">
-                <span className="text-xs font-semibold text-muted-foreground">매출</span>
+                <span className="text-xs font-semibold text-muted-foreground">조회수</span>
                 <div className="flex gap-4 text-xs font-semibold text-muted-foreground">
                     <span>개수</span>
                     <span>비중(%)</span>
@@ -341,14 +341,14 @@ function GraphLegend() {
             </div>
             <div className="py-1">
                 {[
-                    { color: 'bg-red-500', label: '1000억원 이상', count: 154, ratio: '8%' },
-                    { color: 'bg-orange-500', label: '1000억원 이하', count: 42, ratio: '2%' },
-                    { color: 'bg-amber-500', label: '500억원 이하', count: 133, ratio: '7%' },
-                    { color: 'bg-green-500', label: '100억원 이하', count: 90, ratio: '5%' },
-                    { color: 'bg-emerald-500', label: '50억원 이하', count: 237, ratio: '12%' },
-                    { color: 'bg-blue-600', label: '10억원 이하', count: 84, ratio: '4%' },
-                    { color: 'bg-indigo-500', label: '5억원 이하', count: 144, ratio: '7%' },
-                    { color: 'bg-purple-500', label: '1억원 이하', count: 36, ratio: '2%' },
+                    { color: 'bg-red-500', label: '1000회 이상', count: 154, ratio: '8%' },
+                    { color: 'bg-orange-500', label: '1000회 이하', count: 42, ratio: '2%' },
+                    { color: 'bg-amber-500', label: '500회 이하', count: 133, ratio: '7%' },
+                    { color: 'bg-green-500', label: '100회 이하', count: 90, ratio: '5%' },
+                    { color: 'bg-emerald-500', label: '50회 이하', count: 237, ratio: '12%' },
+                    { color: 'bg-blue-600', label: '10회 이하', count: 84, ratio: '4%' },
+                    { color: 'bg-indigo-500', label: '5회 이하', count: 144, ratio: '7%' },
+                    { color: 'bg-purple-500', label: '1회 이하', count: 36, ratio: '2%' },
                 ].map((item, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-1.5 hover:bg-muted/50 cursor-pointer text-xs group">
                         <div className="flex items-center gap-2 flex-1">
