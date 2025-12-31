@@ -1076,11 +1076,10 @@ export default function KnowledgeGarden() {
                              {session.title}
                            </Button>
                          ))}
-                         <div className="flex-1" />
                          <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-7 w-7 text-primary hover:bg-primary/10 rounded-full shrink-0"
+                            className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
                             onClick={handleAddSession}
                          >
                            <Plus className="w-4 h-4" />
