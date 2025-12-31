@@ -314,6 +314,19 @@ const CHAT_HISTORY = [
   }
 ];
 
+const INITIAL_SESSIONS = [
+  {
+    id: 's1',
+    title: 'Patent Analysis',
+    messages: CHAT_HISTORY
+  },
+  {
+    id: 's2',
+    title: 'Legal Review',
+    messages: []
+  }
+];
+
 // --- Components ---
 
 function GraphLegend() {
@@ -435,6 +448,22 @@ export default function KnowledgeGarden() {
   const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
   const [newStatusName, setNewStatusName] = useState("");
   const [newTagName, setNewTagName] = useState("");
+
+  const [chatSessions, setChatSessions] = useState(INITIAL_SESSIONS);
+  const [activeSessionId, setActiveSessionId] = useState('s1');
+
+  const activeSession = chatSessions.find(s => s.id === activeSessionId) || chatSessions[0];
+
+  const handleAddSession = () => {
+    const newId = `s${Date.now()}`;
+    const newSession = {
+      id: newId,
+      title: 'New Chat',
+      messages: []
+    };
+    setChatSessions([...chatSessions, newSession]);
+    setActiveSessionId(newId);
+  };
 
   const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
 
@@ -975,20 +1004,39 @@ export default function KnowledgeGarden() {
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                        {/* New Chat Tabs */}
                        <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center">
-                         <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
-                           Patent Analysis
-                         </Button>
-                          <Button variant="outline" size="sm" className="h-7 text-xs whitespace-nowrap text-muted-foreground font-normal">
-                           Legal Review
-                         </Button>
+                         {chatSessions.map(session => (
+                           <Button 
+                             key={session.id}
+                             variant={activeSessionId === session.id ? "secondary" : "outline"} 
+                             size="sm" 
+                             className={cn(
+                               "h-7 text-xs whitespace-nowrap font-normal",
+                               activeSessionId === session.id ? "bg-secondary text-foreground font-medium" : "text-muted-foreground"
+                             )}
+                             onClick={() => setActiveSessionId(session.id)}
+                           >
+                             {session.title}
+                           </Button>
+                         ))}
                          <div className="flex-1" />
-                         <Button variant="secondary" size="sm" className="h-7 text-xs whitespace-nowrap bg-primary/10 text-primary border border-primary/20 shrink-0">
-                           <Plus className="w-3 h-3 mr-1" /> New Chat
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 text-primary hover:bg-primary/10 rounded-full shrink-0"
+                            onClick={handleAddSession}
+                         >
+                           <Plus className="w-4 h-4" />
                          </Button>
                        </div>
         
                        {/* Chat Messages */}
-                       {CHAT_HISTORY.map((msg, i) => (
+                       {activeSession.messages.length === 0 ? (
+                         <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
+                           <Bot className="w-8 h-8 mb-2 opacity-20" />
+                           <p>Start a new conversation</p>
+                         </div>
+                       ) : (
+                         activeSession.messages.map((msg, i) => (
                          <div key={i} className="space-y-2">
                             <div className="flex items-center justify-between">
                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
@@ -1032,9 +1080,9 @@ export default function KnowledgeGarden() {
                                 </div>
                             )}
                             
-                            {i < CHAT_HISTORY.length - 1 && <Separator className="my-4" />}
+                            {i < activeSession.messages.length - 1 && <Separator className="my-4" />}
                          </div>
-                       ))}
+                       )))}
                     </div>
         
                     {/* Input Area */}
