@@ -814,7 +814,13 @@ export default function KnowledgeGarden() {
                              <span>댓글 추가</span>
                            </button>
                         </div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
+                        <h1 
+                          contentEditable 
+                          suppressContentEditableWarning 
+                          className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text"
+                        >
+                          Patent Dispute Analysis: LG Energy Solution vs SK Innovation
+                        </h1>
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
