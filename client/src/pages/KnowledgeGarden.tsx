@@ -738,7 +738,7 @@ export default function KnowledgeGarden() {
                    </div>
 
                    <h1 
-                        className="text-3xl font-bold tracking-tight text-foreground leading-tight outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        className="text-3xl font-bold tracking-tight text-foreground leading-tight outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
                         contentEditable
                         suppressContentEditableWarning
                    >
@@ -834,14 +834,14 @@ export default function KnowledgeGarden() {
                 <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
                   <div>
                     <h2 
-                        className="text-xl font-semibold flex items-center gap-2 outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        className="text-xl font-semibold flex items-center gap-2 outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
                         contentEditable
                         suppressContentEditableWarning
                     >
                       1. Overview
                     </h2>
                     <p 
-                        className="text-muted-foreground leading-relaxed outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text mt-2"
+                        className="text-muted-foreground leading-relaxed outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text mt-2"
                         contentEditable
                         suppressContentEditableWarning
                     >
@@ -851,7 +851,7 @@ export default function KnowledgeGarden() {
 
                   <div>
                     <h2 
-                        className="text-xl font-semibold flex items-center gap-2 outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        className="text-xl font-semibold flex items-center gap-2 outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
                         contentEditable
                         suppressContentEditableWarning
                     >
