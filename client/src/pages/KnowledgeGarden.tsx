@@ -33,6 +33,16 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // --- Mock Data ---
 
@@ -502,6 +512,10 @@ export default function KnowledgeGarden() {
 
   const [editingMessage, setEditingMessage] = useState<{sessionId: string, index: number} | null>(null);
   
+  // Dialog state
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  
   // Ref for handling click outside
   const editingRef = useRef<HTMLDivElement>(null);
 
@@ -535,6 +549,32 @@ export default function KnowledgeGarden() {
     };
     setChatSessions([...chatSessions, newSession]);
     setActiveSessionId(newId);
+  };
+
+  const handleDeleteSession = (sessionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteSessionId(sessionId);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeleteSession = () => {
+    if (deleteSessionId) {
+      const newSessions = chatSessions.filter(s => s.id !== deleteSessionId);
+      
+      if (newSessions.length === 0) {
+          // If all deleted, add a new empty one
+          const newId = `s${Date.now()}`;
+          setChatSessions([{ id: newId, title: 'New Chat', messages: [] }]);
+          setActiveSessionId(newId);
+      } else {
+          setChatSessions(newSessions);
+          if (activeSessionId === deleteSessionId) {
+            setActiveSessionId(newSessions[0].id);
+          }
+      }
+      setDeleteSessionId(null);
+      setShowDeleteDialog(false);
+    }
   };
 
   const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
@@ -983,20 +1023,34 @@ export default function KnowledgeGarden() {
                            <div className="flex items-center gap-2 mb-4 px-1 w-full min-w-0">
                              <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide flex gap-2">
                                {chatSessions.map(session => (
-                                 <Button 
-                                   key={session.id}
-                                   variant="ghost"
-                                   size="sm" 
-                                   className={cn(
-                                     "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border shrink-0",
-                                     activeSessionId === session.id 
-                                       ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
-                                       : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                                   )}
-                                   onClick={() => setActiveSessionId(session.id)}
-                                 >
-                                   {session.title}
-                                 </Button>
+                                 <div key={session.id} className="relative group/tab shrink-0">
+                                   <Button 
+                                     variant="ghost"
+                                     size="sm" 
+                                     className={cn(
+                                       "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border pr-7",
+                                       activeSessionId === session.id 
+                                         ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
+                                         : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                     )}
+                                     onClick={() => setActiveSessionId(session.id)}
+                                   >
+                                     {session.title}
+                                   </Button>
+                                   <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                          "absolute right-0.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md opacity-0 group-hover/tab:opacity-100 transition-all",
+                                          activeSessionId === session.id 
+                                            ? "text-white/70 hover:text-white hover:bg-white/20" 
+                                            : "text-muted-foreground hover:text-red-500 hover:bg-red-100/50"
+                                      )}
+                                      onClick={(e) => handleDeleteSession(session.id, e)}
+                                   >
+                                      <X className="w-3 h-3" />
+                                   </Button>
+                                 </div>
                                ))}
                              </div>
                              <Button 
@@ -1226,6 +1280,38 @@ export default function KnowledgeGarden() {
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
+          <DeleteSessionDialog 
+            open={showDeleteDialog} 
+            onOpenChange={setShowDeleteDialog} 
+            onConfirm={confirmDeleteSession} 
+          />
         </Layout>
       );
     }
+
+function DeleteSessionDialog({ 
+  open, 
+  onOpenChange, 
+  onConfirm 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  onConfirm: () => void; 
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Chat Session?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this chat session? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
