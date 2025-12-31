@@ -149,6 +149,10 @@
   * {
     @apply border-border;
   }
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+    color: inherit;
+  }
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
