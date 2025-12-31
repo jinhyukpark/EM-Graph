@@ -38,7 +38,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const isProjectView = match;
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
   const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
 
   useEffect(() => {
@@ -52,6 +53,26 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
     used: 3.2, // GB
     total: 5.0, // GB
     percent: 64
+  };
+
+  const handleAlertConfirm = () => {
+    setIsAlertOpen(false);
+    if (alertAction === 'switch-org') {
+      setLocation("/organization-select");
+    } else if (alertAction === 'logout') {
+      setLocation("/");
+    }
+    setAlertAction(null);
+  };
+
+  const handleOrgClick = () => {
+    setAlertAction('switch-org');
+    setIsAlertOpen(true);
+  };
+
+  const handleLogoutClick = () => {
+    setAlertAction('logout');
+    setIsAlertOpen(true);
   };
 
   const NavItem = ({ href, icon: Icon, label, special }: { href: string, icon: any, label: string, special?: boolean }) => {
@@ -115,7 +136,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <Button 
               variant="ghost" 
               className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1"
-              onClick={() => setIsLogoutAlertOpen(true)}
+              onClick={handleOrgClick}
             >
               <div className="flex items-center gap-2 text-left min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
@@ -316,7 +337,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                onClick={() => setIsLogoutAlertOpen(true)}
+                onClick={handleLogoutClick}
               >
                 <LogOut className="w-4 h-4" />
               </Button>
@@ -347,21 +368,20 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         </main>
       </div>
 
-      <AlertDialog open={isLogoutAlertOpen} onOpenChange={setIsLogoutAlertOpen}>
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
             <AlertDialogDescription>
-              If you leave this page, any unsaved changes will be lost. Are you sure you want to switch organizations?
+              {alertAction === 'switch-org' 
+                ? "If you switch organizations, any unsaved changes will be lost. Are you sure you want to continue?"
+                : "If you log out, any unsaved changes will be lost. Are you sure you want to log out?"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              setIsLogoutAlertOpen(false);
-              setLocation("/organization-select");
-            }}>
-              Confirm
+            <AlertDialogCancel onClick={() => setAlertAction(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleAlertConfirm}>
+              {alertAction === 'switch-org' ? "Switch Organization" : "Log Out"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
