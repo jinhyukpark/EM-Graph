@@ -211,6 +211,38 @@ export default function KnowledgeGarden() {
                 <ScrollArea className="flex-1 py-2">
                   {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
                 </ScrollArea>
+                
+                {/* View Toggles Footer */}
+                <div className="p-2 border-t border-border/50 space-y-1">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase px-2 mb-1">View Options</div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={cn("w-full justify-start h-8 text-xs font-normal", true && "bg-secondary/50 text-foreground")}
+                    onClick={() => {}}
+                  >
+                    <FileText className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    Document Details
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={cn("w-full justify-start h-8 text-xs font-normal", showGraph && "bg-secondary/50 text-foreground")}
+                    onClick={() => setShowGraph(!showGraph)}
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    Ontology
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className={cn("w-full justify-start h-8 text-xs font-normal", showCopilot && "bg-secondary/50 text-foreground")}
+                    onClick={() => setShowCopilot(!showCopilot)}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                    Copilot
+                  </Button>
+                </div>
               </ResizablePanel>
               <ResizableHandle />
             </>
