@@ -33,6 +33,8 @@ import {
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -505,6 +507,7 @@ export default function KnowledgeGarden() {
   const [showSearch, setShowSearch] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
+  const [docDate, setDocDate] = useState<Date>(new Date(2025, 11, 15)); // Dec 15, 2025
   const [docTags, setDocTags] = useState<string[]>(['Battery', 'EV']);
   const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
   const [newStatusName, setNewStatusName] = useState("");
@@ -797,7 +800,21 @@ export default function KnowledgeGarden() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
                           <span className="flex items-center gap-1.5 shrink-0">
                             <Calendar className="w-3.5 h-3.5" />
-                            Dec 15, 2025
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <span className="hover:text-foreground hover:bg-secondary/50 px-1.5 py-0.5 rounded cursor-pointer transition-colors">
+                                        {format(docDate, "MMM d, yyyy")}
+                                    </span>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={docDate}
+                                        onSelect={(date) => date && setDocDate(date)}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                           </span>
                           <span className="w-1 h-1 rounded-full bg-border shrink-0" />
                           
