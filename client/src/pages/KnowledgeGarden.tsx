@@ -701,7 +701,7 @@ export default function KnowledgeGarden() {
 
   return (
     <Layout>
-      <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-background relative overflow-hidden">
+      <div className="h-full flex flex-col bg-background relative overflow-hidden">
          {/* Warning Toast */}
          <AnimatePresence>
             {showWarning && (
