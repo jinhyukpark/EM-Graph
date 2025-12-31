@@ -754,7 +754,7 @@ export default function KnowledgeGarden() {
                 <div className="h-16 border-b border-border flex items-center px-4 shrink-0 justify-between">
                   <div className="flex items-center gap-2 text-foreground/80">
                      <Folder className="w-5 h-5 text-blue-500" />
-                     <span className="font-semibold text-sm">탐색기</span>
+                     <span className="font-semibold text-sm">Explorer</span>
                   </div>
                   <div className="flex gap-1">
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleAddNewFile}>
@@ -800,11 +800,11 @@ export default function KnowledgeGarden() {
                         <FileText className="w-4 h-4 text-blue-600" />
                      </div>
                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="hover:text-foreground cursor-pointer transition-colors">지식 가든</span>
+                        <span className="hover:text-foreground cursor-pointer transition-colors">Knowledge Garden</span>
                         <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="hover:text-foreground cursor-pointer transition-colors">2024년 분석</span>
+                        <span className="hover:text-foreground cursor-pointer transition-colors">2024 Analysis</span>
                         <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="font-medium text-foreground">LG 에너지솔루션 & SK 이노베이션</span>
+                        <span className="font-medium text-foreground">LG Energy Solution & SK Innovation</span>
                      </div>
                   </div>
                   
@@ -828,19 +828,19 @@ export default function KnowledgeGarden() {
                         <div className="absolute -top-8 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-4 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-lg border border-border/50 shadow-sm">
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <Smile className="w-3.5 h-3.5" />
-                             <span>아이콘 추가</span>
+                             <span>Add Icon</span>
                            </button>
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <LayoutIcon className="w-3.5 h-3.5" />
-                             <span>커버 추가</span>
+                             <span>Add Cover</span>
                            </button>
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <BadgeCheck className="w-3.5 h-3.5" />
-                             <span>인증하기</span>
+                             <span>Verify</span>
                            </button>
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <MessageSquare className="w-3.5 h-3.5" />
-                             <span>댓글 추가</span>
+                             <span>Add Comment</span>
                            </button>
                         </div>
                         <h1 
@@ -848,7 +848,7 @@ export default function KnowledgeGarden() {
                           suppressContentEditableWarning 
                           className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text"
                         >
-                          특허 분쟁 분석: LG 에너지솔루션 vs SK 이노베이션
+                          Patent Dispute Analysis: LG Energy Solution vs SK Innovation
                         </h1>
                       </div>
 
