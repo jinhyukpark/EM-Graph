@@ -461,7 +461,7 @@ const SourceList = ({ data }: { data: any[] }) => {
                 <div key={idx} className="p-3 hover:bg-muted/30 transition-colors cursor-pointer group">
                   <div className="flex items-start gap-2.5">
                     <FileText className="w-3.5 h-3.5 text-orange-500 mt-0.5 shrink-0" />
-                    <div className="space-y-1 min-w-0">
+                    <div className="space-y-1 min-w-0 flex-1">
                       <div className="text-sm text-foreground/90 font-medium leading-snug group-hover:text-blue-600 group-hover:underline decoration-blue-600/30 underline-offset-4">
                         {item.title}
                       </div>
