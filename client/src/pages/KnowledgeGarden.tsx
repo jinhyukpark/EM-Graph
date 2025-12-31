@@ -425,7 +425,7 @@ const NewsResultList = ({ data }: { data: any[] }) => {
       >
         <div className="flex items-center gap-2 text-muted-foreground">
              <Globe className="w-3.5 h-3.5 text-blue-500" />
-             <span>결과 {data.length}개</span>
+             <span>뉴스 결과 {data.length}개</span>
         </div>
         <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
       </button>
