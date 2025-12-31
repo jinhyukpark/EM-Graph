@@ -110,21 +110,21 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         isCollapsed ? "w-16" : "w-64"
       )}>
         {/* Workspace Switcher / Logo Area */}
-        <div className={cn("h-16 flex items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-4 justify-between")}>
+        <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between px-2 hover:bg-secondary/50 h-12">
+                <Button variant="ghost" className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1">
                   <div className="flex items-center gap-2 text-left min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                       <Share2 className="w-5 h-5" />
                     </div>
                     <div className="flex flex-col items-start leading-none min-w-0">
-                      <span className="font-bold text-sm truncate w-32">{selectedOrg.name}</span>
+                      <span className="font-bold text-sm truncate w-24">{selectedOrg.name}</span>
                       <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
                     </div>
                   </div>
-                  <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-2 opacity-50 shrink-0" />
+                  <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-1 opacity-50 shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="start">
@@ -158,10 +158,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           <Button 
             variant="ghost" 
             size="icon" 
-            className={cn(
-              "h-6 w-6 text-muted-foreground hover:text-foreground hidden md:flex", 
-              !isCollapsed && "absolute right-2 top-5"
-            )}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex shrink-0"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
              {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
