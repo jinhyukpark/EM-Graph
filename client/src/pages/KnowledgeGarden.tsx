@@ -51,29 +51,29 @@ import { toast } from "sonner";
 // --- Mock Data ---
 
 const STATUS_OPTIONS = [
-  { id: 'draft', label: '초안', color: 'bg-slate-500' },
-  { id: 'review', label: '리뷰중', color: 'bg-orange-500' },
-  { id: 'done', label: '완료', color: 'bg-green-500' },
-  { id: 'hold', label: '보류', color: 'bg-red-500' },
+  { id: 'draft', label: 'Draft', color: 'bg-slate-500' },
+  { id: 'review', label: 'Review', color: 'bg-orange-500' },
+  { id: 'done', label: 'Done', color: 'bg-green-500' },
+  { id: 'hold', label: 'Hold', color: 'bg-red-500' },
 ];
 
 const INITIAL_FILE_TREE = [
   {
     id: "root",
-    name: "지식 가든",
+    name: "Knowledge Garden",
     type: "root",
     children: [
-      { id: "f1", name: "테스트 폴더 1", type: "folder", children: [] },
-      { id: "f2", name: "새 폴더 2", type: "folder", children: [] },
-      { id: "f3", name: "새 폴더", type: "folder", children: [] },
-      { id: "f4", name: "리서치", type: "folder", children: [
-        { id: "n1", name: "메모 1", type: "note" },
-        { id: "n2", name: "메모 2", type: "note" },
-        { id: "n3", name: "메모 3", type: "note" }
+      { id: "f1", name: "Test Folder 1", type: "folder", children: [] },
+      { id: "f2", name: "New Folder 2", type: "folder", children: [] },
+      { id: "f3", name: "New Folder", type: "folder", children: [] },
+      { id: "f4", name: "Research", type: "folder", children: [
+        { id: "n1", name: "Note 1", type: "note" },
+        { id: "n2", name: "Note 2", type: "note" },
+        { id: "n3", name: "Note 3", type: "note" }
       ]},
-      { id: "f5", name: "테스트", type: "folder", children: [] },
-      { id: "f6", name: "2024년 분석", type: "folder", children: [
-         { id: "n4", name: "LG 에너지솔루션 & SK 이노베이션", type: "note", active: true }
+      { id: "f5", name: "Test", type: "folder", children: [] },
+      { id: "f6", name: "2024 Analysis", type: "folder", children: [
+         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true }
       ]}
     ]
   }
@@ -305,13 +305,13 @@ const INITIAL_EDGES = [
 const CHAT_HISTORY = [
   {
     role: "user",
-    content: "이 문서의 주요 특허를 요약해 줘.",
-    time: "오늘"
+    content: "Summarize the key patents in this document.",
+    time: "Today"
   },
   {
     role: "assistant",
-    content: "LG 에너지솔루션과 SK이노베이션의 최근 특허 동향을 분석한 결과, 양사는 배터리 안전성과 수명 향상을 위한 기술 개발에 집중하고 있습니다. 특히 LG 에너지솔루션은 하이니켈 양극재 및 실리콘 음극재 관련 특허 출원이 두드러지며, SK이노베이션은 분리막 기술 및 배터리 재활용 기술 관련 특허를 다수 확보하고 있는 것으로 파악됩니다. 또한, 전고체 배터리 등 차세대 배터리 기술 선점을 위한 경쟁도 치열해지고 있습니다. 이 문서는 이러한 기술적 흐름을 바탕으로 향후 시장 점유율 변화 및 기술 분쟁 가능성을 시사하고 있습니다.",
-    tool: "MCP 도구 • Patent_search",
+    content: "Based on the recent patent trends analysis of LG Energy Solution and SK Innovation, both companies are focusing on developing technology to improve battery safety and lifespan. LG Energy Solution is particularly prominent in patent applications related to high-nickel cathode materials and silicon anode materials, while SK Innovation is identified as securing numerous patents related to separator technology and battery recycling technology. Competition is also intensifying to secure next-generation battery technologies such as solid-state batteries. This document suggests changes in market share and potential technical disputes based on these technological trends.",
+    tool: "MCP Tool • Patent_search",
     data: [
       { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
       { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" },
@@ -327,25 +327,25 @@ const CHAT_HISTORY = [
   },
   {
     role: "user",
-    content: "미국 시장의 관련 사례를 찾아줘.",
-    time: "오늘"
+    content: "Find related cases in the US market.",
+    time: "Today"
   },
   {
     role: "assistant",
-    content: "미국 지방 법원의 관련 소송을 검색 중입니다...",
-    tool: "MCP 도구 • Legal_search"
+    content: "Searching for related lawsuits in US District Courts...",
+    tool: "MCP Tool • Legal_search"
   }
 ];
 
 const INITIAL_SESSIONS = [
   {
     id: 's1',
-    title: '특허 분석',
+    title: 'Patent Analysis',
     messages: CHAT_HISTORY
   },
   {
     id: 's2',
-    title: '법률 검토',
+    title: 'Legal Review',
     messages: []
   }
 ];
@@ -356,22 +356,22 @@ function GraphLegend() {
     return (
         <div className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20">
-                <span className="text-xs font-semibold text-muted-foreground">조회수</span>
+                <span className="text-xs font-semibold text-muted-foreground">Views</span>
                 <div className="flex gap-4 text-xs font-semibold text-muted-foreground">
-                    <span>개수</span>
-                    <span>비중(%)</span>
+                    <span>Count</span>
+                    <span>Ratio(%)</span>
                 </div>
             </div>
             <div className="py-1">
                 {[
-                    { color: 'bg-red-500', label: '1000회 이상', count: 154, ratio: '8%' },
-                    { color: 'bg-orange-500', label: '1000회 이하', count: 42, ratio: '2%' },
-                    { color: 'bg-amber-500', label: '500회 이하', count: 133, ratio: '7%' },
-                    { color: 'bg-green-500', label: '100회 이하', count: 90, ratio: '5%' },
-                    { color: 'bg-emerald-500', label: '50회 이하', count: 237, ratio: '12%' },
-                    { color: 'bg-blue-600', label: '10회 이하', count: 84, ratio: '4%' },
-                    { color: 'bg-indigo-500', label: '5회 이하', count: 144, ratio: '7%' },
-                    { color: 'bg-purple-500', label: '1회 이하', count: 36, ratio: '2%' },
+                    { color: 'bg-red-500', label: '> 1000', count: 154, ratio: '8%' },
+                    { color: 'bg-orange-500', label: '< 1000', count: 42, ratio: '2%' },
+                    { color: 'bg-amber-500', label: '< 500', count: 133, ratio: '7%' },
+                    { color: 'bg-green-500', label: '< 100', count: 90, ratio: '5%' },
+                    { color: 'bg-emerald-500', label: '< 50', count: 237, ratio: '12%' },
+                    { color: 'bg-blue-600', label: '< 10', count: 84, ratio: '4%' },
+                    { color: 'bg-indigo-500', label: '< 5', count: 144, ratio: '7%' },
+                    { color: 'bg-purple-500', label: '< 1', count: 36, ratio: '2%' },
                 ].map((item, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-1.5 hover:bg-muted/50 cursor-pointer text-xs group">
                         <div className="flex items-center gap-2 flex-1">
@@ -438,7 +438,7 @@ const NewsResultList = ({ data }: { data: any[] }) => {
       >
         <div className="flex items-center gap-2 text-muted-foreground">
              <Globe className="w-3.5 h-3.5 text-blue-500" />
-             <span>뉴스 결과 {data.length}개</span>
+             <span>News Results {data.length}</span>
         </div>
         <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
       </button>
@@ -576,7 +576,7 @@ export default function KnowledgeGarden() {
     const newId = `s${Date.now()}`;
     const newSession = {
       id: newId,
-      title: '새 채팅',
+      title: 'New Chat',
       messages: []
     };
     setChatSessions([...chatSessions, newSession]);
@@ -596,7 +596,7 @@ export default function KnowledgeGarden() {
       if (newSessions.length === 0) {
           // If all deleted, add a new empty one
           const newId = `s${Date.now()}`;
-          setChatSessions([{ id: newId, title: '새 채팅', messages: [] }]);
+          setChatSessions([{ id: newId, title: 'New Chat', messages: [] }]);
           setActiveSessionId(newId);
       } else {
           setChatSessions(newSessions);
@@ -1019,10 +1019,10 @@ export default function KnowledgeGarden() {
                         className="prose prose-slate max-w-none prose-sm prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:leading-relaxed outline-none min-h-[500px] cursor-text px-2"
                       >
                         <p className="lead text-lg text-foreground/80 mb-8 leading-relaxed tracking-wide">
-                           두 주요 EV 배터리 제조업체 간의 진행 중인 특허 분쟁에 대한 포괄적 분석으로, 주요 특허, 법적 주장 및 잠재적 시장 영향을 검토합니다.
+                           A comprehensive analysis of the ongoing patent dispute between two major EV battery manufacturers, reviewing key patents, legal arguments, and potential market impacts.
                         </p>
 
-                        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 개요</h3>
+                        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. Overview</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <p className="mb-3">
                               The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
@@ -1035,17 +1035,17 @@ export default function KnowledgeGarden() {
                             </ul>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 주요 쟁점 특허</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. Key Disputed Patents</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <div className="not-prose my-6 rounded-lg border border-border bg-card shadow-sm overflow-hidden">
                               <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/40 text-muted-foreground font-medium border-b border-border">
                                   <tr>
-                                    <th className="px-4 py-3 font-semibold">번호</th>
-                                    <th className="px-4 py-3 font-semibold">특허 ID</th>
-                                    <th className="px-4 py-3 font-semibold">제목</th>
-                                    <th className="px-4 py-3 font-semibold">날짜</th>
-                                    <th className="px-4 py-3 font-semibold">상태</th>
+                                    <th className="px-4 py-3 font-semibold">No.</th>
+                                    <th className="px-4 py-3 font-semibold">Patent ID</th>
+                                    <th className="px-4 py-3 font-semibold">Title</th>
+                                    <th className="px-4 py-3 font-semibold">Date</th>
+                                    <th className="px-4 py-3 font-semibold">Status</th>
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/50">
@@ -1082,7 +1082,7 @@ export default function KnowledgeGarden() {
                             </div>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 핵심 주장 및 증거 ⚖️</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. Core Arguments & Evidence ⚖️</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <p className="mb-3">The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
                             <ul className="list-disc pl-5 space-y-2 text-foreground/90">
@@ -1092,7 +1092,7 @@ export default function KnowledgeGarden() {
                             </ul>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 분석 과정 (단계별)</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. Analysis Process (Step-by-Step)</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
                                 <li>Collect all public court filings from the <strong>US ITC</strong> and <strong>Delaware District Court</strong>.</li>
@@ -1102,7 +1102,7 @@ export default function KnowledgeGarden() {
                             </ol>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">5. 시각적 증거</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">5. Visual Evidence</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <p className="mb-4">Comparison of the disputed battery cell structures and the diagrams found in the patent filings.</p>
                             
@@ -1126,25 +1126,25 @@ export default function KnowledgeGarden() {
                             </div>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">6. 조치 항목</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">6. Action Items</h3>
                         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
                             <ul className="contains-task-list task-list list-none pl-0 space-y-2">
                                 <li className="flex items-start gap-3 group">
                                     <input type="checkbox" checked readOnly className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-default" /> 
-                                    <span className="text-foreground/80 group-hover:text-foreground transition-colors line-through decoration-muted-foreground/50">초기 법원 제출 서류 검토 (2024-12-01 완료)</span>
+                                    <span className="text-foreground/80 group-hover:text-foreground transition-colors line-through decoration-muted-foreground/50">Review initial court filings (Completed 2024-12-01)</span>
                                 </li>
                                 <li className="flex items-start gap-3 group">
                                     <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-pointer" /> 
-                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">SK 배터리 모듈 기술 도면 분석</span>
+                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">Analyze SK Battery Module technical schematics</span>
                                 </li>
                                 <li className="flex items-start gap-3 group">
                                     <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 accent-blue-600 cursor-pointer" /> 
-                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">상호 라이선스 제안에 대한 반박 논리 준비</span>
+                                    <span className="text-foreground/90 group-hover:text-foreground transition-colors">Prepare counter-arguments for cross-licensing proposal</span>
                                 </li>
                             </ul>
                         </div>
 
-                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">7. 참고 자료 및 첨부 파일</h3>
+                        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">7. References & Attachments</h3>
                         <p>
                             For more details, refer to the <a href="https://www.usitc.gov" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">US ITC Case Details</a> page.
                             Related internal analysis can be found in <WikiLink>[[Previous Litigation History]]</WikiLink>.
@@ -1191,7 +1191,7 @@ export default function KnowledgeGarden() {
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
                               <Share2 className="w-4 h-4 text-blue-500" />
-                              <span className="font-semibold text-sm">온톨로지</span>
+                              <span className="font-semibold text-sm">Ontology</span>
                            </div>
                            <Button 
                             variant="ghost" 
@@ -1219,7 +1219,7 @@ export default function KnowledgeGarden() {
                         <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-500" />
-                            <span className="font-semibold text-sm">AI 코파일럿</span>
+                            <span className="font-semibold text-sm">AI Copilot</span>
                           </div>
                           <div className="flex gap-1">
                              <Button 
@@ -1283,13 +1283,13 @@ export default function KnowledgeGarden() {
                            {activeSession.messages.length === 0 ? (
                              <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
                                <Bot className="w-8 h-8 mb-2 opacity-20" />
-                               <p>새로운 대화를 시작하세요</p>
+                               <p>Start a new conversation</p>
                              </div>
                            ) : (
                              activeSession.messages.map((msg, i) => (
                              <div key={i} className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? '나' : 'Nexus AI'}</span>
+                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
                                    {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
                                 </div>
                                 
