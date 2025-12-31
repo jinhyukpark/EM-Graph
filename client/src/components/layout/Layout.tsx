@@ -1,11 +1,19 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +25,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Mock Organizations (duplicated for mockup)
+const MOCK_ORGS = [
+  { id: "org-1", name: "Acme Corp", members: 12, role: "Admin", plan: "Enterprise" },
+  { id: "org-2", name: "CyberSec Team", members: 5, role: "Member", plan: "Pro" },
+  { id: "org-3", name: "Data Lab", members: 3, role: "Viewer", plan: "Free" }
+];
+
 export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
@@ -24,6 +39,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
 
   useEffect(() => {
     if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
@@ -93,28 +109,62 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}>
-        {/* Logo Area */}
-        <div className={cn("h-16 flex items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-6 justify-between")}>
-          {!isCollapsed && (
-            <Link href="/dashboard">
-              <a className="flex items-center gap-2 group cursor-pointer">
-                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md group-hover:bg-primary/90 transition-colors">
-                  <Share2 className="w-5 h-5" />
-                </div>
-                <span className="text-lg font-bold tracking-tight text-foreground">
-                  EM-Graph
-                </span>
-              </a>
-            </Link>
+        {/* Workspace Switcher / Logo Area */}
+        <div className={cn("h-16 flex items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-4 justify-between")}>
+          {!isCollapsed ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="w-full justify-between px-2 hover:bg-secondary/50 h-12">
+                  <div className="flex items-center gap-2 text-left min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
+                      <Share2 className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col items-start leading-none min-w-0">
+                      <span className="font-bold text-sm truncate w-32">{selectedOrg.name}</span>
+                      <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
+                    </div>
+                  </div>
+                  <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-2 opacity-50 shrink-0" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Workspaces</DropdownMenuLabel>
+                {MOCK_ORGS.map((org) => (
+                  <DropdownMenuItem key={org.id} onClick={() => setSelectedOrg(org)} className="flex items-center justify-between gap-2 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                        {org.name.substring(0, 1)}
+                      </div>
+                      <span>{org.name}</span>
+                    </div>
+                    {selectedOrg.id === org.id && <Check className="w-4 h-4 text-primary" />}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setLocation("/organization-select")} className="cursor-pointer">
+                   <div className="flex items-center gap-2 text-muted-foreground">
+                     <Plus className="w-4 h-4" />
+                     <span>Add Workspace</span>
+                   </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+              <Share2 className="w-5 h-5" />
+            </div>
           )}
           
           <Button 
             variant="ghost" 
             size="icon" 
-            className={cn("h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex", !isCollapsed && "absolute right-2")}
+            className={cn(
+              "h-6 w-6 text-muted-foreground hover:text-foreground hidden md:flex", 
+              !isCollapsed && "absolute right-2 top-5"
+            )}
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
-            <Menu className="w-4 h-4" />
+             {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </Button>
         </div>
 
