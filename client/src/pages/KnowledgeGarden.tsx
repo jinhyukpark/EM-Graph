@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Newspaper,
+  Newspaper, Smile, Layout as LayoutIcon, BadgeCheck,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -793,8 +793,27 @@ export default function KnowledgeGarden() {
                 <ScrollArea className="flex-1 bg-white">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                     <div className="space-y-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
+                      <div className="group relative">
+                        {/* Title Toolbar */}
+                        <div className="absolute -top-8 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-4 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-lg border border-border/50 shadow-sm">
+                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
+                             <Smile className="w-3.5 h-3.5" />
+                             <span>아이콘 추가</span>
+                           </button>
+                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
+                             <LayoutIcon className="w-3.5 h-3.5" />
+                             <span>커버 추가</span>
+                           </button>
+                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
+                             <BadgeCheck className="w-3.5 h-3.5" />
+                             <span>인증하기</span>
+                           </button>
+                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
+                             <MessageSquare className="w-3.5 h-3.5" />
+                             <span>댓글 추가</span>
+                           </button>
+                        </div>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
                       </div>
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
