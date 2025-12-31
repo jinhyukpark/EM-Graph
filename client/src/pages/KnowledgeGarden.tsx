@@ -1000,6 +1000,11 @@ export default function KnowledgeGarden() {
                           The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
                           This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
                         </p>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li><strong>Consolidated Analysis:</strong> Summary of trade secret misappropriation claims.</li>
+                            <li><strong>Patent Infringement:</strong> Details on specific technology infringements.</li>
+                            <li><strong>Court Filings:</strong> Review of recent legal documentation.</li>
+                        </ul>
 
                         <h3>2. Key Patents in Dispute</h3>
                         <div className="not-prose my-6 rounded-lg border border-border bg-card">
