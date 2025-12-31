@@ -980,27 +980,29 @@ export default function KnowledgeGarden() {
                         <ScrollArea className="flex-1">
                            <div className="p-4 space-y-4">
                            {/* New Chat Tabs */}
-                           <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center px-1">
-                             {chatSessions.map(session => (
-                               <Button 
-                                 key={session.id}
-                                 variant="ghost"
-                                 size="sm" 
-                                 className={cn(
-                                   "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
-                                   activeSessionId === session.id 
-                                     ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
-                                     : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                                 )}
-                                 onClick={() => setActiveSessionId(session.id)}
-                               >
-                                 {session.title}
-                               </Button>
-                             ))}
+                           <div className="flex items-center gap-2 mb-4 px-1">
+                             <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-2">
+                               {chatSessions.map(session => (
+                                 <Button 
+                                   key={session.id}
+                                   variant="ghost"
+                                   size="sm" 
+                                   className={cn(
+                                     "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
+                                     activeSessionId === session.id 
+                                       ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
+                                       : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                   )}
+                                   onClick={() => setActiveSessionId(session.id)}
+                                 >
+                                   {session.title}
+                                 </Button>
+                               ))}
+                             </div>
                              <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
+                                className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0 ml-auto"
                                 onClick={handleAddSession}
                              >
                                <Plus className="w-4 h-4" />
