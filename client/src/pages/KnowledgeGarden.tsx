@@ -1323,8 +1323,8 @@ export default function KnowledgeGarden() {
                         <ScrollArea className="flex-1">
                            <div className="p-4 space-y-4">
                            {/* New Chat Tabs */}
-                           <div className="flex items-center gap-2 mb-4 px-1 w-full min-w-0">
-                             <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide flex gap-2">
+                           <div className="relative flex items-center mb-4 px-1 w-full min-w-0 h-10">
+                             <div className="absolute inset-y-0 left-0 right-10 overflow-x-auto scrollbar-hide flex items-center gap-2 pr-2">
                                {chatSessions.map(session => (
                                  <div key={session.id} className="relative group/tab shrink-0">
                                    <Button 
@@ -1356,14 +1356,19 @@ export default function KnowledgeGarden() {
                                  </div>
                                ))}
                              </div>
-                             <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0 ml-auto"
-                                onClick={handleAddSession}
-                             >
-                               <Plus className="w-4 h-4" />
-                             </Button>
+                             
+                             {/* Fixed + Button with gradient mask on the left */}
+                             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center bg-background pl-2 z-10">
+                                 <div className="absolute left-0 top-0 bottom-0 w-4 -translate-x-full bg-gradient-to-l from-background to-transparent pointer-events-none" />
+                                 <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
+                                    onClick={handleAddSession}
+                                 >
+                                   <Plus className="w-4 h-4" />
+                                 </Button>
+                             </div>
                            </div>
             
                            {/* Chat Messages */}
