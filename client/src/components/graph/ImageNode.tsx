@@ -33,7 +33,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
       {/* Circle Container - White background with colored border */}
       <div 
         className={cn(
-          "relative rounded-full transition-all duration-300 z-10 flex items-center justify-center shadow-sm",
+          "relative rounded-full transition-all duration-300 z-10 flex items-center justify-center shadow-sm overflow-hidden",
           selected ? "ring-4 ring-primary/30 scale-105" : "hover:scale-105",
           data.highlight && "shadow-[0_0_20px_rgba(var(--primary),0.2)]"
         )}
@@ -44,13 +44,21 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
           border: `3px solid ${color}`,
         }}
       >
-        {/* Inner Text (Initials) */}
-        <span 
-          className="text-[16px] font-bold leading-tight"
-          style={{ color: color }}
-        >
-           {data.label.substring(0, 2).toUpperCase()}
-        </span>
+        {data.image ? (
+          <img 
+            src={data.image} 
+            alt={data.label} 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          /* Inner Text (Initials) */
+          <span 
+            className="text-[16px] font-bold leading-tight"
+            style={{ color: color }}
+          >
+             {data.label.substring(0, 2).toUpperCase()}
+          </span>
+        )}
       </div>
 
       {/* Floating Label (Strictly Outside) */}

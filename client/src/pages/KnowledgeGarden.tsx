@@ -92,7 +92,8 @@ const INITIAL_NODES = [
       label: 'Kang "The Viper"', 
       subLabel: 'Crime Boss',
       borderColor: '#ef4444', // red-500
-      highlight: true
+      highlight: true,
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop'
     },
     style: { width: 80, height: 80 }
   },
@@ -104,7 +105,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Thug A', 
       subLabel: 'Associate',
-      borderColor: '#ef4444' // red-500
+      borderColor: '#ef4444', // red-500
+      image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop'
     },
     style: { width: 60, height: 60 }
   },
@@ -116,7 +118,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Witness Kim', 
       subLabel: 'Observer',
-      borderColor: '#eab308' // yellow-500
+      borderColor: '#eab308', // yellow-500
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop'
     },
     style: { width: 60, height: 60 }
   },
@@ -128,7 +131,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Lee', 
       subLabel: 'Partner',
-      borderColor: '#3b82f6' // blue-500
+      borderColor: '#3b82f6', // blue-500
+      image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop'
     },
     style: { width: 60, height: 60 }
   },
@@ -140,7 +144,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Choi', 
       subLabel: 'Lead Investigator',
-      borderColor: '#3b82f6' // blue-500
+      borderColor: '#3b82f6', // blue-500
+      image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop'
     },
     style: { width: 70, height: 70 }
   },
@@ -152,7 +157,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Lawyer Han', 
       subLabel: 'Defense Attorney',
-      borderColor: '#a855f7' // purple-500
+      borderColor: '#a855f7', // purple-500
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'
     },
     style: { width: 65, height: 65 }
   },
@@ -164,7 +170,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Park "Razor"', 
       subLabel: 'Enforcer',
-      borderColor: '#ef4444' // red-500
+      borderColor: '#ef4444', // red-500
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
     },
     style: { width: 70, height: 70 }
   },
@@ -176,7 +183,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kim "Ledger"', 
       subLabel: 'Money Launderer',
-      borderColor: '#ef4444' // red-500
+      borderColor: '#ef4444', // red-500
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop'
     },
     style: { width: 65, height: 65 }
   },
@@ -188,7 +196,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim A', 
       subLabel: 'Assault',
-      borderColor: '#f97316' // orange-500
+      borderColor: '#f97316', // orange-500
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop'
     },
     style: { width: 60, height: 60 }
   },
