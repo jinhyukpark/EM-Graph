@@ -12,7 +12,7 @@ import {
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -508,18 +508,20 @@ function GraphView() {
 }
 
 const WikiLink = ({ children }: { children: string }) => {
+  const docName = children.replace(/\[\[|\]\]/g, '');
+  
   return (
     <span 
-      className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-transparent hover:border-blue-200 rounded-sm px-1.5 py-0.5 cursor-pointer transition-all text-[13px] font-medium align-middle mx-1 select-none"
+      className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/50 hover:bg-blue-100/80 border border-blue-100 hover:border-blue-200 rounded-md px-2 py-0.5 cursor-pointer transition-all text-[13px] font-medium align-middle mx-1 select-none group shadow-sm hover:shadow"
       onClick={(e) => {
         e.stopPropagation();
-        const docName = children.replace(/\[\[|\]\]/g, '');
-        toast.info("문서 이동", {
-          description: `'${docName}' 문서로 이동합니다.`
+        toast.info("Navigate to Document", {
+          description: `Navigating to '${docName}'...`
         });
       }}
     >
-      {children}
+      <Link className="w-3 h-3 text-blue-400 group-hover:text-blue-600 transition-colors" />
+      <span className="border-b border-transparent group-hover:border-blue-600/30">{docName}</span>
     </span>
   );
 };
