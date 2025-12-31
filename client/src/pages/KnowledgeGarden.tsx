@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -1019,9 +1019,15 @@ export default function KnowledgeGarden() {
                               {msg.content}
                             </div>
                             {msg.role === 'assistant' && (
-                                <div className="flex justify-end mt-1">
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Add to Knowledge Garden">
-                                        <Plus className="w-3.5 h-3.5" />
+                                <div className="flex justify-end mt-1 gap-1">
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Add to Knowledge Graph">
+                                        <Share2 className="w-3.5 h-3.5" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
+                                        <Copy className="w-3.5 h-3.5" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
+                                        <Trash2 className="w-3.5 h-3.5" />
                                     </Button>
                                 </div>
                             )}
