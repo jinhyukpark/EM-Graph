@@ -71,7 +71,7 @@ export default function ResourcesManager() {
       <div className="flex h-[calc(100vh-64px)] bg-background">
         {/* Sidebar */}
         <div className="w-64 border-r border-border bg-card/30 flex flex-col">
-          <div className="p-4 border-b border-border">
+          <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Button className="w-full bg-primary text-primary-foreground shadow-sm">
               <Upload className="w-4 h-4 mr-2" />
               Upload New
@@ -128,13 +128,13 @@ export default function ResourcesManager() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col bg-background">
           {/* Toolbar */}
-          <div className="h-14 border-b border-border flex items-center justify-between px-6 bg-card/10">
+          <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-card/10 shrink-0">
             <div className="flex items-center gap-4 flex-1">
               <div className="relative w-64">
-                <Search className="w-4 h-4 absolute left-2.5 top-2.5 text-muted-foreground" />
+                <Search className="w-4 h-4 absolute left-2.5 top-3 text-muted-foreground" />
                 <Input 
                   placeholder="Search resources..." 
-                  className="pl-9 h-9 bg-background/50 border-border focus-visible:ring-primary/20" 
+                  className="pl-9 h-10 bg-background/50 border-border focus-visible:ring-primary/20" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -150,7 +150,7 @@ export default function ResourcesManager() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className={`h-7 w-7 rounded-sm ${viewMode === 'grid' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:bg-secondary/50'}`}
+                  className={`h-8 w-8 rounded-sm ${viewMode === 'grid' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:bg-secondary/50'}`}
                   onClick={() => setViewMode('grid')}
                 >
                   <Grid className="w-4 h-4" />
@@ -158,13 +158,13 @@ export default function ResourcesManager() {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className={`h-7 w-7 rounded-sm ${viewMode === 'list' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:bg-secondary/50'}`}
+                  className={`h-8 w-8 rounded-sm ${viewMode === 'list' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:bg-secondary/50'}`}
                   onClick={() => setViewMode('list')}
                 >
                   <List className="w-4 h-4" />
                 </Button>
               </div>
-              <Button variant="outline" size="sm" className="h-9">
+              <Button variant="outline" size="sm" className="h-10">
                 <Filter className="w-4 h-4 mr-2" />
                 Filter
               </Button>
