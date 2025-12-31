@@ -921,7 +921,7 @@ export default function KnowledgeGarden() {
                         <h1 
                           contentEditable 
                           suppressContentEditableWarning 
-                          className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text pr-24 relative"
+                          className="text-3xl font-bold tracking-tight text-foreground/90 mb-4 pt-2 outline-none cursor-text relative truncate"
                         >
                           Patent Dispute Analysis: LG Energy Solution vs SK Innovation
                         </h1>
