@@ -1021,8 +1021,8 @@ export default function KnowledgeGarden() {
                     </div>
         
                     {/* Input Area */}
-                    <div className="p-4 bg-background border-t border-border">
-                      <div className="relative border border-border/60 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
+                    <div className="p-4 bg-background">
+                      <div className="relative border border-zinc-300 dark:border-zinc-700 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
                         <Textarea 
                           placeholder="Ask anything..." 
                           className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
