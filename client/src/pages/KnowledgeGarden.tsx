@@ -12,7 +12,7 @@ import {
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -731,7 +731,7 @@ export default function KnowledgeGarden() {
 
   return (
     <Layout>
-      <div className="h-full flex flex-col bg-background relative overflow-hidden">
+      <div className="h-full flex flex-col bg-background relative overflow-hidden overscroll-none">
          {/* Warning Toast */}
          <AnimatePresence>
             {showWarning && (
@@ -739,19 +739,19 @@ export default function KnowledgeGarden() {
                     initial={{ opacity: 0, y: -20, x: "-50%" }}
                     animate={{ opacity: 1, y: 0, x: "-50%" }}
                     exit={{ opacity: 0, y: -20, x: "-50%" }}
-                    className="absolute top-4 left-1/2 z-50 bg-red-100 border border-red-200 text-red-700 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+                    className="fixed top-24 left-1/2 z-[100] bg-red-100 border border-red-200 text-red-700 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 pointer-events-none"
                 >
-                    <X className="w-4 h-4" />
+                    <AlertCircle className="w-4 h-4" />
                     <span className="text-sm font-medium">At least one view must be open.</span>
                 </motion.div>
             )}
          </AnimatePresence>
 
-        <ResizablePanelGroup direction="horizontal">
+        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
           {/* 1. File Explorer */}
           {showExplorer && (
             <>
-              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="bg-muted/10 border-r border-border flex flex-col">
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="bg-muted/10 border-r border-border flex flex-col h-full">
                 <div className="h-16 border-b border-border flex items-center px-4 shrink-0 justify-between">
                   <div className="flex items-center gap-2 text-foreground/80">
                      <Folder className="w-5 h-5 text-blue-500" />
@@ -840,12 +840,12 @@ export default function KnowledgeGarden() {
           )}
 
           {/* Main Content Area */}
-          <ResizablePanel defaultSize={80}>
-            <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel defaultSize={80} className="h-full">
+            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
               
               {/* 2. Document Details */}
               {showDocDetails && (
-              <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group">
+              <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
                 <div className="h-16 border-b border-border flex items-center justify-between px-6 shrink-0 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
                   <div className="flex items-center gap-3">
                      {!showExplorer && (
@@ -1273,7 +1273,7 @@ export default function KnowledgeGarden() {
                   {showGraph && (
                     <>
                       {showDocDetails && <ResizableHandle />}
-                      <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col">
+                      <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col h-full">
                          {/* Graph Header - Empty but height aligned */}
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
@@ -1302,7 +1302,7 @@ export default function KnowledgeGarden() {
                   {showCopilot && (
                     <>
                       {(showDocDetails || showGraph) && <ResizableHandle />}
-                      <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
+                      <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col h-full">
                         <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-500" />
