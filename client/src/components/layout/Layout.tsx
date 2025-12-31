@@ -39,6 +39,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const projectId = params?.id;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
+  const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
   const [pendingOrg, setPendingOrg] = useState<typeof MOCK_ORGS[0] | null>(null);
 
   useEffect(() => {
