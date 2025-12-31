@@ -821,7 +821,7 @@ export default function KnowledgeGarden() {
                   </div>
                 </div>
 
-                <ScrollArea className="flex-1 bg-white">
+                <ScrollArea className="flex-1 bg-white" mode="hover">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                     <div className="space-y-6">
                       <div className="group relative mt-6">
@@ -1264,7 +1264,7 @@ export default function KnowledgeGarden() {
                           </div>
                         </div>
                         {/* ... Copilot Content ... */}
-                        <ScrollArea className="flex-1">
+                        <ScrollArea className="flex-1" mode="hover">
                            <div className="p-4 space-y-4">
                            {/* New Chat Tabs */}
                            <div className="flex items-center gap-2 mb-4 px-1 w-full min-w-0">
