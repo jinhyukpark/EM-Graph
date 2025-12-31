@@ -176,6 +176,7 @@ export default function KnowledgeGarden() {
 
   const [fileTree, setFileTree] = useState(INITIAL_FILE_TREE);
   const [showExplorer, setShowExplorer] = useState(true);
+  const [showDocDetails, setShowDocDetails] = useState(true);
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
@@ -338,17 +339,17 @@ export default function KnowledgeGarden() {
                     size="sm" 
                     className={cn(
                       "w-full justify-between h-8 text-xs font-normal border group",
-                      true 
+                      showDocDetails 
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
-                    onClick={() => {}}
+                    onClick={() => setShowDocDetails(!showDocDetails)}
                   >
                     <div className="flex items-center">
                         <FileText className="w-3.5 h-3.5 mr-2" />
                         Document Details
                     </div>
-                    <Eye className="w-3.5 h-3.5" />
+                    {showDocDetails ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
                   </Button>
                   <Button 
                     variant="ghost" 
@@ -395,7 +396,8 @@ export default function KnowledgeGarden() {
             <ResizablePanelGroup direction="horizontal">
             
               {/* 2. Document Editor */}
-              <ResizablePanel defaultSize={50} minSize={30} className="bg-background flex flex-col">
+              {showDocDetails && (
+                <ResizablePanel defaultSize={50} minSize={30} className="bg-background flex flex-col">
                 {/* Document Breadcrumb Header */}
                 <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-background shrink-0">
                   <div className="flex items-center gap-2">
@@ -572,11 +574,12 @@ export default function KnowledgeGarden() {
               </div>
             </ScrollArea>
           </ResizablePanel>
+              )}
 
           {/* 3. Graph View */}
               {showGraph && (
                 <>
-                  <ResizableHandle />
+                  {showDocDetails && <ResizableHandle />}
                   <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col">
                      {/* Graph Header - Empty but height aligned */}
                      <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
@@ -613,7 +616,7 @@ export default function KnowledgeGarden() {
               {/* 4. AI Copilot */}
               {showCopilot && (
                 <>
-                  <ResizableHandle />
+                  {(showDocDetails || showGraph) && <ResizableHandle />}
                   <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
                     <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                       <div className="flex items-center gap-2">
