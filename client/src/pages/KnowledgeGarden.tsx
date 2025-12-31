@@ -670,7 +670,14 @@ export default function KnowledgeGarden() {
     
                   <div className="flex items-center gap-1">
                     <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowDocDetails(false)}
+                    >
+                        <X className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
     
