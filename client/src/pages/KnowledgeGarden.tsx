@@ -544,6 +544,17 @@ export default function KnowledgeGarden() {
     setFileTree(newTree);
   };
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Function to simulate processing state
+  const handleSendMessage = () => {
+    setIsProcessing(true);
+    // Simulate API delay
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 3000);
+  };
+
   return (
     <Layout>
       <div className="h-full bg-background flex flex-col relative">
@@ -1022,6 +1033,39 @@ export default function KnowledgeGarden() {
         
                     {/* Input Area */}
                     <div className="p-4 bg-background">
+                      {isProcessing && (
+                         <motion.div 
+                           initial={{ opacity: 0, y: 10 }}
+                           animate={{ opacity: 1, y: 0 }}
+                           exit={{ opacity: 0, y: 10 }}
+                           className="flex items-center gap-2 mb-3 px-1"
+                         >
+                           <div className="grid grid-cols-2 gap-0.5">
+                             <motion.div 
+                               className="w-1.5 h-1.5 rounded-full bg-primary"
+                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                               transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                             />
+                             <motion.div 
+                               className="w-1.5 h-1.5 rounded-full bg-primary"
+                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                               transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                             />
+                             <motion.div 
+                               className="w-1.5 h-1.5 rounded-full bg-primary"
+                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                               transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                             />
+                             <motion.div 
+                               className="w-1.5 h-1.5 rounded-full bg-primary"
+                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                               transition={{ duration: 1, repeat: Infinity, delay: 0.6 }}
+                             />
+                           </div>
+                           <span className="text-sm font-medium text-foreground">Working.</span>
+                         </motion.div>
+                      )}
+
                       <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
                         <Textarea 
                           placeholder="Ask anything..." 
@@ -1052,8 +1096,12 @@ export default function KnowledgeGarden() {
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
                                 <FileText className="w-4 h-4" />
                               </Button>
-                              <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm">
-                                <ArrowUp className="w-4 h-4" />
+                              <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm" onClick={handleSendMessage}>
+                                {isProcessing ? (
+                                  <div className="w-3 h-3 bg-primary-foreground rounded-[1px]" />
+                                ) : (
+                                  <ArrowUp className="w-4 h-4" />
+                                )}
                               </Button>
                            </div>
                         </div>
