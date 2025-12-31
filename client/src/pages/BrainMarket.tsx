@@ -46,6 +46,13 @@ import rareEarthImg from '@assets/generated_images/rare_earth_mining_map.png';
 import cyberImg from '@assets/generated_images/cybersecurity_threat_network.png';
 import biotechImg from '@assets/generated_images/biotech_innovation_graph.png';
 
+// Import Ontology Structure Images
+import semiconductorOntologyImg from '@assets/generated_images/semiconductor_supply_chain_ontology_graph.png';
+import fraudOntologyImg from '@assets/generated_images/financial_fraud_detection_ontology_graph.png';
+import rareEarthOntologyImg from '@assets/generated_images/rare_earth_geopolitics_ontology_graph.png';
+import cyberOntologyImg from '@assets/generated_images/cybersecurity_threat_ontology_graph.png';
+import biotechOntologyImg from '@assets/generated_images/biotech_innovation_ontology_graph.png';
+
 // Mock Data for Brains
 const BRAINS = [
     {
@@ -84,7 +91,7 @@ const BRAINS = [
             dataSources: 150
         },
         imageSrc: semiconductorImg,
-        ontologyImageSrc: semiconductorImg, // Reusing for demo
+        ontologyImageSrc: semiconductorOntologyImg,
         reviewList: [
             { id: 1, user: 'Sarah Chen', role: 'Procurement Manager', rating: 5, date: '2 days ago', comment: 'Absolutely essential for our sourcing strategy. The tier-2 supplier mapping is incredibly detailed.' },
             { id: 2, user: 'Marcus Weber', role: 'Investment Analyst', rating: 4, date: '1 week ago', comment: 'Great data quality. Would love to see more frequent updates on pricing trends, but the structural data is solid.' },
@@ -126,7 +133,7 @@ const BRAINS = [
             dataSources: 75
         },
         imageSrc: fraudImg,
-        ontologyImageSrc: fraudImg,
+        ontologyImageSrc: fraudOntologyImg,
         reviewList: [
             { id: 1, user: 'Alex Morgan', role: 'Compliance Officer', rating: 5, date: '3 days ago', comment: 'The synthetic identity patterns are spot on. Helped us catch a major ring last week.' },
             { id: 2, user: 'Priya Patel', role: 'Risk Analyst', rating: 5, date: '2 weeks ago', comment: 'Best ontology for graph databases I have used. Integration with Neo4j was seamless.' }
@@ -167,7 +174,7 @@ const BRAINS = [
             dataSources: 40
         },
         imageSrc: rareEarthImg,
-        ontologyImageSrc: rareEarthImg,
+        ontologyImageSrc: rareEarthOntologyImg,
         reviewList: [
             { id: 1, user: 'Dr. James Wilson', role: 'Policy Researcher', rating: 4, date: '1 month ago', comment: 'Very thorough on the ownership structures. Some processing capacity data feels slightly outdated.' },
             { id: 2, user: 'Elena Rodriguez', role: 'Supply Chain Strategist', rating: 5, date: '1 month ago', comment: 'Invaluable for our risk assessment. The geopolitical dependency map is an eye-opener.' }
@@ -208,7 +215,7 @@ const BRAINS = [
             dataSources: 500
         },
         imageSrc: cyberImg,
-        ontologyImageSrc: cyberImg,
+        ontologyImageSrc: cyberOntologyImg,
         reviewList: [
             { id: 1, user: 'SecOps Lead', role: 'Enterprise Security', rating: 5, date: '4 hours ago', comment: 'The hourly updates are critical for us. Caught a C2 communication thanks to this feed.' },
             { id: 2, user: 'Malware Hunter', role: 'Independent Researcher', rating: 5, date: '1 day ago', comment: 'The depth of the TTP mapping is impressive. Worth every penny.' },
@@ -250,7 +257,7 @@ const BRAINS = [
             dataSources: 90
         },
         imageSrc: biotechImg,
-        ontologyImageSrc: biotechImg,
+        ontologyImageSrc: biotechOntologyImg,
         reviewList: [
             { id: 1, user: 'Dr. Emily Chen', role: 'Venture Capitalist', rating: 5, date: '1 week ago', comment: 'The patent citation network helped us identify a key acquisition target.' },
             { id: 2, user: 'Pharma Scout', role: 'R&D', rating: 4, date: '2 weeks ago', comment: 'Great for tracking early-stage startups. Would like more coverage on European markets.' }
