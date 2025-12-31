@@ -17,6 +17,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 // --- Mock Data ---
 
@@ -169,7 +170,7 @@ export default function KnowledgeGarden() {
           {showExplorer && (
             <>
               <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-secondary/5 flex flex-col border-r border-border">
-                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
+                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0 bg-secondary/5 relative z-10">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
                     <Button 
@@ -185,18 +186,28 @@ export default function KnowledgeGarden() {
                     </Button>
                   </div>
                 </div>
+                <AnimatePresence>
                 {showSearch && (
-                    <div className="p-2 border-b border-border/50 bg-secondary/10">
-                         <div className="relative">
-                            <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-muted-foreground" />
-                            <Input 
-                                className="h-8 text-xs pl-8 bg-background border-border/50 focus-visible:ring-1" 
-                                placeholder="Search files..." 
-                                autoFocus
-                            />
+                    <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden bg-secondary/10 border-b border-border/50"
+                    >
+                        <div className="p-2">
+                             <div className="relative">
+                                <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-muted-foreground" />
+                                <Input 
+                                    className="h-8 text-xs pl-8 bg-background border-border/50 focus-visible:ring-1" 
+                                    placeholder="Search files..." 
+                                    autoFocus
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </motion.div>
                 )}
+                </AnimatePresence>
                 <ScrollArea className="flex-1 py-2">
                   {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
                 </ScrollArea>
