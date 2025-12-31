@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -133,50 +133,74 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed ? (
-            <Button 
-              variant="ghost" 
-              className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1"
-              onClick={handleOrgClick}
-            >
-              <div className="flex items-center gap-2 text-left min-w-0">
+            <Link href="/dashboard">
+              <a className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                   <Share2 className="w-5 h-5" />
                 </div>
-                <div className="flex flex-col items-start leading-none min-w-0">
-                  <span className="font-bold text-sm truncate w-24">{selectedOrg.name}</span>
-                  <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
-                </div>
-              </div>
-            </Button>
+                <span className="text-lg font-bold tracking-tight">EM-Graph</span>
+              </a>
+            </Link>
           ) : (
             <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
               <Share2 className="w-5 h-5" />
             </div>
           )}
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex shrink-0"
-              >
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleOrgClick} className="cursor-pointer">
-                워크스페이스 변경
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLocation('/settings')} className="cursor-pointer">
-                워크스페이스 정보 변경
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex shrink-0"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+             {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </Button>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 p-0 overflow-hidden flex flex-col">
+          
+          {!isCollapsed && !isProjectView && (
+            <div className="px-3 pt-6 pb-2">
+               <div className="flex items-center justify-between mb-2 px-1">
+                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
+                 <div className="flex gap-1">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={handleOrgClick} className="cursor-pointer">
+                          Change Workspace
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLocation('/settings')} className="cursor-pointer">
+                          Workspace Settings
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button variant="ghost" size="icon" className="h-5 w-5 p-0 text-muted-foreground hover:text-foreground">
+                       <Search className="w-4 h-4" />
+                    </Button>
+                 </div>
+               </div>
+               <div className="flex items-center gap-2">
+                 <Button variant="outline" className="flex-1 justify-between px-2 h-10 text-left font-normal border-input shadow-sm bg-background hover:bg-accent/50" onClick={handleOrgClick}>
+                   <div className="flex items-center gap-2 truncate min-w-0">
+                     <div className="w-6 h-6 rounded bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+                       {selectedOrg.name.substring(0,1)}
+                     </div>
+                     <span className="truncate text-sm font-medium">{selectedOrg.name}</span>
+                   </div>
+                   <ChevronsUpDown className="w-3 h-3 opacity-50 shrink-0" />
+                 </Button>
+                 <Button variant="default" size="icon" className="h-10 w-10 shrink-0 bg-blue-600 hover:bg-blue-700 text-white shadow-sm" onClick={() => setLocation("/organization-select")}>
+                   <Plus className="w-5 h-5" />
+                 </Button>
+               </div>
+            </div>
+          )}
           
           {isProjectView && (
             <div className={cn("pt-4 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
