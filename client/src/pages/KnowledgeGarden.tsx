@@ -1100,9 +1100,20 @@ export default function KnowledgeGarden() {
                             </div>
                             
                             {msg.tool && (
-                              <div className="bg-secondary/30 border border-border rounded p-2 text-xs flex items-center gap-2 text-muted-foreground">
-                                <Database className="w-3 h-3" />
-                                {msg.tool}
+                              <div className="bg-secondary/30 border border-border rounded px-2.5 py-1.5 text-xs flex items-center gap-2 text-muted-foreground w-fit mb-2">
+                                <Database className="w-3.5 h-3.5 text-blue-500/70" />
+                                <div className="flex items-center gap-2">
+                                  {msg.tool.includes(' • ') ? (
+                                    msg.tool.split(' • ').map((part, idx) => (
+                                      <div key={idx} className="flex items-center gap-2">
+                                        {idx > 0 && <div className="h-3 w-[1px] bg-border/60" />}
+                                        <span className={idx === 1 ? "font-medium text-foreground/80" : ""}>{part}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <span>{msg.tool}</span>
+                                  )}
+                                </div>
                               </div>
                             )}
                             {msg.data && (
