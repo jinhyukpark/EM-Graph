@@ -853,27 +853,27 @@ export default function KnowledgeGarden() {
                                 <Button 
                                     variant="secondary" 
                                     size="sm" 
-                                    className={cn("h-8 px-3 text-xs font-medium bg-neutral-700 hover:bg-neutral-800 text-white border-transparent gap-1.5 rounded-md shadow-sm")}
+                                    className={cn("h-8 px-3 text-xs font-medium text-white border-transparent gap-1.5 rounded-md shadow-sm transition-colors", docStatus.color, "hover:opacity-90")}
                                 >
                                     {docStatus.label}
                                     <ChevronDown className="w-3.5 h-3.5 opacity-70" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-56">
-                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Select Status</DropdownMenuLabel>
+                            <DropdownMenuContent align="start" className="w-60">
+                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal mb-1">Select Status</DropdownMenuLabel>
                                 {allStatuses.map(status => (
                                     <DropdownMenuItem 
                                         key={status.id} 
-                                        className="justify-between group cursor-pointer"
+                                        className="justify-between group cursor-pointer py-2"
                                         onClick={() => setDocStatus(status)}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                            <div className={cn("w-2 h-2 rounded-full ring-2 ring-offset-1 ring-transparent", status.color, docStatus.id === status.id && "ring-offset-background ring-primary/30 scale-110")} />
                                             <span>{status.label}</span>
                                         </div>
                                         {status.id.startsWith('custom-') && (
                                             <Trash2 
-                                                className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
+                                                className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleDeleteStatus(status.id);
@@ -882,27 +882,32 @@ export default function KnowledgeGarden() {
                                         )}
                                     </DropdownMenuItem>
                                 ))}
-                                <DropdownMenuSeparator />
-                                <div className="p-2 space-y-2">
-                                    <div className="flex gap-1 mb-1 justify-between">
+                                <DropdownMenuSeparator className="my-2" />
+                                <div className="p-2 bg-secondary/20 rounded-md mx-1 mb-1">
+                                    <div className="text-[10px] text-muted-foreground mb-2 font-medium">Add New Status</div>
+                                    <div className="flex gap-2 mb-3">
                                         {['bg-slate-500', 'bg-red-500', 'bg-orange-500', 'bg-green-500', 'bg-blue-500', 'bg-purple-500'].map(color => (
-                                            <div 
+                                            <button 
                                                 key={color}
-                                                className={cn("w-4 h-4 rounded-full cursor-pointer hover:scale-110 transition-transform ring-offset-background", color === 'bg-blue-500' ? "ring-2 ring-primary ring-offset-1" : "")}
-                                                // Simplified color selection - in a real app this would update a state
+                                                className={cn(
+                                                  "w-5 h-5 rounded-full cursor-pointer hover:scale-110 transition-transform ring-offset-background focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1", 
+                                                  color,
+                                                  color === 'bg-blue-500' ? "ring-2 ring-primary ring-offset-1" : "" // Mock selected state
+                                                )}
+                                                // In a real app, this would set a 'selectedColor' state
                                             />
                                         ))}
                                     </div>
                                     <div className="flex gap-2">
                                         <Input 
-                                            placeholder="New Status..." 
-                                            className="h-7 text-xs" 
+                                            placeholder="Status name..." 
+                                            className="h-8 text-xs bg-background" 
                                             value={newStatusName}
                                             onChange={(e) => setNewStatusName(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleAddStatus()}
                                         />
-                                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={handleAddStatus}>
-                                            <Plus className="w-3 h-3" />
+                                        <Button size="sm" variant="secondary" className="h-8 w-8 p-0 shrink-0" onClick={handleAddStatus}>
+                                            <Plus className="w-3.5 h-3.5" />
                                         </Button>
                                     </div>
                                 </div>
