@@ -46,6 +46,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 // --- Mock Data ---
 
@@ -505,6 +506,23 @@ function GraphView() {
     return <div className="p-4 text-red-500">GraphView Error: {String(error)}</div>;
   }
 }
+
+const WikiLink = ({ children }: { children: string }) => {
+  return (
+    <span 
+      className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-transparent hover:border-blue-200 rounded-sm px-1.5 py-0.5 cursor-pointer transition-all text-[13px] font-medium align-middle mx-1 select-none"
+      onClick={(e) => {
+        e.stopPropagation();
+        const docName = children.replace(/\[\[|\]\]/g, '');
+        toast.info("문서 이동", {
+          description: `'${docName}' 문서로 이동합니다.`
+        });
+      }}
+    >
+      {children}
+    </span>
+  );
+};
 
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
@@ -1129,7 +1147,7 @@ export default function KnowledgeGarden() {
                         <h3 className="mt-10 mb-4 text-base font-bold text-foreground">7. 참고 자료 및 첨부 파일</h3>
                         <p>
                             For more details, refer to the <a href="https://www.usitc.gov" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">US ITC Case Details</a> page.
-                            Related internal analysis can be found in <span className="text-blue-600 bg-blue-50 px-1 rounded cursor-pointer hover:bg-blue-100 font-medium">[[Previous Litigation History]]</span>.
+                            Related internal analysis can be found in <WikiLink>[[Previous Litigation History]]</WikiLink>.
                         </p>
 
                         <div className="not-prose mt-4 space-y-2">
