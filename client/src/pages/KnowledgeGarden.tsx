@@ -678,17 +678,30 @@ export default function KnowledgeGarden() {
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                 {/* Document Header */}
                 <div className="space-y-4 border-b border-border pb-6">
-                   <div className="flex items-center justify-between mb-4">
-                     <div className="flex items-center gap-3">
+                   <div className="flex items-center justify-between mb-2">
+                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        Today, 10:23 AM
+                     </span>
+                     <span className="text-[10px] text-muted-foreground">
+                        Edited by You
+                     </span>
+                   </div>
+
+                   <h1 className="text-3xl font-bold tracking-tight text-foreground leading-tight">
+                        LG Energy Solution & SK Innovation Special Analysis Report
+                   </h1>
+
+                   <div className="flex items-center gap-3 pt-1">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button 
                                     variant="secondary" 
                                     size="sm" 
-                                    className={cn("h-7 px-2 text-xs font-medium bg-neutral-600 hover:bg-neutral-700 text-white border-transparent gap-1 rounded-sm")}
+                                    className={cn("h-8 px-3 text-xs font-medium bg-neutral-700 hover:bg-neutral-800 text-white border-transparent gap-1.5 rounded-md shadow-sm")}
                                 >
                                     {docStatus.label}
-                                    <ChevronDown className="w-3 h-3 opacity-70" />
+                                    <ChevronDown className="w-3.5 h-3.5 opacity-70" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start" className="w-48">
@@ -729,19 +742,19 @@ export default function KnowledgeGarden() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <div className="h-4 w-px bg-border" />
+                        <div className="h-5 w-px bg-border/60" />
                         
-                        <div className="flex items-center gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap">
                             {docTags.map(tag => (
-                                <Badge key={tag} variant="secondary" className="h-6 text-[10px] font-normal gap-1 hover:bg-secondary/80 pr-1">
+                                <Badge key={tag} variant="secondary" className="h-7 px-2.5 text-[11px] font-normal gap-1.5 hover:bg-secondary/80 bg-secondary/50 border-transparent text-foreground/80">
                                     {tag}
-                                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-pointer" onClick={() => removeTag(tag)} />
+                                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" onClick={() => removeTag(tag)} />
                                 </Badge>
                             ))}
-                            <div className="relative flex items-center">
-                                <Tag className="absolute left-1.5 w-3 h-3 text-muted-foreground" />
+                            <div className="relative flex items-center group">
+                                <Tag className="absolute left-2 w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 <Input 
-                                    className="h-6 w-24 text-[10px] pl-5 bg-transparent border-transparent hover:border-border focus:border-primary focus:w-32 transition-all p-0" 
+                                    className="h-7 w-24 text-[11px] pl-7 bg-transparent border-transparent hover:bg-secondary/30 hover:border-border/50 focus:border-primary focus:w-32 focus:bg-background transition-all p-0 rounded-md" 
                                     placeholder="Add tag..."
                                     value={newTagName}
                                     onChange={(e) => setNewTagName(e.target.value)}
@@ -750,12 +763,6 @@ export default function KnowledgeGarden() {
                             </div>
                         </div>
                      </div>
-                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Last edited 2m ago
-                     </span>
-                   </div>
-                   <h1 className="text-3xl font-bold tracking-tight">LG Energy Solution & SK Innovation Special Analysis Report</h1>
                 </div>
 
                 {/* Content */}
