@@ -515,6 +515,7 @@ export default function KnowledgeGarden() {
   // Dialog state
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isEditingTags, setIsEditingTags] = useState(false);
   
   // Ref for handling click outside
   const editingRef = useRef<HTMLDivElement>(null);
@@ -788,53 +789,75 @@ export default function KnowledgeGarden() {
 
                 <ScrollArea className="flex-1 bg-white">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
-                     {/* Tags Section */}
-                     <div className="flex flex-wrap gap-2 items-center">
-                        {docTags.map(tag => (
-                            <Badge key={tag} variant="secondary" className="px-2 py-0.5 h-6 text-xs bg-secondary/50 hover:bg-secondary text-foreground/80 gap-1 pr-1">
-                                {tag}
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-3.5 w-3.5 hover:bg-red-100 hover:text-red-500 rounded-full p-0"
-                                    onClick={() => removeTag(tag)}
-                                >
-                                    <X className="w-2.5 h-2.5" />
-                                </Button>
-                            </Badge>
-                        ))}
-                        <div className="relative group/tag">
-                            <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:border-primary/50 hover:text-primary transition-colors cursor-text bg-transparent">
-                                <Plus className="w-3 h-3" />
-                                <input 
-                                    type="text" 
-                                    className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full"
-                                    placeholder="Add tag"
-                                    value={newTagName}
-                                    onChange={(e) => setNewTagName(e.target.value)}
-                                    onKeyDown={handleAddTag}
-                                />
-                            </div>
-                        </div>
-                     </div>
-
                     <div className="space-y-6">
                       <div className="flex items-start justify-between gap-4">
                         <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
-                          <span className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
+                          <span className="flex items-center gap-1.5 shrink-0">
                             <Calendar className="w-3.5 h-3.5" />
                             Dec 15, 2025
                           </span>
-                          <span className="w-1 h-1 rounded-full bg-border" />
-                          <span className="flex items-center gap-1.5">
-                            <Tag className="w-3.5 h-3.5" />
-                            Legal, IP, Battery
-                          </span>
+                          <span className="w-1 h-1 rounded-full bg-border shrink-0" />
                           
-                          <div className="ml-auto flex items-center gap-2">
+                          {/* Dynamic Tag Area */}
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                             <Tag className="w-3.5 h-3.5 shrink-0" />
+                             
+                             {!isEditingTags ? (
+                                <div 
+                                    className="hover:bg-secondary/50 px-2 py-1 rounded-md cursor-pointer transition-colors -ml-1 flex items-center gap-2 group/tags"
+                                    onClick={() => setIsEditingTags(true)}
+                                >
+                                    <span className="truncate">{docTags.join(', ')}</span>
+                                    <Edit3 className="w-3 h-3 opacity-0 group-hover/tags:opacity-50" />
+                                </div>
+                             ) : (
+                                <div className="flex flex-wrap gap-2 items-center animate-in fade-in slide-in-from-left-2 duration-200">
+                                    {docTags.map(tag => (
+                                        <Badge key={tag} variant="secondary" className="px-2 py-0.5 h-6 text-xs bg-secondary/50 hover:bg-secondary text-foreground/80 gap-1 pr-1">
+                                            {tag}
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-3.5 w-3.5 hover:bg-red-100 hover:text-red-500 rounded-full p-0"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    removeTag(tag);
+                                                }}
+                                            >
+                                                <X className="w-2.5 h-2.5" />
+                                            </Button>
+                                        </Badge>
+                                    ))}
+                                    <div className="relative group/tag flex items-center gap-1">
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:border-primary/50 hover:text-primary transition-colors cursor-text bg-transparent">
+                                            <Plus className="w-3 h-3" />
+                                            <input 
+                                                type="text" 
+                                                className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full"
+                                                placeholder="Add tag"
+                                                value={newTagName}
+                                                onChange={(e) => setNewTagName(e.target.value)}
+                                                onKeyDown={handleAddTag}
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="h-6 w-6 rounded-full"
+                                            onClick={() => setIsEditingTags(false)}
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </Button>
+                                    </div>
+                                </div>
+                             )}
+                          </div>
+                          
+                          <div className="ml-auto flex items-center gap-2 shrink-0">
                              {/* Status Dropdown moved here */}
                              <DropdownMenu>
                                  <DropdownMenuTrigger asChild>
