@@ -11,10 +11,11 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate
 } from "lucide-react";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { cn } from "@/lib/utils";
 
 // --- Mock Data ---
 
@@ -152,6 +153,10 @@ function GraphView() {
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
 
+  const [showExplorer, setShowExplorer] = useState(true);
+  const [showGraph, setShowGraph] = useState(true);
+  const [showCopilot, setShowCopilot] = useState(true);
+
   return (
     <Layout>
       <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
@@ -159,33 +164,70 @@ export default function KnowledgeGarden() {
         <ResizablePanelGroup direction="horizontal" className="flex-1">
           
           {/* 1. File Tree */}
-          <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-secondary/5 flex flex-col border-r border-border">
-            <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
-              <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="w-4 h-4" /></Button>
-              </div>
-            </div>
-            <ScrollArea className="flex-1 py-2">
-              {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
-            </ScrollArea>
-          </ResizablePanel>
-          
-          <ResizableHandle />
+          {showExplorer && (
+            <>
+              <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-secondary/5 flex flex-col border-r border-border">
+                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
+                  <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="w-4 h-4" /></Button>
+                  </div>
+                </div>
+                <ScrollArea className="flex-1 py-2">
+                  {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
+                </ScrollArea>
+              </ResizablePanel>
+              <ResizableHandle />
+            </>
+          )}
 
           {/* 2. Document Editor */}
           <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col">
             {/* Document Breadcrumb Header */}
             <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-card/50 shrink-0">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                 <span className="font-semibold text-foreground">Knowledge Garden</span>
-                 <ChevronRight className="w-4 h-4" />
-                 <span>Analysis 2024</span>
-                 <ChevronRight className="w-4 h-4" />
-                 <span className="text-foreground">LG Energy Solution & SK Innovation</span>
-              </div>
               <div className="flex items-center gap-2">
+                 <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-8 w-8 mr-1 text-muted-foreground", !showExplorer && "text-primary bg-primary/10")}
+                    onClick={() => setShowExplorer(!showExplorer)}
+                    title="Toggle Explorer"
+                 >
+                   <PanelLeft className="w-4 h-4" />
+                 </Button>
+
+                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                   <span className="font-semibold text-foreground">Knowledge Garden</span>
+                   <ChevronRight className="w-4 h-4" />
+                   <span>Analysis 2024</span>
+                   <ChevronRight className="w-4 h-4" />
+                   <span className="text-foreground">LG Energy Solution & SK Innovation</span>
+                 </div>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <div className="flex items-center bg-secondary/20 rounded-md border border-border/50 mr-2">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-8 w-8 rounded-none border-r border-border/50", showGraph ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                    onClick={() => setShowGraph(!showGraph)}
+                    title="Toggle Graph View"
+                  >
+                    <Network className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-8 w-8 rounded-none", showCopilot ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                    onClick={() => setShowCopilot(!showCopilot)}
+                    title="Toggle Copilot"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="h-4 w-px bg-border mx-1" />
                 <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
               </div>
@@ -270,44 +312,55 @@ export default function KnowledgeGarden() {
           <ResizableHandle />
 
           {/* 3. Graph View */}
-          <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative flex flex-col">
-             {/* Graph Header - Empty but height aligned */}
-             <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-card/30 shrink-0">
-               <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
-             </div>
-            <div className="flex-1 w-full relative">
-              <ReactFlowProvider>
-                <GraphView />
-              </ReactFlowProvider>
-              {/* Mini Analytics Overlay */}
-              <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
-                 <div className="flex justify-between text-muted-foreground">
-                   <span>Nodes</span>
-                   <span className="font-mono text-foreground">5</span>
+          {showGraph && (
+            <>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative flex flex-col">
+                 {/* Graph Header - Empty but height aligned */}
+                 <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-card/30 shrink-0">
+                   <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
+                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowGraph(false)}>
+                     <X className="w-4 h-4 text-muted-foreground" />
+                   </Button>
                  </div>
-                 <div className="flex justify-between text-muted-foreground">
-                   <span>Density</span>
-                   <span className="font-mono text-foreground">0.45</span>
-                 </div>
-              </div>
-            </div>
-          </ResizablePanel>
-
-          <ResizableHandle />
+                <div className="flex-1 w-full relative">
+                  <ReactFlowProvider>
+                    <GraphView />
+                  </ReactFlowProvider>
+                  {/* Mini Analytics Overlay */}
+                  <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
+                     <div className="flex justify-between text-muted-foreground">
+                       <span>Nodes</span>
+                       <span className="font-mono text-foreground">5</span>
+                     </div>
+                     <div className="flex justify-between text-muted-foreground">
+                       <span>Density</span>
+                       <span className="font-mono text-foreground">0.45</span>
+                     </div>
+                  </div>
+                </div>
+              </ResizablePanel>
+            </>
+          )}
 
           {/* 4. AI Copilot */}
-          <ResizablePanel defaultSize={20} minSize={15} className="bg-card flex flex-col">
-            <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-500" />
-                <span className="font-semibold text-sm">Copilot</span>
-              </div>
-              <div className="flex gap-1">
-                 <Button variant="ghost" size="icon" className="h-8 w-8"><Maximize2 className="w-4 h-4" /></Button>
-              </div>
-            </div>
+          {showCopilot && (
+            <>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={20} minSize={15} className="bg-card flex flex-col">
+                <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-500" />
+                    <span className="font-semibold text-sm">Copilot</span>
+                  </div>
+                  <div className="flex gap-1">
+                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowCopilot(false)}>
+                        <X className="w-4 h-4 text-muted-foreground" />
+                     </Button>
+                  </div>
+                </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
                {/* New Chat Tabs */}
                <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
                  <Button variant="secondary" size="sm" className="h-7 text-xs whitespace-nowrap bg-primary/10 text-primary border border-primary/20">
