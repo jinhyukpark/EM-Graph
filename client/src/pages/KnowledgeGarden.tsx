@@ -1063,15 +1063,17 @@ export default function KnowledgeGarden() {
                     {/* ... Copilot Content ... */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                        {/* New Chat Tabs */}
-                       <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center">
+                       <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center px-1">
                          {chatSessions.map(session => (
                            <Button 
                              key={session.id}
-                             variant={activeSessionId === session.id ? "secondary" : "outline"} 
+                             variant="ghost"
                              size="sm" 
                              className={cn(
-                               "h-7 text-xs whitespace-nowrap font-normal",
-                               activeSessionId === session.id ? "bg-secondary text-foreground font-medium" : "text-muted-foreground"
+                               "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
+                               activeSessionId === session.id 
+                                 ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
+                                 : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
                              )}
                              onClick={() => setActiveSessionId(session.id)}
                            >
