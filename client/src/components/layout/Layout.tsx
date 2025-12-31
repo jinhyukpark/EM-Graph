@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, ChevronLeft } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -127,17 +127,9 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       
       {/* Sidebar */}
       <aside className={cn(
-        "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300 relative group",
+        "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}>
-        <div 
-          className="absolute -right-3 top-20 z-50 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          <div className="h-6 w-6 bg-background border border-border rounded-full flex items-center justify-center shadow-sm hover:bg-accent text-muted-foreground hover:text-foreground">
-             {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
-          </div>
-        </div>
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed ? (
