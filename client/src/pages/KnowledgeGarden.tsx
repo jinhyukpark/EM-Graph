@@ -11,8 +11,9 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider, MarkerType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -1008,20 +1009,64 @@ export default function KnowledgeGarden() {
                     </div>
         
                     {/* Input Area */}
-                    <div className="p-3 border-t border-border bg-background">
-                      <div className="relative">
-                        <Input placeholder="Ask about this document..." className="pr-10 bg-secondary/30 border-transparent focus:bg-background focus:border-primary/50" />
-                        <Button size="icon" className="absolute right-1 top-1 h-7 w-7 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm">
-                          <Send className="w-3.5 h-3.5" />
-                        </Button>
+                    <div className="p-4 bg-background border-t border-border">
+                      <div className="relative border border-border/60 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
+                        <Textarea 
+                          placeholder="Ask anything..." 
+                          className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 p-3 text-sm placeholder:text-muted-foreground/60" 
+                        />
+                        
+                        <div className="flex items-center justify-between p-2 border-t border-border/30 bg-muted/5 rounded-b-xl">
+                           <div className="flex items-center gap-1">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
+                                        <Bot className="w-3.5 h-3.5" />
+                                        Agent
+                                        <ChevronDown className="w-3 h-3 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                    <DropdownMenuItem>Agent</DropdownMenuItem>
+                                    <DropdownMenuItem>Chat</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+
+                              <div className="w-px h-3 bg-border mx-1" />
+
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
+                                        Sonnet 4.5
+                                        <ChevronDown className="w-3 h-3 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                    <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
+                                    <DropdownMenuItem>GPT-4o</DropdownMenuItem>
+                                    <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                           </div>
+
+                           <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                <AtSign className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                <Globe className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                <ImageIcon className="w-4 h-4" />
+                              </Button>
+                              <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm">
+                                <ArrowUp className="w-4 h-4" />
+                              </Button>
+                           </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 mt-2 px-1">
-                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Paperclip className="w-3.5 h-3.5" /></Button>
-                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Mic className="w-3.5 h-3.5" /></Button>
-                         <div className="flex-1" />
-                         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                           <Bot className="w-3 h-3" /> Gemini 2.0
-                         </span>
+                      <div className="text-[10px] text-muted-foreground text-center mt-2 opacity-60">
+                        AI can make mistakes. Check important info.
                       </div>
                     </div>
                   </ResizablePanel>
