@@ -30,6 +30,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
+
 // Import Generated Images
 import semiconductorImg from '@assets/generated_images/semiconductor_supply_chain_network.png';
 import fraudImg from '@assets/generated_images/financial_fraud_detection_graph.png';
@@ -134,6 +143,7 @@ const BRAINS = [
 export default function BrainMarket() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTab, setSelectedTab] = useState('all');
+    const [selectedBrain, setSelectedBrain] = useState<typeof BRAINS[0] | null>(null);
 
     const filteredBrains = BRAINS.filter(brain => {
         const matchesSearch = brain.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -262,7 +272,11 @@ export default function BrainMarket() {
                                 <Separator className="bg-border/50" />
 
                                 <CardFooter className="px-5 py-4 bg-muted/10 flex justify-between items-center gap-3">
-                                    <Button variant="outline" className="flex-1 text-xs h-9 border-primary/20 hover:bg-primary/5 hover:text-primary">
+                                    <Button 
+                                        variant="outline" 
+                                        className="flex-1 text-xs h-9 border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                        onClick={() => setSelectedBrain(brain)}
+                                    >
                                         Preview
                                     </Button>
                                     <Button className="flex-1 text-xs h-9 gap-2 shadow-sm">
@@ -284,6 +298,88 @@ export default function BrainMarket() {
                     )}
                 </div>
             </div>
-        </Layout>
-    );
-}
+
+            {/* Preview Dialog */}
+            <Dialog open={!!selectedBrain} onOpenChange={(open) => !open && setSelectedBrain(null)}>
+                <DialogContent className="max-w-2xl p-0 overflow-hidden gap-0">
+                    {selectedBrain && (
+                        <>
+                            <div className="h-48 relative bg-muted">
+                                {selectedBrain.imageSrc ? (
+                                    <>
+                                        <img 
+                                            src={selectedBrain.imageSrc} 
+                                            alt={selectedBrain.title} 
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-80" />
+                                    </>
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/50">
+                                        <ImageIcon className="w-16 h-16 mb-2" />
+                                    </div>
+                                )}
+                                <div className="absolute bottom-6 left-6 right-6">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Badge className="bg-primary hover:bg-primary text-primary-foreground border-none">
+                                            {selectedBrain.nodes.toLocaleString()} Nodes
+                                        </Badge>
+                                        <Badge variant="outline" className="bg-black/40 backdrop-blur text-white border-white/20">
+                                            {selectedBrain.edges.toLocaleString()} Edges
+                                        </Badge>
+                                    </div>
+                                    <h2 className="text-2xl font-bold text-white shadow-sm">{selectedBrain.title}</h2>
+                                </div>
+                            </div>
+                            
+                            <div className="p-6 space-y-6">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="w-10 h-10 border border-border">
+                                            <AvatarFallback className="bg-primary/10 text-primary font-bold">{selectedBrain.authorInitials}</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <div className="font-medium">{selectedBrain.author}</div>
+                                            <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                                {selectedBrain.rating} ({selectedBrain.reviews} reviews)
+                                                <span>•</span>
+                                                Last updated {selectedBrain.updated}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="text-2xl font-bold text-primary">${selectedBrain.price}</div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <h3 className="font-medium mb-2 text-sm uppercase text-muted-foreground tracking-wider">Description</h3>
+                                        <p className="text-muted-foreground leading-relaxed">
+                                            {selectedBrain.description}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="font-medium mb-2 text-sm uppercase text-muted-foreground tracking-wider">Tags</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedBrain.tags.map(tag => (
+                                                <Badge key={tag} variant="secondary" className="font-normal text-muted-foreground">
+                                                    #{tag}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-border/50">
+                                    <Button variant="outline" onClick={() => setSelectedBrain(null)}>Close</Button>
+                                    <Button className="gap-2 w-full sm:w-auto">
+                                        Subscribe Now
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Button>
+                                </DialogFooter>
+                            </div>
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
