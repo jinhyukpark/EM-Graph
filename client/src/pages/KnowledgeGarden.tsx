@@ -1035,7 +1035,7 @@ export default function KnowledgeGarden() {
                                        "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border pr-7",
                                        activeSessionId === session.id 
                                          ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
-                                         : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                         : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-blue-500 hover:text-blue-600"
                                      )}
                                      onClick={() => setActiveSessionId(session.id)}
                                    >
