@@ -793,7 +793,7 @@ export default function KnowledgeGarden() {
                 <ScrollArea className="flex-1 bg-white">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                     <div className="space-y-6">
-                      <div className="group relative">
+                      <div className="group relative mt-6">
                         {/* Title Toolbar */}
                         <div className="absolute -top-8 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-4 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-lg border border-border/50 shadow-sm">
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
