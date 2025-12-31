@@ -11,8 +11,9 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns
 } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
@@ -170,8 +171,35 @@ export default function KnowledgeGarden() {
                 <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="w-4 h-4" /></Button>
+                    <div className="flex items-center bg-secondary/20 rounded-md border border-border/50">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-7 w-7 rounded-none border-r border-border/50", showExplorer ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                        onClick={() => setShowExplorer(!showExplorer)}
+                        title="Toggle Explorer"
+                      >
+                        <PanelLeft className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-7 w-7 rounded-none border-r border-border/50", showGraph ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                        onClick={() => setShowGraph(!showGraph)}
+                        title="Toggle Graph View"
+                      >
+                        <Columns className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-7 w-7 rounded-none", showCopilot ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                        onClick={() => setShowCopilot(!showCopilot)}
+                        title="Toggle Copilot"
+                      >
+                        <PanelRight className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <ScrollArea className="flex-1 py-2">
