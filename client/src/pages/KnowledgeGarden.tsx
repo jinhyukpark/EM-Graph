@@ -977,7 +977,8 @@ export default function KnowledgeGarden() {
                           </div>
                         </div>
                         {/* ... Copilot Content ... */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        <ScrollArea className="flex-1">
+                           <div className="p-4 space-y-4">
                            {/* New Chat Tabs */}
                            <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center px-1">
                              {chatSessions.map(session => (
@@ -1137,6 +1138,7 @@ export default function KnowledgeGarden() {
                              </div>
                            )))}
                         </div>
+                        </ScrollArea>
             
                         {/* Input Area */}
                         <div className="p-4 bg-background">
