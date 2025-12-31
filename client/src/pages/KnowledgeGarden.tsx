@@ -970,16 +970,7 @@ export default function KnowledgeGarden() {
                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
                                {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
                             </div>
-                            <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
-                              {msg.content}
-                            </div>
-                            {msg.role === 'assistant' && (
-                                <div className="flex justify-end mt-1">
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Add to Knowledge Garden">
-                                        <Plus className="w-3.5 h-3.5" />
-                                    </Button>
-                                </div>
-                            )}
+                            
                             {msg.tool && (
                               <div className="bg-secondary/30 border border-border rounded p-2 text-xs flex items-center gap-2 text-muted-foreground">
                                 <Database className="w-3 h-3" />
@@ -999,6 +990,18 @@ export default function KnowledgeGarden() {
                                  ))}
                                </div>
                             )}
+
+                            <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                              {msg.content}
+                            </div>
+                            {msg.role === 'assistant' && (
+                                <div className="flex justify-end mt-1">
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Add to Knowledge Garden">
+                                        <Plus className="w-3.5 h-3.5" />
+                                    </Button>
+                                </div>
+                            )}
+                            
                             {i < CHAT_HISTORY.length - 1 && <Separator className="my-4" />}
                          </div>
                        ))}
