@@ -921,17 +921,6 @@ export default function KnowledgeGarden() {
                       <ReactFlowProvider>
                         <GraphView />
                       </ReactFlowProvider>
-                      {/* Mini Analytics Overlay */}
-                      <div className="absolute bottom-4 right-4 w-48 bg-card/90 backdrop-blur border border-border rounded-lg p-2 shadow-sm text-xs space-y-1">
-                         <div className="flex justify-between text-muted-foreground">
-                           <span>Nodes</span>
-                           <span className="font-mono text-foreground">5</span>
-                         </div>
-                         <div className="flex justify-between text-muted-foreground">
-                           <span>Density</span>
-                           <span className="font-mono text-foreground">0.45</span>
-                         </div>
-                      </div>
                     </div>
                   </ResizablePanel>
                 </>
