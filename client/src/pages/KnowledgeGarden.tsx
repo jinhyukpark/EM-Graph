@@ -426,6 +426,8 @@ export default function KnowledgeGarden() {
               </div>
             </div>
           </ResizablePanel>
+          </>
+          )}
 
         </ResizablePanelGroup>
       </div>
