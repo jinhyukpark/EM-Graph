@@ -156,7 +156,7 @@ export default function KnowledgeGarden() {
     <Layout>
       <div className="h-[calc(100vh-64px)] bg-background flex flex-col">
         {/* Top Bar */}
-        <div className="h-10 border-b border-border flex items-center px-4 justify-between bg-card/50">
+        <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-card/50">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
              <span className="font-semibold text-foreground">Knowledge Garden</span>
              <ChevronRight className="w-4 h-4" />
@@ -165,8 +165,8 @@ export default function KnowledgeGarden() {
              <span className="text-foreground">LG Energy Solution & SK Innovation</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-7 w-7"><Share2 className="w-4 h-4" /></Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="w-4 h-4" /></Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
           </div>
         </div>
 
