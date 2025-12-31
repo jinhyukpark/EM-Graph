@@ -802,7 +802,7 @@ export default function KnowledgeGarden() {
                             <div className="relative flex items-center group">
                                 <Tag className="absolute left-2.5 w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors z-10" />
                                 <Input 
-                                    className="h-7 w-24 text-[11px] pl-8 bg-transparent border-transparent hover:bg-secondary/30 hover:border-border/50 focus:border-primary focus:w-32 focus:bg-background transition-all p-0 py-0 rounded-md" 
+                                    className="h-7 w-24 text-[11px] pl-7 pr-2 bg-transparent border-transparent hover:bg-secondary/30 hover:border-border/50 focus:border-primary focus:w-32 focus:bg-background transition-all rounded-md" 
                                     placeholder="Add tag..."
                                     value={newTagName}
                                     onChange={(e) => setNewTagName(e.target.value)}
