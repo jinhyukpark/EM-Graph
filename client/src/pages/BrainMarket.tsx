@@ -519,25 +519,25 @@ export default function BrainMarket() {
                                         <TabsList className="bg-transparent h-12 w-full justify-start gap-6 p-0">
                                             <TabsTrigger 
                                                 value="overview" 
-                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
                                                 Overview
                                             </TabsTrigger>
                                             <TabsTrigger 
                                                 value="dataspecs" 
-                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
                                                 Data & Ontology
                                             </TabsTrigger>
                                             <TabsTrigger 
                                                 value="author" 
-                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
                                                 Author Info
                                             </TabsTrigger>
                                             <TabsTrigger 
                                                 value="reviews" 
-                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 font-medium"
+                                                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
                                                 Reviews ({selectedBrain.reviews})
                                             </TabsTrigger>
