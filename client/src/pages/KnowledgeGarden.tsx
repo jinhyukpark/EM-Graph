@@ -299,7 +299,15 @@ const CHAT_HISTORY = [
     tool: "MCP Tool • Patent_search",
     data: [
       { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
-      { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" }
+      { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" },
+      { id: "Investing.com", title: "Korean Stock Market | 1983-2025 Data | 2026-2027 Forecast - Economic Indicators", date: "2024-12-08" },
+      { id: "Investing.com", title: "Korean Stock Market - Investing.com", date: "2024-12-08" },
+      { id: "KRX Info System", title: "Korea Exchange | Information Data System", date: "2024-12-05" },
+      { id: "Korea Economic Daily", title: "Market Summary | Korea Economic Daily", date: "2024-12-01" },
+      { id: "KCIF", title: "2024 Domestic Stock Market Conditions Outlook and Evaluation", date: "2024-11-28" },
+      { id: "Hankyoreh", title: "KOSPI & KOSDAQ Both Down 3%, Bitcoin Below $90k", date: "2024-11-25" },
+      { id: "Maeil Business", title: "KOSPI & KOSDAQ Close Lower... Market Cools Down on Trump Remarks", date: "2024-11-22" },
+      { id: "KyungHyang", title: "Breaking: KOSPI 3900 Line Collapses... KOSPI/KOSDAQ Plunge Over 3%", date: "2024-11-20" }
     ]
   },
   {
@@ -398,6 +406,54 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+const NewsResultList = ({ data }: { data: any[] }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="mt-2 border border-border rounded-xl overflow-hidden bg-card/50">
+      <button 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between px-3 py-2 bg-muted/30 hover:bg-muted/50 transition-colors text-xs font-medium"
+      >
+        <span className="text-muted-foreground">결과 {data.length}개</span>
+        <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="divide-y divide-border/50">
+              {data.map((item, idx) => (
+                <div key={idx} className="p-3 hover:bg-muted/30 transition-colors cursor-pointer group">
+                  <div className="flex items-start gap-2.5">
+                    <Globe className="w-3.5 h-3.5 text-blue-500 mt-0.5 shrink-0" />
+                    <div className="space-y-1 min-w-0">
+                      <div className="text-sm text-foreground/90 font-medium leading-snug group-hover:text-blue-600 group-hover:underline decoration-blue-600/30 underline-offset-4">
+                        {item.title}
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span className="font-medium text-foreground/70">{item.id}</span>
+                        {item.date && <span>{item.date}</span>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -1050,20 +1106,7 @@ export default function KnowledgeGarden() {
                               </div>
                             )}
                             {msg.data && (
-                               <div className="space-y-1 mt-1">
-                                 {msg.data.map((item: any, idx: number) => (
-                                   <div key={idx} className="bg-card border border-border rounded p-2 text-xs hover:bg-secondary/50 cursor-pointer transition-colors group">
-                                      <div className="font-medium text-blue-600 dark:text-blue-400 mb-1 line-clamp-1 underline-offset-2 group-hover:underline flex items-center gap-1">
-                                        <Globe className="w-3 h-3 shrink-0" />
-                                        {item.title}
-                                      </div>
-                                      <div className="flex justify-between text-muted-foreground text-[10px]">
-                                        <span className="font-medium text-foreground/80">{item.id}</span>
-                                        <span>{item.date}</span>
-                                      </div>
-                                   </div>
-                                 ))}
-                               </div>
+                               <NewsResultList data={msg.data} />
                             )}
 
                             <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
