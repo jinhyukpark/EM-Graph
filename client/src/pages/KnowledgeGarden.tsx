@@ -1195,19 +1195,21 @@ export default function KnowledgeGarden() {
                               )}
                             </div>
                             {msg.role === 'assistant' && (
-                                <div className="flex justify-end mt-1 gap-1">
+                                <div className="flex justify-between mt-1 items-center">
                                     <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
                                         <RotateCcw className="w-3.5 h-3.5" />
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
-                                        <Share2 className="w-4 h-4" />
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
-                                        <Copy className="w-3.5 h-3.5" />
-                                    </Button>
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </Button>
+                                    <div className="flex gap-1">
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
+                                            <Share2 className="w-4 h-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
+                                            <Copy className="w-3.5 h-3.5" />
+                                        </Button>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </Button>
+                                    </div>
                                 </div>
                             )}
                             
