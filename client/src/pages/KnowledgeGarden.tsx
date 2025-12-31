@@ -980,15 +980,15 @@ export default function KnowledgeGarden() {
                         <ScrollArea className="flex-1">
                            <div className="p-4 space-y-4">
                            {/* New Chat Tabs */}
-                           <div className="flex items-center gap-2 mb-4 px-1">
-                             <div className="flex-1 overflow-x-auto scrollbar-hide flex gap-2">
+                           <div className="flex items-center gap-2 mb-4 px-1 w-full min-w-0">
+                             <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide flex gap-2">
                                {chatSessions.map(session => (
                                  <Button 
                                    key={session.id}
                                    variant="ghost"
                                    size="sm" 
                                    className={cn(
-                                     "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
+                                     "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border shrink-0",
                                      activeSessionId === session.id 
                                        ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
                                        : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
