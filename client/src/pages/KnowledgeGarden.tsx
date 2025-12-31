@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
@@ -501,6 +501,25 @@ export default function KnowledgeGarden() {
   const [newTagName, setNewTagName] = useState("");
 
   const [editingMessage, setEditingMessage] = useState<{sessionId: string, index: number} | null>(null);
+  
+  // Ref for handling click outside
+  const editingRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (editingRef.current && !editingRef.current.contains(event.target as Node)) {
+        setEditingMessage(null);
+      }
+    }
+
+    if (editingMessage) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [editingMessage]);
+
 
   const [chatSessions, setChatSessions] = useState(INITIAL_SESSIONS);
   const [activeSessionId, setActiveSessionId] = useState('s1');
@@ -626,299 +645,201 @@ export default function KnowledgeGarden() {
     setFileTree(newTree);
   };
 
+  const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Function to simulate processing state
   const handleSendMessage = () => {
-    setIsProcessing(true);
-    // Simulate API delay
-    setTimeout(() => {
-      setIsProcessing(false);
-    }, 3000);
+    // Implement dummy response or logic here
+    console.log("Sending message...", prompt);
+    // ... logic for adding message
   };
 
   return (
     <Layout>
-      <div className="h-full bg-background flex flex-col relative">
-        {/* Warning Toast */}
-        <AnimatePresence>
+      <div className="h-[calc(100vh-3.5rem)] flex flex-col bg-background relative overflow-hidden">
+         {/* Warning Toast */}
+         <AnimatePresence>
             {showWarning && (
-                <motion.div
-                    initial={{ y: -50, opacity: 0 }}
-                    animate={{ y: 20, opacity: 1 }}
-                    exit={{ y: -50, opacity: 0 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    className="absolute top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none"
+                <motion.div 
+                    initial={{ opacity: 0, y: -20, x: "-50%" }}
+                    animate={{ opacity: 1, y: 0, x: "-50%" }}
+                    exit={{ opacity: 0, y: -20, x: "-50%" }}
+                    className="absolute top-4 left-1/2 z-50 bg-red-100 border border-red-200 text-red-700 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
                 >
-                    <div className="bg-background border border-border/50 shadow-lg rounded-full px-4 py-2 flex items-center gap-2 text-sm font-medium text-foreground">
-                        <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center">
-                            <span className="text-amber-600 text-xs font-bold">!</span>
-                        </div>
-                        한개의 뷰화면은 존재해야합니다.
-                    </div>
+                    <X className="w-4 h-4" />
+                    <span className="text-sm font-medium">At least one view must be open.</span>
                 </motion.div>
             )}
-        </AnimatePresence>
+         </AnimatePresence>
 
-        {/* Main Workspace */}
-        <ResizablePanelGroup direction="horizontal" className="flex-1">
-          
-          {/* 1. File Tree (Outer Group) */}
+        <ResizablePanelGroup direction="horizontal">
+          {/* 1. File Explorer */}
           {showExplorer && (
             <>
-              <ResizablePanel defaultSize={15} minSize={10} maxSize={20} className="bg-background flex flex-col border-r border-border">
-                <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0 bg-background relative z-10">
-                  <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="bg-muted/10 border-r border-border flex flex-col">
+                <div className="h-16 border-b border-border flex items-center px-4 shrink-0 justify-between">
+                  <div className="flex items-center gap-2 text-foreground/80">
+                     <Folder className="w-5 h-5 text-blue-500" />
+                     <span className="font-semibold text-sm">Explorer</span>
+                  </div>
                   <div className="flex gap-1">
-                    <Button 
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleAddNewFile}>
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                      <Button 
                         variant="ghost" 
                         size="icon" 
-                        className={cn("h-8 w-8 text-muted-foreground", showSearch && "text-primary bg-primary/10")}
-                        onClick={() => setShowSearch(!showSearch)}
-                    >
-                      <Search className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-muted-foreground"
-                        onClick={handleAddNewFile}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
+                      >
+                         <PanelLeft className="w-4 h-4" />
+                      </Button>
                   </div>
                 </div>
-                <AnimatePresence>
-                {showSearch && (
-                    <motion.div 
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden bg-secondary/10 border-b border-border/50"
-                    >
-                        <div className="p-2">
-                             <div className="relative">
-                                <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-muted-foreground" />
-                                <Input 
-                                    className="h-8 text-xs pl-8 bg-background border-border/50 focus-visible:ring-1" 
-                                    placeholder="Search files..." 
-                                    autoFocus
-                                />
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-                </AnimatePresence>
-                <ScrollArea className="flex-1 py-2">
-                  {fileTree.map(node => <FileTreeNode key={node.id} node={node} />)}
+                <ScrollArea className="flex-1">
+                   <div className="p-2">
+                     {fileTree.map(node => (
+                       <FileTreeNode key={node.id} node={node} />
+                     ))}
+                   </div>
                 </ScrollArea>
-                
-                {/* View Toggles Footer */}
-                <div className="p-2 border-t border-border/50 space-y-1">
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase px-2 mb-1">View Options</div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className={cn(
-                      "w-full justify-between h-8 text-xs font-normal border group",
-                      showDocDetails 
-                        ? "bg-background border-primary text-primary" 
-                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
-                    )}
-                    onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
-                  >
-                    <div className="flex items-center">
-                        <FileText className="w-3.5 h-3.5 mr-2" />
-                        Document Details
-                    </div>
-                    {showDocDetails ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className={cn(
-                      "w-full justify-between h-8 text-xs font-normal border group",
-                      showGraph 
-                        ? "bg-background border-primary text-primary" 
-                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
-                    )}
-                    onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
-                  >
-                    <div className="flex items-center">
-                        <Share2 className="w-3.5 h-3.5 mr-2" />
-                        Ontology
-                    </div>
-                    {showGraph ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className={cn(
-                      "w-full justify-between h-8 text-xs font-normal border group",
-                      showCopilot 
-                        ? "bg-background border-primary text-primary" 
-                        : "border-transparent text-muted-foreground hover:bg-secondary/50"
-                    )}
-                    onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
-                  >
-                    <div className="flex items-center">
-                        <Sparkles className="w-3.5 h-3.5 mr-2" />
-                        Copilot
-                    </div>
-                    {showCopilot ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
-                  </Button>
-                </div>
               </ResizablePanel>
               <ResizableHandle />
             </>
           )}
 
-          {/* Content Wrapper (Inner Group) */}
-          <ResizablePanel defaultSize={85}>
+          {/* Main Content Area */}
+          <ResizablePanel defaultSize={80}>
             <ResizablePanelGroup direction="horizontal">
-            
-              {/* 2. Document Editor */}
+              
+              {/* 2. Document Details */}
               {showDocDetails && (
-                <ResizablePanel defaultSize={50} minSize={30} className="bg-background flex flex-col">
-                {/* Document Breadcrumb Header */}
-                <div className="h-16 border-b border-border flex items-center px-4 justify-between bg-background shrink-0">
-                  <div className="flex items-center gap-2">
-                     <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className={cn("h-8 w-8 mr-1 text-orange-500 hover:text-orange-600 hover:bg-orange-50", !showExplorer && "bg-orange-100")}
-                        onClick={() => setShowExplorer(!showExplorer)}
-                        title="Toggle Explorer"
-                     >
-                       <FileText className="w-4 h-4" />
-                     </Button>
-    
-                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                       <span className="font-semibold text-foreground">Knowledge Garden</span>
-                       <ChevronRight className="w-4 h-4" />
-                       <span>Analysis 2024</span>
-                       <ChevronRight className="w-4 h-4" />
-                       <span className="text-foreground">LG Energy Solution & SK Innovation</span>
+              <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group">
+                <div className="h-16 border-b border-border flex items-center justify-between px-6 shrink-0 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
+                  <div className="flex items-center gap-3">
+                     {!showExplorer && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2 mr-1" onClick={() => setShowExplorer(true)}>
+                           <PanelLeft className="w-4 h-4 text-muted-foreground" />
+                        </Button>
+                     )}
+                     <div className="p-1.5 bg-blue-50 rounded-lg">
+                        <FileText className="w-4 h-4 text-blue-600" />
+                     </div>
+                     <div>
+                        <h2 className="font-semibold text-sm leading-tight">LG Energy Solution & SK Innovation</h2>
+                        <p className="text-[10px] text-muted-foreground">Updated 10 mins ago</p>
                      </div>
                   </div>
-    
-                  <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
-                    >
-                        <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-    
-                <ScrollArea className="flex-1">
-                  <div className="max-w-3xl mx-auto p-8 space-y-8">
-                {/* Document Header */}
-                <div className="space-y-4 border-b border-border pb-6">
-                   <div className="flex items-center justify-between mb-2">
-                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Today, 10:23 AM
-                     </span>
-                     <span className="text-[10px] text-muted-foreground">
-                        Edited by You
-                     </span>
-                   </div>
-
-                   <h1 
-                        className="text-3xl font-bold tracking-tight text-foreground leading-tight outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
-                        contentEditable
-                        suppressContentEditableWarning
-                   >
-                        LG Energy Solution & SK Innovation Special Analysis Report
-                   </h1>
-
-                   <div className="flex items-center gap-3 pt-1">
+                  
+                  <div className="flex items-center gap-2">
+                     <div className="flex items-center gap-2 mr-4">
+                        {/* Status Dropdown */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button 
-                                    variant="secondary" 
+                                    variant="outline" 
                                     size="sm" 
-                                    className={cn("h-8 px-3 text-xs font-medium text-white border-transparent gap-1.5 rounded-md shadow-sm transition-colors", docStatus.color, "hover:opacity-90")}
+                                    className={cn(
+                                        "h-7 gap-2 px-2.5 border-transparent text-white hover:text-white/90 shadow-sm transition-all",
+                                        docStatus.color
+                                    )}
                                 >
-                                    {docStatus.label}
-                                    <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                                    <span className="text-xs font-medium">{docStatus.label}</span>
+                                    <ChevronDown className="w-3 h-3 opacity-50" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-60">
-                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal mb-1">Select Status</DropdownMenuLabel>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2 py-1.5">Change Status</DropdownMenuLabel>
                                 {allStatuses.map(status => (
                                     <DropdownMenuItem 
                                         key={status.id} 
-                                        className="justify-between group cursor-pointer py-2"
                                         onClick={() => setDocStatus(status)}
+                                        className="gap-2 focus:bg-accent cursor-pointer"
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <div className={cn("w-2 h-2 rounded-full ring-2 ring-offset-1 ring-transparent", status.color, docStatus.id === status.id && "ring-offset-background ring-primary/30 scale-110")} />
-                                            <span>{status.label}</span>
-                                        </div>
-                                        {status.id.startsWith('custom-') && (
-                                            <Trash2 
-                                                className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDeleteStatus(status.id);
-                                                }}
-                                            />
-                                        )}
+                                        <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                        <span className="text-sm">{status.label}</span>
+                                        {docStatus.id === status.id && <div className="ml-auto text-primary text-xs">Active</div>}
                                     </DropdownMenuItem>
                                 ))}
-                                <DropdownMenuSeparator className="my-2" />
-                                <div className="p-2 bg-secondary/20 rounded-md mx-1 mb-1">
-                                    <div className="text-[10px] text-muted-foreground mb-2 font-medium">Add New Status</div>
-                                    <div className="flex gap-2 mb-3">
-                                        {['bg-slate-500', 'bg-red-500', 'bg-orange-500', 'bg-green-500', 'bg-blue-500', 'bg-purple-500'].map(color => (
-                                            <button 
-                                                key={color}
-                                                className={cn(
-                                                  "w-5 h-5 rounded-full cursor-pointer hover:scale-110 transition-transform ring-offset-background focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1", 
-                                                  color,
-                                                  color === 'bg-blue-500' ? "ring-2 ring-primary ring-offset-1" : "" // Mock selected state
-                                                )}
-                                                // In a real app, this would set a 'selectedColor' state
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className="flex gap-2">
+                                <DropdownMenuSeparator />
+                                <div className="p-2">
+                                    <div className="flex items-center gap-2">
                                         <Input 
-                                            placeholder="Status name..." 
-                                            className="h-8 text-xs bg-background" 
+                                            placeholder="New status..." 
+                                            className="h-7 text-xs" 
                                             value={newStatusName}
                                             onChange={(e) => setNewStatusName(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleAddStatus()}
                                         />
-                                        <Button size="sm" variant="secondary" className="h-8 w-8 p-0 shrink-0" onClick={handleAddStatus}>
-                                            <Plus className="w-3.5 h-3.5" />
+                                        <Button size="icon" className="h-7 w-7" onClick={handleAddStatus}>
+                                            <Plus className="w-3 h-3" />
                                         </Button>
                                     </div>
                                 </div>
+                                {customStatuses.length > 0 && (
+                                    <>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2">Manage Custom</DropdownMenuLabel>
+                                        {customStatuses.map(status => (
+                                            <div key={status.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-muted/50 rounded-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <div className={cn("w-2 h-2 rounded-full", status.color)} />
+                                                    <span>{status.label}</span>
+                                                </div>
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-5 w-5 hover:text-red-500"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteStatus(status.id);
+                                                    }}
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
                             </DropdownMenuContent>
                         </DropdownMenu>
+                     </div>
+                     <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8" 
+                        onClick={() => toggleView(showDocDetails, setShowDocDetails, [showExplorer, showGraph, showCopilot])}
+                     >
+                        <X className="w-4 h-4 text-muted-foreground" />
+                     </Button>
+                  </div>
+                </div>
 
-                        <div className="h-5 w-px bg-border/60" />
-                        
-                        <div className="flex items-center gap-2 flex-wrap">
-                            {docTags.map(tag => (
-                                <Badge key={tag} variant="secondary" className="h-7 px-2.5 text-[11px] font-normal gap-1.5 hover:bg-secondary/80 bg-secondary/50 border-transparent text-foreground/80">
-                                    {tag}
-                                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" onClick={() => removeTag(tag)} />
-                                </Badge>
-                            ))}
-                            <div className="relative flex items-center group">
-                                <Tag className="absolute left-2.5 w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors z-10" />
-                                <Input 
-                                    className="h-7 w-24 text-[11px] pl-7 pr-2 bg-transparent border-transparent hover:bg-secondary/30 hover:border-border/50 focus:border-primary focus:w-32 focus:bg-background transition-all rounded-md" 
-                                    placeholder="Add tag..."
+                <ScrollArea className="flex-1 bg-white">
+                  <div className="max-w-3xl mx-auto p-8 space-y-8">
+                     {/* Tags Section */}
+                     <div className="flex flex-wrap gap-2 items-center">
+                        {docTags.map(tag => (
+                            <Badge key={tag} variant="secondary" className="px-2 py-0.5 h-6 text-xs bg-secondary/50 hover:bg-secondary text-foreground/80 gap-1 pr-1">
+                                {tag}
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-3.5 w-3.5 hover:bg-red-100 hover:text-red-500 rounded-full p-0"
+                                    onClick={() => removeTag(tag)}
+                                >
+                                    <X className="w-2.5 h-2.5" />
+                                </Button>
+                            </Badge>
+                        ))}
+                        <div className="relative group/tag">
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 h-6 rounded-full border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:border-primary/50 hover:text-primary transition-colors cursor-text bg-transparent">
+                                <Plus className="w-3 h-3" />
+                                <input 
+                                    type="text" 
+                                    className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full"
+                                    placeholder="Add tag"
                                     value={newTagName}
                                     onChange={(e) => setNewTagName(e.target.value)}
                                     onKeyDown={handleAddTag}
@@ -926,381 +847,381 @@ export default function KnowledgeGarden() {
                             </div>
                         </div>
                      </div>
-                </div>
 
-                {/* Content */}
-                <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
-                  <div>
-                    <h2 
-                        className="text-xl font-semibold flex items-center gap-2 outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
-                        contentEditable
-                        suppressContentEditableWarning
-                    >
-                      1. Overview
-                    </h2>
-                    <p 
-                        className="text-muted-foreground leading-relaxed outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text mt-2"
-                        contentEditable
-                        suppressContentEditableWarning
-                    >
-                      This report analyzes recent patent filings by LG Energy Solution and SK Innovation to understand their technological development directions and core competencies. Both companies are major players in the secondary battery market and are strengthening their technological competitiveness through active patent activities.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h2 
-                        className="text-xl font-semibold flex items-center gap-2 outline-none hover:bg-secondary/10 focus:bg-secondary/10 rounded transition-colors cursor-text"
-                        contentEditable
-                        suppressContentEditableWarning
-                    >
-                      2. LG Energy Solution Patent List (Total 10)
-                    </h2>
-                    
-                    <div className="border border-border rounded-lg overflow-hidden mt-4">
-                      <table className="w-full text-sm text-left">
-                        <thead className="bg-secondary/30 text-xs uppercase text-muted-foreground font-medium">
-                          <tr>
-                            <th className="px-4 py-3">No</th>
-                            <th className="px-4 py-3">App Number</th>
-                            <th className="px-4 py-3">Invention Name</th>
-                            <th className="px-4 py-3">Date</th>
-                            <th className="px-4 py-3">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                          <tr>
-                            <td className="px-4 py-3">1</td>
-                            <td className="px-4 py-3 font-mono text-xs">1020250175306</td>
-                            <td className="px-4 py-3">Secondary battery including cathode active material</td>
-                            <td className="px-4 py-3 text-muted-foreground">2025-11-18</td>
-                            <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3">2</td>
-                            <td className="px-4 py-3 font-mono text-xs">1020250170023</td>
-                            <td className="px-4 py-3">Battery module and battery pack including same</td>
-                            <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                            <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3">3</td>
-                            <td className="px-4 py-3 font-mono text-xs">1020250170024</td>
-                            <td className="px-4 py-3">Battery management system and method</td>
-                            <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
-                            <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                          </tr>
-                           <tr>
-                            <td className="px-4 py-3">4</td>
-                            <td className="px-4 py-3 font-mono text-xs">1020250167131</td>
-                            <td className="px-4 py-3">Thermal management system for electric vehicles</td>
-                            <td className="px-4 py-3 text-muted-foreground">2025-11-07</td>
-                            <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ScrollArea>
-          </ResizablePanel>
-              )}
-
-          {/* 3. Graph View */}
-              {showGraph && (
-                <>
-                  {showDocDetails && <ResizableHandle />}
-                  <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col">
-                     {/* Graph Header - Empty but height aligned */}
-                     <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
-                       <div className="flex items-center gap-2 px-2">
-                          <Share2 className="w-4 h-4 text-blue-500" />
-                          <span className="font-semibold text-sm">Ontology</span>
-                       </div>
-                       <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8" 
-                        onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
-                       >
-                         <X className="w-4 h-4 text-muted-foreground" />
-                       </Button>
-                     </div>
-                    <div className="flex-1 w-full relative">
-                      <ReactFlowProvider>
-                        <GraphView />
-                      </ReactFlowProvider>
-                    </div>
-                  </ResizablePanel>
-                </>
-              )}
-
-              {/* 4. AI Copilot */}
-              {showCopilot && (
-                <>
-                  {(showDocDetails || showGraph) && <ResizableHandle />}
-                  <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
-                    <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-purple-500" />
-                        <span className="font-semibold text-sm">Copilot</span>
+                    <div className="space-y-6">
+                      <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground/90 mb-4">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</h1>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" />
+                            Dec 15, 2025
+                          </span>
+                          <span className="w-1 h-1 rounded-full bg-border" />
+                          <span className="flex items-center gap-1.5">
+                            <Tag className="w-3.5 h-3.5" />
+                            Legal, IP, Battery
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex gap-1">
-                         <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8" 
-                            onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
-                         >
-                            <X className="w-4 h-4 text-muted-foreground" />
-                         </Button>
-                      </div>
-                    </div>
-                    {/* ... Copilot Content ... */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                       {/* New Chat Tabs */}
-                       <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center px-1">
-                         {chatSessions.map(session => (
-                           <Button 
-                             key={session.id}
-                             variant="ghost"
-                             size="sm" 
-                             className={cn(
-                               "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
-                               activeSessionId === session.id 
-                                 ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
-                                 : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                             )}
-                             onClick={() => setActiveSessionId(session.id)}
-                           >
-                             {session.title}
-                           </Button>
-                         ))}
-                         <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
-                            onClick={handleAddSession}
-                         >
-                           <Plus className="w-4 h-4" />
-                         </Button>
-                       </div>
-        
-                       {/* Chat Messages */}
-                       {activeSession.messages.length === 0 ? (
-                         <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
-                           <Bot className="w-8 h-8 mb-2 opacity-20" />
-                           <p>Start a new conversation</p>
-                         </div>
-                       ) : (
-                         activeSession.messages.map((msg, i) => (
-                         <div key={i} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                               <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
-                               {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
-                            </div>
-                            
-                            {msg.tool && (
-                              <div className="bg-secondary/30 border border-border rounded px-2.5 py-1.5 text-xs flex items-center gap-2 text-muted-foreground w-fit mb-2">
-                                <Database className="w-3.5 h-3.5 text-blue-500" />
-                                <div className="flex items-center gap-2">
-                                  {msg.tool.includes(' • ') ? (
-                                    msg.tool.split(' • ').map((part, idx) => (
-                                      <div key={idx} className="flex items-center gap-2">
-                                        {idx > 0 && <div className="h-3 w-[1px] bg-border/60" />}
-                                        <span className={idx === 1 ? "font-medium text-foreground/80" : ""}>{part}</span>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <span>{msg.tool}</span>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                            {msg.data && (
-                               <NewsResultList data={msg.data} />
-                            )}
 
-                            <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
-                              {msg.role === 'user' ? (
-                                <div 
-                                  className={cn(
-                                    "relative transition-all duration-200 rounded-xl group",
-                                    editingMessage?.sessionId === activeSessionId && editingMessage?.index === i 
-                                      ? "border border-blue-500 shadow-sm bg-background" 
-                                      : "hover:bg-muted/30 hover:ring-1 hover:ring-border/50 p-2 -m-2 cursor-pointer"
-                                  )}
-                                  onDoubleClick={() => setEditingMessage({ sessionId: activeSessionId, index: i })}
-                                >
-                                  <Textarea 
-                                    className={cn(
-                                      "min-h-[40px] w-full resize-none border-0 bg-transparent shadow-none p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0",
-                                      editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3 min-h-[80px]" : "text-foreground cursor-pointer pointer-events-none"
-                                    )}
-                                    value={msg.content}
-                                    readOnly={!(editingMessage?.sessionId === activeSessionId && editingMessage?.index === i)}
-                                    onChange={(e) => {
-                                      const newSessions = [...chatSessions];
-                                      const sessionIndex = newSessions.findIndex(s => s.id === activeSessionId);
-                                      if (sessionIndex !== -1) {
-                                        newSessions[sessionIndex].messages[i].content = e.target.value;
-                                        setChatSessions(newSessions);
-                                      }
-                                    }}
-                                  />
-                                  
-                                  {/* Toolbar for editing mode */}
-                                  {editingMessage?.sessionId === activeSessionId && editingMessage?.index === i && (
-                                    <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
-                                       <div className="flex items-center gap-1 shrink-0">
-                                          <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
-                                                    <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
-                                                    <ChevronDown className="w-3 h-3 opacity-50" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="start">
-                                                <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
-                                                <DropdownMenuItem>GPT-4o</DropdownMenuItem>
-                                                <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                          </DropdownMenu>
-                                       </div>
+                      <div className="prose prose-slate max-w-none prose-sm prose-headings:font-semibold prose-a:text-blue-600">
+                        <p className="lead text-foreground/80">
+                           A comprehensive analysis of the ongoing patent dispute between two major EV battery manufacturers, examining key patents, legal arguments, and potential market impact.
+                        </p>
 
-                                       <div className="flex items-center gap-1 shrink-0 ml-auto">
-                                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                            <AtSign className="w-4 h-4" />
-                                          </Button>
-                                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                            <FileText className="w-4 h-4" />
-                                          </Button>
-                                          <Button 
-                                            size="icon" 
-                                            className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm"
-                                            onClick={() => {
-                                              setEditingMessage(null);
-                                              // Simulate re-sending or just saving edits
-                                            }}
-                                          >
-                                            <ArrowUp className="w-4 h-4" />
-                                          </Button>
-                                       </div>
-                                    </div>
-                                  )}
-                                </div>
-                              ) : (
-                                msg.content
-                              )}
-                            </div>
-                            {msg.role === 'assistant' && (
-                                <div className="flex justify-between mt-1 items-center">
-                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
-                                        <RotateCcw className="w-3.5 h-3.5" />
-                                    </Button>
-                                    <div className="flex gap-1">
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
-                                            <Share2 className="w-4 h-4" />
-                                        </Button>
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
-                                            <Copy className="w-3.5 h-3.5" />
-                                        </Button>
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
-                            
-                            {i < activeSession.messages.length - 1 && <Separator className="my-4" />}
-                         </div>
-                       )))}
-                    </div>
-        
-                    {/* Input Area */}
-                    <div className="p-4 bg-background">
-                      {isProcessing && (
-                         <motion.div 
-                           initial={{ opacity: 0, y: 10 }}
-                           animate={{ opacity: 1, y: 0 }}
-                           exit={{ opacity: 0, y: 10 }}
-                           className="flex items-center gap-2 mb-3 px-1"
-                         >
-                           <div className="grid grid-cols-2 gap-0.5">
-                             <motion.div 
-                               className="w-1.5 h-1.5 rounded-full bg-primary"
-                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                               transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                             />
-                             <motion.div 
-                               className="w-1.5 h-1.5 rounded-full bg-primary"
-                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                               transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                             />
-                             <motion.div 
-                               className="w-1.5 h-1.5 rounded-full bg-primary"
-                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                               transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                             />
-                             <motion.div 
-                               className="w-1.5 h-1.5 rounded-full bg-primary"
-                               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                               transition={{ duration: 1, repeat: Infinity, delay: 0.6 }}
-                             />
-                           </div>
-                           <span className="text-sm font-medium text-foreground">Working.</span>
-                         </motion.div>
-                      )}
+                        <h3>1. Executive Summary</h3>
+                        <p>
+                          The legal battle between LG Energy Solution and SK Innovation centers on trade secret misappropriation and patent infringement claims. 
+                          This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
+                        </p>
 
-                      <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
-                        <Textarea 
-                          placeholder="Ask anything..." 
-                          className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
-                        />
-                        
-                        <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
-                           <div className="flex items-center gap-1 shrink-0">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
-                                        <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
-                                        <ChevronDown className="w-3 h-3 opacity-50" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start">
-                                    <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
-                                    <DropdownMenuItem>GPT-4o</DropdownMenuItem>
-                                    <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                           </div>
-
-                           <div className="flex items-center gap-1 shrink-0 ml-auto">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                <AtSign className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
-                                <FileText className="w-4 h-4" />
-                              </Button>
-                              <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm" onClick={handleSendMessage}>
-                                {isProcessing ? (
-                                  <div className="w-3 h-3 bg-primary-foreground rounded-[1px]" />
-                                ) : (
-                                  <ArrowUp className="w-4 h-4" />
-                                )}
-                              </Button>
-                           </div>
+                        <h3>2. Key Patents in Dispute</h3>
+                        <div className="not-prose my-6 rounded-lg border border-border bg-card">
+                          <table className="w-full text-sm text-left">
+                            <thead className="bg-muted/40 text-muted-foreground font-medium">
+                              <tr>
+                                <th className="px-4 py-3">No.</th>
+                                <th className="px-4 py-3">Patent ID</th>
+                                <th className="px-4 py-3">Title</th>
+                                <th className="px-4 py-3">Date</th>
+                                <th className="px-4 py-3">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border">
+                              <tr>
+                                <td className="px-4 py-3">1</td>
+                                <td className="px-4 py-3 font-mono text-xs">1020250175306</td>
+                                <td className="px-4 py-3">Secondary battery including cathode active material</td>
+                                <td className="px-4 py-3 text-muted-foreground">2025-11-18</td>
+                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-3">2</td>
+                                <td className="px-4 py-3 font-mono text-xs">1020250170023</td>
+                                <td className="px-4 py-3">Battery module and battery pack including same</td>
+                                <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
+                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-3">3</td>
+                                <td className="px-4 py-3 font-mono text-xs">1020250170024</td>
+                                <td className="px-4 py-3">Battery management system and method</td>
+                                <td className="px-4 py-3 text-muted-foreground">2025-11-12</td>
+                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                              </tr>
+                               <tr>
+                                <td className="px-4 py-3">4</td>
+                                <td className="px-4 py-3 font-mono text-xs">1020250167131</td>
+                                <td className="px-4 py-3">Thermal management system for electric vehicles</td>
+                                <td className="px-4 py-3 text-muted-foreground">2025-11-07</td>
+                                <td className="px-4 py-3"><Badge variant="secondary" className="text-[10px]">Public</Badge></td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     </div>
-                  </ResizablePanel>
-                </>
-              )}
+                  </div>
+                </ScrollArea>
+              </ResizablePanel>
+                  )}
 
+              {/* 3. Graph View */}
+                  {showGraph && (
+                    <>
+                      {showDocDetails && <ResizableHandle />}
+                      <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col">
+                         {/* Graph Header - Empty but height aligned */}
+                         <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
+                           <div className="flex items-center gap-2 px-2">
+                              <Share2 className="w-4 h-4 text-blue-500" />
+                              <span className="font-semibold text-sm">Ontology</span>
+                           </div>
+                           <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8" 
+                            onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
+                           >
+                             <X className="w-4 h-4 text-muted-foreground" />
+                           </Button>
+                         </div>
+                        <div className="flex-1 w-full relative">
+                          <ReactFlowProvider>
+                            <GraphView />
+                          </ReactFlowProvider>
+                        </div>
+                      </ResizablePanel>
+                    </>
+                  )}
+
+                  {/* 4. AI Copilot */}
+                  {showCopilot && (
+                    <>
+                      {(showDocDetails || showGraph) && <ResizableHandle />}
+                      <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col">
+                        <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-purple-500" />
+                            <span className="font-semibold text-sm">Copilot</span>
+                          </div>
+                          <div className="flex gap-1">
+                             <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8" 
+                                onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
+                             >
+                                <X className="w-4 h-4 text-muted-foreground" />
+                             </Button>
+                          </div>
+                        </div>
+                        {/* ... Copilot Content ... */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                           {/* New Chat Tabs */}
+                           <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide items-center px-1">
+                             {chatSessions.map(session => (
+                               <Button 
+                                 key={session.id}
+                                 variant="ghost"
+                                 size="sm" 
+                                 className={cn(
+                                   "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border",
+                                   activeSessionId === session.id 
+                                     ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
+                                     : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                 )}
+                                 onClick={() => setActiveSessionId(session.id)}
+                               >
+                                 {session.title}
+                               </Button>
+                             ))}
+                             <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
+                                onClick={handleAddSession}
+                             >
+                               <Plus className="w-4 h-4" />
+                             </Button>
+                           </div>
+            
+                           {/* Chat Messages */}
+                           {activeSession.messages.length === 0 ? (
+                             <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
+                               <Bot className="w-8 h-8 mb-2 opacity-20" />
+                               <p>Start a new conversation</p>
+                             </div>
+                           ) : (
+                             activeSession.messages.map((msg, i) => (
+                             <div key={i} className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
+                                   {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
+                                </div>
+                                
+                                {msg.tool && (
+                                  <div className="bg-secondary/30 border border-border rounded px-2.5 py-1.5 text-xs flex items-center gap-2 text-muted-foreground w-fit mb-2">
+                                    <Database className="w-3.5 h-3.5 text-blue-500" />
+                                    <div className="flex items-center gap-2">
+                                      {msg.tool.includes(' • ') ? (
+                                        msg.tool.split(' • ').map((part, idx) => (
+                                          <div key={idx} className="flex items-center gap-2">
+                                            {idx > 0 && <div className="h-3 w-[1px] bg-border/60" />}
+                                            <span className={idx === 1 ? "font-medium text-foreground/80" : ""}>{part}</span>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <span>{msg.tool}</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                                {msg.data && (
+                                   <NewsResultList data={msg.data} />
+                                )}
+
+                                <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                                  {msg.role === 'user' ? (
+                                    <div 
+                                      ref={editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? editingRef : null}
+                                      className={cn(
+                                        "relative transition-all duration-200 rounded-xl group",
+                                        editingMessage?.sessionId === activeSessionId && editingMessage?.index === i 
+                                          ? "border border-blue-500 shadow-sm bg-background" 
+                                          : "hover:bg-muted/30 hover:ring-1 hover:ring-border/50 p-2 -m-2 cursor-pointer"
+                                      )}
+                                      onDoubleClick={() => setEditingMessage({ sessionId: activeSessionId, index: i })}
+                                    >
+                                      <Textarea 
+                                        className={cn(
+                                          "min-h-[40px] w-full resize-none border-0 bg-transparent shadow-none p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0",
+                                          editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3 min-h-[80px]" : "text-foreground cursor-pointer pointer-events-none"
+                                        )}
+                                        value={msg.content}
+                                        readOnly={!(editingMessage?.sessionId === activeSessionId && editingMessage?.index === i)}
+                                        onChange={(e) => {
+                                          const newSessions = [...chatSessions];
+                                          const sessionIndex = newSessions.findIndex(s => s.id === activeSessionId);
+                                          if (sessionIndex !== -1) {
+                                            newSessions[sessionIndex].messages[i].content = e.target.value;
+                                            setChatSessions(newSessions);
+                                          }
+                                        }}
+                                      />
+                                      
+                                      {/* Toolbar for editing mode */}
+                                      {editingMessage?.sessionId === activeSessionId && editingMessage?.index === i && (
+                                        <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
+                                           <div className="flex items-center gap-1 shrink-0">
+                                              <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
+                                                        <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
+                                                        <ChevronDown className="w-3 h-3 opacity-50" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="start">
+                                                    <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
+                                                    <DropdownMenuItem>GPT-4o</DropdownMenuItem>
+                                                    <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                              </DropdownMenu>
+                                           </div>
+
+                                           <div className="flex items-center gap-1 shrink-0 ml-auto">
+                                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                                <AtSign className="w-4 h-4" />
+                                              </Button>
+                                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                                <FileText className="w-4 h-4" />
+                                              </Button>
+                                              <Button 
+                                                size="icon" 
+                                                className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm"
+                                                onClick={() => {
+                                                  setEditingMessage(null);
+                                                  // Simulate re-sending or just saving edits
+                                                }}
+                                              >
+                                                <ArrowUp className="w-4 h-4" />
+                                              </Button>
+                                           </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    msg.content
+                                  )}
+                                </div>
+                                {msg.role === 'assistant' && (
+                                    <div className="flex justify-between mt-1 items-center">
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
+                                            <RotateCcw className="w-3.5 h-3.5" />
+                                        </Button>
+                                        <div className="flex gap-1">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
+                                                <Share2 className="w-4 h-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
+                                                <Copy className="w-3.5 h-3.5" />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {i < activeSession.messages.length - 1 && <Separator className="my-4" />}
+                             </div>
+                           )))}
+                        </div>
+            
+                        {/* Input Area */}
+                        <div className="p-4 bg-background">
+                          {isProcessing && (
+                             <motion.div 
+                               initial={{ opacity: 0, y: 10 }}
+                               animate={{ opacity: 1, y: 0 }}
+                               exit={{ opacity: 0, y: 10 }}
+                               className="flex items-center gap-2 mb-3 px-1"
+                             >
+                               <div className="grid grid-cols-2 gap-0.5">
+                                 <motion.div 
+                                   className="w-1.5 h-1.5 rounded-full bg-primary"
+                                   animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                   transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                                 />
+                                 <motion.div 
+                                   className="w-1.5 h-1.5 rounded-full bg-primary"
+                                   animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                   transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                                 />
+                                 <motion.div 
+                                   className="w-1.5 h-1.5 rounded-full bg-primary"
+                                   animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                   transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                                 />
+                                 <motion.div 
+                                   className="w-1.5 h-1.5 rounded-full bg-primary"
+                                   animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                   transition={{ duration: 1, repeat: Infinity, delay: 0.6 }}
+                                 />
+                               </div>
+                               <span className="text-sm font-medium text-foreground">Working.</span>
+                             </motion.div>
+                          )}
+
+                          <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
+                            <Textarea 
+                              placeholder="Ask anything..." 
+                              className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
+                            />
+                            
+                            <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
+                               <div className="flex items-center gap-1 shrink-0">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
+                                            <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
+                                            <ChevronDown className="w-3 h-3 opacity-50" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start">
+                                        <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
+                                        <DropdownMenuItem>GPT-4o</DropdownMenuItem>
+                                        <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                               </div>
+
+                               <div className="flex items-center gap-1 shrink-0 ml-auto">
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                    <AtSign className="w-4 h-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                    <FileText className="w-4 h-4" />
+                                  </Button>
+                                  <Button size="icon" className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm" onClick={handleSendMessage}>
+                                    {isProcessing ? (
+                                      <div className="w-3 h-3 bg-primary-foreground rounded-[1px]" />
+                                    ) : (
+                                      <ArrowUp className="w-4 h-4" />
+                                    )}
+                                  </Button>
+                               </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                    </>
+                  )}
+
+                </ResizablePanelGroup>
+              </ResizablePanel>
             </ResizablePanelGroup>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    </Layout>
-  );
-}
+          </div>
+        </Layout>
+      );
+    }
