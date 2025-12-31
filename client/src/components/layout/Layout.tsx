@@ -136,7 +136,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       )}>
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
-          {!isCollapsed ? (
+          {!isCollapsed && (
             <Link href="/dashboard">
               <a className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
@@ -145,10 +145,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <span className="text-lg font-bold tracking-tight">EM-Graph</span>
               </a>
             </Link>
-          ) : (
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
-              <Share2 className="w-5 h-5" />
-            </div>
           )}
           
           <Button 
