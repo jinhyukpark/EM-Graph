@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,34 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // --- Mock Data ---
+
+const STATUS_OPTIONS = [
+  { id: 'draft', label: '초안', color: 'bg-slate-500' },
+  { id: 'review', label: '리뷰중', color: 'bg-orange-500' },
+  { id: 'done', label: '완료', color: 'bg-green-500' },
+  { id: 'hold', label: '보류', color: 'bg-red-500' },
+];
 
 const INITIAL_FILE_TREE = [
   {
@@ -160,6 +179,40 @@ export default function KnowledgeGarden() {
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
+  const [docTags, setDocTags] = useState<string[]>(['Battery', 'EV']);
+  const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
+  const [newStatusName, setNewStatusName] = useState("");
+  const [newTagName, setNewTagName] = useState("");
+
+  const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
+
+  const handleAddStatus = () => {
+    if (newStatusName.trim()) {
+      setCustomStatuses([...customStatuses, { id: `custom-${Date.now()}`, label: newStatusName, color: 'bg-blue-500' }]);
+      setNewStatusName("");
+    }
+  };
+
+  const handleDeleteStatus = (id: string) => {
+    setCustomStatuses(customStatuses.filter(s => s.id !== id));
+    if (docStatus.id === id) {
+        setDocStatus(STATUS_OPTIONS[0]);
+    }
+  };
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newTagName.trim()) {
+        if (!docTags.includes(newTagName.trim())) {
+            setDocTags([...docTags, newTagName.trim()]);
+        }
+        setNewTagName("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+      setDocTags(docTags.filter(tag => tag !== tagToRemove));
+  };
 
   const handleAddNewFile = () => {
     const newTree = JSON.parse(JSON.stringify(fileTree));
@@ -362,9 +415,82 @@ export default function KnowledgeGarden() {
               <div className="max-w-3xl mx-auto p-8 space-y-8">
                 {/* Document Header */}
                 <div className="space-y-4 border-b border-border pb-6">
-                   <div className="flex items-center gap-2 mb-4">
-                     <Badge variant="outline" className="text-muted-foreground font-normal">Auto-generated</Badge>
-                     <span className="text-xs text-muted-foreground">Last edited 2m ago</span>
+                   <div className="flex items-center justify-between mb-4">
+                     <div className="flex items-center gap-3">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button 
+                                    variant="secondary" 
+                                    size="sm" 
+                                    className={cn("h-7 px-2 text-xs font-medium bg-neutral-600 hover:bg-neutral-700 text-white border-transparent gap-1 rounded-sm")}
+                                >
+                                    {docStatus.label}
+                                    <ChevronDown className="w-3 h-3 opacity-70" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48">
+                                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Select Status</DropdownMenuLabel>
+                                {allStatuses.map(status => (
+                                    <DropdownMenuItem 
+                                        key={status.id} 
+                                        className="justify-between group cursor-pointer"
+                                        onClick={() => setDocStatus(status)}
+                                    >
+                                        <span>{status.label}</span>
+                                        {status.id.startsWith('custom-') && (
+                                            <Trash2 
+                                                className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteStatus(status.id);
+                                                }}
+                                            />
+                                        )}
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuSeparator />
+                                <div className="p-2">
+                                    <div className="flex gap-2">
+                                        <Input 
+                                            placeholder="New Status..." 
+                                            className="h-7 text-xs" 
+                                            value={newStatusName}
+                                            onChange={(e) => setNewStatusName(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleAddStatus()}
+                                        />
+                                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={handleAddStatus}>
+                                            <Plus className="w-3 h-3" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <div className="h-4 w-px bg-border" />
+                        
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                            {docTags.map(tag => (
+                                <Badge key={tag} variant="secondary" className="h-6 text-[10px] font-normal gap-1 hover:bg-secondary/80 pr-1">
+                                    {tag}
+                                    <X className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-pointer" onClick={() => removeTag(tag)} />
+                                </Badge>
+                            ))}
+                            <div className="relative flex items-center">
+                                <Tag className="absolute left-1.5 w-3 h-3 text-muted-foreground" />
+                                <Input 
+                                    className="h-6 w-24 text-[10px] pl-5 bg-transparent border-transparent hover:border-border focus:border-primary focus:w-32 transition-all p-0" 
+                                    placeholder="Add tag..."
+                                    value={newTagName}
+                                    onChange={(e) => setNewTagName(e.target.value)}
+                                    onKeyDown={handleAddTag}
+                                />
+                            </div>
+                        </div>
+                     </div>
+                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        Last edited 2m ago
+                     </span>
                    </div>
                    <h1 className="text-3xl font-bold tracking-tight">LG Energy Solution & SK Innovation Special Analysis Report</h1>
                 </div>
