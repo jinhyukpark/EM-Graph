@@ -294,7 +294,7 @@ const CHAT_HISTORY = [
   },
   {
     role: "assistant",
-    content: "I've analyzed the document. Here are the key patents mentioned regarding LG Energy Solution:",
+    content: "LG 에너지솔루션과 SK이노베이션의 최근 특허 동향을 분석한 결과, 양사는 배터리 안전성과 수명 향상을 위한 기술 개발에 집중하고 있습니다. 특히 LG 에너지솔루션은 하이니켈 양극재 및 실리콘 음극재 관련 특허 출원이 두드러지며, SK이노베이션은 분리막 기술 및 배터리 재활용 기술 관련 특허를 다수 확보하고 있는 것으로 파악됩니다. 또한, 전고체 배터리 등 차세대 배터리 기술 선점을 위한 경쟁도 치열해지고 있습니다. 이 문서는 이러한 기술적 흐름을 바탕으로 향후 시장 점유율 변화 및 기술 분쟁 가능성을 시사하고 있습니다.",
     tool: "MCP Tool • Patent_search",
     data: [
       { id: "1020250175306", title: "Cathode Active Material", date: "2025-11-18" },
@@ -973,6 +973,13 @@ export default function KnowledgeGarden() {
                             <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
                               {msg.content}
                             </div>
+                            {msg.role === 'assistant' && (
+                                <div className="flex justify-end mt-1">
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Add to Knowledge Garden">
+                                        <Plus className="w-3.5 h-3.5" />
+                                    </Button>
+                                </div>
+                            )}
                             {msg.tool && (
                               <div className="bg-secondary/30 border border-border rounded p-2 text-xs flex items-center gap-2 text-muted-foreground">
                                 <Database className="w-3 h-3" />
