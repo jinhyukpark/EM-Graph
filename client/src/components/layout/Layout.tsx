@@ -112,43 +112,22 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1">
-                  <div className="flex items-center gap-2 text-left min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
-                      <Share2 className="w-5 h-5" />
-                    </div>
-                    <div className="flex flex-col items-start leading-none min-w-0">
-                      <span className="font-bold text-sm truncate w-24">{selectedOrg.name}</span>
-                      <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
-                    </div>
-                  </div>
-                  <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-1 opacity-50 shrink-0" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Workspaces</DropdownMenuLabel>
-                {MOCK_ORGS.map((org) => (
-                  <DropdownMenuItem key={org.id} onClick={() => setSelectedOrg(org)} className="flex items-center justify-between gap-2 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                        {org.name.substring(0, 1)}
-                      </div>
-                      <span>{org.name}</span>
-                    </div>
-                    {selectedOrg.id === org.id && <Check className="w-4 h-4 text-primary" />}
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setLocation("/organization-select")} className="cursor-pointer">
-                   <div className="flex items-center gap-2 text-muted-foreground">
-                     <Plus className="w-4 h-4" />
-                     <span>Add Workspace</span>
-                   </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button 
+              variant="ghost" 
+              className="flex-1 justify-between px-2 hover:bg-secondary/50 h-12 min-w-0 mr-1"
+              onClick={() => setIsLogoutAlertOpen(true)}
+            >
+              <div className="flex items-center gap-2 text-left min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col items-start leading-none min-w-0">
+                  <span className="font-bold text-sm truncate w-24">{selectedOrg.name}</span>
+                  <span className="text-[10px] text-muted-foreground">{selectedOrg.plan} Plan</span>
+                </div>
+              </div>
+              <ChevronsUpDown className="w-4 h-4 text-muted-foreground ml-1 opacity-50 shrink-0" />
+            </Button>
           ) : (
             <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
               <Share2 className="w-5 h-5" />
