@@ -312,6 +312,11 @@ const CHAT_HISTORY = [
     role: "assistant",
     content: "Based on the recent patent trends analysis of LG Energy Solution and SK Innovation, both companies are focusing on developing technology to improve battery safety and lifespan. LG Energy Solution is particularly prominent in patent applications related to high-nickel cathode materials and silicon anode materials, while SK Innovation is identified as securing numerous patents related to separator technology and battery recycling technology. Competition is also intensifying to secure next-generation battery technologies such as solid-state batteries. This document suggests changes in market share and potential technical disputes based on these technological trends.",
     tool: "MCP Tool • Patent_search",
+    sources: [
+      { id: "note-1", title: "LG Energy Solution Patent Portfolio", date: "2024-12-01" },
+      { id: "note-2", title: "SK Innovation Battery Tech Analysis", date: "2024-11-20" },
+      { id: "note-3", title: "Meeting Notes: Cross-licensing Strategy", date: "2024-10-15" }
+    ],
     data: [
       { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
       { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" },
@@ -421,6 +426,57 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+const SourceList = ({ data }: { data: any[] }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="mt-2 border border-border rounded-xl overflow-hidden bg-card/50">
+      <button 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between px-2.5 py-2 bg-muted/30 hover:bg-muted/50 transition-colors text-xs font-medium"
+      >
+        <div className="flex items-center gap-2 text-muted-foreground">
+             <FileText className="w-3.5 h-3.5 text-orange-500" />
+             <span>Source {data.length}</span>
+        </div>
+        <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="divide-y divide-border/50">
+              {data.map((item, idx) => (
+                <div key={idx} className="p-3 hover:bg-muted/30 transition-colors cursor-pointer group">
+                  <div className="flex items-start gap-2.5">
+                    <FileText className="w-3.5 h-3.5 text-orange-500 mt-0.5 shrink-0" />
+                    <div className="space-y-1 min-w-0">
+                      <div className="text-sm text-foreground/90 font-medium leading-snug group-hover:text-blue-600 group-hover:underline decoration-blue-600/30 underline-offset-4">
+                        {item.title}
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span className="font-medium text-foreground/70">{item.id}</span>
+                        {item.date && <span>{item.date}</span>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -1404,6 +1460,9 @@ export default function KnowledgeGarden() {
                                 )}
                                 {msg.data && (
                                    <NewsResultList data={msg.data} />
+                                )}
+                                {msg.sources && (
+                                   <SourceList data={msg.sources} />
                                 )}
 
                                 <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
