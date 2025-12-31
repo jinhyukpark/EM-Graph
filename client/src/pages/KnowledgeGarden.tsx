@@ -318,7 +318,12 @@ export default function KnowledgeGarden() {
               <ResizablePanel defaultSize={25} minSize={20} className="bg-secondary/5 border-r border-border relative flex flex-col">
                  {/* Graph Header - Empty but height aligned */}
                  <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-card/30 shrink-0">
-                   <Badge variant="outline" className="bg-background/80 backdrop-blur">Graph View</Badge>
+                   <div className="flex items-center gap-2 px-2">
+                      <div className="p-1.5 bg-primary/10 rounded-md">
+                        <Share2 className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="font-semibold text-sm">Ontology</span>
+                   </div>
                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowGraph(false)}>
                      <X className="w-4 h-4 text-muted-foreground" />
                    </Button>
