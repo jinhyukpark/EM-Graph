@@ -157,6 +157,7 @@ export default function KnowledgeGarden() {
   const [showExplorer, setShowExplorer] = useState(true);
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
 
   return (
     <Layout>
@@ -171,7 +172,12 @@ export default function KnowledgeGarden() {
                 <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("h-8 w-8 text-muted-foreground", showSearch && "text-primary bg-primary/10")}
+                        onClick={() => setShowSearch(!showSearch)}
+                    >
                       <Search className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
@@ -179,6 +185,18 @@ export default function KnowledgeGarden() {
                     </Button>
                   </div>
                 </div>
+                {showSearch && (
+                    <div className="p-2 border-b border-border/50 bg-secondary/10">
+                         <div className="relative">
+                            <Search className="absolute left-2 top-1.5 w-3.5 h-3.5 text-muted-foreground" />
+                            <Input 
+                                className="h-8 text-xs pl-8 bg-background border-border/50 focus-visible:ring-1" 
+                                placeholder="Search files..." 
+                                autoFocus
+                            />
+                        </div>
+                    </div>
+                )}
                 <ScrollArea className="flex-1 py-2">
                   {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
                 </ScrollArea>
