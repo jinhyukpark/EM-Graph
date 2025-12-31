@@ -779,44 +779,58 @@ export default function KnowledgeGarden() {
                    </div>
                 </ScrollArea>
                 
-                <div className="p-3 border-t border-border bg-muted/5 space-y-2.5">
-                    <div className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider px-1">View Options</div>
-                    <div className="flex flex-col gap-1">
+                <div className="p-4 border-t border-border bg-background space-y-3">
+                    <div className="text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest">View Options</div>
+                    <div className="flex flex-col gap-2">
                          <Button 
-                            variant={showDocDetails ? "secondary" : "ghost"} 
-                            size="sm" 
-                            className={cn("justify-between h-8 px-2 w-full font-normal", showDocDetails && "bg-white shadow-sm border border-border/50")}
+                            variant="outline"
+                            className={cn(
+                                "justify-between h-10 px-3 w-full font-medium transition-all duration-200", 
+                                showDocDetails 
+                                    ? "bg-background border-blue-500 text-blue-600 hover:bg-blue-50/50 hover:text-blue-700 hover:border-blue-600 shadow-sm" 
+                                    : "border-transparent bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                            )}
                             onClick={() => toggleView(showDocDetails, setShowDocDetails, [showGraph, showCopilot])}
                          >
-                            <div className="flex items-center gap-2">
-                                <FileText className="w-3.5 h-3.5 text-blue-500" />
-                                <span className="text-xs">Editor</span>
+                            <div className="flex items-center gap-2.5">
+                                <FileText className={cn("w-4 h-4", showDocDetails ? "text-blue-500" : "text-muted-foreground/70")} />
+                                <span>Document Details</span>
                             </div>
-                            <div className={cn("w-2 h-2 rounded-full", showDocDetails ? "bg-blue-500" : "bg-border")} />
+                            {showDocDetails ? <Eye className="w-4 h-4 text-blue-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground/50" />}
                          </Button>
+
                          <Button 
-                            variant={showGraph ? "secondary" : "ghost"} 
-                            size="sm" 
-                            className={cn("justify-between h-8 px-2 w-full font-normal", showGraph && "bg-white shadow-sm border border-border/50")}
+                            variant="outline"
+                            className={cn(
+                                "justify-between h-10 px-3 w-full font-medium transition-all duration-200", 
+                                showGraph 
+                                    ? "bg-background border-blue-500 text-blue-600 hover:bg-blue-50/50 hover:text-blue-700 hover:border-blue-600 shadow-sm" 
+                                    : "border-transparent bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                            )}
                             onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
                          >
-                            <div className="flex items-center gap-2">
-                                <Network className="w-3.5 h-3.5 text-purple-500" />
-                                <span className="text-xs">Ontology</span>
+                            <div className="flex items-center gap-2.5">
+                                <Network className={cn("w-4 h-4", showGraph ? "text-blue-500" : "text-muted-foreground/70")} />
+                                <span>Ontology</span>
                             </div>
-                             <div className={cn("w-2 h-2 rounded-full", showGraph ? "bg-purple-500" : "bg-border")} />
+                             {showGraph ? <Eye className="w-4 h-4 text-blue-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground/50" />}
                          </Button>
+
                          <Button 
-                            variant={showCopilot ? "secondary" : "ghost"} 
-                            size="sm" 
-                            className={cn("justify-between h-8 px-2 w-full font-normal", showCopilot && "bg-white shadow-sm border border-border/50")}
+                            variant="outline"
+                            className={cn(
+                                "justify-between h-10 px-3 w-full font-medium transition-all duration-200", 
+                                showCopilot 
+                                    ? "bg-background border-blue-500 text-blue-600 hover:bg-blue-50/50 hover:text-blue-700 hover:border-blue-600 shadow-sm" 
+                                    : "border-transparent bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                            )}
                             onClick={() => toggleView(showCopilot, setShowCopilot, [showDocDetails, showGraph])}
                          >
-                            <div className="flex items-center gap-2">
-                                <Bot className="w-3.5 h-3.5 text-green-500" />
-                                <span className="text-xs">AI Copilot</span>
+                            <div className="flex items-center gap-2.5">
+                                <Sparkles className={cn("w-4 h-4", showCopilot ? "text-blue-500" : "text-muted-foreground/70")} />
+                                <span>Copilot</span>
                             </div>
-                             <div className={cn("w-2 h-2 rounded-full", showCopilot ? "bg-green-500" : "bg-border")} />
+                             {showCopilot ? <Eye className="w-4 h-4 text-blue-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground/50" />}
                          </Button>
                     </div>
                 </div>
