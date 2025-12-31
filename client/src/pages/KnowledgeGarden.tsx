@@ -14,8 +14,9 @@ import {
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
+import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider, MarkerType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import ImageNode from "@/components/graph/ImageNode";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -62,20 +63,227 @@ const INITIAL_FILE_TREE = [
   }
 ];
 
+const nodeTypes = {
+  entity: ImageNode,
+};
+
 const INITIAL_NODES = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: 'LG Energy Solution' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '2', position: { x: 200, y: -100 }, data: { label: 'SK Innovation' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '3', position: { x: 200, y: 100 }, data: { label: 'Battery Patent' }, style: { background: '#6ee7b7', border: 'none', borderRadius: '50%', width: 50, height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', textAlign: 'center' } },
-  { id: '4', position: { x: 400, y: 0 }, data: { label: 'Trade Secrets' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
-  { id: '5', position: { x: 100, y: 200 }, data: { label: 'EV Market' }, style: { background: '#a7f3d0', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', textAlign: 'center' } },
+  // Center
+  { 
+    id: 'kang', 
+    type: 'entity',
+    position: { x: 0, y: 0 }, 
+    data: { 
+      label: 'Kang "The Viper"', 
+      subLabel: 'Crime Boss',
+      image: 'https://i.pravatar.cc/150?u=kang',
+      borderColor: '#ef4444', // red-500
+      highlight: true
+    },
+    style: { width: 80, height: 80 }
+  },
+  // Top Left
+  { 
+    id: 'thug_a', 
+    type: 'entity',
+    position: { x: -300, y: -150 }, 
+    data: { 
+      label: 'Thug A', 
+      subLabel: 'Associate',
+      image: 'https://i.pravatar.cc/150?u=thug',
+      borderColor: '#ef4444' // red-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Top
+  { 
+    id: 'witness_kim', 
+    type: 'entity',
+    position: { x: -100, y: -250 }, 
+    data: { 
+      label: 'Witness Kim', 
+      subLabel: 'Observer',
+      image: 'https://i.pravatar.cc/150?u=kim',
+      borderColor: '#eab308' // yellow-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Top Right
+  { 
+    id: 'det_lee', 
+    type: 'entity',
+    position: { x: 150, y: -280 }, 
+    data: { 
+      label: 'Det. Lee', 
+      subLabel: 'Partner',
+      image: 'https://i.pravatar.cc/150?u=lee',
+      borderColor: '#3b82f6' // blue-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Left Middle (Det Choi)
+  { 
+    id: 'det_choi', 
+    type: 'entity',
+    position: { x: -100, y: -100 }, 
+    data: { 
+      label: 'Det. Choi', 
+      subLabel: 'Lead Investigator',
+      image: 'https://i.pravatar.cc/150?u=choi',
+      borderColor: '#3b82f6' // blue-500
+    },
+    style: { width: 70, height: 70 }
+  },
+  // Right Middle (Lawyer Han)
+  { 
+    id: 'lawyer_han', 
+    type: 'entity',
+    position: { x: 150, y: -80 }, 
+    data: { 
+      label: 'Lawyer Han', 
+      subLabel: 'Defense Attorney',
+      image: 'https://i.pravatar.cc/150?u=han',
+      borderColor: '#a855f7' // purple-500
+    },
+    style: { width: 65, height: 65 }
+  },
+  // Right (Park Razor)
+  { 
+    id: 'park_razor', 
+    type: 'entity',
+    position: { x: 300, y: 50 }, 
+    data: { 
+      label: 'Park "Razor"', 
+      subLabel: 'Enforcer',
+      image: 'https://i.pravatar.cc/150?u=park',
+      borderColor: '#ef4444' // red-500
+    },
+    style: { width: 70, height: 70 }
+  },
+  // Bottom Right (Kim Ledger)
+  { 
+    id: 'kim_ledger', 
+    type: 'entity',
+    position: { x: 200, y: 250 }, 
+    data: { 
+      label: 'Kim "Ledger"', 
+      subLabel: 'Money Launderer',
+      image: 'https://i.pravatar.cc/150?u=ledger',
+      borderColor: '#ef4444' // red-500
+    },
+    style: { width: 65, height: 65 }
+  },
+  // Bottom (Victim A)
+  { 
+    id: 'victim_a', 
+    type: 'entity',
+    position: { x: -50, y: 200 }, 
+    data: { 
+      label: 'Victim A', 
+      subLabel: 'Assault',
+      image: 'https://i.pravatar.cc/150?u=victima',
+      borderColor: '#f97316' // orange-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Far Left (Case)
+  { 
+    id: 'case_22004', 
+    type: 'entity',
+    position: { x: -350, y: 150 }, 
+    data: { 
+      label: 'Case #22-004', 
+      subLabel: 'Lawsuit',
+      borderColor: '#a855f7' // purple-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Far Left 2 (Victim B)
+  { 
+    id: 'victim_b', 
+    type: 'entity',
+    position: { x: -250, y: 20 }, 
+    data: { 
+      label: 'Victim B', 
+      subLabel: 'Fraud',
+      borderColor: '#eab308' // yellow-500
+    },
+    style: { width: 50, height: 50 }
+  },
+  // Far Right (Company X)
+  { 
+    id: 'company_x', 
+    type: 'entity',
+    position: { x: 450, y: -50 }, 
+    data: { 
+      label: 'Company X', 
+      subLabel: 'Fraud Victim',
+      borderColor: '#eab308' // yellow-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Far Right Bottom (Burner Phone)
+  { 
+    id: 'burner_phone', 
+    type: 'entity',
+    position: { x: 400, y: 200 }, 
+    data: { 
+      label: 'Burner Phone', 
+      subLabel: 'Evidence',
+      borderColor: '#64748b' // slate-500
+    },
+    style: { width: 50, height: 50 }
+  },
+  // Bottom Left (Offshore Account)
+  { 
+    id: 'offshore_account', 
+    type: 'entity',
+    position: { x: -150, y: 350 }, 
+    data: { 
+      label: 'Offshore Account', 
+      subLabel: 'Asset',
+      borderColor: '#10b981' // emerald-500
+    },
+    style: { width: 60, height: 60 }
+  },
+  // Bottom Right (Warehouse 4)
+  { 
+    id: 'warehouse_4', 
+    type: 'entity',
+    position: { x: 250, y: 350 }, 
+    data: { 
+      label: 'Warehouse 4', 
+      subLabel: 'Crime Scene',
+      borderColor: '#10b981' // emerald-500
+    },
+    style: { width: 60, height: 60 }
+  }
 ];
 
 const INITIAL_EDGES = [
-  { id: 'e1-2', source: '1', target: '2', animated: true, style: { stroke: '#94a3b8' } },
-  { id: 'e1-3', source: '1', target: '3', style: { stroke: '#e2e8f0' } },
-  { id: 'e2-3', source: '2', target: '3', style: { stroke: '#e2e8f0' } },
-  { id: 'e3-4', source: '3', target: '4', style: { stroke: '#e2e8f0' } },
-  { id: 'e1-5', source: '1', target: '5', style: { stroke: '#e2e8f0' } },
+  // Red Arrows (Criminal/Hostile)
+  { id: 'e-kang-park', source: 'kang', target: 'park_razor', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-park-warehouse', source: 'park_razor', target: 'warehouse_4', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  
+  // Blue Lines (Police/Investigation)
+  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
+  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
+  { id: 'e-lee-warehouse', source: 'det_lee', target: 'warehouse_4', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  
+  // Purple (Legal)
+  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },
+  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', style: { stroke: '#a855f7', strokeWidth: 1.5 } },
+  
+  // Green (Money/Asset)
+  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', style: { stroke: '#10b981', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
+  
+  // Misc
+  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', style: { stroke: '#eab308', strokeWidth: 1.5, strokeDasharray: '5,5' } },
+  { id: 'e-company-kang', source: 'company_x', target: 'kang', style: { stroke: '#eab308', strokeWidth: 1.5 } },
 ];
 
 const CHAT_HISTORY = [
@@ -158,6 +366,7 @@ function GraphView() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
         fitView
         className="bg-background"
       >

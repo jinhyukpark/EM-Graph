@@ -66,11 +66,14 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
       </div>
 
       {/* Floating Label (Strictly Outside) */}
-      <div className="absolute top-full mt-2 flex flex-col items-center pointer-events-none w-[200%] z-20">
+      <div className="absolute top-full mt-2 flex flex-col items-center pointer-events-none w-[300%] z-20">
         <span className={cn(
-          "text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm bg-background/90 backdrop-blur-sm border border-border/50 whitespace-nowrap",
+          "text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm bg-background/90 backdrop-blur-sm border border-border/50",
+          "max-w-[120px] truncate block text-center", // Added truncation
           selected ? "text-primary border-primary/30" : "text-foreground/80"
-        )}>
+        )}
+        title={data.label} // Tooltip for full text
+        >
           {data.label}
         </span>
         {data.subLabel && (
