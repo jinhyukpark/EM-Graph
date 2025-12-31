@@ -997,7 +997,7 @@ export default function KnowledgeGarden() {
 
                         <h3>1. Executive Summary</h3>
                         <p>
-                          The legal battle between LG Energy Solution and SK Innovation centers on trade secret misappropriation and patent infringement claims. 
+                          The legal battle between <strong>LG Energy Solution</strong> and <strong>SK Innovation</strong> centers on trade secret misappropriation and patent infringement claims. 
                           This document consolidates key findings from recent court filings and technical analysis of the disputed patents.
                         </p>
 
@@ -1044,6 +1044,93 @@ export default function KnowledgeGarden() {
                               </tr>
                             </tbody>
                           </table>
+                        </div>
+
+                        <h3>3. Key Arguments & Evidence ⚖️</h3>
+                        <p>The core dispute revolves around three main technical areas. Below is a breakdown of the primary arguments presented by both sides:</p>
+                        <ul>
+                            <li><strong>Separator Technology:</strong> Claims regarding the misappropriation of ceramic coated separator (CCS) technology.</li>
+                            <li><strong>Cathode Materials:</strong> Infringement allegations related to high-nickel content cathode manufacturing processes.</li>
+                            <li><strong>Manufacturing Data:</strong> Disputes over the transfer of yield rate data and production line schematics. 📉</li>
+                        </ul>
+
+                        <h3>4. Analysis Process (Step-by-Step)</h3>
+                        <ol>
+                            <li>Collect all public court filings from the <strong>US ITC</strong> and <strong>Delaware District Court</strong>.</li>
+                            <li>Compare patent claims against the technical specifications of the <a href="#">SK Innovation Battery Module</a>.</li>
+                            <li>Evaluate the validity of the "prior art" defense strategy using the database.</li>
+                            <li>Assess potential damages and royalty models based on market share projections.</li>
+                        </ol>
+
+                        <h3>5. Visual Evidence</h3>
+                        <p>Comparison of the disputed battery cell structures and the diagrams found in the patent filings.</p>
+                        
+                        <div className="grid grid-cols-2 gap-4 my-6 not-prose">
+                            <div className="rounded-lg border border-border overflow-hidden bg-muted/20">
+                                <div className="aspect-video bg-slate-200 flex items-center justify-center text-slate-400">
+                                    <ImageIcon className="w-8 h-8 opacity-50" />
+                                </div>
+                                <div className="p-2 text-xs text-muted-foreground bg-card border-t border-border">
+                                    Fig 1. LGES Patent Diagram (US 10,123,456)
+                                </div>
+                            </div>
+                            <div className="rounded-lg border border-border overflow-hidden bg-muted/20">
+                                <div className="aspect-video bg-slate-200 flex items-center justify-center text-slate-400">
+                                    <ImageIcon className="w-8 h-8 opacity-50" />
+                                </div>
+                                <div className="p-2 text-xs text-muted-foreground bg-card border-t border-border">
+                                    Fig 2. SKI Battery Cell Cross-section
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>6. Action Items</h3>
+                        <ul className="contains-task-list task-list list-none pl-0">
+                            <li className="flex items-center gap-2 mb-1">
+                                <input type="checkbox" checked readOnly className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
+                                <span>Review initial court filings (Completed 2024-12-01)</span>
+                            </li>
+                            <li className="flex items-center gap-2 mb-1">
+                                <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
+                                <span>Analyze technical diagrams of SK's battery modules</span>
+                            </li>
+                            <li className="flex items-center gap-2 mb-1">
+                                <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" /> 
+                                <span>Prepare counter-arguments for cross-licensing proposal</span>
+                            </li>
+                        </ul>
+
+                        <h3>7. References & Attachments</h3>
+                        <p>
+                            For more details, refer to the <a href="https://www.usitc.gov" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">US ITC Case Details</a> page.
+                            Related internal analysis can be found in <span className="text-blue-600 bg-blue-50 px-1 rounded cursor-pointer hover:bg-blue-100 font-medium">[[Previous Litigation History]]</span>.
+                        </p>
+
+                        <div className="not-prose mt-4 space-y-2">
+                            <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors cursor-pointer group">
+                                <div className="h-10 w-10 rounded bg-red-50 flex items-center justify-center shrink-0">
+                                    <FileText className="w-5 h-5 text-red-500" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">technical_analysis_v2.pdf</div>
+                                    <div className="text-xs text-muted-foreground">2.4 MB • Uploaded yesterday</div>
+                                </div>
+                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                                    <ArrowUp className="w-4 h-4 rotate-45" />
+                                </Button>
+                            </div>
+                            <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors cursor-pointer group">
+                                <div className="h-10 w-10 rounded bg-blue-50 flex items-center justify-center shrink-0">
+                                    <FileText className="w-5 h-5 text-blue-500" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">market_impact_report.docx</div>
+                                    <div className="text-xs text-muted-foreground">1.8 MB • Uploaded 2 hours ago</div>
+                                </div>
+                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                                    <ArrowUp className="w-4 h-4 rotate-45" />
+                                </Button>
+                            </div>
                         </div>
                       </div>
                     </div>
