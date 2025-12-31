@@ -1077,9 +1077,6 @@ export default function KnowledgeGarden() {
                            </div>
                         </div>
                       </div>
-                      <div className="text-[10px] text-muted-foreground text-center mt-2 opacity-60">
-                        AI can make mistakes. Check important info.
-                      </div>
                     </div>
                   </ResizablePanel>
                 </>
