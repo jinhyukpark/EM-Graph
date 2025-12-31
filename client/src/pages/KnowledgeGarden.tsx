@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // --- Mock Data ---
 
-const FILE_TREE = [
+const INITIAL_FILE_TREE = [
   {
     id: "root",
     name: "Knowledge Garden",
@@ -155,10 +155,70 @@ function GraphView() {
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
 
+  const [fileTree, setFileTree] = useState(INITIAL_FILE_TREE);
   const [showExplorer, setShowExplorer] = useState(true);
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+
+  const handleAddNewFile = () => {
+    const newTree = JSON.parse(JSON.stringify(fileTree));
+    let added = false;
+
+    // Recursive function to find active node and add sibling
+    const addSiblingToActive = (nodes: any[]) => {
+      for (const node of nodes) {
+        if (node.children) {
+          // Check if any child is active
+          const activeChildIndex = node.children.findIndex((c: any) => c.active);
+          if (activeChildIndex !== -1) {
+            // Deactivate current active
+            node.children[activeChildIndex].active = false;
+            
+            // Add new node
+            const newNode = {
+              id: `n-${Date.now()}`,
+              name: "Untitled Note",
+              type: "note",
+              active: true
+            };
+            // Insert after active node
+            node.children.splice(activeChildIndex + 1, 0, newNode);
+            added = true;
+            return true;
+          }
+          
+          // Check if folder itself is active (if we supported that) or recurse
+          if (addSiblingToActive(node.children)) return true;
+        }
+      }
+      return false;
+    };
+
+    if (!addSiblingToActive(newTree)) {
+      // Fallback: Add to 'Analysis 2024' (f6) or root's children if not found
+      const addToDefault = (nodes: any[]) => {
+          for (const node of nodes) {
+              if (node.id === 'f6') { // Analysis 2024
+                  // Deactivate all
+                  node.children.forEach((c: any) => c.active = false);
+                  node.children.push({
+                      id: `n-${Date.now()}`,
+                      name: "Untitled Note",
+                      type: "note",
+                      active: true
+                  });
+                  return true;
+              }
+              if (node.children && addToDefault(node.children)) return true;
+          }
+          return false;
+      }
+      addToDefault(newTree);
+    }
+
+    setFileTree(newTree);
+  };
 
   return (
     <Layout>
@@ -181,7 +241,12 @@ export default function KnowledgeGarden() {
                     >
                       <Search className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground"
+                        onClick={handleAddNewFile}
+                    >
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -209,7 +274,7 @@ export default function KnowledgeGarden() {
                 )}
                 </AnimatePresence>
                 <ScrollArea className="flex-1 py-2">
-                  {FILE_TREE.map(node => <FileTreeNode key={node.id} node={node} />)}
+                  {fileTree.map(node => <FileTreeNode key={node.id} node={node} />)}
                 </ScrollArea>
                 
                 {/* View Toggles Footer */}
