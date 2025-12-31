@@ -573,11 +573,7 @@ export default function KnowledgeGarden() {
             </ScrollArea>
           </ResizablePanel>
 
-          </ResizablePanel>
-
-            <ResizablePanelGroup direction="horizontal">
-            
-              {/* 3. Graph View */}
+          {/* 3. Graph View */}
               {showGraph && (
                 <>
                   <ResizableHandle />
