@@ -171,35 +171,7 @@ export default function KnowledgeGarden() {
                 <div className="h-16 flex items-center justify-between border-b border-border/50 px-2 shrink-0">
                   <span className="text-xs font-bold text-muted-foreground uppercase px-2">Explorer</span>
                   <div className="flex gap-1">
-                    <div className="flex items-center bg-background rounded-md border border-border shadow-sm">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className={cn("h-7 w-7 rounded-none border-r border-border hover:bg-secondary/50", showExplorer ? "text-primary bg-primary/5" : "text-muted-foreground")}
-                        onClick={() => setShowExplorer(!showExplorer)}
-                        title="Toggle Explorer"
-                      >
-                        <PanelLeft className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className={cn("h-7 w-7 rounded-none border-r border-border hover:bg-secondary/50", showGraph ? "text-primary bg-primary/5" : "text-muted-foreground")}
-                        onClick={() => setShowGraph(!showGraph)}
-                        title="Toggle Graph View"
-                      >
-                        <Columns className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className={cn("h-7 w-7 rounded-none hover:bg-secondary/50", showCopilot ? "text-primary bg-primary/5" : "text-muted-foreground")}
-                        onClick={() => setShowCopilot(!showCopilot)}
-                        title="Toggle Copilot"
-                      >
-                        <PanelRight className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    {/* Toggle Buttons Removed */}
                   </div>
                 </div>
                 {/* Search Bar */}
@@ -248,6 +220,27 @@ export default function KnowledgeGarden() {
               </div>
 
               <div className="flex items-center gap-1">
+                <div className="flex items-center bg-secondary/20 rounded-md border border-border/50 mr-2">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-8 w-8 rounded-none border-r border-border/50", showGraph ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                    onClick={() => setShowGraph(!showGraph)}
+                    title="Toggle Graph View"
+                  >
+                    <Network className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("h-8 w-8 rounded-none", showCopilot ? "bg-background shadow-sm text-primary" : "text-muted-foreground")}
+                    onClick={() => setShowCopilot(!showCopilot)}
+                    title="Toggle Copilot"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="h-4 w-px bg-border mx-1" />
                 <Button variant="ghost" size="icon" className="h-8 w-8"><Share2 className="w-4 h-4" /></Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="w-4 h-4" /></Button>
               </div>
