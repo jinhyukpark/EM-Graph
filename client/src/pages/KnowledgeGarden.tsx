@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider } from "@xyflow/react";
@@ -337,43 +337,52 @@ export default function KnowledgeGarden() {
                     variant="ghost" 
                     size="sm" 
                     className={cn(
-                      "w-full justify-start h-8 text-xs font-normal border",
+                      "w-full justify-between h-8 text-xs font-normal border group",
                       true 
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
                     onClick={() => {}}
                   >
-                    <FileText className="w-3.5 h-3.5 mr-2" />
-                    Document Details
+                    <div className="flex items-center">
+                        <FileText className="w-3.5 h-3.5 mr-2" />
+                        Document Details
+                    </div>
+                    <Eye className="w-3.5 h-3.5" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     className={cn(
-                      "w-full justify-start h-8 text-xs font-normal border",
+                      "w-full justify-between h-8 text-xs font-normal border group",
                       showGraph 
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
                     onClick={() => setShowGraph(!showGraph)}
                   >
-                    <Share2 className="w-3.5 h-3.5 mr-2" />
-                    Ontology
+                    <div className="flex items-center">
+                        <Share2 className="w-3.5 h-3.5 mr-2" />
+                        Ontology
+                    </div>
+                    {showGraph ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     className={cn(
-                      "w-full justify-start h-8 text-xs font-normal border",
+                      "w-full justify-between h-8 text-xs font-normal border group",
                       showCopilot 
                         ? "bg-background border-primary text-primary" 
                         : "border-transparent text-muted-foreground hover:bg-secondary/50"
                     )}
                     onClick={() => setShowCopilot(!showCopilot)}
                   >
-                    <Sparkles className="w-3.5 h-3.5 mr-2" />
-                    Copilot
+                    <div className="flex items-center">
+                        <Sparkles className="w-3.5 h-3.5 mr-2" />
+                        Copilot
+                    </div>
+                    {showCopilot ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 opacity-50" />}
                   </Button>
                 </div>
               </ResizablePanel>
