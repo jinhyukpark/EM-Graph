@@ -1028,7 +1028,7 @@ export default function KnowledgeGarden() {
                           className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 p-3 text-sm placeholder:text-muted-foreground/60" 
                         />
                         
-                        <div className="flex items-center justify-between p-2 border-t border-border/30 bg-muted/5 rounded-b-xl">
+                        <div className="flex items-center justify-between p-2 rounded-b-xl">
                            <div className="flex items-center gap-1">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
