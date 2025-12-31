@@ -14,6 +14,9 @@ interface ImageNodeProps {
 }
 
 export default function ImageNode({ data, selected }: ImageNodeProps) {
+  // Use borderColor as the main color, default to gray if missing
+  const color = data.borderColor || '#64748b'; 
+  
   return (
     <div className="relative flex flex-col items-center justify-center w-full h-full">
       {/* 
@@ -27,57 +30,37 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
         style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0, width: 1, height: 1, background: 'transparent' }} 
       />
       
-      {/* Circle Container - Strictly Circular with overflow-visible to show border but inner content hidden */}
+      {/* Circle Container - White background with colored border */}
       <div 
         className={cn(
-          "relative rounded-full transition-all duration-300 bg-background z-10",
-          selected ? "ring-4 ring-primary/30 scale-105" : "hover:ring-4 hover:ring-muted/30",
+          "relative rounded-full transition-all duration-300 z-10 flex items-center justify-center shadow-sm",
+          selected ? "ring-4 ring-primary/30 scale-105" : "hover:scale-105",
           data.highlight && "shadow-[0_0_20px_rgba(var(--primary),0.2)]"
         )}
         style={{
           width: '100%',
           height: '100%',
-          border: `3px solid ${data.borderColor || 'hsl(var(--border))'}`,
-          aspectRatio: '1/1'
+          backgroundColor: 'white',
+          border: `3px solid ${color}`,
         }}
       >
-        {/* Inner overflow hidden container for image */}
-        <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-white">
-          {data.image ? (
-            <img 
-              src={data.image} 
-              alt={data.label} 
-              className="w-full h-full object-cover pointer-events-none" 
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling?.classList.remove('hidden');
-              }}
-            />
-          ) : null}
-          
-          {/* Fallback content (shown if no image or image error) */}
-          <div className={cn(
-            "w-full h-full flex flex-col items-center justify-center p-2 text-center",
-            data.image ? "hidden" : ""
-          )}>
-             <span 
-              className="text-[14px] font-bold leading-tight"
-              style={{ color: data.borderColor || 'hsl(var(--foreground))' }}
-             >
-                {data.label.substring(0, 2).toUpperCase()}
-             </span>
-          </div>
-        </div>
+        {/* Inner Text (Initials) */}
+        <span 
+          className="text-[16px] font-bold leading-tight"
+          style={{ color: color }}
+        >
+           {data.label.substring(0, 2).toUpperCase()}
+        </span>
       </div>
 
       {/* Floating Label (Strictly Outside) */}
       <div className="absolute top-full mt-2 flex flex-col items-center pointer-events-none w-[300%] z-20">
         <span className={cn(
           "text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm bg-background/90 backdrop-blur-sm border border-border/50",
-          "max-w-[120px] truncate block text-center", // Added truncation
+          "max-w-[120px] truncate block text-center", 
           selected ? "text-primary border-primary/30" : "text-foreground/80"
         )}
-        title={data.label} // Tooltip for full text
+        title={data.label} 
         >
           {data.label}
         </span>

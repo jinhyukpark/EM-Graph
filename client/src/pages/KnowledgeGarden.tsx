@@ -78,7 +78,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kang "The Viper"', 
       subLabel: 'Crime Boss',
-      image: 'https://i.pravatar.cc/150?u=kang',
       borderColor: '#ef4444', // red-500
       highlight: true
     },
@@ -92,7 +91,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Thug A', 
       subLabel: 'Associate',
-      image: 'https://i.pravatar.cc/150?u=thug',
       borderColor: '#ef4444' // red-500
     },
     style: { width: 60, height: 60 }
@@ -105,7 +103,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Witness Kim', 
       subLabel: 'Observer',
-      image: 'https://i.pravatar.cc/150?u=kim',
       borderColor: '#eab308' // yellow-500
     },
     style: { width: 60, height: 60 }
@@ -118,7 +115,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Lee', 
       subLabel: 'Partner',
-      image: 'https://i.pravatar.cc/150?u=lee',
       borderColor: '#3b82f6' // blue-500
     },
     style: { width: 60, height: 60 }
@@ -131,7 +127,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Choi', 
       subLabel: 'Lead Investigator',
-      image: 'https://i.pravatar.cc/150?u=choi',
       borderColor: '#3b82f6' // blue-500
     },
     style: { width: 70, height: 70 }
@@ -144,7 +139,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Lawyer Han', 
       subLabel: 'Defense Attorney',
-      image: 'https://i.pravatar.cc/150?u=han',
       borderColor: '#a855f7' // purple-500
     },
     style: { width: 65, height: 65 }
@@ -157,7 +151,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Park "Razor"', 
       subLabel: 'Enforcer',
-      image: 'https://i.pravatar.cc/150?u=park',
       borderColor: '#ef4444' // red-500
     },
     style: { width: 70, height: 70 }
@@ -170,7 +163,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kim "Ledger"', 
       subLabel: 'Money Launderer',
-      image: 'https://i.pravatar.cc/150?u=ledger',
       borderColor: '#ef4444' // red-500
     },
     style: { width: 65, height: 65 }
@@ -183,7 +175,6 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim A', 
       subLabel: 'Assault',
-      image: 'https://i.pravatar.cc/150?u=victima',
       borderColor: '#f97316' // orange-500
     },
     style: { width: 60, height: 60 }
@@ -1135,15 +1126,17 @@ export default function KnowledgeGarden() {
                               {msg.role === 'user' ? (
                                 <div 
                                   className={cn(
-                                    "relative transition-all duration-200 rounded-lg",
-                                    editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "ring-2 ring-primary bg-background shadow-lg scale-[1.01]" : "bg-transparent"
+                                    "relative transition-all duration-200 rounded-xl group",
+                                    editingMessage?.sessionId === activeSessionId && editingMessage?.index === i 
+                                      ? "border border-blue-500 shadow-sm bg-background" 
+                                      : "hover:bg-muted/30 hover:ring-1 hover:ring-border/50 p-2 -m-2 cursor-pointer"
                                   )}
                                   onDoubleClick={() => setEditingMessage({ sessionId: activeSessionId, index: i })}
                                 >
                                   <Textarea 
                                     className={cn(
                                       "min-h-[40px] w-full resize-none border-0 bg-transparent shadow-none p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0",
-                                      editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3" : "text-foreground cursor-default"
+                                      editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3 min-h-[80px]" : "text-foreground cursor-pointer pointer-events-none"
                                     )}
                                     value={msg.content}
                                     readOnly={!(editingMessage?.sessionId === activeSessionId && editingMessage?.index === i)}
@@ -1159,7 +1152,7 @@ export default function KnowledgeGarden() {
                                   
                                   {/* Toolbar for editing mode */}
                                   {editingMessage?.sessionId === activeSessionId && editingMessage?.index === i && (
-                                    <div className="flex items-center justify-between p-2 rounded-b-lg border-t border-border/50 bg-muted/20">
+                                    <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
                                        <div className="flex items-center gap-1 shrink-0">
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -1188,7 +1181,7 @@ export default function KnowledgeGarden() {
                                             className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm"
                                             onClick={() => {
                                               setEditingMessage(null);
-                                              handleSendMessage();
+                                              // Simulate re-sending or just saving edits
                                             }}
                                           >
                                             <ArrowUp className="w-4 h-4" />
