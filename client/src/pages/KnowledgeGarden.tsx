@@ -420,7 +420,7 @@ const NewsResultList = ({ data }: { data: any[] }) => {
     <div className="mt-2 border border-border rounded-xl overflow-hidden bg-card/50">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-3 py-2 bg-muted/30 hover:bg-muted/50 transition-colors text-xs font-medium"
+        className="w-full flex items-center justify-between px-2.5 py-2 bg-muted/30 hover:bg-muted/50 transition-colors text-xs font-medium"
       >
         <div className="flex items-center gap-2 text-muted-foreground">
              <Globe className="w-3.5 h-3.5 text-blue-500" />
@@ -1105,7 +1105,7 @@ export default function KnowledgeGarden() {
                             
                             {msg.tool && (
                               <div className="bg-secondary/30 border border-border rounded px-2.5 py-1.5 text-xs flex items-center gap-2 text-muted-foreground w-fit mb-2">
-                                <Database className="w-3.5 h-3.5 text-blue-500/70" />
+                                <Database className="w-3.5 h-3.5 text-blue-500" />
                                 <div className="flex items-center gap-2">
                                   {msg.tool.includes(' • ') ? (
                                     msg.tool.split(' • ').map((part, idx) => (
