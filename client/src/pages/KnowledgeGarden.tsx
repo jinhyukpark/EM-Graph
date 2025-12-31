@@ -12,7 +12,7 @@ import {
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -818,7 +818,7 @@ export default function KnowledgeGarden() {
 
                       <div className="flex items-center gap-4 text-sm text-muted-foreground border-b border-border pb-6 min-h-[50px]">
                           <span className="flex items-center gap-1.5 shrink-0">
-                            <Calendar className="w-3.5 h-3.5" />
+                            <CalendarIcon className="w-3.5 h-3.5" />
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <span className="hover:text-foreground hover:bg-secondary/50 px-1.5 py-0.5 rounded cursor-pointer transition-colors">
