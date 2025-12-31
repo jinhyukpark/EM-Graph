@@ -796,7 +796,7 @@ export default function KnowledgeGarden() {
                      <Button 
                         variant="ghost" 
                         size="icon" 
-                        className={cn("h-8 w-8 mr-1 text-muted-foreground", !showExplorer && "text-primary bg-primary/10")}
+                        className={cn("h-8 w-8 mr-1 text-orange-500 hover:text-orange-600 hover:bg-orange-50", !showExplorer && "bg-orange-100")}
                         onClick={() => setShowExplorer(!showExplorer)}
                         title="Toggle Explorer"
                      >
