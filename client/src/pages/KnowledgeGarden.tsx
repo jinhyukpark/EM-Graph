@@ -736,7 +736,11 @@ export default function KnowledgeGarden() {
                      </span>
                    </div>
 
-                   <h1 className="text-3xl font-bold tracking-tight text-foreground leading-tight">
+                   <h1 
+                        className="text-3xl font-bold tracking-tight text-foreground leading-tight outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        contentEditable
+                        suppressContentEditableWarning
+                   >
                         LG Energy Solution & SK Innovation Special Analysis Report
                    </h1>
 
@@ -816,16 +820,28 @@ export default function KnowledgeGarden() {
                 {/* Content */}
                 <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
                   <div>
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <h2 
+                        className="text-xl font-semibold flex items-center gap-2 outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        contentEditable
+                        suppressContentEditableWarning
+                    >
                       1. Overview
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p 
+                        className="text-muted-foreground leading-relaxed outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text mt-2"
+                        contentEditable
+                        suppressContentEditableWarning
+                    >
                       This report analyzes recent patent filings by LG Energy Solution and SK Innovation to understand their technological development directions and core competencies. Both companies are major players in the secondary battery market and are strengthening their technological competitiveness through active patent activities.
                     </p>
                   </div>
 
                   <div>
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <h2 
+                        className="text-xl font-semibold flex items-center gap-2 outline-none focus:bg-secondary/20 rounded px-2 -mx-2 transition-colors cursor-text"
+                        contentEditable
+                        suppressContentEditableWarning
+                    >
                       2. LG Energy Solution Patent List (Total 10)
                     </h2>
                     
