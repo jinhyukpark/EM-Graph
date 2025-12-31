@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -1138,6 +1138,9 @@ export default function KnowledgeGarden() {
                             </div>
                             {msg.role === 'assistant' && (
                                 <div className="flex justify-end mt-1 gap-1">
+                                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                    </Button>
                                     <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
                                         <Share2 className="w-4 h-4" />
                                     </Button>
