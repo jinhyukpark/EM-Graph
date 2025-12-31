@@ -956,9 +956,7 @@ export default function KnowledgeGarden() {
                      {/* Graph Header - Empty but height aligned */}
                      <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                        <div className="flex items-center gap-2 px-2">
-                          <div className="p-1.5 bg-primary/10 rounded-md">
-                            <Share2 className="w-4 h-4 text-primary" />
-                          </div>
+                          <Share2 className="w-5 h-5 text-blue-500" />
                           <span className="font-semibold text-sm">Ontology</span>
                        </div>
                        <Button 
