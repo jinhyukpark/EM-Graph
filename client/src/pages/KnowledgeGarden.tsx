@@ -1028,13 +1028,13 @@ export default function KnowledgeGarden() {
                           className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
                         />
                         
-                        <div className="flex items-center justify-between p-2 rounded-b-xl">
-                           <div className="flex items-center gap-1">
+                        <div className="flex items-center justify-between p-2 rounded-b-xl flex-wrap gap-2">
+                           <div className="flex items-center gap-1 shrink-0">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
                                         <Bot className="w-3.5 h-3.5" />
-                                        Agent
+                                        <span className="hidden sm:inline">Agent</span>
                                         <ChevronDown className="w-3 h-3 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -1049,7 +1049,7 @@ export default function KnowledgeGarden() {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
-                                        Sonnet 4.5
+                                        <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
                                         <ChevronDown className="w-3 h-3 opacity-50" />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -1061,7 +1061,7 @@ export default function KnowledgeGarden() {
                               </DropdownMenu>
                            </div>
 
-                           <div className="flex items-center gap-1">
+                           <div className="flex items-center gap-1 shrink-0 ml-auto">
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
                                 <AtSign className="w-4 h-4" />
                               </Button>
