@@ -449,6 +449,8 @@ export default function KnowledgeGarden() {
   const [newStatusName, setNewStatusName] = useState("");
   const [newTagName, setNewTagName] = useState("");
 
+  const [editingMessage, setEditingMessage] = useState<{sessionId: string, index: number} | null>(null);
+
   const [chatSessions, setChatSessions] = useState(INITIAL_SESSIONS);
   const [activeSessionId, setActiveSessionId] = useState('s1');
 
@@ -1065,7 +1067,74 @@ export default function KnowledgeGarden() {
                             )}
 
                             <div className={`text-sm leading-relaxed ${msg.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}`}>
-                              {msg.content}
+                              {msg.role === 'user' ? (
+                                <div 
+                                  className={cn(
+                                    "relative transition-all duration-200 rounded-lg",
+                                    editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "ring-2 ring-primary bg-background shadow-lg scale-[1.01]" : "bg-transparent"
+                                  )}
+                                  onDoubleClick={() => setEditingMessage({ sessionId: activeSessionId, index: i })}
+                                >
+                                  <Textarea 
+                                    className={cn(
+                                      "min-h-[40px] w-full resize-none border-0 bg-transparent shadow-none p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0",
+                                      editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3" : "text-foreground cursor-default"
+                                    )}
+                                    value={msg.content}
+                                    readOnly={!(editingMessage?.sessionId === activeSessionId && editingMessage?.index === i)}
+                                    onChange={(e) => {
+                                      const newSessions = [...chatSessions];
+                                      const sessionIndex = newSessions.findIndex(s => s.id === activeSessionId);
+                                      if (sessionIndex !== -1) {
+                                        newSessions[sessionIndex].messages[i].content = e.target.value;
+                                        setChatSessions(newSessions);
+                                      }
+                                    }}
+                                  />
+                                  
+                                  {/* Toolbar for editing mode */}
+                                  {editingMessage?.sessionId === activeSessionId && editingMessage?.index === i && (
+                                    <div className="flex items-center justify-between p-2 rounded-b-lg border-t border-border/50 bg-muted/20">
+                                       <div className="flex items-center gap-1 shrink-0">
+                                          <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs font-medium text-muted-foreground hover:text-foreground gap-1.5 rounded-full hover:bg-secondary/80">
+                                                    <span className="truncate max-w-[80px] sm:max-w-none">Sonnet 4.5</span>
+                                                    <ChevronDown className="w-3 h-3 opacity-50" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="start">
+                                                <DropdownMenuItem>Sonnet 4.5</DropdownMenuItem>
+                                                <DropdownMenuItem>GPT-4o</DropdownMenuItem>
+                                                <DropdownMenuItem>Gemini 1.5 Pro</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                          </DropdownMenu>
+                                       </div>
+
+                                       <div className="flex items-center gap-1 shrink-0 ml-auto">
+                                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                            <AtSign className="w-4 h-4" />
+                                          </Button>
+                                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80">
+                                            <FileText className="w-4 h-4" />
+                                          </Button>
+                                          <Button 
+                                            size="icon" 
+                                            className="h-8 w-8 ml-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full shadow-sm"
+                                            onClick={() => {
+                                              setEditingMessage(null);
+                                              handleSendMessage();
+                                            }}
+                                          >
+                                            <ArrowUp className="w-4 h-4" />
+                                          </Button>
+                                       </div>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                msg.content
+                              )}
                             </div>
                             {msg.role === 'assistant' && (
                                 <div className="flex justify-end mt-1 gap-1">
