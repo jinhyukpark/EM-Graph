@@ -1025,7 +1025,7 @@ export default function KnowledgeGarden() {
                       <div className="relative border border-border/60 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
                         <Textarea 
                           placeholder="Ask anything..." 
-                          className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 p-3 text-sm placeholder:text-muted-foreground/60" 
+                          className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
                         />
                         
                         <div className="flex items-center justify-between p-2 rounded-b-xl">
