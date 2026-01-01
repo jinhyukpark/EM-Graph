@@ -244,11 +244,12 @@ export default function ProjectView() {
           <div className="absolute top-4 left-4 right-16 z-10 flex justify-between pointer-events-none">
             <div className="flex gap-2 pointer-events-auto">
               
-              <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-2 top-2.5 text-muted-foreground" />
-                  <Input placeholder="Search nodes in graph..." className="pl-8 w-64 border-none bg-transparent focus-visible:ring-0 h-9" />
-                </div>
+              <div className="relative group">
+                <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 group-hover:text-foreground transition-colors" />
+                <Input 
+                  placeholder="Search..." 
+                  className="pl-10 w-64 h-12 bg-background/80 backdrop-blur-md border border-border/50 rounded-full shadow-sm hover:shadow-md hover:bg-background/90 focus-visible:ring-1 focus-visible:ring-primary/30 transition-all duration-300" 
+                />
               </div>
               
             </div>
