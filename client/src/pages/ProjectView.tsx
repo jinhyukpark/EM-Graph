@@ -12,7 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -167,6 +167,7 @@ export default function ProjectView() {
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(true);
+  const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
   // Multi-select state for legend items - initialize with all selected
   const [selectedCategories, setSelectedCategories] = useState<string[]>(LEGEND_DATA.map(d => d.label));
@@ -354,19 +355,40 @@ export default function ProjectView() {
         </div>
 
         {/* Right Sidebar - Graph Tools */}
-        <GraphToolsSidebar 
-          stats={{
-            nodes: nodes.length,
-            edges: edges.length,
-            types: new Set(nodes.map(n => n.data.type)).size,
-            density: (2 * edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
-          }}
-        />
+        <div className={cn(
+            "relative border-l border-border bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out flex flex-col h-full",
+            graphToolsOpen ? "w-80" : "w-0 border-l-0"
+        )}>
+            {/* Toggle Button (Floating outside) */}
+            <Button
+                variant="outline"
+                size="icon"
+                className="absolute top-4 -left-10 h-8 w-8 rounded-r-none border-r-0 shadow-md z-20 bg-card hover:bg-secondary"
+                onClick={() => setGraphToolsOpen(!graphToolsOpen)}
+            >
+                {graphToolsOpen ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+            </Button>
+
+            <div className="w-80 h-full overflow-hidden">
+                <GraphToolsSidebar 
+                  className="w-full h-full border-none bg-transparent"
+                  stats={{
+                    nodes: nodes.length,
+                    edges: edges.length,
+                    types: new Set(nodes.map(n => n.data.type)).size,
+                    density: (2 * edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
+                  }}
+                />
+            </div>
+        </div>
       </div>
 
       {/* Node Details Panel (Floating) */}
       {selectedNode && (
-        <div className="absolute top-20 right-[340px] w-80 bg-card/95 backdrop-blur border border-border shadow-xl rounded-lg overflow-hidden z-20 animate-in slide-in-from-right-10 duration-300">
+        <div className={cn(
+          "absolute top-20 w-80 bg-card/95 backdrop-blur border border-border shadow-xl rounded-lg overflow-hidden z-20 animate-in slide-in-from-right-10 duration-300 transition-all",
+          graphToolsOpen ? "right-[340px]" : "right-4"
+        )}>
             <div className="h-2 bg-primary w-full" />
             <div className="p-4">
               <div className="flex justify-between items-start mb-4">
