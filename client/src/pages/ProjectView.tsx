@@ -276,16 +276,16 @@ export default function ProjectView() {
               showZoom={false} 
               showFitView={false} 
               showInteractive={false}
-              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-3 p-3 flex flex-col"
+              className="!bg-card/50 !backdrop-blur-sm !border-border/50 !shadow-sm !ml-4 !mt-20 gap-1 p-1 flex flex-col rounded-xl"
             >
-              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-20 h-20 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <RefreshCw className="w-12 h-12" />
+              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-10 h-10 !border-none rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <RefreshCw className="w-5 h-5" />
               </ControlButton>
-              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-20 h-20 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <Waypoints className="w-12 h-12" />
+              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-10 h-10 !border-none rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <Waypoints className="w-5 h-5" />
               </ControlButton>
-              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-20 h-20 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <EyeOff className="w-12 h-12" />
+              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-10 h-10 !border-none rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                <EyeOff className="w-5 h-5" />
               </ControlButton>
             </Controls>
           </ReactFlow>
