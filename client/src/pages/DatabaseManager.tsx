@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
@@ -211,6 +211,44 @@ export default function DatabaseManager() {
   const [newQueryName, setNewQueryName] = useState("");
   const [newTableName, setNewTableName] = useState("");
 
+  // Project Management State
+  const [projects, setProjects] = useState([
+    { id: "project-alpha", name: "Project Alpha" },
+    { id: "project-beta", name: "Supply Chain Analysis" },
+    { id: "project-gamma", name: "Social Network Study" }
+  ]);
+  const [selectedProjectId, setSelectedProjectId] = useState("project-alpha");
+  const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
+  const [newProjectName, setNewProjectName] = useState("");
+
+  const handleProjectChange = (value: string) => {
+    if (value === "create_new") {
+        setIsCreateProjectDialogOpen(true);
+        // Reset select value to current project to prevent "create_new" from showing as selected
+        // In a controlled component this is handled by not updating selectedProjectId
+    } else {
+        setSelectedProjectId(value);
+        toast({
+            title: "Project Switched",
+            description: `Switched to ${projects.find(p => p.id === value)?.name}`,
+        });
+    }
+  };
+
+  const handleCreateProject = () => {
+    if (!newProjectName.trim()) return;
+    const newId = `project-${Date.now()}`;
+    const newProject = { id: newId, name: newProjectName };
+    setProjects([...projects, newProject]);
+    setSelectedProjectId(newId);
+    setNewProjectName("");
+    setIsCreateProjectDialogOpen(false);
+    toast({
+        title: "Project Created",
+        description: `Project '${newProject.name}' has been successfully created.`,
+    });
+  };
+
   const handleRunPipeline = (data: any[]) => {
     const newTabId = `result-${Date.now()}`;
     setTabs([...tabs, { 
@@ -299,14 +337,23 @@ export default function DatabaseManager() {
         {/* Sidebar: Navigation */}
         <div className="w-64 border-r border-border bg-card/30 flex flex-col">
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
-            <Select defaultValue="project-alpha">
+            <Select value={selectedProjectId} onValueChange={handleProjectChange}>
               <SelectTrigger className="w-full bg-background/50 h-9 text-sm">
                 <SelectValue placeholder="Select project" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="project-alpha">Project Alpha</SelectItem>
-                <SelectItem value="project-beta">Supply Chain Analysis</SelectItem>
-                <SelectItem value="project-gamma">Social Network Study</SelectItem>
+                {projects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                        {project.name}
+                    </SelectItem>
+                ))}
+                <SelectSeparator />
+                <SelectItem value="create_new" className="text-primary font-medium focus:text-primary cursor-pointer">
+                    <div className="flex items-center gap-2">
+                        <Plus className="w-3.5 h-3.5" />
+                        Create New Project
+                    </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -817,6 +864,35 @@ export default function DatabaseManager() {
             <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>Save Table</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Create New Project</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                    <Label htmlFor="project-name">Project Name</Label>
+                    <Input 
+                        id="project-name" 
+                        placeholder="Enter project name..." 
+                        value={newProjectName}
+                        onChange={(e) => setNewProjectName(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleCreateProject();
+                        }}
+                        autoFocus
+                    />
+                    <p className="text-xs text-muted-foreground">
+                        Create a new project workspace to organize your data and analysis.
+                    </p>
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>Create Project</Button>
+            </DialogFooter>
         </DialogContent>
       </Dialog>
     </Layout>
