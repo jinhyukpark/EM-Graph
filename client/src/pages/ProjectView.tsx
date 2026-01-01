@@ -287,9 +287,9 @@ export default function ProjectView() {
             <div className="absolute top-1/2 -translate-y-1/2 left-6 z-20 flex flex-col gap-2 pointer-events-none">
               <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col">
                  {/* Toolbox Header (Icon only when collapsed) */}
-                 <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30">
-                    <Grid className="w-6 h-6 text-primary" />
-                    <span className="ml-3 font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-0 group-hover:w-auto overflow-hidden">Graph Tools</span>
+                 <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30 relative overflow-hidden">
+                    <Grid className="w-6 h-6 text-primary absolute left-[15px] transition-all duration-300" />
+                    <span className="ml-10 font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-0 group-hover:w-auto overflow-hidden">Graph Tools</span>
                  </div>
 
                  {/* Tools List */}
