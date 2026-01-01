@@ -337,7 +337,7 @@ export default function ProjectView() {
                     </Button>
                  </div>
               </div>
-            </div>
+            </motion.div>
 
             <Controls 
               position="bottom-left" 
