@@ -275,13 +275,13 @@ export default function ProjectView() {
               showZoom={false} 
               showFitView={false} 
               showInteractive={false}
-              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-3 p-3"
+              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-4 p-4"
             >
-              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-14 h-14 !border-none">
-                <Settings className="w-8 h-8" />
+              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-24 h-24 !border-none">
+                <Settings className="w-20 h-20" />
               </ControlButton>
-              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-14 h-14 !border-none">
-                <Layers className="w-8 h-8" />
+              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-24 h-24 !border-none">
+                <Layers className="w-20 h-20" />
               </ControlButton>
             </Controls>
           </ReactFlow>
@@ -337,8 +337,8 @@ export default function ProjectView() {
         </div>
 
         {/* Right Sidebar - Graph Tools */}
-        <div className="relative border-l border-border bg-card/50 backdrop-blur-sm flex flex-col h-full w-20 shrink-0 z-30">
-            <div className="w-20 h-full overflow-visible">
+        <div className="relative border-l border-border bg-card/50 backdrop-blur-sm flex flex-col h-full w-14 shrink-0 z-30">
+            <div className="w-14 h-full overflow-visible">
                 <GraphToolsSidebar 
                   className="w-full h-full border-none bg-transparent"
                   stats={{
