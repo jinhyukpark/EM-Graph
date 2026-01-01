@@ -262,19 +262,6 @@ export default function ProjectView() {
               </div>
             </div>
 
-            <div className="flex gap-2 pointer-events-auto">
-              <Button 
-                onClick={() => setAiDrawerOpen(true)}
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-purple-500/20 border-none"
-              >
-                <Bot className="w-4 h-4 mr-2" />
-                Nexus AI
-              </Button>
-              <Button variant="outline" className="bg-card/90 backdrop-blur shadow-sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
           </div>
 
           {/* Graph Visualization */}
