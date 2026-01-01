@@ -278,10 +278,10 @@ export default function ProjectView() {
               className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-4 p-4"
             >
               <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-24 h-24 !border-none">
-                <Settings className="w-14 h-14" />
+                <Settings className="w-20 h-20" />
               </ControlButton>
               <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-24 h-24 !border-none">
-                <Layers className="w-14 h-14" />
+                <Layers className="w-20 h-20" />
               </ControlButton>
             </Controls>
           </ReactFlow>
