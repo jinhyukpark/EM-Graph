@@ -293,20 +293,11 @@ export default function ProjectView() {
           >
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
             <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20" />
-            <MiniMap 
-              nodeColor={(n) => {
-                if (n.type === 'Core') return 'hsl(var(--primary))';
-                if (n.type === 'Event') return 'hsl(var(--accent))';
-                return 'hsl(var(--secondary))';
-              }}
-              className="!bg-card !border-border !shadow-md"
-              maskColor="hsl(var(--background) / 0.8)"
-            />
           </ReactFlow>
 
           {/* Legend Panel */}
           {legendOpen && (
-            <div className="absolute bottom-4 left-4 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-left-5 duration-300">
+            <div className="absolute bottom-4 right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-bottom-5 duration-300">
               <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center">
                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
                  <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setLegendOpen(false)}>
