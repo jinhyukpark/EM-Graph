@@ -19,10 +19,51 @@ import {
   Sliders,
   CircleDot,
   X,
-  Sparkles
+  Sparkles,
+  MoreHorizontal,
+  PlusCircle,
+  Edit,
+  Trash2
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import AICopilotPanel from "./AICopilotPanel";
+
+const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
+  <div className="flex items-center justify-between">
+    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+      <Icon className="w-3.5 h-3.5" /> {title}
+    </h4>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary text-muted-foreground">
+          <MoreHorizontal className="w-3.5 h-3.5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel className="text-xs">Configure Section</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-xs">
+          <PlusCircle className="w-3.5 h-3.5 mr-2" /> Add Control
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-xs">
+          <Edit className="w-3.5 h-3.5 mr-2" /> Edit Layout
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-xs text-destructive focus:text-destructive">
+          <Trash2 className="w-3.5 h-3.5 mr-2" /> Hide Section
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+);
 
 export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
@@ -69,9 +110,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             {activeTab === "view" && (
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Network className="w-3.5 h-3.5" /> Layout & Clustering
-                  </h4>
+                  <SectionHeader icon={Network} title="Layout & Clustering" />
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -103,9 +142,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
                 <Separator />
 
                 <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Box className="w-3.5 h-3.5" /> View Mode
-                    </h4>
+                    <SectionHeader icon={Box} title="View Mode" />
                     <div className="grid grid-cols-2 gap-2">
                         <Button variant="outline" size="sm" className="text-xs justify-start h-8 px-2 bg-primary/10 border-primary/20 text-primary">
                             2D View
@@ -122,9 +159,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             {activeTab === "settings" && (
               <div className="space-y-6">
                 <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Settings2 className="w-3.5 h-3.5" /> Display Settings
-                    </h4>
+                    <SectionHeader icon={Settings2} title="Display Settings" />
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <Label className="text-xs">Show Node Labels</Label>
@@ -150,9 +185,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             {/* Node Sizing Tab */}
             {activeTab === "sizing" && (
               <div className="space-y-4">
-                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Maximize2 className="w-3.5 h-3.5" /> Node Styling
-                </h4>
+                <SectionHeader icon={Maximize2} title="Node Styling" />
                 
                 <div className="space-y-3">
                   <div className="space-y-1">
@@ -184,9 +217,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             {/* Filters Tab */}
             {activeTab === "filters" && (
               <div className="space-y-4">
-                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <Filter className="w-3.5 h-3.5" /> Filters
-                </h4>
+                <SectionHeader icon={Filter} title="Filters" />
                 
                 <div className="space-y-3">
                   <div className="space-y-1">
@@ -230,9 +261,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             {/* Report Tab */}
             {activeTab === "report" && (
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                  <BarChart3 className="w-3.5 h-3.5" /> Statistics
-                </h4>
+                <SectionHeader icon={BarChart3} title="Statistics" />
                 <div className="grid grid-cols-2 gap-2">
                   <div className="bg-secondary/30 p-2 rounded border border-border/50">
                     <div className="text-[10px] text-muted-foreground">Nodes</div>
@@ -254,9 +283,9 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
 
                 <Separator className="my-4" />
 
-                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
-                    <FileText className="w-3.5 h-3.5" /> Export Report
-                </h4>
+                <div className="mb-4">
+                    <SectionHeader icon={FileText} title="Export Report" />
+                </div>
                 <Button className="w-full" size="sm" variant="outline">
                     Download PDF Report
                 </Button>
