@@ -287,16 +287,16 @@ export default function ProjectView() {
               showZoom={false} 
               showFitView={false} 
               showInteractive={false}
-              className="!bg-transparent !border-none !shadow-none !ml-4 !mt-20 gap-3 p-0 flex flex-col"
+              className="!bg-transparent !border-none !shadow-none !ml-4 !mt-24 gap-4 p-0 flex flex-col"
             >
-              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-11 h-11 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-sm hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
-                <RefreshCw className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
+              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-20 h-20 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-md hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
+                <RefreshCw className="w-8 h-8 text-muted-foreground group-hover:text-primary-foreground" />
               </ControlButton>
-              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-11 h-11 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-sm hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
-                <Waypoints className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
+              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-20 h-20 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-md hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
+                <Waypoints className="w-8 h-8 text-muted-foreground group-hover:text-primary-foreground" />
               </ControlButton>
-              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-11 h-11 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-sm hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
-                <EyeOff className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
+              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-20 h-20 !border border-border/40 !bg-card/90 !backdrop-blur rounded-full shadow-md hover:!bg-primary hover:!text-primary-foreground hover:!border-primary transition-all duration-300 group">
+                <EyeOff className="w-8 h-8 text-muted-foreground group-hover:text-primary-foreground" />
               </ControlButton>
             </Controls>
           </ReactFlow>
