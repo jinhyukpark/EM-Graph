@@ -160,11 +160,13 @@ const LEGEND_DATA = [
 ];
 
 import GraphToolsSidebar from "@/components/graph/GraphToolsSidebar";
+import CompareDialog from "@/components/graph/CompareDialog";
 
 export default function ProjectView() {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [selectedNode, setSelectedNode] = useState<any>(null);
+  const [compareOpen, setCompareOpen] = useState(false);
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(true);
@@ -263,11 +265,17 @@ export default function ProjectView() {
               </span>
             </div>
 
-            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card">
+            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card" onClick={() => setCompareOpen(true)}>
                <Scale className="w-3.5 h-3.5 mr-2" />
                Compare
             </Button>
           </div>
+
+          <CompareDialog 
+            open={compareOpen} 
+            onOpenChange={setCompareOpen} 
+            nodes={nodes} 
+          />
 
           {/* Graph Visualization */}
           <ReactFlow
