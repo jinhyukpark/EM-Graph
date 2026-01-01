@@ -12,7 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -270,7 +270,23 @@ export default function ProjectView() {
             maxZoom={2}
           >
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-            
+            <Controls 
+              position="top-left" 
+              showZoom={false} 
+              showFitView={false} 
+              showInteractive={false}
+              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-3 p-3 flex flex-col"
+            >
+              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
+                <RefreshCw className="w-10 h-10" />
+              </ControlButton>
+              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
+                <Waypoints className="w-10 h-10" />
+              </ControlButton>
+              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
+                <EyeOff className="w-10 h-10" />
+              </ControlButton>
+            </Controls>
           </ReactFlow>
 
           {/* Legend Panel */}
