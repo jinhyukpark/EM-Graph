@@ -270,20 +270,7 @@ export default function ProjectView() {
             maxZoom={2}
           >
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-            <Controls 
-              position="top-left" 
-              showZoom={false} 
-              showFitView={false} 
-              showInteractive={false}
-              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-3 p-3"
-            >
-              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <Settings className="w-10 h-10" />
-              </ControlButton>
-              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <Layers className="w-10 h-10" />
-              </ControlButton>
-            </Controls>
+            
           </ReactFlow>
 
           {/* Legend Panel */}
