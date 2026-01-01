@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
 import { ReactFlow, Background, Controls, ControlButton, useNodesState, useEdgesState, MiniMap, BackgroundVariant, NodeTypes, MarkerType } from "@xyflow/react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -171,6 +172,7 @@ export default function ProjectView() {
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
   // Multi-select state for legend items - initialize with all selected
   const [selectedCategories, setSelectedCategories] = useState<string[]>(LEGEND_DATA.map(d => d.label));
+  const constraintsRef = useRef(null);
   
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => 
@@ -238,7 +240,7 @@ export default function ProjectView() {
     >
       <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
-        <div className="relative flex-1 bg-background h-full">
+        <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
         
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
@@ -284,8 +286,14 @@ export default function ProjectView() {
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
             
             {/* Toolbox Panel */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-6 z-20 flex flex-col gap-2 pointer-events-none">
-              <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col">
+            <motion.div 
+              drag
+              dragConstraints={constraintsRef}
+              dragMomentum={false}
+              className="absolute top-1/2 left-6 z-20 flex flex-col gap-2"
+              style={{ y: "-50%" }}
+            >
+              <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col cursor-move">
                  {/* Toolbox Header (Icon only when collapsed) */}
                  <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30 relative overflow-hidden">
                     <Grid className="w-6 h-6 text-primary absolute left-[15px] transition-all duration-300" />
@@ -343,10 +351,18 @@ export default function ProjectView() {
 
           {/* Legend Panel */}
           {legendOpen && (
-            <div className="absolute bottom-4 right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10 animate-in slide-in-from-bottom-5 duration-300">
-              <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center">
+            <motion.div 
+              drag
+              dragConstraints={constraintsRef}
+              dragMomentum={false}
+              className="absolute bottom-4 right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
-                 <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => setLegendOpen(false)}>
+                 <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer" onClick={() => setLegendOpen(false)} onPointerDown={(e) => e.stopPropagation()}>
                    <span className="sr-only">Close</span>
                    <span className="text-lg leading-none">×</span>
                  </Button>
@@ -387,7 +403,7 @@ export default function ProjectView() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
 
