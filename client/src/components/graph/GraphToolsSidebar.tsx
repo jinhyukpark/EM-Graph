@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,8 @@ import {
   MoreHorizontal,
   PlusCircle,
   Edit,
-  Trash2
+  Trash2,
+  GripVertical
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -67,6 +68,46 @@ const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
 
 export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
+  const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const startResizing = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing || !sidebarRef.current) return;
+      
+      // Calculate new width: We are resizing from the left edge.
+      // The sidebar is anchored to the right. 
+      // The mouse position relative to the viewport determines the new width.
+      // The right edge of the panel is fixed at `sidebarRef.current.getBoundingClientRect().right`.
+      const rightEdge = sidebarRef.current.getBoundingClientRect().right;
+      const newWidth = rightEdge - e.clientX;
+      
+      // Min width 300px, Max width 800px
+      if (newWidth >= 300 && newWidth <= 800) {
+        setPanelWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai") => {
     if (activeTab === tab) {
@@ -77,15 +118,23 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
   };
 
   return (
-    <div className={cn("relative flex h-full z-40", className)}>
+    <div ref={sidebarRef} className={cn("relative flex h-full z-40", className)}>
       
       {/* Content Panel (Flyout) */}
       <div 
+        style={{ width: activeTab ? panelWidth : 0 }}
         className={cn(
-          "absolute top-0 right-full h-full w-96 bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
-          activeTab ? "translate-x-0 opacity-100 border-r" : "translate-x-10 opacity-0 pointer-events-none"
+          "absolute top-0 right-full h-full bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
+          activeTab ? "opacity-100 border-r" : "opacity-0 pointer-events-none"
         )}
       >
+        {/* Resize Handle */}
+        <div 
+            className="absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-primary/50 z-50 flex items-center justify-center group"
+            onMouseDown={startResizing}
+        >
+            <div className="h-8 w-1 bg-border group-hover:bg-primary rounded-full transition-colors" />
+        </div>
         {activeTab === "ai" ? (
             <AICopilotPanel onClose={() => setActiveTab(null)} />
         ) : (
