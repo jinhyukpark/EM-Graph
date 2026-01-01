@@ -240,20 +240,31 @@ export default function ProjectView() {
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full">
         
-          {/* Toolbar Overlay */}
-          <div className="absolute top-4 left-4 right-16 z-10 flex justify-between pointer-events-none">
-            <div className="flex gap-2 pointer-events-auto">
-              
-              <div className="relative group">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 group-hover:text-foreground transition-colors" />
-                <Input 
-                  placeholder="Search..." 
-                  className="pl-10 w-64 h-12 bg-background/80 backdrop-blur-md border border-border/50 rounded-full shadow-sm hover:shadow-md hover:bg-background/90 focus-visible:ring-1 focus-visible:ring-primary/30 transition-all duration-300" 
-                />
-              </div>
-              
+          {/* Top Left Stats Bar (Replaces Search) */}
+          <div className="absolute top-4 left-4 z-10 flex gap-2 pointer-events-none">
+            <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
+              <span className="font-medium text-foreground mr-3">
+                <span className="text-muted-foreground font-normal mr-1">Project:</span>
+                Graph View
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Nodes <span className="font-mono text-foreground font-medium">{nodes.length}</span>
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Links <span className="font-mono text-foreground font-medium">{edges.length}</span>
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Density <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
+              </span>
             </div>
 
+            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card">
+               <Scale className="w-3.5 h-3.5 mr-2" />
+               Compare
+            </Button>
           </div>
 
           {/* Graph Visualization */}
@@ -290,32 +301,6 @@ export default function ProjectView() {
             </Controls>
           </ReactFlow>
 
-          {/* Bottom Center Stats Bar */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
-            <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
-              <span className="font-medium text-foreground mr-3">
-                <span className="text-muted-foreground font-normal mr-1">Project:</span>
-                Graph View
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Nodes <span className="font-mono text-foreground font-medium">{nodes.length}</span>
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Links <span className="font-mono text-foreground font-medium">{edges.length}</span>
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Density <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
-              </span>
-            </div>
-
-            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card">
-               <Scale className="w-3.5 h-3.5 mr-2" />
-               Compare
-            </Button>
-          </div>
 
           {/* Legend Panel */}
           {legendOpen && (
