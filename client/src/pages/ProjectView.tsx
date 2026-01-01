@@ -275,13 +275,13 @@ export default function ProjectView() {
               showZoom={false} 
               showFitView={false} 
               showInteractive={false}
-              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-2 p-2"
+              className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20 gap-3 p-3"
             >
-              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-14 h-14 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <Settings className="w-8 h-8" />
+              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
+                <Settings className="w-10 h-10" />
               </ControlButton>
-              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-14 h-14 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
-                <Layers className="w-8 h-8" />
+              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend" className="w-16 h-16 !border-none rounded-lg hover:bg-secondary/80 transition-colors">
+                <Layers className="w-10 h-10" />
               </ControlButton>
             </Controls>
           </ReactFlow>
