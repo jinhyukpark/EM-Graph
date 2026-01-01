@@ -42,7 +42,7 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
       <div 
         className={cn(
           "absolute top-0 right-full h-full w-96 bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
-          activeTab ? "translate-x-0 opacity-100 mr-2 rounded-l-xl my-2 max-h-[calc(100%-16px)]" : "translate-x-10 opacity-0 pointer-events-none"
+          activeTab ? "translate-x-0 opacity-100 border-r" : "translate-x-10 opacity-0 pointer-events-none"
         )}
       >
         {activeTab === "ai" ? (
