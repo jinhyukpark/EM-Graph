@@ -12,7 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -289,6 +289,33 @@ export default function ProjectView() {
               </ControlButton>
             </Controls>
           </ReactFlow>
+
+          {/* Bottom Center Stats Bar */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
+            <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
+              <span className="font-medium text-foreground mr-3">
+                <span className="text-muted-foreground font-normal mr-1">Project:</span>
+                Graph View
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Nodes <span className="font-mono text-foreground font-medium">{nodes.length}</span>
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Links <span className="font-mono text-foreground font-medium">{edges.length}</span>
+              </span>
+              <div className="h-3 w-px bg-border mx-2" />
+              <span className="flex items-center gap-1 mx-2">
+                Density <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
+              </span>
+            </div>
+
+            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card">
+               <Scale className="w-3.5 h-3.5 mr-2" />
+               Compare
+            </Button>
+          </div>
 
           {/* Legend Panel */}
           {legendOpen && (
