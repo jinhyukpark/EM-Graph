@@ -312,20 +312,32 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
             <button 
                 onClick={() => toggleTab("ai")}
                 className={cn(
-                  "relative p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110",
+                  "relative p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 overflow-hidden",
                   activeTab === "ai" 
-                    ? "bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-lg shadow-purple-500/25 ring-2 ring-purple-500/20" 
+                    ? "text-white shadow-lg shadow-purple-500/25 ring-2 ring-purple-500/20" 
                     : "text-muted-foreground hover:bg-secondary/50"
                 )}
             >
-                <Sparkles className={cn("w-5 h-5", activeTab !== "ai" && "text-purple-500")} />
+                {/* Colorful Gradient Background */}
+                <div className={cn(
+                    "absolute inset-0 bg-gradient-to-tr from-violet-600 via-fuchsia-500 to-amber-400 opacity-90",
+                     activeTab === "ai" ? "opacity-100" : "opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                )} />
+                
+                {/* Shine Effect */}
+                {activeTab === "ai" && (
+                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                )}
+
+                <Sparkles className={cn("w-5 h-5 relative z-10", activeTab === "ai" ? "text-white" : "text-purple-500 group-hover:text-purple-600")} />
+                
                 {activeTab !== "ai" && (
-                    <span className="absolute inset-0 rounded-xl bg-purple-500/10 animate-pulse" />
+                    <span className="absolute inset-0 rounded-xl bg-gradient-to-tr from-violet-500/10 to-fuchsia-500/10 animate-pulse" />
                 )}
             </button>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md">
+            <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md">
                 AI Copilot
-                <div className="absolute top-1/2 right-[-4px] -translate-y-1/2 border-4 border-transparent border-l-purple-600"></div>
+                <div className="absolute top-1/2 right-[-4px] -translate-y-1/2 border-4 border-transparent border-l-amber-500"></div>
             </div>
         </div>
       </div>
