@@ -284,7 +284,7 @@ export default function ProjectView() {
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
             
             {/* Toolbox Panel */}
-            <div className="absolute top-24 left-6 z-20 flex flex-col gap-2 pointer-events-none">
+            <div className="absolute top-1/2 -translate-y-1/2 left-6 z-20 flex flex-col gap-2 pointer-events-none">
               <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col">
                  {/* Toolbox Header (Icon only when collapsed) */}
                  <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30">
