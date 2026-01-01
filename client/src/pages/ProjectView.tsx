@@ -241,7 +241,7 @@ export default function ProjectView() {
         <div className="relative flex-1 bg-background h-full">
         
           {/* Toolbar Overlay */}
-          <div className="absolute top-4 left-4 right-4 z-10 flex justify-between pointer-events-none">
+          <div className="absolute top-4 left-4 right-16 z-10 flex justify-between pointer-events-none">
             <div className="flex gap-2 pointer-events-auto">
               
               <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm">
