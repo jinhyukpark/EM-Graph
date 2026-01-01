@@ -12,7 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2 } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -282,23 +282,62 @@ export default function ProjectView() {
             maxZoom={2}
           >
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
+            
+            {/* Toolbox Panel */}
+            <div className="absolute top-24 left-6 z-20 flex flex-col gap-2 pointer-events-none">
+              <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col">
+                 {/* Toolbox Header (Icon only when collapsed) */}
+                 <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30">
+                    <Grid className="w-6 h-6 text-primary" />
+                    <span className="ml-3 font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-0 group-hover:w-auto overflow-hidden">Graph Tools</span>
+                 </div>
+
+                 {/* Tools List */}
+                 <div className="flex flex-col p-2 gap-1">
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <MousePointer2 className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Mode</span>
+                    </Button>
+                    
+                    <div className="h-px bg-border/50 my-1 mx-2" />
+                    
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <RefreshCw className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Refresh Layout</span>
+                    </Button>
+
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <Waypoints className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Shortest Path</span>
+                    </Button>
+
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <Cpu className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Analysis</span>
+                    </Button>
+
+                    <div className="h-px bg-border/50 my-1 mx-2" />
+
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <EyeOff className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Filters</span>
+                    </Button>
+
+                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                       <Download className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
+                    </Button>
+                 </div>
+              </div>
+            </div>
+
             <Controls 
-              position="top-left" 
-              showZoom={false} 
-              showFitView={false} 
-              showInteractive={false}
-              className="!bg-card/80 !backdrop-blur-md !border !border-border/50 !shadow-xl !ml-6 !mt-24 !gap-4 !p-4 flex flex-col !rounded-3xl"
-            >
-              <ControlButton onClick={() => {}} title="Refresh Layout" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <RefreshCw className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
-              </ControlButton>
-              <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <Waypoints className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
-              </ControlButton>
-              <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <EyeOff className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
-              </ControlButton>
-            </Controls>
+              position="bottom-left" 
+              showZoom={true} 
+              showFitView={true} 
+              showInteractive={true}
+              className="!bg-card/80 !backdrop-blur-md !border !border-border/50 !shadow-lg !m-4 !rounded-lg"
+            />
           </ReactFlow>
 
 
