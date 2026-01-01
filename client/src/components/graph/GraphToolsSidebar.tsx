@@ -351,33 +351,33 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
       </div>
 
       {/* Icon Navigation Rail (Always Visible) */}
-      <div className="w-14 border-l border-border flex flex-col items-center py-4 gap-4 bg-card/80 backdrop-blur-sm z-20">
+      <div className="w-20 border-l border-border flex flex-col items-center py-6 gap-6 bg-card/80 backdrop-blur-sm z-20">
         <NavIcon 
-          icon={<Box className="w-5 h-5" />} 
+          icon={<Box className="w-8 h-8" />} 
           label="View Type" 
           isActive={activeTab === "view"} 
           onClick={() => toggleTab("view")} 
         />
         <NavIcon 
-          icon={<Sliders className="w-5 h-5" />} 
+          icon={<Sliders className="w-8 h-8" />} 
           label="Settings" 
           isActive={activeTab === "settings"} 
           onClick={() => toggleTab("settings")} 
         />
         <NavIcon 
-          icon={<CircleDot className="w-5 h-5" />} 
+          icon={<CircleDot className="w-8 h-8" />} 
           label="Node Sizing" 
           isActive={activeTab === "sizing"} 
           onClick={() => toggleTab("sizing")} 
         />
         <NavIcon 
-          icon={<Filter className="w-5 h-5" />} 
+          icon={<Filter className="w-8 h-8" />} 
           label="Filters" 
           isActive={activeTab === "filters"} 
           onClick={() => toggleTab("filters")} 
         />
         <NavIcon 
-          icon={<FileText className="w-5 h-5" />} 
+          icon={<FileText className="w-8 h-8" />} 
           label="Report" 
           isActive={activeTab === "report"} 
           onClick={() => toggleTab("report")} 
@@ -386,11 +386,11 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
         <div className="flex-1" />
         
         {/* AI Copilot Toggle */}
-        <div className="relative group flex justify-center w-full pb-2">
+        <div className="relative group flex justify-center w-full pb-4">
             <button 
                 onClick={() => toggleTab("ai")}
                 className={cn(
-                  "relative p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 overflow-hidden",
+                  "relative p-4 rounded-2xl transition-all duration-300 group-hover:scale-110 overflow-hidden",
                   activeTab === "ai" 
                     ? "text-white shadow-lg shadow-purple-500/25 ring-2 ring-purple-500/20" 
                     : "text-muted-foreground hover:bg-secondary/50"
@@ -407,10 +407,10 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
                 )}
 
-                <Sparkles className={cn("w-5 h-5 relative z-10", activeTab === "ai" ? "text-white" : "text-purple-500 group-hover:text-purple-600")} />
+                <Sparkles className={cn("w-8 h-8 relative z-10", activeTab === "ai" ? "text-white" : "text-purple-500 group-hover:text-purple-600")} />
                 
                 {activeTab !== "ai" && (
-                    <span className="absolute inset-0 rounded-xl bg-gradient-to-tr from-violet-500/10 to-fuchsia-500/10 animate-pulse" />
+                    <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-violet-500/10 to-fuchsia-500/10 animate-pulse" />
                 )}
             </button>
             <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md">
