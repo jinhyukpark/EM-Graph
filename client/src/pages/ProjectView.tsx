@@ -355,21 +355,8 @@ export default function ProjectView() {
         </div>
 
         {/* Right Sidebar - Graph Tools */}
-        <div className={cn(
-            "relative border-l border-border bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out flex flex-col h-full",
-            graphToolsOpen ? "w-80" : "w-0 border-l-0"
-        )}>
-            {/* Toggle Button (Floating outside) */}
-            <Button
-                variant="outline"
-                size="icon"
-                className="absolute top-4 -left-10 h-8 w-8 rounded-r-none border-r-0 shadow-md z-20 bg-card hover:bg-secondary"
-                onClick={() => setGraphToolsOpen(!graphToolsOpen)}
-            >
-                {graphToolsOpen ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
-            </Button>
-
-            <div className="w-80 h-full overflow-hidden">
+        <div className="relative border-l border-border bg-card/50 backdrop-blur-sm flex flex-col h-full w-14 shrink-0 z-30">
+            <div className="w-14 h-full overflow-visible">
                 <GraphToolsSidebar 
                   className="w-full h-full border-none bg-transparent"
                   stats={{

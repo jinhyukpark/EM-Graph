@@ -17,58 +17,42 @@ import {
   FileText,
   Box,
   Sliders,
-  CircleDot
+  CircleDot,
+  X
 } from "lucide-react";
 
 export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
-  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report">("view");
+  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | null>(null);
+
+  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report") => {
+    if (activeTab === tab) {
+      setActiveTab(null);
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   return (
-    <div className={cn("flex h-full bg-card/50 backdrop-blur-sm", className)}>
-      {/* Icon Navigation Rail */}
-      <div className="w-12 border-r border-border flex flex-col items-center py-4 gap-4 bg-secondary/20">
-        <NavIcon 
-          icon={<Box className="w-5 h-5" />} 
-          label="View Type" 
-          isActive={activeTab === "view"} 
-          onClick={() => setActiveTab("view")} 
-        />
-        <NavIcon 
-          icon={<Sliders className="w-5 h-5" />} 
-          label="Settings" 
-          isActive={activeTab === "settings"} 
-          onClick={() => setActiveTab("settings")} 
-        />
-        <NavIcon 
-          icon={<CircleDot className="w-5 h-5" />} 
-          label="Node Sizing" 
-          isActive={activeTab === "sizing"} 
-          onClick={() => setActiveTab("sizing")} 
-        />
-        <NavIcon 
-          icon={<Filter className="w-5 h-5" />} 
-          label="Filters" 
-          isActive={activeTab === "filters"} 
-          onClick={() => setActiveTab("filters")} 
-        />
-        <NavIcon 
-          icon={<FileText className="w-5 h-5" />} 
-          label="Report" 
-          isActive={activeTab === "report"} 
-          onClick={() => setActiveTab("report")} 
-        />
-      </div>
-
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <div className="h-12 border-b border-border flex items-center px-4 bg-secondary/10 shrink-0">
+    <div className={cn("relative flex h-full z-40", className)}>
+      
+      {/* Content Panel (Flyout) */}
+      <div 
+        className={cn(
+          "absolute top-0 right-full h-full w-80 bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col",
+          activeTab ? "translate-x-0 opacity-100 mr-2 rounded-l-xl my-2 max-h-[calc(100%-16px)]" : "translate-x-10 opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="h-12 border-b border-border flex items-center justify-between px-4 bg-secondary/10 shrink-0">
           <h3 className="font-semibold text-sm flex items-center gap-2">
-            {activeTab === "view" && "View Options"}
-            {activeTab === "settings" && "General Settings"}
-            {activeTab === "sizing" && "Node Sizing"}
-            {activeTab === "filters" && "Graph Filters"}
-            {activeTab === "report" && "Analysis Report"}
+            {activeTab === "view" && <><Box className="w-4 h-4" /> View Options</>}
+            {activeTab === "settings" && <><Sliders className="w-4 h-4" /> General Settings</>}
+            {activeTab === "sizing" && <><CircleDot className="w-4 h-4" /> Node Sizing</>}
+            {activeTab === "filters" && <><Filter className="w-4 h-4" /> Graph Filters</>}
+            {activeTab === "report" && <><FileText className="w-4 h-4" /> Analysis Report</>}
           </h3>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setActiveTab(null)}>
+            <X className="w-4 h-4" />
+          </Button>
         </div>
 
         <ScrollArea className="flex-1">
@@ -278,6 +262,40 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
           </div>
         </ScrollArea>
       </div>
+
+      {/* Icon Navigation Rail (Always Visible) */}
+      <div className="w-14 border-l border-border flex flex-col items-center py-4 gap-4 bg-card/80 backdrop-blur-sm z-20">
+        <NavIcon 
+          icon={<Box className="w-5 h-5" />} 
+          label="View Type" 
+          isActive={activeTab === "view"} 
+          onClick={() => toggleTab("view")} 
+        />
+        <NavIcon 
+          icon={<Sliders className="w-5 h-5" />} 
+          label="Settings" 
+          isActive={activeTab === "settings"} 
+          onClick={() => toggleTab("settings")} 
+        />
+        <NavIcon 
+          icon={<CircleDot className="w-5 h-5" />} 
+          label="Node Sizing" 
+          isActive={activeTab === "sizing"} 
+          onClick={() => toggleTab("sizing")} 
+        />
+        <NavIcon 
+          icon={<Filter className="w-5 h-5" />} 
+          label="Filters" 
+          isActive={activeTab === "filters"} 
+          onClick={() => toggleTab("filters")} 
+        />
+        <NavIcon 
+          icon={<FileText className="w-5 h-5" />} 
+          label="Report" 
+          isActive={activeTab === "report"} 
+          onClick={() => toggleTab("report")} 
+        />
+      </div>
     </div>
   );
 }
@@ -288,20 +306,18 @@ function NavIcon({ icon, label, isActive, onClick }: { icon: React.ReactNode, la
       <button 
         onClick={onClick}
         className={cn(
-          "p-2 rounded-md transition-all duration-200 hover:bg-background hover:text-foreground",
+          "p-2.5 rounded-xl transition-all duration-200 hover:bg-primary/10 hover:text-primary",
           isActive 
-            ? "bg-background text-primary shadow-sm" 
+            ? "bg-primary text-primary-foreground shadow-md hover:bg-primary hover:text-primary-foreground" 
             : "text-muted-foreground"
         )}
       >
         {icon}
       </button>
-      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md border border-border">
+      <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-popover text-popover-foreground text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md border border-border">
         {label}
+        <div className="absolute top-1/2 right-[-4px] -translate-y-1/2 border-4 border-transparent border-l-popover"></div>
       </div>
-      {isActive && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-l-full" />
-      )}
     </div>
   )
 }
