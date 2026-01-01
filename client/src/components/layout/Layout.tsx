@@ -158,12 +158,9 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
           {!isCollapsed ? (
             <Link href="/dashboard">
-              <a className="flex items-center gap-3 hover:opacity-90 transition-opacity z-10 w-full mb-1">
-                <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shadow-lg shrink-0 backdrop-blur-md border border-white/20">
-                  <Share2 className="w-6 h-6" />
-                </div>
+              <a className="flex flex-col gap-1 hover:opacity-90 transition-opacity z-10 w-full mb-1 px-1">
                 <div className="flex flex-col text-white drop-shadow-md">
-                   <span className="text-xl font-bold tracking-tight leading-none text-white">EM-Graph</span>
+                   <span className="text-xl font-bold tracking-tight leading-none text-white">글로벌 시장 분석</span>
                    <span className="text-[10px] font-medium text-white/80 mt-1">Enterprise Workspace</span>
                 </div>
               </a>
@@ -269,15 +266,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           ) : isProjectView ? (
             <div className={cn("overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1", isCollapsed ? "px-2 py-4" : "px-4 pb-4")}>
-              {!isCollapsed && (
-                <div>
-                  <div className="px-1 mb-6">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
-                    <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
-                  </div>
-                </div>
-              )}
-
               {/* Project Structure Tree */}
               <div className="space-y-4">
                 {/* Original Tables */}
