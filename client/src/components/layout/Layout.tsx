@@ -134,63 +134,27 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}>
-        {/* Workspace Switcher / Logo Area - Project Featured Image */}
-        <div className={cn(
-          "relative flex items-center border-b border-border/50 gap-1 transition-all duration-300 group overflow-hidden", 
-          isCollapsed ? "h-16 justify-center bg-card" : "h-40 items-end p-4"
-        )}>
-          {/* Background Image (Visible when expanded) */}
+        {/* Workspace Switcher / Logo Area */}
+        <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed && (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-0 pointer-events-none" />
-              <img 
-                src="https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=2670&auto=format&fit=crop" 
-                alt="Project Cover" 
-                className="absolute inset-0 w-full h-full object-cover -z-10 group-hover:scale-105 transition-transform duration-700"
-              />
-              
-              {/* Edit Image Button (Visible on Hover) */}
-              <button className="absolute top-3 right-12 text-[10px] font-medium bg-black/40 hover:bg-black/60 text-white px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20 backdrop-blur-md border border-white/10">
-                Set Cover
-              </button>
-            </>
-          )}
-
-          {!isCollapsed ? (
             <Link href="/dashboard">
-              <a className="flex items-center gap-3 hover:opacity-90 transition-opacity z-10 w-full mb-1">
-                <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shadow-lg shrink-0 backdrop-blur-md border border-white/20">
-                  <Share2 className="w-6 h-6" />
+              <a className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
+                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
+                  <Share2 className="w-5 h-5" />
                 </div>
-                <div className="flex flex-col text-white drop-shadow-md">
-                   <span className="text-xl font-bold tracking-tight leading-none text-white">EM-Graph</span>
-                   <span className="text-[10px] font-medium text-white/80 mt-1">Enterprise Workspace</span>
-                </div>
+                <span className="text-lg font-bold tracking-tight">EM-Graph</span>
               </a>
             </Link>
-          ) : (
-            // Collapsed State
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-10 w-10 text-muted-foreground hover:text-foreground"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-              >
-                 <Menu className="w-5 h-5" />
-              </Button>
           )}
           
-          {/* Menu/Toggle Button for Expanded State */}
-          {!isCollapsed && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-2 right-2 h-8 w-8 text-white/70 hover:text-white hover:bg-white/10 z-20"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-            >
-               <Menu className="w-5 h-5" />
-            </Button>
-          )}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-muted-foreground hover:text-foreground hidden md:flex shrink-0"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+             {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </Button>
         </div>
 
         {/* Navigation */}
