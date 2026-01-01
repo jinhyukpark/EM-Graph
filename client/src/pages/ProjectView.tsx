@@ -236,7 +236,7 @@ export default function ProjectView() {
       }
       sidebarControls={SidebarToggle}
     >
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full">
         
