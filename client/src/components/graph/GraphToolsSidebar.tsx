@@ -18,13 +18,16 @@ import {
   Box,
   Sliders,
   CircleDot,
-  X
+  X,
+  Sparkles
 } from "lucide-react";
 
-export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
-  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | null>(null);
+import AICopilotPanel from "./AICopilotPanel";
 
-  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report") => {
+export default function GraphToolsSidebar({ className, stats }: { className?: string, stats?: { nodes: number, edges: number, types: number, density: string } }) {
+  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
+
+  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai") => {
     if (activeTab === tab) {
       setActiveTab(null);
     } else {
@@ -38,10 +41,14 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
       {/* Content Panel (Flyout) */}
       <div 
         className={cn(
-          "absolute top-0 right-full h-full w-80 bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col",
+          "absolute top-0 right-full h-full w-96 bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
           activeTab ? "translate-x-0 opacity-100 mr-2 rounded-l-xl my-2 max-h-[calc(100%-16px)]" : "translate-x-10 opacity-0 pointer-events-none"
         )}
       >
+        {activeTab === "ai" ? (
+            <AICopilotPanel onClose={() => setActiveTab(null)} />
+        ) : (
+            <>
         <div className="h-12 border-b border-border flex items-center justify-between px-4 bg-secondary/10 shrink-0">
           <h3 className="font-semibold text-sm flex items-center gap-2">
             {activeTab === "view" && <><Box className="w-4 h-4" /> View Options</>}
@@ -261,6 +268,8 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
 
           </div>
         </ScrollArea>
+        </>
+        )}
       </div>
 
       {/* Icon Navigation Rail (Always Visible) */}
@@ -295,6 +304,30 @@ export default function GraphToolsSidebar({ className, stats }: { className?: st
           isActive={activeTab === "report"} 
           onClick={() => toggleTab("report")} 
         />
+        
+        <div className="flex-1" />
+        
+        {/* AI Copilot Toggle */}
+        <div className="relative group flex justify-center w-full pb-2">
+            <button 
+                onClick={() => toggleTab("ai")}
+                className={cn(
+                  "relative p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110",
+                  activeTab === "ai" 
+                    ? "bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-lg shadow-purple-500/25 ring-2 ring-purple-500/20" 
+                    : "text-muted-foreground hover:bg-secondary/50"
+                )}
+            >
+                <Sparkles className={cn("w-5 h-5", activeTab !== "ai" && "text-purple-500")} />
+                {activeTab !== "ai" && (
+                    <span className="absolute inset-0 rounded-xl bg-purple-500/10 animate-pulse" />
+                )}
+            </button>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-2 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-medium rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-md">
+                AI Copilot
+                <div className="absolute top-1/2 right-[-4px] -translate-y-1/2 border-4 border-transparent border-l-purple-600"></div>
+            </div>
+        </div>
       </div>
     </div>
   );
