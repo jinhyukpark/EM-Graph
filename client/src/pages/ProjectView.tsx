@@ -290,13 +290,13 @@ export default function ProjectView() {
               className="!bg-card/80 !backdrop-blur-md !border !border-border/50 !shadow-xl !ml-6 !mt-24 !gap-4 !p-4 flex flex-col !rounded-3xl"
             >
               <ControlButton onClick={() => {}} title="Refresh Layout" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <RefreshCw className="w-12 h-12 text-muted-foreground group-hover:text-primary" />
+                <RefreshCw className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
               </ControlButton>
               <ControlButton onClick={() => {}} title="Find Shortest Path" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <Waypoints className="w-12 h-12 text-muted-foreground group-hover:text-primary" />
+                <Waypoints className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
               </ControlButton>
               <ControlButton onClick={() => {}} title="Filter Most Nodes" className="w-24 h-24 !border-none !bg-transparent rounded-2xl hover:!bg-primary/10 hover:!text-primary transition-all duration-200 group">
-                <EyeOff className="w-12 h-12 text-muted-foreground group-hover:text-primary" />
+                <EyeOff className="!w-16 !h-16 text-muted-foreground group-hover:text-primary" />
               </ControlButton>
             </Controls>
           </ReactFlow>
