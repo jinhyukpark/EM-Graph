@@ -339,13 +339,6 @@ export default function ProjectView() {
               </div>
             </motion.div>
 
-            <Controls 
-              position="bottom-left" 
-              showZoom={true} 
-              showFitView={true} 
-              showInteractive={true}
-              className="!bg-card/80 !backdrop-blur-md !border !border-border/50 !shadow-lg !m-4 !rounded-lg"
-            />
           </ReactFlow>
 
 
