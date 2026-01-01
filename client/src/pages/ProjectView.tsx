@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
-import { ReactFlow, Background, Controls, useNodesState, useEdgesState, MiniMap, BackgroundVariant, NodeTypes, MarkerType } from "@xyflow/react";
+import { ReactFlow, Background, Controls, ControlButton, useNodesState, useEdgesState, MiniMap, BackgroundVariant, NodeTypes, MarkerType } from "@xyflow/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -251,15 +251,6 @@ export default function ProjectView() {
                 </div>
               </div>
               
-              <div className="bg-card/90 backdrop-blur border border-border p-1 rounded-md flex items-center shadow-sm ml-2">
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setSettingsOpen(true)}>
-                  <Settings className="w-4 h-4 text-muted-foreground" />
-                </Button>
-                <div className="h-4 w-px bg-border mx-1" />
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary" onClick={() => setLegendOpen(!legendOpen)}>
-                  <Layers className="w-4 h-4 text-muted-foreground" />
-                </Button>
-              </div>
             </div>
 
           </div>
@@ -279,7 +270,14 @@ export default function ProjectView() {
             maxZoom={2}
           >
             <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-            <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20" />
+            <Controls position="top-left" className="!bg-card !border-border !fill-foreground !shadow-md !ml-4 !mt-20">
+              <ControlButton onClick={() => setSettingsOpen(true)} title="Settings">
+                <Settings className="w-4 h-4" />
+              </ControlButton>
+              <ControlButton onClick={() => setLegendOpen(!legendOpen)} title="Toggle Legend">
+                <Layers className="w-4 h-4" />
+              </ControlButton>
+            </Controls>
           </ReactFlow>
 
           {/* Legend Panel */}
