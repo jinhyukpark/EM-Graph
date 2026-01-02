@@ -123,92 +123,125 @@ function GraphInsightCard() {
 function GraphTimeline() {
   // Mock data for the timeline
   const timelineData = Array.from({ length: 60 }, (_, i) => ({
-    date: new Date(2023, 0, 1 + i * 5),
-    value: Math.floor(Math.random() * 50) + 10,
-    hasEvent: Math.random() > 0.8
+    date: new Date(2024, 0, 1 + i * 3), // Jan 2024 start
+    value: Math.floor(Math.random() * 50) + 15,
+    hasEvent: Math.random() > 0.85,
+    isHigh: Math.random() > 0.9
   }));
 
   const [isPlaying, setIsPlaying] = useState(false);
   
   return (
     <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      {/* Header / Filter Bar */}
+      <div className="h-9 border-b border-border/50 bg-secondary/10 flex items-center justify-between px-4 text-xs">
+        <div className="flex items-center gap-2 text-muted-foreground">
+           <Maximize2 className="w-3.5 h-3.5 cursor-pointer hover:text-foreground transition-colors" />
+        </div>
+        <div className="flex items-center gap-6">
+           <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+             <Checkbox defaultChecked className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" />
+             <div className="flex items-center gap-1.5">
+               <span className="w-2 h-2 rounded-full bg-green-500" />
+               <span className="font-medium text-foreground">&lt; 100</span>
+             </div>
+           </div>
+           <div className="flex gap-6 text-muted-foreground font-mono">
+             <span>90</span>
+             <span>5%</span>
+           </div>
+        </div>
+      </div>
+
       {/* Timeline Chart Area */}
-      <div className="h-24 w-full px-4 pt-4 relative">
-        <div className="h-full w-full flex items-end gap-[2px]">
+      <div className="h-32 w-full px-4 pt-6 pb-2 relative group/chart">
+        <div className="h-full w-full flex items-end gap-[3px] px-8">
           {timelineData.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
-              {/* Event Marker */}
+              {/* Event Marker (Red Circle) */}
               {d.hasEvent && (
-                <div className="mb-1 w-2 h-2 rounded-full border border-red-500 bg-transparent group-hover:bg-red-500 transition-colors" />
+                <div className="absolute -top-3 w-2.5 h-2.5 rounded-full border-[1.5px] border-red-500 bg-background z-10 group-hover:bg-red-500 transition-colors" />
               )}
               
               {/* Bar */}
               <div 
                 className={cn(
-                  "w-full rounded-t-sm transition-all duration-200",
-                  d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300 group-hover:bg-slate-400"
+                  "w-full rounded-t-sm transition-all duration-200 min-h-[4px]",
+                  d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300/60 group-hover:bg-slate-400/80",
+                  d.isHigh && "bg-slate-500 group-hover:bg-slate-600"
                 )}
                 style={{ height: `${d.value}%` }}
               />
               
               {/* Tooltip */}
-              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-md whitespace-nowrap border border-border z-20">
-                {format(d.date, 'MMM d, yyyy')} • {d.value} events
+              <div className="absolute bottom-full mb-3 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap border border-border z-30 animate-in fade-in slide-in-from-bottom-1 duration-200">
+                <div className="font-semibold">{format(d.date, 'MMM d, yyyy')}</div>
+                <div className="text-muted-foreground">{d.value} events recorded</div>
               </div>
             </div>
           ))}
         </div>
         
         {/* Month Labels */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 pointer-events-none">
-          {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((m, i) => (
-             <span key={i} className="text-[10px] text-muted-foreground font-medium bg-background/50 px-1 rounded translate-y-1/2">{m} 2024</span>
-          ))}
+        <div className="absolute bottom-1 left-0 right-0 flex justify-between px-12 pointer-events-none text-[10px] text-muted-foreground/70 font-medium">
+          <span>Jan 2024</span>
+          <span>Feb 2024</span>
+          <span>Mar 2024</span>
+          <span>Apr 2024</span>
+          <span>May 2024</span>
+          <span>Jun 2024</span>
         </div>
       </div>
 
       {/* Control Bar */}
-      <div className="h-10 border-t border-border bg-muted/30 flex items-center justify-between px-4">
-         <div className="flex items-center gap-1">
-             <span className="text-[10px] text-muted-foreground font-medium">Timeline Range:</span>
-             <span className="text-[10px] text-foreground font-semibold">Jan 1, 2024 - Jun 30, 2024</span>
+      <div className="h-12 border-t border-border bg-card flex items-center justify-between px-6">
+         <div className="flex items-center gap-2">
+             <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
+             <span className="text-[11px] text-foreground font-bold">Jan 1, 2024 - Jun 30, 2024</span>
          </div>
 
-         <div className="flex items-center justify-center gap-2">
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronsLeft className="w-4 h-4" />
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronLeft className="w-4 h-4" />
-             </Button>
+         <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-4">
+             <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <ChevronsLeft className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <ChevronLeft className="w-4 h-4" />
+                </Button>
+             </div>
+             
              <Button 
-                variant="ghost" 
+                variant="default" 
                 size="icon" 
-                className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                className="h-10 w-10 rounded-full bg-blue-600 hover:bg-blue-700 shadow-md text-white border border-blue-500/50"
                 onClick={() => setIsPlaying(!isPlaying)}
              >
-                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                 {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 ml-0.5 fill-current" />}
              </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronRight className="w-4 h-4" />
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronsRight className="w-4 h-4" />
-             </Button>
+             
+             <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <ChevronRight className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <ChevronsRight className="w-4 h-4" />
+                </Button>
+             </div>
          </div>
 
-         <div className="flex items-center gap-2">
-             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                 <ZoomOut className="w-3.5 h-3.5" />
+         <div className="flex items-center gap-1">
+             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                 <ZoomOut className="w-4 h-4" />
              </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                 <ZoomIn className="w-3.5 h-3.5" />
+             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                 <ZoomIn className="w-4 h-4" />
              </Button>
          </div>
       </div>
     </div>
   );
 }
+
 
 
 const edgeTypes = {
