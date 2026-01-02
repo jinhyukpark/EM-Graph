@@ -266,7 +266,7 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
                    Name
                  </div>
                  <div className={cn(
-                   "text-sm font-bold flex items-center leading-none pt-0.5",
+                   "text-sm font-medium flex items-center leading-none pt-0.5",
                    selectedNodeId === node.id ? "text-primary" : "text-foreground"
                  )}>
                    {node.name}
