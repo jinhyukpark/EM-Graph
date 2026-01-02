@@ -41,8 +41,8 @@ import {
 import AICopilotPanel from "./AICopilotPanel";
 
 const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
-  <div className="flex items-center justify-between">
-    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+  <div className="flex items-center justify-between mb-2">
+    <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest flex items-center gap-2">
       <Icon className="w-3.5 h-3.5" /> {title}
     </h4>
     <DropdownMenu>
@@ -203,7 +203,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
                     
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 pl-3">
                       <ViewModeCard 
                         icon={<Maximize2 className="w-5 h-5" />} 
                         label="Lens" 
