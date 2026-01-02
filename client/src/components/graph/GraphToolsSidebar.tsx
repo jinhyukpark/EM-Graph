@@ -236,7 +236,94 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-4">
                     <SectionHeader icon={Eye} title="Graph Settings" />
                     
+                    {/* Node Type Selection Mode */}
+                    <div className="space-y-4">
+                        <Label className="text-xs font-medium">Node Type Selection</Label>
+                        <RadioGroup 
+                            defaultValue={settings?.nodeSelectionMode || 'multi'} 
+                            onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
+                            className="flex gap-4 pt-1"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="single" id="mode-single" />
+                                <Label htmlFor="mode-single" className="text-xs font-normal">Single</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="multi" id="mode-multi" />
+                                <Label htmlFor="mode-multi" className="text-xs font-normal">Multi-Select</Label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+
+                    <Separator />
+
+                    {/* Node Weight & Direction */}
                     <div className="space-y-3">
+                         <div className="space-y-1">
+                            <div className="flex justify-between">
+                              <Label className="text-xs">Node Weight Threshold</Label>
+                              <span className="text-xs text-muted-foreground">{settings?.nodeWeight || 50}%</span>
+                            </div>
+                            <Slider 
+                                defaultValue={[settings?.nodeWeight || 50]} 
+                                max={100} 
+                                step={1} 
+                                className="py-1" 
+                                onValueChange={(v) => updateSetting("nodeWeight", v[0])}
+                            />
+                         </div>
+
+                         <div className="flex items-center justify-between">
+                            <Label className="text-xs">Edge Direction</Label>
+                             <Select 
+                                value={settings?.nodeDirection || 'directed'} 
+                                onValueChange={(v) => updateSetting("nodeDirection", v)}
+                             >
+                                <SelectTrigger className="h-7 text-xs w-[120px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="directed">Directed</SelectItem>
+                                  <SelectItem value="undirected">Undirected</SelectItem>
+                                </SelectContent>
+                             </Select>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Visibility Toggles */}
+                    <div className="space-y-3">
+                        <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Visibility</Label>
+                        
+                        <div className="flex items-center justify-between">
+                            <Label className="text-xs">Timeline</Label>
+                            <Switch 
+                                checked={settings?.showTimeline ?? true}
+                                onCheckedChange={(c) => updateSetting("showTimeline", c)}
+                            />
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <Label className="text-xs">AI Briefing</Label>
+                            <Switch 
+                                checked={settings?.showAiBriefing ?? true}
+                                onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
+                            />
+                        </div>
+                         <div className="flex items-center justify-between">
+                            <Label className="text-xs">Legend</Label>
+                            <Switch 
+                                checked={settings?.showLegend ?? true}
+                                onCheckedChange={(c) => updateSetting("showLegend", c)}
+                            />
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Display */}
+                    <div className="space-y-3">
+                        <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Display</Label>
                         <div className="flex items-center justify-between">
                             <Label className="text-xs">Show Node Labels</Label>
                         <Switch 
@@ -496,6 +583,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
           label="Settings" 
           isActive={activeTab === "settings"} 
           onClick={() => toggleTab("settings")} 
+          className="hidden" // Hide the old settings tab icon for now as content is moved
         />
         <NavIcon 
           icon={<CircleDot className="w-5 h-5" />} 
@@ -556,9 +644,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   );
 }
 
-function NavIcon({ icon, label, isActive, onClick }: { icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void }) {
+function NavIcon({ icon, label, isActive, onClick, className }: { icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void, className?: string }) {
   return (
-    <div className="relative group flex justify-center w-full">
+    <div className={cn("relative group flex justify-center w-full", className)}>
       <button 
         onClick={onClick}
         className={cn(
