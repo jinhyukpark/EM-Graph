@@ -203,8 +203,17 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           )}
           
+          {isProjectView && !isCollapsed && (
+            <div className="px-6 pb-2">
+                <div className="px-1 mb-2">
+                <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
+                <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
+                </div>
+            </div>
+          )}
+
           {isProjectView && (
-            <div className={cn("pt-4 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
+            <div className={cn("pt-0 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
               <Link href="/projects" className={cn(
                   buttonVariants({ variant: "ghost", size: "sm" }),
                   "text-muted-foreground hover:text-foreground gap-1",
@@ -219,15 +228,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                    {sidebarControls}
                  </div>
               )}
-            </div>
-          )}
-
-          {isProjectView && !isCollapsed && (
-            <div className="px-6 pb-2">
-                <div className="px-1 mb-2">
-                <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
-                <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
-                </div>
             </div>
           )}
 
