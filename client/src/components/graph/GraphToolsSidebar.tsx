@@ -1256,6 +1256,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
                   </div>
+                  </div>
                 )}
               </div>
             )}
