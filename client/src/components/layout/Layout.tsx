@@ -160,7 +160,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
     </div>
   );
 
-  const ExpandableNavItem = ({ icon: Icon, label, fields }: { icon: any, label: string, fields?: { name: string, type: any }[] }) => {
+  const ExpandableNavItem = ({ icon: Icon, label, fields }: { icon: any, label: string, fields?: { name: string, type: any, alias?: string }[] }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -182,9 +182,14 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             {!isCollapsed && isOpen && fields && (
                 <div className="pl-9 pr-2 py-1 space-y-0.5 animate-in slide-in-from-top-1 duration-200">
                     {fields.map((field, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground py-1 px-2 rounded hover:bg-muted/50 transition-colors cursor-pointer group/field">
-                           <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 group-hover/field:opacity-100 transition-opacity" />
-                           <span className="truncate opacity-80 group-hover/field:opacity-100 transition-opacity">{field.name}</span>
+                        <div key={idx} className="flex items-center justify-between text-sm text-muted-foreground py-1 px-2 rounded hover:bg-muted/50 transition-colors cursor-pointer group/field">
+                           <div className="flex items-center gap-2 overflow-hidden">
+                             <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 group-hover/field:opacity-100 transition-opacity shrink-0" />
+                             <span className="truncate opacity-80 group-hover/field:opacity-100 transition-opacity">{field.name}</span>
+                           </div>
+                           {field.alias && (
+                             <span className="text-[10px] text-muted-foreground/60 ml-2 shrink-0">{field.alias}</span>
+                           )}
                         </div>
                     ))}
                 </div>
@@ -369,23 +374,23 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                         icon={CircleDot} 
                         label="crime_incidents_2024" 
                         fields={[
-                            { name: "incident_id", type: Hash },
-                            { name: "date_time", type: Calendar },
-                            { name: "type", type: Type },
-                            { name: "location_lat", type: MapPin },
-                            { name: "description", type: AlignLeft },
-                            { name: "status", type: Activity }
+                            { name: "incident_id", type: Hash, alias: "ID" },
+                            { name: "date_time", type: Calendar, alias: "Timestamp" },
+                            { name: "type", type: Type, alias: "Category" },
+                            { name: "location_lat", type: MapPin, alias: "Latitude" },
+                            { name: "description", type: AlignLeft, alias: "Details" },
+                            { name: "status", type: Activity, alias: "State" }
                         ]}
                     />
                     <ExpandableNavItem 
                         icon={CircleDot} 
                         label="suspect_profiles" 
                         fields={[
-                             { name: "suspect_id", type: Hash },
-                             { name: "full_name", type: Type },
-                             { name: "alias", type: Type },
-                             { name: "date_of_birth", type: Calendar },
-                             { name: "risk_level", type: Activity }
+                             { name: "suspect_id", type: Hash, alias: "Suspect ID" },
+                             { name: "full_name", type: Type, alias: "Name" },
+                             { name: "alias", type: Type, alias: "Known As" },
+                             { name: "date_of_birth", type: Calendar, alias: "DOB" },
+                             { name: "risk_level", type: Activity, alias: "Risk Score" }
                         ]}
                     />
                   </div>
@@ -404,22 +409,22 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                         icon={Network} 
                         label="location_hotspots" 
                         fields={[
-                            { name: "location_id", type: Hash },
-                            { name: "latitude", type: MapPin },
-                            { name: "longitude", type: MapPin },
-                            { name: "intensity", type: Activity },
-                            { name: "last_updated", type: Calendar }
+                            { name: "location_id", type: Hash, alias: "Loc ID" },
+                            { name: "latitude", type: MapPin, alias: "Lat" },
+                            { name: "longitude", type: MapPin, alias: "Long" },
+                            { name: "intensity", type: Activity, alias: "Heat Level" },
+                            { name: "last_updated", type: Calendar, alias: "Modified" }
                         ]}
                     />
                     <ExpandableNavItem 
                         icon={Network} 
                         label="supply_chain_nodes" 
                         fields={[
-                            { name: "node_id", type: Hash },
-                            { name: "node_type", type: Type },
-                            { name: "capacity", type: Activity },
-                            { name: "location_name", type: AlignLeft },
-                            { name: "status", type: Activity }
+                            { name: "node_id", type: Hash, alias: "Node ID" },
+                            { name: "node_type", type: Type, alias: "Type" },
+                            { name: "capacity", type: Activity, alias: "Max Cap" },
+                            { name: "location_name", type: AlignLeft, alias: "Location" },
+                            { name: "status", type: Activity, alias: "Status" }
                         ]}
                     />
                   </div>
