@@ -193,6 +193,12 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
           {!isCollapsed && isProjectView && (
              <div className="flex items-center gap-2 px-2 flex-1 overflow-hidden">
+                <Link href="/projects" className={cn(
+                    buttonVariants({ variant: "ghost", size: "icon" }),
+                    "shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
+                  )}>
+                    <ArrowLeft className="w-4 h-4" />
+                </Link>
                 <span className="text-base font-bold tracking-tight truncate flex-1" title="City Crime Analysis 2024">
                   City Crime Analysis 2024
                 </span>
@@ -366,17 +372,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         </nav>
 
         {/* Bottom Section: Storage & User */}
-        {isProjectView ? (
-          <div className={cn("border-t border-border/50 p-4", isCollapsed ? "p-2" : "")}>
-             <Link href="/projects" className={cn(
-               buttonVariants({ variant: "outline", size: isCollapsed ? "icon" : "default" }),
-               "w-full gap-2 text-muted-foreground hover:text-foreground border-border/60 bg-background/50 hover:bg-accent hover:border-accent-foreground/20 transition-all group"
-             )}>
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                {!isCollapsed && <span>Exit Project</span>}
-             </Link>
-          </div>
-        ) : (
+        {!isProjectView && (
         <div className={cn("border-t border-border/50 space-y-4 bg-secondary/10", isCollapsed ? "p-2" : "p-4")}>
           
           {/* Storage Widget */}
