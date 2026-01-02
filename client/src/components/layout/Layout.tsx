@@ -24,6 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Mock Organizations (duplicated for mockup)
 const MOCK_ORGS = [
@@ -244,6 +245,25 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           ) : isProjectView ? (
             <div className={cn("overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1", isCollapsed ? "px-2 py-4" : "px-4 pb-4")}>
               
+              {!isCollapsed && (
+                <div className="px-2">
+                   <Select>
+                      <SelectTrigger className="h-9 text-xs border-dashed bg-secondary/20">
+                         <SelectValue placeholder="그래프 DB를 선택해주세요" />
+                      </SelectTrigger>
+                      <SelectContent>
+                         <SelectItem value="db1">Criminal Network 2024</SelectItem>
+                         <SelectItem value="db2">Supply Chain V2</SelectItem>
+                         <div className="p-1 border-t border-border mt-1 pt-1">
+                             <Button variant="ghost" className="w-full justify-start h-8 text-xs font-medium text-primary gap-2 px-2">
+                                <Plus className="w-3 h-3" /> 그래프 DB 만들러 가기...
+                             </Button>
+                         </div>
+                      </SelectContent>
+                   </Select>
+                </div>
+              )}
+
               {/* Project Structure Tree */}
               <div className="space-y-4">
                 {/* Nodes */}
