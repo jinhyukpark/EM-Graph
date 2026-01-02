@@ -331,6 +331,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         </nav>
 
         {/* Bottom Section: Storage & User */}
+        {!isProjectView && (
         <div className={cn("border-t border-border/50 space-y-4 bg-secondary/10", isCollapsed ? "p-2" : "p-4")}>
           
           {/* Storage Widget */}
@@ -381,6 +382,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             )}
           </div>
         </div>
+        )}
       </aside>
 
       {/* Main Content Area */}
