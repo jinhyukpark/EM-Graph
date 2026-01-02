@@ -204,24 +204,30 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
           
           {isProjectView && !isCollapsed && (
-            <div className="px-6 pb-2">
+            <div className="px-6 pt-4 pb-2">
+                <Link href="/projects" className={cn(
+                    buttonVariants({ variant: "ghost", size: "sm" }),
+                    "text-muted-foreground hover:text-foreground gap-1 -ml-2 mb-2 pl-2 pr-4 h-7 text-xs"
+                  )}>
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back to Projects
+                </Link>
                 <div className="px-1 mb-2">
-                <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
-                <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
+                  <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
                 </div>
             </div>
           )}
 
           {isProjectView && (
             <div className={cn("pt-0 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
-              <Link href="/projects" className={cn(
-                  buttonVariants({ variant: "ghost", size: "sm" }),
-                  "text-muted-foreground hover:text-foreground gap-1",
-                  isCollapsed ? "p-0 h-8 w-8 justify-center" : "-ml-2 mb-2 pl-2 pr-4"
-                )}>
-                  <ArrowLeft className="w-4 h-4" />
-                  {!isCollapsed && "Back to Projects"}
-              </Link>
+              {isCollapsed && (
+                 <Link href="/projects" className={cn(
+                     buttonVariants({ variant: "ghost", size: "sm" }),
+                     "text-muted-foreground hover:text-foreground gap-1 p-0 h-8 w-8 justify-center mb-2"
+                   )}>
+                     <ArrowLeft className="w-4 h-4" />
+                 </Link>
+              )}
               
               {!isCollapsed && sidebarControls && (
                  <div className="mb-2">
