@@ -381,7 +381,7 @@ const LEGEND_DATA = [
   { label: "Evidence", color: "bg-slate-500", count: 1, percent: "6%" },
 ];
 
-import GraphToolsSidebar from "@/components/graph/GraphToolsSidebar";
+import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
 import CompareDialog from "@/components/graph/CompareDialog";
 
 export default function ProjectView() {
@@ -391,9 +391,23 @@ export default function ProjectView() {
   const [compareOpen, setCompareOpen] = useState(false);
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [legendOpen, setLegendOpen] = useState(true);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
+  
+  // Graph Settings State
+  const [graphSettings, setGraphSettings] = useState<GraphSettings>({
+    nodeSelectionMode: 'multi',
+    nodeWeight: 50,
+    nodeDirection: 'directed',
+    showTimeline: true,
+    showAiBriefing: true,
+    showLegend: true,
+    showNodeLabels: true,
+    showEdgeLabels: false,
+    curvedEdges: true,
+    particlesEffect: true
+  });
+
   // Multi-select state for legend items - initialize with all selected
   const [selectedCategories, setSelectedCategories] = useState<string[]>(LEGEND_DATA.map(d => d.label));
   const constraintsRef = useRef(null);
@@ -466,7 +480,7 @@ export default function ProjectView() {
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
           {/* AI Insight Card - Added */}
-          <GraphInsightCard />
+          {graphSettings.showAiBriefing && <GraphInsightCard />}
           
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
@@ -575,12 +589,12 @@ export default function ProjectView() {
           </ReactFlow>
 
           {/* Timeline - Added */}
-          <GraphTimeline />
+          {graphSettings.showTimeline && <GraphTimeline />}
 
 
 
           {/* Legend Panel */}
-          {legendOpen && (
+          {graphSettings.showLegend && (
             <motion.div 
               drag
               dragConstraints={constraintsRef}
@@ -592,7 +606,7 @@ export default function ProjectView() {
             >
               <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
-                 <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer" onClick={() => setLegendOpen(false)} onPointerDown={(e) => e.stopPropagation()}>
+                 <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer" onClick={() => setGraphSettings(prev => ({...prev, showLegend: false}))} onPointerDown={(e) => e.stopPropagation()}>
                    <span className="sr-only">Close</span>
                    <span className="text-lg leading-none">×</span>
                  </Button>
@@ -648,6 +662,8 @@ export default function ProjectView() {
                     types: new Set(nodes.map(n => n.data.type)).size,
                     density: (2 * edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
                   }}
+                  settings={graphSettings}
+                  onSettingsChange={setGraphSettings}
                 />
             </div>
         </div>
