@@ -121,6 +121,31 @@ interface GraphToolsSidebarProps {
   onSettingsChange?: (settings: GraphSettings) => void;
 }
 
+// New component for dismissible info box
+const InfoBox = ({ title, description, icon: Icon }: { title: string, description: string, icon: any }) => {
+  const [isVisible, setIsVisible] = useState(true);
+  
+  if (!isVisible) return null;
+
+  return (
+    <div className="relative group bg-secondary/20 border border-border/50 rounded-md p-3 mb-4 transition-all hover:bg-secondary/30">
+        <button 
+            onClick={() => setIsVisible(false)}
+            className="absolute top-2 right-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+            <X className="w-3.5 h-3.5" />
+        </button>
+        <div className="flex items-center gap-2 mb-1.5">
+            <Icon className="w-4 h-4 text-primary" />
+            <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed pl-6 pr-4">
+            {description}
+        </p>
+    </div>
+  );
+};
+
 export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange }: GraphToolsSidebarProps) {
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
@@ -925,15 +950,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-6">
                     {/* Field-based Sizing Configuration */}
                     <div>
-                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
-                            <div className="flex items-center gap-2 mb-1.5">
-                                <Info className="w-4 h-4 text-primary" />
-                                <h4 className="text-sm font-semibold text-foreground">Field-Based Sizing</h4>
-                            </div>
-                            <p className="text-xs text-muted-foreground leading-relaxed pl-6">
-                                Configure specific sizing fields for each node type based on their attributes.
-                            </p>
-                        </div>
+                        <InfoBox 
+                            title="Field-Based Sizing" 
+                            description="Configure specific sizing fields for each node type based on their attributes."
+                            icon={Info}
+                        />
 
                         <div className="space-y-4">
                             {/* Criminal Nodes */}
@@ -1030,15 +1051,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     {/* Global Sizing Settings */}
                     <div className="space-y-4">
                         <SectionHeader icon={Network} title="Graph Theory" />
-                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
-                            <div className="flex items-center gap-2 mb-1.5">
-                                <Info className="w-4 h-4 text-primary" />
-                                <h4 className="text-sm font-semibold text-foreground">Graph Theory</h4>
-                            </div>
-                            <p className="text-xs text-muted-foreground leading-relaxed pl-6">
-                                Apply graph theoretical metrics to visualize node importance and centrality.
-                            </p>
-                        </div>
+                        <InfoBox 
+                            title="Graph Theory" 
+                            description="Apply graph theoretical metrics to visualize node importance and centrality."
+                            icon={Info}
+                        />
                         
                         <div className="space-y-1.5">
                             <Label className="text-xs font-medium">Sizing Method</Label>
