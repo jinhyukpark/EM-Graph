@@ -599,7 +599,10 @@ export default function ProjectView() {
               drag
               dragConstraints={constraintsRef}
               dragMomentum={false}
-              className="absolute bottom-4 right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10"
+              className={cn(
+                "absolute right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10",
+                graphSettings.showTimeline ? "bottom-[230px]" : "bottom-4"
+              )}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
