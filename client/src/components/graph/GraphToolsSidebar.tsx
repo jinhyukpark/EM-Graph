@@ -107,6 +107,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
   const [isResizing, setIsResizing] = useState(false);
+  const [showLayoutDescription, setShowLayoutDescription] = useState(true);
+  const [showGraphSettingsDescription, setShowGraphSettingsDescription] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const updateSetting = (key: keyof GraphSettings, value: any) => {
@@ -204,12 +206,22 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
-                    <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
-                        <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-muted-foreground leading-snug">
-                            Customize the graph structure layout view.
-                        </p>
-                    </div>
+                    {showLayoutDescription && (
+                        <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
+                            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                            <p className="text-[11px] text-muted-foreground leading-snug pr-4">
+                                Customize the graph structure layout view.
+                            </p>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute right-1 top-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
+                                onClick={() => setShowLayoutDescription(false)}
+                            >
+                                <X className="w-3 h-3 text-muted-foreground" />
+                            </Button>
+                        </div>
+                    )}
                     
                     <div className="grid grid-cols-2 gap-2 pl-3">
                       <ViewModeCard 
@@ -244,12 +256,22 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-6">
                     <div>
                         <SectionHeader icon={Settings2} title="Graph Settings" />
-                        <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
-                            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                            <p className="text-[11px] text-muted-foreground leading-snug">
-                                Configure visual elements and interactive features.
-                            </p>
-                        </div>
+                        {showGraphSettingsDescription && (
+                            <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
+                                <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                <p className="text-[11px] text-muted-foreground leading-snug pr-4">
+                                    Configure visual elements and interactive features.
+                                </p>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="absolute right-1 top-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
+                                    onClick={() => setShowGraphSettingsDescription(false)}
+                                >
+                                    <X className="w-3 h-3 text-muted-foreground" />
+                                </Button>
+                            </div>
+                        )}
                     
                         {/* Node Type Selection Mode */}
                         <div className="space-y-3">
