@@ -36,6 +36,43 @@ const nodeTypes: NodeTypes = {
 
 // --- New Components Copied from KnowledgeGarden.tsx ---
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+// Participants Component
+function ParticipantsDisplay() {
+  const participants = [
+    { id: 1, name: "John Doe", image: "https://github.com/shadcn.png", color: "bg-blue-500", initials: "JD" },
+    { id: 2, name: "Sarah Smith", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop", color: "bg-green-500", initials: "SS" },
+    { id: 3, name: "Mike Johnson", image: null, color: "bg-purple-500", initials: "MJ" },
+  ];
+
+  return (
+    <div className="flex items-center gap-1 bg-card/80 backdrop-blur-md border border-border/50 rounded-full p-1 pl-3 shadow-sm">
+      <div className="flex -space-x-2">
+        <TooltipProvider delayDuration={0}>
+          {participants.map((user) => (
+            <Tooltip key={user.id}>
+              <TooltipTrigger asChild>
+                <Avatar className="w-7 h-7 border-2 border-background cursor-pointer hover:z-10 transition-transform hover:scale-110">
+                  <AvatarImage src={user.image || undefined} alt={user.name} />
+                  <AvatarFallback className={cn("text-[10px] text-white", user.color)}>{user.initials}</AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                <p>{user.name}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
+      </div>
+      <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted ml-1">
+        <Plus className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+}
+
 // AI Insight Card
 function GraphInsightCard({ onClose }: { onClose: () => void }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -522,6 +559,11 @@ export default function ProjectView() {
                <Scale className="w-3.5 h-3.5 mr-2" />
                Compare
             </Button>
+            
+            <div className="pointer-events-auto">
+               <ParticipantsDisplay />
+            </div>
+          </div>
           </div>
 
           <CompareDialog 
