@@ -32,9 +32,10 @@ interface LegendConfigDialogProps {
   onOpenChange: (open: boolean) => void;
   items: LegendItem[];
   onSave: (items: LegendItem[]) => void;
+  fieldName?: string;
 }
 
-export function LegendConfigDialog({ open, onOpenChange, items, onSave }: LegendConfigDialogProps) {
+export function LegendConfigDialog({ open, onOpenChange, items, onSave, fieldName = "Category" }: LegendConfigDialogProps) {
   const [localItems, setLocalItems] = useState<LegendItem[]>([]);
 
   useEffect(() => {
@@ -72,7 +73,15 @@ export function LegendConfigDialog({ open, onOpenChange, items, onSave }: Legend
         <DialogHeader>
           <DialogTitle>Configure Legend</DialogTitle>
           <DialogDescription>
-            Set categories, colors, and display aliases for the legend.
+            <div className="flex flex-col gap-2 pt-1">
+              <div>
+                Settings for field: <span className="font-semibold text-foreground">{fieldName}</span>
+              </div>
+              <div className="text-xs bg-muted/50 p-2 rounded-md border border-border/50 text-muted-foreground/80">
+                <p>Enter exact values or specify a numeric range using tilde (e.g., <span className="font-mono text-xs bg-background/50 px-1 rounded">1~10</span>).</p>
+                <p className="mt-1">Items will be matched in order. Use Alias to customize the display label.</p>
+              </div>
+            </div>
           </DialogDescription>
         </DialogHeader>
 
