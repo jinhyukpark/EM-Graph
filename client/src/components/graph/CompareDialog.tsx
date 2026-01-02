@@ -29,6 +29,23 @@ interface CompareDialogProps {
   nodes: any[];
 }
 
+const safeStringify = (obj: any): string => {
+  try {
+    const seen = new WeakSet();
+    return JSON.stringify(obj, (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return "[Circular]";
+        }
+        seen.add(value);
+      }
+      return value;
+    });
+  } catch (e) {
+    return String(obj);
+  }
+};
+
 export default function CompareDialog({ open, onOpenChange, nodes }: CompareDialogProps) {
   // Extract all possible keys from node data, excluding some internal ones if needed
   // We'll filter out complex objects or large strings if necessary, but for now just take keys
@@ -57,7 +74,7 @@ export default function CompareDialog({ open, onOpenChange, nodes }: CompareDial
             if (val === null || val === undefined) return "";
             // Handle objects safely for CSV
             if (typeof val === 'object') {
-                return `"${String(JSON.stringify(val)).replace(/"/g, '""')}"`;
+                return `"${String(safeStringify(val)).replace(/"/g, '""')}"`;
             }
             return `"${String(val).replace(/"/g, '""')}"`; // Escape quotes
         })
@@ -137,7 +154,7 @@ export default function CompareDialog({ open, onOpenChange, nodes }: CompareDial
                       return (
                         <TableCell key={`${node.id}-${col}`} className="text-xs">
                           {typeof val === 'object' && val !== null ? (
-                             <span className="text-muted-foreground italic text-[10px]">{JSON.stringify(val).substring(0, 30)}...</span>
+                             <span className="text-muted-foreground italic text-[10px]">{safeStringify(val).substring(0, 30)}...</span>
                           ) : (
                             col === 'image' && typeof val === 'string' ? (
                                 <img src={val} alt="node" className="w-6 h-6 rounded-full object-cover border border-border" />

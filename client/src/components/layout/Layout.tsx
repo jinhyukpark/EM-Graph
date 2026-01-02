@@ -81,8 +81,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
   const NavItem = ({ href, icon: Icon, label, special }: { href: string, icon: any, label: string, special?: boolean }) => {
     const content = (
-      <Link href={href}>
-        <a className={cn(
+      <Link href={href} className={cn(
           "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors mb-1",
           special 
             ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-700 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/50 shadow-sm font-bold" 
@@ -93,7 +92,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         )}>
           <Icon className={cn("w-4 h-4", special ? "text-emerald-600 stroke-[2.5px]" : "")} />
           {!isCollapsed && label}
-        </a>
       </Link>
     );
 
@@ -137,13 +135,11 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed && (
-            <Link href="/dashboard">
-              <a className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
+            <Link href="/dashboard" className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                   <Share2 className="w-5 h-5" />
                 </div>
                 <span className="text-lg font-bold tracking-tight">EM-Graph</span>
-              </a>
             </Link>
           )}
           
@@ -391,13 +387,11 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header (Visible only on small screens) */}
         <header className="md:hidden h-16 border-b border-border bg-background/90 backdrop-blur-md flex items-center px-4 justify-between sticky top-0 z-50">
-           <Link href="/dashboard">
-            <a className="flex items-center gap-2">
+           <Link href="/dashboard" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
                 <Share2 className="w-5 h-5" />
               </div>
               <span className="text-lg font-bold tracking-tight">EM-Graph</span>
-            </a>
           </Link>
           <Button variant="ghost" size="icon">
             <LayoutGrid className="w-5 h-5" />
