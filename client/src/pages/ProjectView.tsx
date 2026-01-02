@@ -22,6 +22,11 @@ import { format } from "date-fns";
 
 import CenterEdge from "@/components/graph/CenterEdge";
 
+// Import stock images
+import victimBImg from '@assets/stock_images/portrait_of_a_young__1114e5ec.jpg';
+import thugAImg from '@assets/stock_images/portrait_of_a_young__7ceb0422.jpg';
+import lawyerHanImg from '@assets/stock_images/portrait_of_a_middle_cd4cfedc.jpg';
+
 import { cn } from "@/lib/utils";
 
 // Define custom node types
@@ -277,9 +282,9 @@ const createRadialLayout = () => {
     { id: 'lt-1', label: 'Park "Razor"', sub: 'Enforcer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop' },
     { id: 'lt-2', label: 'Kim "ledger"', sub: 'Money Launderer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop' },
     { id: 'vc-1', label: 'Victim A', sub: 'Assault', type: 'Victim', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop' },
-    { id: 'vc-2', label: 'Victim B', sub: 'Fraud', type: 'Victim', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1554151228-14d9def656ec?w=150&h=150&fit=crop' },
+    { id: 'vc-2', label: 'Victim B', sub: 'Fraud', type: 'Victim', color: '#fbbf24', img: victimBImg },
     { id: 'dt-1', label: 'Det. Choi', sub: 'Lead Investigator', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop' },
-    { id: 'lw-1', label: 'Lawyer Han', sub: 'Defense Attorney', type: 'Lawyer', color: '#8b5cf6', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop' },
+    { id: 'lw-1', label: 'Lawyer Han', sub: 'Defense Attorney', type: 'Lawyer', color: '#8b5cf6', img: lawyerHanImg },
   ];
 
   innerCircle.forEach((entity, i) => {
@@ -308,7 +313,7 @@ const createRadialLayout = () => {
     { id: 'loc-1', label: 'Warehouse 4', sub: 'Crime Scene', type: 'Location', color: '#10b981' },
     { id: 'loc-2', label: 'Offshore Account', sub: 'Asset', type: 'Asset', color: '#10b981' },
     { id: 'case-1', label: 'Case #22-004', sub: 'Lawsuit', type: 'Lawsuit', color: '#8b5cf6' },
-    { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop' },
+    { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: thugAImg },
     { id: 'wit-1', label: 'Witness Kim', sub: 'Observer', type: 'Witness', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop' },
     { id: 'dt-2', label: 'Det. Lee', sub: 'Partner', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop' },
     { id: 'vic-3', label: 'Company X', sub: 'Fraud Victim', type: 'Victim', color: '#fbbf24' },
