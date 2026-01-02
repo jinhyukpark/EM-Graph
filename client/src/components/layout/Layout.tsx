@@ -222,21 +222,22 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           )}
 
+          {isProjectView && !isCollapsed && (
+            <div className="px-6 pb-2">
+                <div className="px-1 mb-2">
+                <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
+                <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
+                </div>
+            </div>
+          )}
+
           {sidebar && !isCollapsed ? (
             <div className="flex-1 overflow-hidden flex flex-col">
               {sidebar}
             </div>
           ) : isProjectView ? (
             <div className={cn("overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1", isCollapsed ? "px-2 py-4" : "px-4 pb-4")}>
-              {!isCollapsed && (
-                <div>
-                  <div className="px-1 mb-6">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Active Project</div>
-                    <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
-                  </div>
-                </div>
-              )}
-
+              
               {/* Project Structure Tree */}
               <div className="space-y-4">
                 {/* Original Tables */}
