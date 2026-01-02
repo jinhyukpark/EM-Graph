@@ -650,7 +650,11 @@ export default function ProjectView() {
     
     setSelectedNode({ 
       id: node.id, 
-      data: { label: node.name, type: node.category }, 
+      data: { 
+        label: node.name, 
+        type: node.category,
+        image: node.image // Pass the image from the node data
+      }, 
       position: { x: 0, y: 0 } // dummy position
     });
   };
