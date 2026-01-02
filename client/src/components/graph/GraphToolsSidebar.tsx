@@ -54,8 +54,8 @@ import AICopilotPanel from "./AICopilotPanel";
 
 const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any, title: string, onHide?: () => void, onEditControl?: () => void }) => (
   <div className="flex items-center justify-between mb-2">
-    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-      <Icon className="w-3.5 h-3.5" /> {title}
+    <h4 className="text-[11px] font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+      <Icon className="w-3.5 h-3.5 text-primary" /> {title}
     </h4>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
