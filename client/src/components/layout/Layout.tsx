@@ -181,9 +181,9 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         )}
 
         {/* Workspace Switcher / Logo Area */}
-        <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
+        <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-4 justify-between")}>
           {!isCollapsed && !isProjectView && (
-            <Link href="/dashboard" className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
+            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                   <Share2 className="w-5 h-5" />
                 </div>
@@ -192,10 +192,10 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
 
           {!isCollapsed && isProjectView && (
-             <div className="flex items-center gap-2 px-2 flex-1 overflow-hidden">
+             <div className="flex items-center gap-2 flex-1 overflow-hidden">
                 <Link href="/projects" className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
-                    "shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
+                    "shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
                   )}>
                     <ArrowLeft className="w-4 h-4" />
                 </Link>
