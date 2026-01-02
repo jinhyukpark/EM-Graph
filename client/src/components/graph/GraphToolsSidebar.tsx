@@ -1364,7 +1364,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
           onClick={() => toggleTab("filters")} 
         />
         <NavIcon 
-          icon={<FileText className="w-5 h-5" />} 
+          icon={<BarChart3 className="w-5 h-5" />} 
           label="Report" 
           isActive={activeTab === "report"} 
           onClick={() => toggleTab("report")} 
