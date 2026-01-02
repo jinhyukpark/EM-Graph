@@ -257,12 +257,14 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
 
                         <div className="space-y-6">
-                            <div className="space-y-3">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Layout Type</Label>
-                                <p className="text-[11px] text-muted-foreground mb-3">
+                            <div>
+                                <p className="text-xs text-muted-foreground mb-4">
                                   Please select a layout type that can change the analysis form of the graph.
                                 </p>
-                                <div className="grid grid-cols-2 gap-2">
+                                
+                                <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 block">Layout Type</Label>
+                                
+                                <div className="grid grid-cols-2 gap-2 mb-6">
                                     <ViewModeCard 
                                         icon={<Share2 className="w-5 h-5" />}
                                         label="Organic"
@@ -342,60 +344,58 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         }
                                     />
                                 </div>
-                            </div>
 
-                            <Separator />
-
-                            <div className="space-y-5">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="text-sm font-semibold">Configuration</h4>
-                                    <span className="text-xs text-muted-foreground capitalize">{focusedLayout}</span>
-                                </div>
-                                
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <Label className="text-xs">Tightness</Label>
-                                        <span className="text-xs font-medium bg-secondary px-2 py-0.5 rounded text-muted-foreground">
-                                            {layoutConfigs[focusedLayout]?.tightness ?? 5}
-                                        </span>
+                                <div className="rounded-lg border bg-card/50 p-4">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Configuration</h4>
+                                        <span className="text-xs font-medium px-2 py-0.5 bg-primary/10 text-primary rounded-full capitalize">{focusedLayout}</span>
                                     </div>
-                                    <Slider 
-                                        value={[layoutConfigs[focusedLayout]?.tightness ?? 5]} 
-                                        onValueChange={(v) => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], tightness: v[0]}}))}
-                                        max={10} 
-                                        step={1} 
-                                        className="py-2" 
-                                    />
-                                    <p className="text-[10px] text-muted-foreground">Adjusts how closely nodes are packed together.</p>
-                                </div>
-
-                                {(focusedLayout === 'hierarchy' || focusedLayout === 'sequential') && (
-                                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                                        <Label className="text-xs">Orientation</Label>
-                                        <div className="grid grid-cols-4 gap-2">
-                                            {[
-                                                { value: 'down', icon: ArrowDown, label: 'Down' },
-                                                { value: 'up', icon: ArrowUp, label: 'Up' },
-                                                { value: 'left', icon: ArrowLeft, label: 'Left' },
-                                                { value: 'right', icon: ArrowRight, label: 'Right' }
-                                            ].map((opt) => (
-                                                <div 
-                                                    key={opt.value}
-                                                    onClick={() => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], orientation: opt.value}}))}
-                                                    className={cn(
-                                                        "flex flex-col items-center justify-center p-2 rounded border cursor-pointer transition-all",
-                                                        layoutConfigs[focusedLayout]?.orientation === opt.value 
-                                                            ? "bg-primary/10 border-primary/50 text-primary" 
-                                                            : "bg-card border-border text-muted-foreground hover:bg-accent"
-                                                    )}
-                                                >
-                                                    <opt.icon className="w-4 h-4 mb-1" />
-                                                    <span className="text-[10px]">{opt.label}</span>
-                                                </div>
-                                            ))}
+                                    
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <Label className="text-xs">Tightness</Label>
+                                            <span className="text-xs font-medium bg-secondary px-2 py-0.5 rounded text-muted-foreground">
+                                                {layoutConfigs[focusedLayout]?.tightness ?? 5}
+                                            </span>
                                         </div>
+                                        <Slider 
+                                            value={[layoutConfigs[focusedLayout]?.tightness ?? 5]} 
+                                            onValueChange={(v) => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], tightness: v[0]}}))}
+                                            max={10} 
+                                            step={1} 
+                                            className="py-2" 
+                                        />
+                                        <p className="text-[10px] text-muted-foreground">Adjusts how closely nodes are packed together.</p>
                                     </div>
-                                )}
+
+                                    {(focusedLayout === 'hierarchy' || focusedLayout === 'sequential') && (
+                                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200 mt-4 pt-4 border-t border-dashed">
+                                            <Label className="text-xs">Orientation</Label>
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {[
+                                                    { value: 'down', icon: ArrowDown, label: 'Down' },
+                                                    { value: 'up', icon: ArrowUp, label: 'Up' },
+                                                    { value: 'left', icon: ArrowLeft, label: 'Left' },
+                                                    { value: 'right', icon: ArrowRight, label: 'Right' }
+                                                ].map((opt) => (
+                                                    <div 
+                                                        key={opt.value}
+                                                        onClick={() => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], orientation: opt.value}}))}
+                                                        className={cn(
+                                                            "flex flex-col items-center justify-center p-2 rounded border cursor-pointer transition-all",
+                                                            layoutConfigs[focusedLayout]?.orientation === opt.value 
+                                                                ? "bg-primary/10 border-primary/50 text-primary" 
+                                                                : "bg-card border-border text-muted-foreground hover:bg-accent"
+                                                        )}
+                                                    >
+                                                        <opt.icon className="w-4 h-4 mb-1" />
+                                                        <span className="text-[10px]">{opt.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
