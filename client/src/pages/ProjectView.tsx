@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -37,14 +37,16 @@ const nodeTypes: NodeTypes = {
 // --- New Components Copied from KnowledgeGarden.tsx ---
 
 // AI Insight Card
-function GraphInsightCard() {
+function GraphInsightCard({ onClose }: { onClose: () => void }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
     <motion.div 
+      drag
+      dragMomentum={false}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="absolute top-4 left-4 z-10 max-w-[320px] group"
+      className="absolute top-4 left-4 z-10 max-w-[320px] group cursor-move"
     >
       {/* Moving Light Border Effect */}
       <div className={cn(
@@ -57,18 +59,25 @@ function GraphInsightCard() {
         <div className="relative h-full bg-background/95 backdrop-blur-md rounded-[10px] overflow-hidden">
             {/* Header */}
             <div 
-              className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50/50 to-transparent border-b border-border/50 cursor-pointer"
-              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50/50 to-transparent border-b border-border/50"
             >
-              <div className="flex items-center gap-2">
+              <div 
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
                 <div className="p-1 rounded bg-blue-100 text-blue-600">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
                 <span className="text-xs font-semibold text-foreground/90">AI Network Briefing</span>
               </div>
-              <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground">
-                 {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-              </Button>
+              <div className="flex items-center">
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => setIsExpanded(!isExpanded)}>
+                   {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                </Button>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={onClose}>
+                   <X className="w-3.5 h-3.5" />
+                </Button>
+              </div>
             </div>
 
             {/* Content */}
@@ -486,7 +495,7 @@ export default function ProjectView() {
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
           {/* AI Insight Card - Added */}
-          {graphSettings.showAiBriefing && <GraphInsightCard />}
+          {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
           
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
