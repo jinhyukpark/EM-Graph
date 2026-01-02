@@ -29,7 +29,16 @@ import {
   Map as MapIcon,
   Eye,
   Info,
-  Layers
+  Layers,
+  Share2,
+  ListEnd,
+  Workflow,
+  CircleDashed,
+  LayoutGrid as LayoutGridIcon,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  ArrowLeft
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -112,6 +121,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [showGraphSettingsDescription, setShowGraphSettingsDescription] = useState(true);
   const [visibleSections, setVisibleSections] = useState({ layout: true, graphSettings: true });
   const [editingSection, setEditingSection] = useState<string | null>(null);
+  
+  // Layout Edit State
+  const [editLayoutType, setEditLayoutType] = useState('organic');
+  const [editTightness, setEditTightness] = useState([5]);
+  const [editOrientation, setEditOrientation] = useState('down');
+
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const updateSetting = (key: keyof GraphSettings, value: any) => {
@@ -222,64 +237,111 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                         <div className="space-y-6">
                             <div className="space-y-3">
-                                <Label className="text-xs font-medium text-muted-foreground">Layout Type</Label>
-                                <RadioGroup defaultValue="organic" className="grid gap-2">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="organic" id="layout-organic" />
-                                        <Label htmlFor="layout-organic" className="font-normal">Organic</Label>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Layout Type</Label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div onClick={() => setEditLayoutType('organic')}>
+                                        <ViewModeCard 
+                                            icon={<Share2 className="w-5 h-5" />}
+                                            label="Organic"
+                                            description="Natural clustering"
+                                            active={editLayoutType === 'organic'}
+                                        />
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="sequential" id="layout-sequential" />
-                                        <Label htmlFor="layout-sequential" className="font-normal">Sequential</Label>
+                                    <div onClick={() => setEditLayoutType('sequential')}>
+                                        <ViewModeCard 
+                                            icon={<ListEnd className="w-5 h-5" />}
+                                            label="Sequential"
+                                            description="Linear progression"
+                                            active={editLayoutType === 'sequential'}
+                                        />
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="hierarchy" id="layout-hierarchy" />
-                                        <Label htmlFor="layout-hierarchy" className="font-normal">Hierarchy</Label>
+                                    <div onClick={() => setEditLayoutType('hierarchy')}>
+                                        <ViewModeCard 
+                                            icon={<Workflow className="w-5 h-5" />}
+                                            label="Hierarchy"
+                                            description="Tree structure"
+                                            active={editLayoutType === 'hierarchy'}
+                                        />
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="lens" id="layout-lens" />
-                                        <Label htmlFor="layout-lens" className="font-normal">Lens</Label>
+                                    <div onClick={() => setEditLayoutType('lens')}>
+                                        <ViewModeCard 
+                                            icon={<Maximize2 className="w-5 h-5" />}
+                                            label="Lens"
+                                            description="Focus context"
+                                            active={editLayoutType === 'lens'}
+                                        />
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="radial" id="layout-radial" />
-                                        <Label htmlFor="layout-radial" className="font-normal">Radial</Label>
+                                    <div onClick={() => setEditLayoutType('radial')}>
+                                        <ViewModeCard 
+                                            icon={<CircleDashed className="w-5 h-5" />}
+                                            label="Radial"
+                                            description="Circular view"
+                                            active={editLayoutType === 'radial'}
+                                        />
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="structural" id="layout-structural" />
-                                        <Label htmlFor="layout-structural" className="font-normal">Structural</Label>
+                                    <div onClick={() => setEditLayoutType('structural')}>
+                                        <ViewModeCard 
+                                            icon={<LayoutGridIcon className="w-5 h-5" />}
+                                            label="Structural"
+                                            description="Grid arrangement"
+                                            active={editLayoutType === 'structural'}
+                                        />
                                     </div>
-                                </RadioGroup>
+                                </div>
                             </div>
 
-                            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
-                                Run layout
+                            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium shadow-sm">
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                Run Layout
                             </Button>
 
-                            <div className="space-y-4">
-                                <h4 className="text-lg font-medium">Options</h4>
+                            <Separator />
+
+                            <div className="space-y-5">
+                                <h4 className="text-sm font-semibold">Configuration</h4>
                                 
                                 <div className="space-y-3">
-                                    <div className="flex justify-between">
-                                        <Label>Tightness</Label>
-                                        <span className="text-sm font-medium">5</span>
+                                    <div className="flex justify-between items-center">
+                                        <Label className="text-xs">Tightness</Label>
+                                        <span className="text-xs font-medium bg-secondary px-2 py-0.5 rounded text-muted-foreground">{editTightness}</span>
                                     </div>
-                                    <Slider defaultValue={[5]} max={10} step={1} className="py-2" />
+                                    <Slider 
+                                        value={editTightness} 
+                                        onValueChange={setEditTightness}
+                                        max={10} 
+                                        step={1} 
+                                        className="py-2" 
+                                    />
+                                    <p className="text-[10px] text-muted-foreground">Adjusts how closely nodes are packed together.</p>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label className="text-sm text-muted-foreground">Orientation (Hierarchy and Sequential)</Label>
-                                    <Select defaultValue="down">
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select orientation" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="down">Down</SelectItem>
-                                            <SelectItem value="up">Up</SelectItem>
-                                            <SelectItem value="left">Left</SelectItem>
-                                            <SelectItem value="right">Right</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                {(editLayoutType === 'hierarchy' || editLayoutType === 'sequential') && (
+                                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <Label className="text-xs">Orientation</Label>
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {[
+                                                { value: 'down', icon: ArrowDown, label: 'Down' },
+                                                { value: 'up', icon: ArrowUp, label: 'Up' },
+                                                { value: 'left', icon: ArrowLeft, label: 'Left' },
+                                                { value: 'right', icon: ArrowRight, label: 'Right' }
+                                            ].map((opt) => (
+                                                <div 
+                                                    key={opt.value}
+                                                    onClick={() => setEditOrientation(opt.value)}
+                                                    className={cn(
+                                                        "flex flex-col items-center justify-center p-2 rounded border cursor-pointer transition-all",
+                                                        editOrientation === opt.value 
+                                                            ? "bg-primary/10 border-primary/50 text-primary" 
+                                                            : "bg-card border-border text-muted-foreground hover:bg-accent"
+                                                    )}
+                                                >
+                                                    <opt.icon className="w-4 h-4 mb-1" />
+                                                    <span className="text-[10px]">{opt.label}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
