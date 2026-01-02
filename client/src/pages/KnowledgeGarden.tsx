@@ -1358,7 +1358,7 @@ export default function KnowledgeGarden() {
                   {showCopilot && (
                     <>
                       {(showDocDetails || showGraph) && <ResizableHandle />}
-                      <ResizablePanel defaultSize={20} minSize={15} className="bg-background flex flex-col h-full">
+                      <ResizablePanel defaultSize={30} minSize={15} className="bg-background flex flex-col h-full">
                         <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-500" />

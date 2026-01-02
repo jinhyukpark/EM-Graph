@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { useLocation, Link } from "wouter";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -25,6 +25,8 @@ const RECENT_ACTIVITY = [
 ];
 
 export default function Home() {
+  const [, setLocation] = useLocation();
+
   return (
     <Layout>
       <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
@@ -43,18 +45,14 @@ export default function Home() {
             <p className="text-muted-foreground">System status and recent intelligence updates.</p>
           </div>
           <div className="flex gap-3">
-             <Link href="/database">
-               <Button variant="outline" className="gap-2 bg-background/50 backdrop-blur">
-                 <Database className="w-4 h-4" />
-                 Data Sources
-               </Button>
-             </Link>
-             <Link href="/create">
-              <Button className="gap-2 shadow-lg shadow-primary/20">
-                <Plus className="w-4 h-4" />
-                New Analysis
-              </Button>
-             </Link>
+             <Button variant="outline" className="gap-2 bg-background/50 backdrop-blur" onClick={() => setLocation("/database")}>
+               <Database className="w-4 h-4" />
+               Data Sources
+             </Button>
+             <Button className="gap-2 shadow-lg shadow-primary/20" onClick={() => setLocation("/create")}>
+               <Plus className="w-4 h-4" />
+               New Analysis
+             </Button>
           </div>
         </div>
 
