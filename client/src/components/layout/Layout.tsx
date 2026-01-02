@@ -182,8 +182,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             {!isCollapsed && isOpen && fields && (
                 <div className="pl-9 pr-2 py-1 space-y-0.5 animate-in slide-in-from-top-1 duration-200">
                     {fields.map((field, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-[11px] text-muted-foreground py-1 px-2 rounded hover:bg-muted/50 transition-colors cursor-pointer group/field">
-                           <field.type className="w-3 h-3 opacity-50 group-hover/field:opacity-100 transition-opacity" />
+                        <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground py-1 px-2 rounded hover:bg-muted/50 transition-colors cursor-pointer group/field">
+                           <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40 group-hover/field:opacity-100 transition-opacity" />
                            <span className="truncate opacity-80 group-hover/field:opacity-100 transition-opacity">{field.name}</span>
                         </div>
                     ))}
