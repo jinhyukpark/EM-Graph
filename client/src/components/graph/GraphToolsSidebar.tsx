@@ -1059,7 +1059,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         />
                         
                         <div className="space-y-1.5">
-                            <Label className="text-xs font-medium">그래프 분석 모델</Label>
+                            <Label className="text-xs font-medium">Graph Analysis Model</Label>
                             <Select defaultValue="centrality">
                                 <SelectTrigger className="h-10 text-xs">
                                     <SelectValue placeholder="Select method" />
