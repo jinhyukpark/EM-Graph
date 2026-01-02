@@ -346,14 +346,19 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 <Label className="text-sm font-medium flex items-center gap-1.5">
                                     AI Briefing
                                     <svg width="0" height="0" className="absolute">
-                                        <linearGradient id="ai-gradient" x1="100%" y1="100%" x2="0%" y2="0%">
-                                            <stop stopColor="#3b82f6" offset="0%" />
-                                            <stop stopColor="#a855f7" offset="100%" />
+                                        <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stopColor="#3b82f6" />
+                                            <stop offset="50%" stopColor="#8b5cf6" />
+                                            <stop offset="100%" stopColor="#ec4899" />
                                         </linearGradient>
                                     </svg>
                                     <Sparkles 
-                                        className="w-3 h-3 animate-pulse" 
-                                        style={{ stroke: "url(#ai-gradient)" }} 
+                                        className="w-3.5 h-3.5 animate-pulse" 
+                                        style={{ 
+                                            stroke: "url(#ai-gradient)", 
+                                            fill: "url(#ai-gradient)",
+                                            fillOpacity: 0.2
+                                        }} 
                                     />
                                 </Label>
                                 <Switch 
