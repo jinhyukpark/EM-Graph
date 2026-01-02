@@ -203,7 +203,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
-                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-2">
+                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-3">
                         Customize the graph structure layout view.
                     </p>
                     
@@ -237,33 +237,35 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 <Separator />
 
-                <div className="space-y-4">
-                    <SectionHeader icon={Settings2} title="Graph Settings" />
-                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-2">
-                         Configure visual elements and interactive features.
-                    </p>
+                <div className="space-y-6">
+                    <div>
+                        <SectionHeader icon={Settings2} title="Graph Settings" />
+                        <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-4">
+                             Configure visual elements and interactive features.
+                        </p>
                     
-                    {/* Node Type Selection Mode */}
-                    <div className="space-y-3">
-                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-1 block uppercase tracking-widest">Node Type Selection</Label>
-                        <RadioGroup 
-                            defaultValue={settings?.nodeSelectionMode || 'multi'} 
-                            onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
-                            className="flex gap-4 pt-1 pl-3"
-                        >
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="single" id="mode-single" />
-                                <Label htmlFor="mode-single" className="text-sm font-medium">Single</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="multi" id="mode-multi" />
-                                <Label htmlFor="mode-multi" className="text-sm font-medium">Multi-Select</Label>
-                            </div>
-                        </RadioGroup>
+                        {/* Node Type Selection Mode */}
+                        <div className="space-y-3">
+                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-1 block uppercase tracking-widest">Node Type Selection</Label>
+                            <RadioGroup 
+                                defaultValue={settings?.nodeSelectionMode || 'multi'} 
+                                onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
+                                className="flex gap-4 pt-1 pl-3"
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="single" id="mode-single" />
+                                    <Label htmlFor="mode-single" className="text-sm font-medium">Single</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="multi" id="mode-multi" />
+                                    <Label htmlFor="mode-multi" className="text-sm font-medium">Multi-Select</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
                     </div>
 
                     {/* Node Weight & Direction */}
-                    <div className="space-y-5">
+                    <div className="space-y-6">
                          <div className="space-y-2">
                             <div className="flex justify-between">
                               <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
@@ -300,7 +302,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     </div>
 
                     {/* Visibility Toggles */}
-                    <div className="space-y-3 pt-2">
+                    <div className="space-y-3 pt-4">
                         <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Visibility</Label>
                         
                         <div className="space-y-3 pl-3">
@@ -329,7 +331,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     </div>
 
                     {/* Display */}
-                    <div className="space-y-3 pt-2">
+                    <div className="space-y-3 pt-4">
                         <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Display</Label>
                         <div className="space-y-3 pl-3">
                             <div className="flex items-center justify-between">
