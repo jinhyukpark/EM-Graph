@@ -28,7 +28,8 @@ import {
   GripVertical,
   Map as MapIcon,
   Eye,
-  Info
+  Info,
+  Layers
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -59,7 +60,7 @@ const SectionHeader = ({ icon: Icon, title, onHide }: { icon: any, title: string
           <Edit className="w-3.5 h-3.5 mr-2" /> Edit Control
         </DropdownMenuItem>
         <DropdownMenuItem className="text-xs">
-          <Edit className="w-3.5 h-3.5 mr-2" /> Edit Layout
+          <Layers className="w-3.5 h-3.5 mr-2" /> Edit Layout
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-xs text-destructive focus:text-destructive" onClick={onHide}>
