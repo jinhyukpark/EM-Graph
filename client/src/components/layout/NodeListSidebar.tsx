@@ -222,22 +222,27 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               key={node.id}
               onClick={() => onNodeSelect?.(node)}
               className={cn(
-                "group flex flex-col gap-1.5 p-3 rounded-lg border border-transparent cursor-pointer transition-all hover:bg-secondary/50",
+                "group flex flex-col gap-2 p-3 rounded-lg border border-transparent cursor-pointer transition-all hover:bg-secondary/50",
                 selectedNodeId === node.id ? "bg-secondary border-primary/20 shadow-sm" : "border-border/0"
               )}
             >
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-mono text-muted-foreground bg-secondary/80 border-border/50">
-                  ID: {node.id}
-                </Badge>
-                <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/30">
-                  {node.category}
-                </span>
+              <div className="grid grid-cols-[40px_1fr] gap-x-2 gap-y-1 text-sm">
+                <span className="text-muted-foreground font-medium text-xs pt-0.5">ID</span>
+                <span className="font-mono text-xs text-foreground/80">#{node.id}</span>
+                
+                <span className="text-muted-foreground font-medium text-xs pt-0.5">Type</span>
+                <span className="text-foreground/90 font-medium text-xs">{node.category}</span>
+
+                <span className="text-muted-foreground font-medium text-xs pt-0.5">Name</span>
+                <span className="text-foreground font-bold">{node.name}</span>
+
+                {node.representative && (
+                   <>
+                    <span className="text-muted-foreground font-medium text-xs pt-0.5">Info</span>
+                    <span className="text-muted-foreground text-xs">{node.representative}</span>
+                   </>
+                )}
               </div>
-              
-              <h4 className={cn("font-bold text-base truncate pl-0.5", selectedNodeId === node.id ? "text-primary" : "text-foreground")}>
-                {node.name}
-              </h4>
             </div>
           ))}
         </div>
