@@ -166,7 +166,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
       <div 
         style={{ width: activeTab ? panelWidth : 0 }}
         className={cn(
-          "absolute top-0 right-full h-full bg-card/95 backdrop-blur-md border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
+          "absolute top-0 right-full h-full bg-card border-l border-y border-border shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col z-50",
           activeTab ? "opacity-100 border-r" : "opacity-0 pointer-events-none"
         )}
       >
