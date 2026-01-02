@@ -1058,72 +1058,69 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             icon={Info}
                         />
                         
-                        <div className="space-y-1.5">
+                        <div className="space-y-3">
                             <Label className="text-xs font-medium">Graph Analysis Model</Label>
-                            <Select defaultValue="centrality">
-                                <SelectTrigger className="h-10 text-xs">
-                                    <SelectValue placeholder="Select method" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="centrality" className="py-2">
-                                        <div className="flex flex-col gap-0.5 text-left">
-                                            <div className="flex items-center gap-2 font-medium">
-                                                <Network className="w-3 h-3 text-primary" />
-                                                <span>Degree Centrality</span>
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground pl-5">
-                                                Measures direct connections
-                                            </span>
+                            <div className="space-y-2">
+                                {/* Degree Centrality - Selected */}
+                                <div className="flex items-start gap-3 p-2.5 rounded-md border border-primary/50 bg-primary/5 cursor-pointer transition-colors">
+                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-primary">
+                                        <div className="flex h-full w-full items-center justify-center">
+                                            <div className="h-2 w-2 rounded-full bg-primary" />
                                         </div>
-                                    </SelectItem>
-                                    <SelectItem value="pagerank" className="py-2">
-                                        <div className="flex flex-col gap-0.5 text-left">
-                                            <div className="flex items-center gap-2 font-medium">
-                                                <Share2 className="w-3 h-3 text-primary" />
-                                                <span>PageRank Score</span>
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground pl-5">
-                                                Measures node importance via links
-                                            </span>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2 font-medium text-sm text-foreground">
+                                            <Network className="w-3.5 h-3.5 text-primary" />
+                                            <span>Degree Centrality</span>
                                         </div>
-                                    </SelectItem>
-                                    <SelectItem value="betweenness" className="py-2">
-                                        <div className="flex flex-col gap-0.5 text-left">
-                                            <div className="flex items-center gap-2 font-medium">
-                                                <Waypoints className="w-3 h-3 text-primary" />
-                                                <span>Betweenness</span>
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground pl-5">
-                                                Measures bridge role in shortest paths
-                                            </span>
-                                        </div>
-                                    </SelectItem>
-                                    <SelectItem value="manual" className="py-2">
-                                        <div className="flex flex-col gap-0.5 text-left">
-                                            <div className="flex items-center gap-2 font-medium">
-                                                <Edit className="w-3 h-3 text-primary" />
-                                                <span>Manual Override</span>
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground pl-5">
-                                                Manually set node sizes
-                                            </span>
-                                        </div>
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Measures direct connections
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <div className="space-y-3 pt-2">
-                            <div className="flex justify-between items-center">
-                                <Label className="text-xs font-medium">Base Size</Label>
-                                <span className="text-xs text-muted-foreground">45px</span>
+                                {/* PageRank */}
+                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
+                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
+                                            <Share2 className="w-3.5 h-3.5" />
+                                            <span>PageRank Score</span>
+                                        </div>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Measures node importance via links
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Betweenness */}
+                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
+                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
+                                            <Waypoints className="w-3.5 h-3.5" />
+                                            <span>Betweenness</span>
+                                        </div>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Measures bridge role in shortest paths
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Manual Override */}
+                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
+                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
+                                            <Edit className="w-3.5 h-3.5" />
+                                            <span>Manual Override</span>
+                                        </div>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Manually set node sizes
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <Slider 
-                                defaultValue={[45]} 
-                                max={100} 
-                                step={1} 
-                                className="py-2"
-                            />
                         </div>
                     </div>
                 </div>
