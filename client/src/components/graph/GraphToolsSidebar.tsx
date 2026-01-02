@@ -238,7 +238,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     
                     {/* Node Type Selection Mode */}
                     <div className="space-y-4">
-                        <Label className="text-xs font-medium">Node Type Selection</Label>
+                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Node Type Selection</Label>
                         <RadioGroup 
                             defaultValue={settings?.nodeSelectionMode || 'multi'} 
                             onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
@@ -259,7 +259,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <div className="space-y-4">
                          <div className="space-y-2">
                             <div className="flex justify-between">
-                              <Label className="text-xs font-medium">Node Weight Threshold</Label>
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Node Weight Threshold</Label>
                               <span className="text-xs text-muted-foreground">{settings?.nodeWeight || 50}%</span>
                             </div>
                             <Slider 
@@ -272,7 +272,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                          </div>
 
                          <div className="flex items-center justify-between">
-                            <Label className="text-xs font-medium">Edge Direction</Label>
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Edge Direction</Label>
                              <Select 
                                 value={settings?.nodeDirection || 'directed'} 
                                 onValueChange={(v) => updateSetting("nodeDirection", v)}
@@ -359,7 +359,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     
                     {/* Node Type Selection Mode */}
                     <div className="space-y-4">
-                        <Label className="text-xs font-medium">Node Type Selection</Label>
+                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Node Type Selection</Label>
                         <RadioGroup 
                             defaultValue={settings?.nodeSelectionMode || 'multi'} 
                             onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
