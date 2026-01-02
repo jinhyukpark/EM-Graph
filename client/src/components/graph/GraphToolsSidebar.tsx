@@ -864,32 +864,144 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
             {/* Node Sizing Tab */}
             {activeTab === "sizing" && (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <SectionHeader icon={Maximize2} title="Node Styling" />
                 
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <Label className="text-xs">Sizing Method</Label>
-                    <Select defaultValue="degree">
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Select method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="fixed">Fixed Size</SelectItem>
-                        <SelectItem value="degree">Degree Centrality</SelectItem>
-                        <SelectItem value="pagerank">PageRank</SelectItem>
-                        <SelectItem value="betweenness">Betweenness</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-6">
+                    {/* Global Sizing Settings */}
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <Label className="text-xs font-medium">Sizing Method</Label>
+                            <Select defaultValue="centrality">
+                                <SelectTrigger className="h-8 text-xs">
+                                    <SelectValue placeholder="Select method" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="centrality">Degree Centrality</SelectItem>
+                                    <SelectItem value="pagerank">PageRank Score</SelectItem>
+                                    <SelectItem value="betweenness">Betweenness</SelectItem>
+                                    <SelectItem value="manual">Manual Override</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <Label className="text-xs">Base Size</Label>
-                      <span className="text-xs text-muted-foreground">45px</span>
+                        <div className="space-y-3 pt-2">
+                            <div className="flex justify-between items-center">
+                                <Label className="text-xs font-medium">Base Size</Label>
+                                <span className="text-xs text-muted-foreground">45px</span>
+                            </div>
+                            <Slider 
+                                defaultValue={[45]} 
+                                max={100} 
+                                step={1} 
+                                className="py-2"
+                            />
+                        </div>
                     </div>
-                    <Slider defaultValue={[45]} max={100} step={1} className="py-1" />
-                  </div>
+
+                    <Separator />
+
+                    {/* Field-based Sizing Configuration */}
+                    <div>
+                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <Info className="w-4 h-4 text-primary" />
+                                <h4 className="text-sm font-semibold text-foreground">Field-Based Sizing</h4>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                Configure specific sizing fields for each node type based on their attributes.
+                            </p>
+                        </div>
+
+                        <div className="space-y-4">
+                            {/* Criminal Nodes */}
+                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                                    <span className="text-sm font-medium">Criminal</span>
+                                </div>
+                                <div className="pl-4 space-y-2">
+                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
+                                    <Select defaultValue="risk_score">
+                                        <SelectTrigger className="h-7 text-xs">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="risk_score">Risk Score</SelectItem>
+                                            <SelectItem value="crimes_count">Crimes Committed</SelectItem>
+                                            <SelectItem value="sentence_years">Sentence Years</SelectItem>
+                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            {/* Detective Nodes */}
+                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                    <span className="text-sm font-medium">Detective</span>
+                                </div>
+                                <div className="pl-4 space-y-2">
+                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
+                                    <Select defaultValue="cases_solved">
+                                        <SelectTrigger className="h-7 text-xs">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="cases_solved">Cases Solved</SelectItem>
+                                            <SelectItem value="rank_level">Rank Level</SelectItem>
+                                            <SelectItem value="years_active">Years Active</SelectItem>
+                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            {/* Prison/Location Nodes */}
+                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    <span className="text-sm font-medium">Prison / Location</span>
+                                </div>
+                                <div className="pl-4 space-y-2">
+                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
+                                    <Select defaultValue="capacity">
+                                        <SelectTrigger className="h-7 text-xs">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="capacity">Inmate Capacity</SelectItem>
+                                            <SelectItem value="security_level">Security Level</SelectItem>
+                                            <SelectItem value="staff_count">Staff Count</SelectItem>
+                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            {/* Victim Nodes */}
+                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                    <span className="text-sm font-medium">Victim</span>
+                                </div>
+                                <div className="pl-4 space-y-2">
+                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
+                                    <Select defaultValue="damage_amount">
+                                        <SelectTrigger className="h-7 text-xs">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="damage_amount">Financial Damage</SelectItem>
+                                            <SelectItem value="impact_score">Impact Score</SelectItem>
+                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
               </div>
             )}
