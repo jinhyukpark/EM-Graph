@@ -252,7 +252,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
           
           {isProjectView && !isCollapsed && (
-            <div className="px-6 pt-4 pb-2">
+            <div className="px-4 pt-4 pb-2">
                 <Link href="/projects" className={cn(
                     buttonVariants({ variant: "ghost", size: "sm" }),
                     "text-muted-foreground hover:text-foreground gap-1 -ml-2 mb-2 pl-2 pr-4 h-7 text-xs"
@@ -267,7 +267,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
 
           {isProjectView && (
-            <div className={cn("pt-0 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
+            <div className={cn("pt-0 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-4")}>
               {isCollapsed && (
                  <Link href="/projects" className={cn(
                      buttonVariants({ variant: "ghost", size: "sm" }),
