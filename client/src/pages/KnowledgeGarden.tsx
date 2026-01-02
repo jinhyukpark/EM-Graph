@@ -572,6 +572,93 @@ const NewsResultList = ({ data }: { data: any[] }) => {
 };
 
 // Separate GraphView component for ReactFlow
+function GraphInsightCard() {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="absolute top-4 left-4 z-10 max-w-[320px]"
+    >
+      <div className={cn(
+        "bg-background/90 backdrop-blur-md border border-border/60 shadow-lg rounded-xl overflow-hidden transition-all duration-300",
+        isExpanded ? "w-full" : "w-auto"
+      )}>
+        {/* Header */}
+        <div 
+          className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50 to-transparent border-b border-border/50 cursor-pointer"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center gap-2">
+            <div className="p-1 rounded bg-blue-100 text-blue-600">
+              <Sparkles className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-xs font-semibold text-foreground/90">AI Network Briefing</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground">
+             {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+          </Button>
+        </div>
+
+        {/* Content */}
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="p-3"
+            >
+              <div className="space-y-3">
+                <div>
+                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Domain Analysis</div>
+                   <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      Criminal Organization Network
+                   </div>
+                </div>
+
+                <div className="space-y-2">
+                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Key Insights</div>
+                   
+                   <div className="p-2 rounded bg-muted/30 border border-border/50 space-y-2">
+                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
+                        <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                        <span>
+                          <strong className="text-foreground">Kang "The Viper"</strong> exhibits highest degree centrality, indicating role as key decision maker.
+                        </span>
+                      </div>
+                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
+                        <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                        <span>
+                          <strong className="text-foreground">Det. Choi</strong> serves as critical bridge node between criminal & legal clusters.
+                        </span>
+                      </div>
+                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
+                         <span className="mt-1 w-1 h-1 rounded-full bg-orange-500 shrink-0" />
+                         <span>
+                            <strong className="text-foreground">Warehouse 4</strong> identified as high-risk asset connected to multiple investigation paths.
+                         </span>
+                      </div>
+                   </div>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 bg-background hover:bg-muted/50">
+                        <MessageSquare className="w-3 h-3" />
+                        Ask Copilot Details
+                    </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
 function GraphView() {
   console.log("[GraphView] Component rendering...");
 
@@ -582,19 +669,22 @@ function GraphView() {
     console.log("[GraphView] Hooks initialized successfully", { nodesCount: nodes.length, edgesCount: edges.length });
 
     return (
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        className="bg-background"
-      >
-        <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-        <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-        <GraphLegend />
-      </ReactFlow>
+      <div className="w-full h-full relative">
+        <GraphInsightCard />
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
+          fitView
+          className="bg-background"
+        >
+          <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+          <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
+          <GraphLegend />
+        </ReactFlow>
+      </div>
     );
   } catch (error) {
     console.error("[GraphView] Error:", error);
