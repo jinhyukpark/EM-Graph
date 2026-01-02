@@ -13,13 +13,14 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, Database, CircleDot } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import CenterEdge from "@/components/graph/CenterEdge";
 
@@ -47,6 +48,164 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, Mail, UserPlus, Shield, Edit2, Eye } from "lucide-react";
+
+// Mock Data for Graph Connect
+const MOCK_GRAPH_DBS = [
+  { id: "neo4j-prod", name: "Neo4j Production", type: "Neo4j", url: "bolt://prod-db.internal:7687", status: "Connected", nodeCount: "12.5M", edgeCount: "45.2M" },
+  { id: "memgraph-dev", name: "Memgraph Dev", type: "Memgraph", url: "bolt://dev-mem.internal:7687", status: "Idle", nodeCount: "450K", edgeCount: "1.2M" },
+  { id: "nebula-analytics", name: "Nebula Analytics", type: "NebulaGraph", url: "http://nebula-ana.internal:9669", status: "Offline", nodeCount: "N/A", edgeCount: "N/A" },
+];
+
+const MOCK_DB_SCHEMA = {
+  nodes: [
+    { label: "Person", count: 5240, properties: ["name", "age", "ssn", "address"] },
+    { label: "Company", count: 1205, properties: ["name", "reg_no", "industry", "founded_date"] },
+    { label: "Account", count: 8500, properties: ["account_no", "bank_code", "balance", "status"] },
+    { label: "Transaction", count: 45200, properties: ["amount", "timestamp", "currency", "type"] },
+    { label: "Location", count: 320, properties: ["lat", "lng", "city", "country"] },
+  ],
+  relationships: [
+    { type: "OWNS", source: "Person", target: "Account", count: 6200 },
+    { type: "WORKS_FOR", source: "Person", target: "Company", count: 4100 },
+    { type: "TRANSFERRED", source: "Account", target: "Account", count: 45200 },
+    { type: "LOCATED_AT", source: "Company", target: "Location", count: 1205 },
+    { type: "LIVES_IN", source: "Person", target: "Location", count: 5100 },
+  ]
+};
+
+// Graph Connect Sidebar Component
+function GraphConnectSidebar() {
+  const [selectedDb, setSelectedDb] = useState<string | null>(null);
+
+  return (
+    <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-4">
+           <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+             <Database className="w-4 h-4 text-primary" />
+             Graph Connect
+           </h3>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label className="text-xs font-semibold text-muted-foreground">Select Graph Database</Label>
+            <Select value={selectedDb || ""} onValueChange={setSelectedDb}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select connection..." />
+              </SelectTrigger>
+              <SelectContent>
+                {MOCK_GRAPH_DBS.map(db => (
+                  <SelectItem key={db.id} value={db.id}>
+                    <div className="flex items-center gap-2">
+                      <div className={cn("w-2 h-2 rounded-full", 
+                        db.status === "Connected" ? "bg-green-500" : 
+                        db.status === "Idle" ? "bg-amber-500" : "bg-red-500"
+                      )} />
+                      <span>{db.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedDb && (
+            <div className="p-3 bg-secondary/20 rounded-lg border border-border/50 space-y-2">
+               <div className="flex justify-between items-center text-xs">
+                 <span className="text-muted-foreground">Type</span>
+                 <span className="font-medium">{MOCK_GRAPH_DBS.find(d => d.id === selectedDb)?.type}</span>
+               </div>
+               <div className="flex justify-between items-center text-xs">
+                 <span className="text-muted-foreground">URL</span>
+                 <span className="font-mono text-[10px]">{MOCK_GRAPH_DBS.find(d => d.id === selectedDb)?.url}</span>
+               </div>
+               <div className="flex justify-between items-center text-xs pt-1 border-t border-border/50 mt-1">
+                 <span className="text-muted-foreground">Status</span>
+                 <Badge variant="outline" className={cn("h-5 text-[10px]", 
+                    MOCK_GRAPH_DBS.find(d => d.id === selectedDb)?.status === "Connected" ? "text-green-600 bg-green-500/10 border-green-500/20" : "text-amber-600"
+                 )}>
+                   {MOCK_GRAPH_DBS.find(d => d.id === selectedDb)?.status}
+                 </Badge>
+               </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <ScrollArea className="flex-1 p-4">
+         {selectedDb ? (
+           <div className="space-y-6">
+              {/* Nodes Section */}
+              <div className="space-y-3">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                   <span>Node Labels</span>
+                   <Badge variant="secondary" className="text-[10px] h-5">{MOCK_DB_SCHEMA.nodes.length}</Badge>
+                 </h4>
+                 <div className="space-y-2">
+                    {MOCK_DB_SCHEMA.nodes.map((node, i) => (
+                       <div key={i} className="bg-card rounded-md border border-border p-3 hover:bg-secondary/20 transition-colors cursor-pointer group">
+                          <div className="flex items-center justify-between mb-2">
+                             <div className="flex items-center gap-2">
+                                <CircleDot className="w-3.5 h-3.5 text-primary" />
+                                <span className="font-semibold text-sm">{node.label}</span>
+                             </div>
+                             <span className="text-xs text-muted-foreground bg-secondary px-1.5 py-0.5 rounded-full">{node.count.toLocaleString()}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                             {node.properties.map(prop => (
+                               <span key={prop} className="text-[10px] px-1.5 py-0.5 bg-secondary/50 rounded text-muted-foreground group-hover:bg-secondary group-hover:text-foreground transition-colors">
+                                 {prop}
+                               </span>
+                             ))}
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+
+              {/* Relationships Section */}
+              <div className="space-y-3">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                   <span>Relationships</span>
+                   <Badge variant="secondary" className="text-[10px] h-5">{MOCK_DB_SCHEMA.relationships.length}</Badge>
+                 </h4>
+                 <div className="space-y-2">
+                    {MOCK_DB_SCHEMA.relationships.map((rel, i) => (
+                       <div key={i} className="bg-card rounded-md border border-border p-3 hover:bg-secondary/20 transition-colors cursor-pointer flex items-center gap-3">
+                          <div className="flex flex-col items-center gap-1 shrink-0">
+                             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                                {rel.source.substring(0, 2).toUpperCase()}
+                             </div>
+                          </div>
+                          
+                          <div className="flex-1 flex flex-col items-center gap-1">
+                             <div className="h-px w-full bg-border relative top-2"></div>
+                             <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 rounded relative z-10">
+                               {rel.type}
+                             </span>
+                          </div>
+
+                          <div className="flex flex-col items-center gap-1 shrink-0">
+                             <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                                {rel.target.substring(0, 2).toUpperCase()}
+                             </div>
+                          </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+           </div>
+         ) : (
+           <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2 py-10 opacity-60">
+             <Database className="w-8 h-8" />
+             <p className="text-sm">Select a database to view schema</p>
+           </div>
+         )}
+      </ScrollArea>
+    </div>
+  );
+}
 
 // Participants Component
 function ParticipantsDisplay() {
@@ -486,784 +645,5 @@ const createRadialLayout = () => {
     });
   });
 
-  // Outer Circle (Evidence, Locations, Lower Associates, Court)
-  const outerCircle = [
-    { id: 'ev-1', label: 'Burner Phone', sub: 'Evidence', type: 'Evidence', color: '#64748b' },
-    { id: 'loc-1', label: 'Warehouse 4', sub: 'Crime Scene', type: 'Location', color: '#10b981', img: warehouseImg },
-    { id: 'loc-2', label: 'Offshore Account', sub: 'Asset', type: 'Asset', color: '#10b981' },
-    { id: 'case-1', label: 'Case #22-004', sub: 'Lawsuit', type: 'Lawsuit', color: '#8b5cf6' },
-    { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: thugAImg },
-    { id: 'wit-1', label: 'Witness Kim', sub: 'Observer', type: 'Witness', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop' },
-    { id: 'dt-2', label: 'Det. Lee', sub: 'Partner', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop' },
-    { id: 'vic-3', label: 'Company X', sub: 'Fraud Victim', type: 'Victim', color: '#fbbf24', img: companyLogoImg },
-  ];
-
-  outerCircle.forEach((entity, i) => {
-    const angle = (i / outerCircle.length) * 2 * Math.PI + (Math.PI / 8); 
-    nodes.push({
-      id: entity.id,
-      type: 'imageNode',
-      position: {
-        x: center.x + radius2 * Math.cos(angle),
-        y: center.y + radius2 * Math.sin(angle)
-      },
-      data: { 
-        label: entity.label, 
-        subLabel: entity.sub,
-        type: entity.type,
-        image: (entity as any).img,
-        borderColor: entity.color 
-      },
-      style: { width: 60, height: 60 }
-    });
-  });
-
   return nodes;
 };
-
-const INITIAL_NODES = createRadialLayout();
-
-const INITIAL_EDGES = [
-  // Boss Connections
-  { id: 'e-boss-lt1', source: 'boss', target: 'lt-1', label: 'Command', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 3 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-boss-lt2', source: 'boss', target: 'lt-2', label: 'Money Flow', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 3, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-boss-lw1', source: 'boss', target: 'lw-1', label: 'Representation', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
-  
-  // Detective Connections
-  { id: 'e-dt1-boss', source: 'dt-1', target: 'boss', label: 'Investigating', type: 'centerEdge', animated: true, style: { stroke: '#3b82f6', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-dt1-ev1', source: 'dt-1', target: 'ev-1', label: 'Found', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-dt1-dt2', source: 'dt-1', target: 'dt-2', label: 'Partners', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 } },
-  { id: 'e-dt2-loc1', source: 'dt-2', target: 'loc-1', label: 'Raided', type: 'centerEdge', style: { stroke: '#3b82f6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-
-  // Crime Actions
-  { id: 'e-lt1-vc1', source: 'lt-1', target: 'vc-1', label: 'Assaulted', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-lt2-vc2', source: 'lt-2', target: 'vc-2', label: 'Defrauded', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-lt2-loc2', source: 'lt-2', target: 'loc-2', label: 'Hidden Assets', type: 'centerEdge', style: { stroke: '#10b981', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
-  { id: 'e-lt1-loc1', source: 'lt-1', target: 'loc-1', label: 'Base', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-
-  // Legal / Witness
-  { id: 'e-wit1-dt1', source: 'wit-1', target: 'dt-1', label: 'Testimony', type: 'centerEdge', animated: true, style: { stroke: '#fbbf24', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#fbbf24' } },
-  { id: 'e-lw1-case1', source: 'lw-1', target: 'case-1', label: 'Filing', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
-  { id: 'e-vc3-case1', source: 'vic-3', target: 'case-1', label: 'Plaintiff', type: 'centerEdge', style: { stroke: '#8b5cf6', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#8b5cf6' } },
-  
-  // Associates
-  { id: 'e-asn1-lt1', source: 'asn-1', target: 'lt-1', label: 'Henchman', type: 'centerEdge', style: { stroke: '#ef4444', strokeWidth: 1 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-];
-
-// Mock Legend Data (Updated)
-const DEFAULT_LEGEND_ITEMS: LegendItem[] = [
-  { id: "1", label: "Criminal", color: "bg-red-500", alias: "Criminal" },
-  { id: "2", label: "Detective", color: "bg-blue-500", alias: "Detective" },
-  { id: "3", label: "Victim/Witness", color: "bg-amber-400", alias: "Victim/Witness" },
-  { id: "4", label: "Legal/Lawsuit", color: "bg-violet-500", alias: "Legal/Lawsuit" },
-  { id: "5", label: "Asset/Location", color: "bg-emerald-500", alias: "Asset/Location" },
-  { id: "6", label: "Evidence", color: "bg-slate-500", alias: "Evidence" },
-];
-
-import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
-import CompareDialog from "@/components/graph/CompareDialog";
-
-export default function ProjectView() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
-  const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [compareOpen, setCompareOpen] = useState(false);
-  const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [graphToolsOpen, setGraphToolsOpen] = useState(true);
-  const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
-  const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
-  
-  // Legend State
-  const [legendItems, setLegendItems] = useState<LegendItem[]>(DEFAULT_LEGEND_ITEMS);
-  const [isLegendConfigOpen, setIsLegendConfigOpen] = useState(false);
-
-  const onPaneContextMenu = (event: React.MouseEvent | MouseEvent) => {
-    event.preventDefault();
-    // Adjust coordinates to be relative to the viewport or container if needed
-    // For fixed position, clientX/Y work well
-    const clientX = 'clientX' in event ? event.clientX : 0;
-    const clientY = 'clientY' in event ? event.clientY : 0;
-    setContextMenu({ x: clientX, y: clientY });
-  };
-
-  const onPaneClick = () => {
-    if (contextMenu) setContextMenu(null);
-  };
-
-  // Close context menu on any click
-  useEffect(() => {
-    const handleClick = () => setContextMenu(null);
-    window.addEventListener('click', handleClick);
-    return () => window.removeEventListener('click', handleClick);
-  }, []);
-  
-  // Graph Settings State
-  const [graphSettings, setGraphSettings] = useState<GraphSettings>({
-    nodeSelectionMode: 'multi',
-    nodeWeight: 50,
-    nodeDirection: 'directed',
-    showTimeline: true,
-    showAiBriefing: true,
-    showLegend: true,
-    showNodeLabels: true,
-    showEdgeLabels: false,
-    curvedEdges: true,
-    particlesEffect: true
-  });
-
-  // Multi-select state for legend items - initialize with all selected
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(DEFAULT_LEGEND_ITEMS.map(d => d.label));
-  const constraintsRef = useRef(null);
-  
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
-  };
-
-  const [nodeMappings, setNodeMappings] = useState([
-    { id: 1, sheet: "Sheet1", key: "id", title: "name", type: "string", image: "img_url" }
-  ]);
-
-  const addNodeMapping = () => {
-    setNodeMappings([...nodeMappings, { id: Date.now(), sheet: "", key: "", title: "", type: "", image: "" }]);
-  };
-
-  const removeNodeMapping = (id: number) => {
-    setNodeMappings(nodeMappings.filter(m => m.id !== id));
-  };
-
-  const onNodeClick = (_: any, node: any) => {
-    setSelectedNode(node);
-  };
-
-  const handleSidebarNodeSelect = (node: any) => {
-    // In a real app, you'd select the node in the graph. 
-    // Here we just set selectedNode to show the panel
-    setSelectedNode({ 
-      id: node.id, 
-      data: { label: node.name, type: node.category }, 
-      position: { x: 0, y: 0 } // dummy position
-    });
-  };
-
-  const SidebarToggle = (
-    <Tabs value={sidebarMode} onValueChange={(v) => setSidebarMode(v as "nav" | "list")} className="w-full mb-6">
-      <TabsList className="w-full grid grid-cols-2 bg-secondary/50 h-10 p-1 rounded-full border border-border/50">
-        <TabsTrigger 
-          value="list" 
-          className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
-        >
-          <List className="w-3.5 h-3.5" />
-          Node List
-        </TabsTrigger>
-        <TabsTrigger 
-          value="nav" 
-          className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
-        >
-          <LayoutTemplate className="w-3.5 h-3.5" />
-          Navigation
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
-  );
-
-  return (
-    <Layout 
-      sidebar={
-        sidebarMode === "list" 
-          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNode={selectedNode} /> 
-          : undefined
-      }
-      sidebarControls={SidebarToggle}
-    >
-      <div className="flex h-full overflow-hidden">
-        {/* Main Graph Area */}
-        <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
-          {/* Context Menu */}
-          {contextMenu && (
-            <div 
-              style={{ top: contextMenu.y, left: contextMenu.x }} 
-              className="fixed z-50 min-w-[180px] bg-popover border border-border rounded-lg shadow-xl p-1.5 animate-in fade-in zoom-in-95 duration-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div 
-                  className="flex items-center gap-2 px-2.5 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
-                  onClick={() => {
-                      setContextMenu(null);
-                      // Trigger refresh animation or logic here
-                  }}
-              >
-                  <RefreshCw className="w-4 h-4 text-muted-foreground" />
-                  <span>Refresh Network</span>
-              </div>
-               <div 
-                  className="flex items-center gap-2 px-2.5 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
-                  onClick={() => {
-                      setContextMenu(null);
-                  }}
-              >
-                  <Download className="w-4 h-4 text-muted-foreground" />
-                  <span>Save Snapshot</span>
-              </div>
-            </div>
-          )}
-
-          {/* AI Insight Card - Added */}
-          {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
-          
-          {/* Top Center Stats Bar */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
-            <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
-              <span className="font-medium text-foreground mr-3">
-                <span className="text-muted-foreground font-normal mr-1">Project:</span>
-                Graph View
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Nodes <span className="font-mono text-foreground font-medium">{nodes.length}</span>
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Links <span className="font-mono text-foreground font-medium">{edges.length}</span>
-              </span>
-              <div className="h-3 w-px bg-border mx-2" />
-              <span className="flex items-center gap-1 mx-2">
-                Density <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
-              </span>
-            </div>
-
-            <Button size="sm" variant="secondary" className="h-10 rounded-full px-4 bg-card/80 backdrop-blur-md border border-border/50 shadow-lg pointer-events-auto hover:bg-card" onClick={() => setCompareOpen(true)}>
-               <Scale className="w-3.5 h-3.5 mr-2" />
-               Compare
-            </Button>
-          </div>
-          
-          {/* Participants - Top Right */}
-          <div className="absolute top-4 right-4 z-10 pointer-events-auto">
-             <ParticipantsDisplay />
-          </div>
-
-          <CompareDialog 
-            open={compareOpen} 
-            onOpenChange={setCompareOpen} 
-            nodes={nodes} 
-          />
-
-          {/* Graph Visualization */}
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            onPaneClick={onPaneClick}
-            onPaneContextMenu={onPaneContextMenu}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            className="bg-background"
-            minZoom={0.5}
-            maxZoom={2}
-          >
-            <Background color="hsl(var(--foreground))" gap={30} size={1} variant={BackgroundVariant.Dots} className="opacity-10" />
-            
-            {/* Toolbox Panel */}
-            <motion.div 
-              drag
-              dragConstraints={constraintsRef}
-              dragMomentum={false}
-              className="absolute top-1/2 left-6 z-20 flex flex-col gap-2"
-              style={{ y: "-50%" }}
-            >
-              <div className="bg-card/90 backdrop-blur-md border border-border/50 shadow-xl rounded-xl w-14 overflow-hidden pointer-events-auto transition-all duration-300 hover:w-64 group flex flex-col cursor-move">
-                 {/* Toolbox Header (Icon only when collapsed) */}
-                 <div className="h-14 flex items-center justify-center border-b border-border/50 shrink-0 bg-secondary/30 relative overflow-hidden">
-                    <Grid className="w-6 h-6 text-primary absolute left-[15px] transition-all duration-300" />
-                    <span className="ml-10 font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-0 group-hover:w-auto overflow-hidden">Graph Tools</span>
-                 </div>
-
-                 {/* Tools List */}
-                 <div className="flex flex-col p-2 gap-1">
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <MousePointer2 className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Mode</span>
-                    </Button>
-                    
-                    <div className="h-px bg-border/50 my-1 mx-2" />
-                    
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <RefreshCw className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Refresh Layout</span>
-                    </Button>
-
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <Waypoints className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Shortest Path</span>
-                    </Button>
-
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <Cpu className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Analysis</span>
-                    </Button>
-
-                    <div className="h-px bg-border/50 my-1 mx-2" />
-
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <EyeOff className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Filters</span>
-                    </Button>
-
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <Download className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
-                    </Button>
-                 </div>
-              </div>
-            </motion.div>
-            
-            <Controls className="!bg-card !border-border !fill-foreground !shadow-sm !mb-28" />
-          </ReactFlow>
-
-          {/* Timeline - Added */}
-          {graphSettings.showTimeline && <GraphTimeline />}
-
-
-
-          {/* Legend Panel */}
-          {graphSettings.showLegend && (
-            <motion.div 
-              drag
-              dragConstraints={constraintsRef}
-              dragMomentum={false}
-              className={cn(
-                "absolute right-16 w-80 bg-card/95 backdrop-blur border border-border shadow-lg rounded-lg overflow-hidden z-10",
-                graphSettings.showTimeline ? "bottom-[230px]" : "bottom-4"
-              )}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
-                 <div className="flex flex-col">
-                   <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                     Category
-                   </h3>
-                 </div>
-                 <div className="flex items-center gap-1">
-                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => setIsLegendConfigOpen(true)}>
-                     <Edit className="w-3 h-3" />
-                   </Button>
-                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => setGraphSettings(prev => ({...prev, showLegend: false}))} onPointerDown={(e) => e.stopPropagation()}>
-                     <span className="sr-only">Close</span>
-                     <X className="w-3 h-3" />
-                   </Button>
-                 </div>
-              </div>
-              <div className="p-0">
-                <table className="w-full text-xs">
-                  <thead className="bg-secondary/20">
-                    <tr className="text-muted-foreground">
-                      <th className="px-3 py-2 text-left font-medium w-8"></th>
-                      <th className="px-2 py-2 text-left font-medium">Category</th>
-                      <th className="px-3 py-2 text-right font-medium">Count</th>
-                      <th className="px-3 py-2 text-right font-medium">%</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
-                    {legendItems.map((item, i) => {
-                      const isSelected = selectedCategories.includes(item.label);
-                      // Mock stats for new items, use defaults for known ones
-                      // In a real app, this would be computed from graph data
-                      const count = i < 4 ? 4 - i : 1; 
-                      const percent = i < 4 ? `${25 - i * 5}%` : "5%";
-                      
-                      return (
-                        <tr key={item.id} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
-                          <td className="px-3 py-1.5">
-                            <Checkbox 
-                              checked={isSelected}
-                              onCheckedChange={() => toggleCategory(item.label)}
-                              className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-muted-foreground/50"
-                            />
-                          </td>
-                          <td className="px-2 py-1.5">
-                            <div className="flex items-center gap-2">
-                              <div className={cn("w-2 h-2 rounded-full", item.color)} />
-                              <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>
-                                {item.alias || item.label}
-                              </span>
-                            </div>
-                          </td>
-                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{count}</td>
-                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{percent}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Right Sidebar - Graph Tools */}
-        <div className="relative border-l border-border bg-card/50 backdrop-blur-sm flex flex-col h-full w-14 shrink-0 z-30">
-            <div className="w-14 h-full overflow-visible">
-                <GraphToolsSidebar 
-                  className="w-full h-full border-none bg-transparent"
-                  stats={{
-                    nodes: nodes.length,
-                    edges: edges.length,
-                    types: new Set(nodes.map(n => n.data.type)).size,
-                    density: (2 * edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
-                  }}
-                  settings={graphSettings}
-                  onSettingsChange={setGraphSettings}
-                />
-            </div>
-        </div>
-      </div>
-
-      {/* Node Details Panel (Floating) */}
-      {selectedNode && (
-        <div className={cn(
-          "absolute top-20 w-80 bg-card/95 backdrop-blur border border-border shadow-xl rounded-lg overflow-hidden z-20 animate-in slide-in-from-right-10 duration-300 transition-all",
-          graphToolsOpen ? "right-[340px]" : "right-4"
-        )}>
-            <div className="h-2 bg-primary w-full" />
-            <div className="p-4">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="font-bold text-lg">{selectedNode.data.label}</h3>
-                  <Badge variant="outline" className="mt-1 bg-secondary text-secondary-foreground border-none">{selectedNode.data.type}</Badge>
-                </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setSelectedNode(null)}>
-                  <span className="sr-only">Close</span>
-                  <span className="text-lg">×</span>
-                </Button>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="p-2 bg-secondary/50 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground uppercase">Degree</div>
-                    <div className="text-lg font-mono font-bold">12</div>
-                  </div>
-                   <div className="p-2 bg-secondary/50 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground uppercase">Centrality</div>
-                    <div className="text-lg font-mono font-bold">0.85</div>
-                  </div>
-                </div>
-
-                <div className="text-sm text-muted-foreground">
-                  <p>Node detected as a high-traffic bridge in the network topology. Connected to 3 major clusters.</p>
-                </div>
-
-                <Button className="w-full" variant="secondary">View Raw Data</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Settings Drawer */}
-        <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <SheetContent side="right" className="w-[800px] border-l border-border bg-card text-foreground p-0 sm:max-w-none">
-            <SheetHeader className="p-6 border-b border-border">
-              <SheetTitle className="flex items-center gap-2 text-xl">
-                <Settings className="w-5 h-5" />
-                Graph Settings
-              </SheetTitle>
-              <SheetDescription>
-                Configure data sources, analysis functions, and visualization properties.
-              </SheetDescription>
-            </SheetHeader>
-            
-            <div className="overflow-y-auto h-[calc(100vh-80px)]">
-              <Tabs defaultValue="graph-set" className="w-full">
-                <div className="px-6 py-4 border-b border-border bg-secondary/10 sticky top-0 z-10 backdrop-blur-md">
-                  <TabsList className="w-full grid grid-cols-3">
-                    <TabsTrigger value="graph-set">Graph Set</TabsTrigger>
-                    <TabsTrigger value="function">Function</TabsTrigger>
-                    <TabsTrigger value="view">View</TabsTrigger>
-                  </TabsList>
-                </div>
-
-                {/* Graph Set Tab */}
-                <TabsContent value="graph-set" className="p-6 space-y-6 mt-0">
-                  <Tabs defaultValue="nodes" className="w-full">
-                    <TabsList className="w-40 mb-6 bg-secondary/50">
-                      <TabsTrigger value="nodes">Nodes</TabsTrigger>
-                      <TabsTrigger value="edges">Links</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="nodes" className="space-y-4">
-                      <div className="text-sm text-muted-foreground mb-4">
-                        Define which data fields map to node properties.
-                      </div>
-                      
-                      <div className="border border-border rounded-lg overflow-hidden">
-                        <div className="grid grid-cols-12 gap-4 bg-secondary/30 p-3 text-xs font-medium text-muted-foreground uppercase tracking-wider border-b border-border">
-                          <div className="col-span-2">Sheet Name</div>
-                          <div className="col-span-2">Node Key</div>
-                          <div className="col-span-3">Node Title</div>
-                          <div className="col-span-2">Field Type</div>
-                          <div className="col-span-2">Image Field</div>
-                          <div className="col-span-1"></div>
-                        </div>
-                        
-                        <div className="bg-card/50">
-                          {nodeMappings.map((mapping) => (
-                            <div key={mapping.id} className="grid grid-cols-12 gap-4 p-3 items-center border-b border-border/50 last:border-0 hover:bg-secondary/10 transition-colors">
-                              <div className="col-span-2">
-                                <Select defaultValue={mapping.sheet}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Sheet1">Crime Data</SelectItem>
-                                    <SelectItem value="Sheet2">Suspects</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-2">
-                                <Select defaultValue={mapping.key}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="id">ID</SelectItem>
-                                    <SelectItem value="uuid">UUID</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-3">
-                                <Select defaultValue={mapping.title}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="name">Name</SelectItem>
-                                    <SelectItem value="label">Label</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-2">
-                                <Select defaultValue={mapping.type}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="string">String</SelectItem>
-                                    <SelectItem value="number">Number</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-2">
-                                <Select defaultValue={mapping.image}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="img_url">Image URL</SelectItem>
-                                    <SelectItem value="icon">Icon Name</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-1 flex justify-end">
-                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeNodeMapping(mapping.id)}>
-                                  <Minus className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        <div className="p-2 bg-secondary/10 border-t border-border/50">
-                           <Button variant="ghost" size="sm" className="w-full text-xs text-primary hover:text-primary hover:bg-primary/5 gap-1 dashed border border-primary/20" onClick={addNodeMapping}>
-                             <Plus className="w-3 h-3" /> Add Mapping
-                           </Button>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="edges" className="space-y-6">
-                      <div className="rounded-lg border border-border p-4 bg-card/50">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center text-muted-foreground">
-                            <Network className="w-4 h-4" />
-                          </div>
-                          <h3 className="font-semibold">Link Definition</h3>
-                        </div>
-                        
-                        <div className="space-y-4">
-                           <div className="grid grid-cols-2 gap-4">
-                              <div className="grid gap-2">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase">Source Column</Label>
-                                <Select defaultValue="src">
-                                  <SelectTrigger><SelectValue /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="src">source_node_id</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="grid gap-2">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase">Target Column</Label>
-                                <Select defaultValue="tgt">
-                                  <SelectTrigger><SelectValue /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="tgt">target_node_id</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                           </div>
-                        </div>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </TabsContent>
-
-                {/* Function Tab (previously Filters) */}
-                <TabsContent value="function" className="p-6 space-y-6 mt-0">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium text-sm">Active Filters</h3>
-                      <Button variant="ghost" size="sm" className="h-6 text-xs">Reset All</Button>
-                    </div>
-                    
-                    <div className="rounded-lg border border-border p-4 bg-card/50 space-y-4">
-                       <div className="space-y-2">
-                          <div className="flex justify-between">
-                             <Label className="text-xs font-medium uppercase text-muted-foreground">Severity Score</Label>
-                             <span className="text-xs font-mono">Min: 4</span>
-                          </div>
-                          <Slider defaultValue={[4]} max={10} step={1} />
-                       </div>
-
-                       <div className="space-y-2 pt-2">
-                          <Label className="text-xs font-medium uppercase text-muted-foreground mb-1.5 block">Incident Type</Label>
-                          <div className="flex flex-wrap gap-2">
-                            {['Theft', 'Assault', 'Traffic', 'Cyber'].map(tag => (
-                              <Badge key={tag} variant="secondary" className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-colors">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                       </div>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* View Tab (previously Visuals) */}
-                <TabsContent value="view" className="p-6 space-y-6 mt-0">
-                  <div className="space-y-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <Palette className="w-4 h-4 text-muted-foreground" />
-                          Color Scheme
-                        </Label>
-                      </div>
-                      <div className="grid grid-cols-5 gap-2">
-                        {['bg-primary', 'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500'].map((color, i) => (
-                          <div key={i} className={`h-8 rounded-md cursor-pointer ring-offset-background hover:ring-2 hover:ring-ring ring-offset-2 transition-all ${color} ${i === 0 ? 'ring-2 ring-ring' : ''}`} />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="node-size" className="text-sm font-medium">Base Size</Label>
-                        <span className="text-xs text-muted-foreground">Medium</span>
-                      </div>
-                      <Slider id="node-size" defaultValue={[50]} max={100} step={1} />
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <Zap className="w-4 h-4 text-muted-foreground" />
-                          Physics Simulation
-                        </Label>
-                        <Switch defaultChecked />
-                      </div>
-                      <div className="pl-6 border-l-2 border-border space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Gravity</Label>
-                          <Slider defaultValue={[30]} max={100} />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Repulsion</Label>
-                          <Slider defaultValue={[70]} max={100} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-            
-            <SheetFooter className="p-4 border-t border-border bg-background/95 backdrop-blur absolute bottom-0 w-full">
-               <Button variant="outline" className="w-1/3" onClick={() => setSettingsOpen(false)}>Cancel</Button>
-               <Button className="w-2/3 bg-primary hover:bg-primary/90 text-white">Apply Changes</Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-
-        {/* AI Drawer */}
-        <Sheet open={aiDrawerOpen} onOpenChange={setAiDrawerOpen}>
-          <SheetContent className="w-[400px] sm:w-[540px] border-l border-border bg-card text-foreground">
-            <SheetHeader>
-              <SheetTitle className="flex items-center gap-2 text-2xl">
-                <Bot className="w-6 h-6 text-purple-500" />
-                Nexus AI Insights
-              </SheetTitle>
-              <SheetDescription>
-                Real-time analysis of the current network topology.
-              </SheetDescription>
-            </SheetHeader>
-            
-            <div className="mt-8 space-y-6">
-              <div className="p-4 rounded-lg border border-purple-500/30 bg-purple-500/5 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-purple-500" />
-                <h4 className="font-semibold text-purple-700 dark:text-purple-400 mb-2 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Anomaly Detected
-                </h4>
-                <p className="text-sm text-purple-900/80 dark:text-purple-100/80 leading-relaxed">
-                  Cluster #3 shows unusual density compared to historical baselines. 
-                  This pattern often indicates a coordinated supply chain bottleneck or organized activity.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-medium text-sm uppercase tracking-wider text-muted-foreground">Recommended Actions</h4>
-                
-                {[
-                  "Filter network by 'Severity > 8' to isolate risk nodes.",
-                  "Run 'Shortest Path' analysis between Node A and Node B.",
-                  "Generate report for Q1 anomalies."
-                ].map((action, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-md hover:bg-secondary cursor-pointer transition-colors border border-transparent hover:border-border">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
-                      {i + 1}
-                    </div>
-                    <span className="text-sm">{action}</span>
-                    <ArrowRight className="w-4 h-4 ml-auto text-muted-foreground" />
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-4 border-t border-border">
-                <div className="relative">
-                  <Input placeholder="Ask Nexus about this graph..." className="pl-4 pr-10 py-6 bg-secondary/50 border-transparent focus-visible:ring-primary/20" />
-                  <Button size="icon" className="absolute right-2 top-2 h-8 w-8 bg-purple-600 hover:bg-purple-700 text-white">
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-        <LegendConfigDialog 
-           open={isLegendConfigOpen} 
-           onOpenChange={setIsLegendConfigOpen}
-           items={legendItems}
-           onSave={setLegendItems}
-        />
-    </Layout>
-  );
-}
