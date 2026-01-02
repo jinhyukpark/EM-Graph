@@ -26,7 +26,8 @@ import {
   Edit,
   Trash2,
   GripVertical,
-  Map as MapIcon
+  Map as MapIcon,
+  Eye
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -276,10 +277,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 <Separator />
 
-                <div className="space-y-3">
-                    <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Display</Label>
-                    <div className="flex items-center justify-between">
-                        <Label className="text-xs">Show Node Labels</Label>
+                <div className="space-y-4">
+                    <SectionHeader icon={Eye} title="Display" />
+                    
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-xs">Show Node Labels</Label>
                         <Switch 
                             checked={settings?.showNodeLabels ?? true}
                             onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
