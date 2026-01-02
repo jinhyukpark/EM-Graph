@@ -564,7 +564,6 @@ export default function ProjectView() {
                <ParticipantsDisplay />
             </div>
           </div>
-          </div>
 
           <CompareDialog 
             open={compareOpen} 
