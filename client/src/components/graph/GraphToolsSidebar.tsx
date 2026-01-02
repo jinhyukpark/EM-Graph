@@ -203,9 +203,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
-                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-3">
-                        Customize the graph structure layout view.
-                    </p>
+                    <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-3">
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                            Customize the graph structure layout view.
+                        </p>
+                    </div>
                     
                     <div className="grid grid-cols-2 gap-2 pl-3">
                       <ViewModeCard 
@@ -240,9 +242,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-6">
                     <div>
                         <SectionHeader icon={Settings2} title="Graph Settings" />
-                        <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-4">
-                             Configure visual elements and interactive features.
-                        </p>
+                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
+                            <p className="text-[11px] text-muted-foreground leading-snug">
+                                Configure visual elements and interactive features.
+                            </p>
+                        </div>
                     
                         {/* Node Type Selection Mode */}
                         <div className="space-y-3">
