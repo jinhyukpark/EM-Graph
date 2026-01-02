@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, Edit2 } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -843,11 +843,21 @@ export default function ProjectView() {
               transition={{ duration: 0.3 }}
             >
               <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
-                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Legend</h3>
-                 <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer" onClick={() => setGraphSettings(prev => ({...prev, showLegend: false}))} onPointerDown={(e) => e.stopPropagation()}>
-                   <span className="sr-only">Close</span>
-                   <span className="text-lg leading-none">×</span>
-                 </Button>
+                 <div className="flex flex-col">
+                   <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                     Legend
+                     <span className="text-[10px] font-normal text-muted-foreground/70 normal-case px-1.5 py-0.5 bg-secondary/50 rounded-full border border-border/50">Field: Category</span>
+                   </h3>
+                 </div>
+                 <div className="flex items-center gap-1">
+                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => { /* Open Edit Dialog */ }}>
+                     <Edit className="w-3 h-3" />
+                   </Button>
+                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => setGraphSettings(prev => ({...prev, showLegend: false}))} onPointerDown={(e) => e.stopPropagation()}>
+                     <span className="sr-only">Close</span>
+                     <X className="w-3 h-3" />
+                   </Button>
+                 </div>
               </div>
               <div className="p-0">
                 <table className="w-full text-xs">
