@@ -200,6 +200,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* View / Clustering Tab */}
             {activeTab === "view" && (
               <div className="space-y-6">
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Customize the graph layout structure and configure visual elements and interactive features.
+                </p>
+
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
                     
