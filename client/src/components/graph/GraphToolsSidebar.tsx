@@ -121,6 +121,13 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [showGraphSettingsDescription, setShowGraphSettingsDescription] = useState(true);
   const [visibleSections, setVisibleSections] = useState({ layout: true, graphSettings: true });
   const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [controlVisibility, setControlVisibility] = useState({
+    nodeTypeSelection: true,
+    nodeWeight: true,
+    edgeDirection: true,
+    visibilityGroup: true,
+    displayGroup: true,
+  });
   
   // Layout Edit State
   const [editLayoutType, setEditLayoutType] = useState('organic');
@@ -405,8 +412,97 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 {visibleSections.graphSettings && (
                 <div className="space-y-6">
+                    {editingSection === 'graphSettings' ? (
+                        <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                             <div className="flex items-center justify-between border-b border-border pb-4">
+                                <h4 className="text-sm font-semibold flex items-center gap-2">
+                                    <Edit className="w-4 h-4 text-primary" />
+                                    Edit Control
+                                </h4>
+                                <div className="flex gap-2">
+                                    <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                    <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">Visible Controls</Label>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <CircleDot className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Node Type Selection</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.nodeTypeSelection}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeTypeSelection: c }))}
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Sliders className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Node Weight</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.nodeWeight}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeWeight: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <ArrowRight className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Edge Direction</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.edgeDirection}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, edgeDirection: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Eye className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Visibility Options</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.visibilityGroup}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, visibilityGroup: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Maximize2 className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Display Options</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.displayGroup}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, displayGroup: c }))}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
                     <div>
-                        <SectionHeader icon={Settings2} title="Graph Settings" onHide={() => setVisibleSections(prev => ({...prev, graphSettings: false}))} />
+                        <SectionHeader 
+                            icon={Settings2} 
+                            title="Graph Settings" 
+                            onHide={() => setVisibleSections(prev => ({...prev, graphSettings: false}))}
+                            onEditControl={() => setEditingSection('graphSettings')}
+                        />
                         {showGraphSettingsDescription && (
                             <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
                                 <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -425,7 +521,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         )}
                     
                         {/* Node Type Selection Mode */}
-                        <div className="space-y-3">
+                        {controlVisibility.nodeTypeSelection && (
+                        <div className="space-y-3 mb-6">
                             <Label className="text-[10px] font-bold text-muted-foreground/80 mb-1 block uppercase tracking-widest">Node Type Selection</Label>
                             <RadioGroup 
                                 defaultValue={settings?.nodeSelectionMode || 'multi'} 
@@ -442,125 +539,135 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </div>
                             </RadioGroup>
                         </div>
-                    </div>
+                        )}
 
-                    {/* Node Weight & Direction */}
-                    <div className="space-y-6">
-                         <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
-                              <span className="text-sm font-medium text-muted-foreground">{settings?.nodeWeight || 50}%</span>
-                            </div>
-                            <div className="pl-3">
-                                <Slider 
-                                    defaultValue={[settings?.nodeWeight || 50]} 
-                                    max={100} 
-                                    step={1} 
-                                    className="py-1" 
-                                    onValueChange={(v) => updateSetting("nodeWeight", v[0])}
-                                />
-                            </div>
-                         </div>
-
-                         <div className="space-y-2">
-                            <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest block">Edge Direction</Label>
-                            <div className="pl-3">
-                                 <Select 
-                                    value={settings?.nodeDirection || 'directed'} 
-                                    onValueChange={(v) => updateSetting("nodeDirection", v)}
-                                 >
-                                    <SelectTrigger className="h-8 text-sm w-full">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="directed">Directed</SelectItem>
-                                      <SelectItem value="undirected">Undirected</SelectItem>
-                                    </SelectContent>
-                                 </Select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Visibility Toggles */}
-                    <div className="space-y-3 pt-4">
-                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Visibility</Label>
-                        
-                        <div className="space-y-3 pl-3">
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Timeline</Label>
-                                <Switch 
-                                    checked={settings?.showTimeline ?? true}
-                                    onCheckedChange={(c) => updateSetting("showTimeline", c)}
-                                />
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium flex items-center gap-1.5">
-                                    AI Briefing
-                                    <svg width="0" height="0" className="absolute">
-                                        <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stopColor="#3b82f6" />
-                                            <stop offset="50%" stopColor="#8b5cf6" />
-                                            <stop offset="100%" stopColor="#ec4899" />
-                                        </linearGradient>
-                                    </svg>
-                                    <Sparkles 
-                                        className="w-3.5 h-3.5 animate-pulse" 
-                                        style={{ 
-                                            stroke: "url(#ai-gradient)", 
-                                            fill: "url(#ai-gradient)",
-                                            fillOpacity: 0.2
-                                        }} 
+                        {/* Node Weight & Direction */}
+                        <div className="space-y-6">
+                             {controlVisibility.nodeWeight && (
+                             <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
+                                  <span className="text-sm font-medium text-muted-foreground">{settings?.nodeWeight || 50}%</span>
+                                </div>
+                                <div className="pl-3">
+                                    <Slider 
+                                        defaultValue={[settings?.nodeWeight || 50]} 
+                                        max={100} 
+                                        step={1} 
+                                        className="py-1" 
+                                        onValueChange={(v) => updateSetting("nodeWeight", v[0])}
                                     />
-                                </Label>
-                                <Switch 
-                                    checked={settings?.showAiBriefing ?? true}
-                                    onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
-                                />
-                            </div>
-                             <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Legend</Label>
-                                <Switch 
-                                    checked={settings?.showLegend ?? true}
-                                    onCheckedChange={(c) => updateSetting("showLegend", c)}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                                </div>
+                             </div>
+                             )}
 
-                    {/* Display */}
-                    <div className="space-y-3 pt-4">
-                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Display</Label>
-                        <div className="space-y-3 pl-3">
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Show Node Labels</Label>
-                                <Switch 
-                                    checked={settings?.showNodeLabels ?? true}
-                                    onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
-                                />
+                             {controlVisibility.edgeDirection && (
+                             <div className="space-y-2">
+                                <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest block">Edge Direction</Label>
+                                <div className="pl-3">
+                                     <Select 
+                                        value={settings?.nodeDirection || 'directed'} 
+                                        onValueChange={(v) => updateSetting("nodeDirection", v)}
+                                     >
+                                        <SelectTrigger className="h-8 text-sm w-full">
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="directed">Directed</SelectItem>
+                                          <SelectItem value="undirected">Undirected</SelectItem>
+                                        </SelectContent>
+                                     </Select>
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Show Edge Labels</Label>
-                                <Switch 
-                                    checked={settings?.showEdgeLabels ?? false}
-                                    onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
-                                />
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Curved Edges</Label>
-                                <Switch 
-                                    checked={settings?.curvedEdges ?? true}
-                                    onCheckedChange={(c) => updateSetting("curvedEdges", c)}
-                                />
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">Particles Effect</Label>
-                                <Switch 
-                                    checked={settings?.particlesEffect ?? true}
-                                    onCheckedChange={(c) => updateSetting("particlesEffect", c)}
-                                />
+                            )}
+                        </div>
+
+                        {/* Visibility Toggles */}
+                        {controlVisibility.visibilityGroup && (
+                        <div className="space-y-3 pt-4">
+                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Visibility</Label>
+                            
+                            <div className="space-y-3 pl-3">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Timeline</Label>
+                                    <Switch 
+                                        checked={settings?.showTimeline ?? true}
+                                        onCheckedChange={(c) => updateSetting("showTimeline", c)}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                                        AI Briefing
+                                        <svg width="0" height="0" className="absolute">
+                                            <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stopColor="#3b82f6" />
+                                                <stop offset="50%" stopColor="#8b5cf6" />
+                                                <stop offset="100%" stopColor="#ec4899" />
+                                            </linearGradient>
+                                        </svg>
+                                        <Sparkles 
+                                            className="w-3.5 h-3.5 animate-pulse" 
+                                            style={{ 
+                                                stroke: "url(#ai-gradient)", 
+                                                fill: "url(#ai-gradient)",
+                                                fillOpacity: 0.2
+                                            }} 
+                                        />
+                                    </Label>
+                                    <Switch 
+                                        checked={settings?.showAiBriefing ?? true}
+                                        onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
+                                    />
+                                </div>
+                                 <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Legend</Label>
+                                    <Switch 
+                                        checked={settings?.showLegend ?? true}
+                                        onCheckedChange={(c) => updateSetting("showLegend", c)}
+                                    />
+                                </div>
                             </div>
                         </div>
+                        )}
+
+                        {/* Display */}
+                        {controlVisibility.displayGroup && (
+                        <div className="space-y-3 pt-4">
+                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Display</Label>
+                            <div className="space-y-3 pl-3">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Show Node Labels</Label>
+                                    <Switch 
+                                        checked={settings?.showNodeLabels ?? true}
+                                        onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Show Edge Labels</Label>
+                                    <Switch 
+                                        checked={settings?.showEdgeLabels ?? false}
+                                        onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Curved Edges</Label>
+                                    <Switch 
+                                        checked={settings?.curvedEdges ?? true}
+                                        onCheckedChange={(c) => updateSetting("curvedEdges", c)}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-sm font-medium">Particles Effect</Label>
+                                    <Switch 
+                                        checked={settings?.particlesEffect ?? true}
+                                        onCheckedChange={(c) => updateSetting("particlesEffect", c)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        )}
                     </div>
+                    )}
               </div>
                 )}
                 
