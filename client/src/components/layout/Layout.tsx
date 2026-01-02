@@ -195,7 +195,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
              <div className="flex items-center gap-2 flex-1 overflow-hidden">
                 <Link href="/projects" className={cn(
                     buttonVariants({ variant: "ghost", size: "icon" }),
-                    "shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
+                    "shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
                   )}>
                     <ArrowLeft className="w-4 h-4" />
                 </Link>
