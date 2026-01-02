@@ -40,18 +40,18 @@ import {
 } from '@/components/ui/dialog';
 
 // Import Generated Images
-import semiconductorImg from '@assets/generated_images/semiconductor_supply_chain_network.png';
-import fraudImg from '@assets/generated_images/financial_fraud_detection_graph.png';
-import rareEarthImg from '@assets/generated_images/rare_earth_mining_map.png';
-import cyberImg from '@assets/generated_images/cybersecurity_threat_network.png';
-import biotechImg from '@assets/generated_images/biotech_innovation_graph.png';
+import semiconductorImg from '@/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png';
+import fraudImg from '@/assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png';
+import rareEarthImg from '@/assets/generated_images/abstract_network_background.png';
+import cyberImg from '@/assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png';
+import biotechImg from '@/assets/generated_images/biological_protein_interaction_network_graph.png';
 
 // Import Ontology Structure Images
-import semiconductorOntologyImg from '@assets/generated_images/semiconductor_supply_chain_ontology_graph.png';
-import fraudOntologyImg from '@assets/generated_images/financial_fraud_detection_ontology_graph.png';
-import rareEarthOntologyImg from '@assets/generated_images/rare_earth_geopolitics_ontology_graph.png';
-import cyberOntologyImg from '@assets/generated_images/cybersecurity_threat_ontology_graph.png';
-import biotechOntologyImg from '@assets/generated_images/biotech_innovation_ontology_graph.png';
+import semiconductorOntologyImg from '@/assets/generated_images/abstract_database_ontology_illustration.png';
+import fraudOntologyImg from '@/assets/generated_images/abstract_database_ontology_illustration.png';
+import rareEarthOntologyImg from '@/assets/generated_images/abstract_database_ontology_illustration.png';
+import cyberOntologyImg from '@/assets/generated_images/abstract_database_ontology_illustration.png';
+import biotechOntologyImg from '@/assets/generated_images/abstract_database_ontology_illustration.png';
 
 // Mock Data for Brains
 const BRAINS = [
