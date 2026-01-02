@@ -222,26 +222,49 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               key={node.id}
               onClick={() => onNodeSelect?.(node)}
               className={cn(
-                "group flex flex-col gap-2 p-3 rounded-lg border border-transparent cursor-pointer transition-all hover:bg-secondary/50",
-                selectedNodeId === node.id ? "bg-secondary border-primary/20 shadow-sm" : "border-border/0"
+                "group rounded-md border cursor-pointer transition-all hover:shadow-sm overflow-hidden",
+                selectedNodeId === node.id ? "bg-secondary/20 border-primary/50 ring-1 ring-primary/20" : "bg-card border-border hover:border-primary/30"
               )}
             >
-              <div className="grid grid-cols-[40px_1fr] gap-x-2 gap-y-1 text-sm">
-                <span className="text-muted-foreground font-medium text-xs pt-0.5">ID</span>
-                <span className="font-mono text-xs text-foreground/80">#{node.id}</span>
-                
-                <span className="text-muted-foreground font-medium text-xs pt-0.5">Type</span>
-                <span className="text-foreground/90 font-medium text-xs">{node.category}</span>
+              <div className="grid grid-cols-[60px_1fr] text-sm">
+                 {/* Row 1: ID */}
+                 <div className="bg-muted/30 px-2.5 py-1.5 border-b border-r border-border/60 text-[11px] font-medium text-muted-foreground flex items-center">
+                   ID
+                 </div>
+                 <div className="px-2.5 py-1.5 border-b border-border/60 font-mono text-[11px] text-muted-foreground flex items-center bg-background/50">
+                   #{node.id}
+                 </div>
 
-                <span className="text-muted-foreground font-medium text-xs pt-0.5">Name</span>
-                <span className="text-foreground font-bold">{node.name}</span>
+                 {/* Row 2: Type */}
+                 <div className="bg-muted/30 px-2.5 py-1.5 border-b border-r border-border/60 text-[11px] font-medium text-muted-foreground flex items-center">
+                   Type
+                 </div>
+                 <div className="px-2.5 py-1.5 border-b border-border/60 text-[11px] font-medium text-foreground/80 flex items-center bg-background/50">
+                   {node.category}
+                 </div>
 
-                {node.representative && (
+                 {/* Row 3: Name */}
+                 <div className="bg-muted/30 px-2.5 py-1.5 border-b border-r border-border/60 text-[11px] font-medium text-muted-foreground flex items-center">
+                   Name
+                 </div>
+                 <div className={cn(
+                   "px-2.5 py-1.5 border-b border-border/60 text-xs font-bold flex items-center bg-background/50",
+                   selectedNodeId === node.id ? "text-primary" : "text-foreground"
+                 )}>
+                   {node.name}
+                 </div>
+                 
+                 {/* Row 4: Info (Optional) */}
+                 {node.representative && (
                    <>
-                    <span className="text-muted-foreground font-medium text-xs pt-0.5">Info</span>
-                    <span className="text-muted-foreground text-xs">{node.representative}</span>
+                     <div className="bg-muted/30 px-2.5 py-1.5 border-r border-border/60 text-[11px] font-medium text-muted-foreground flex items-center">
+                       Info
+                     </div>
+                     <div className="px-2.5 py-1.5 text-[11px] text-muted-foreground flex items-center bg-background/50">
+                       {node.representative}
+                     </div>
                    </>
-                )}
+                 )}
               </div>
             </div>
           ))}
