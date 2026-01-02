@@ -238,7 +238,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     
                     {/* Node Type Selection Mode */}
                     <div className="space-y-3">
-                        <Label className="text-xs font-medium text-muted-foreground mb-1 block uppercase tracking-wider">Node Type Selection</Label>
+                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-1 block uppercase tracking-widest">Node Type Selection</Label>
                         <RadioGroup 
                             defaultValue={settings?.nodeSelectionMode || 'multi'} 
                             onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
@@ -246,11 +246,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="single" id="mode-single" />
-                                <Label htmlFor="mode-single" className="text-xs font-normal">Single</Label>
+                                <Label htmlFor="mode-single" className="text-sm font-medium">Single</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="multi" id="mode-multi" />
-                                <Label htmlFor="mode-multi" className="text-xs font-normal">Multi-Select</Label>
+                                <Label htmlFor="mode-multi" className="text-sm font-medium">Multi-Select</Label>
                             </div>
                         </RadioGroup>
                     </div>
@@ -259,8 +259,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <div className="space-y-5">
                          <div className="space-y-2">
                             <div className="flex justify-between">
-                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Node Weight Threshold</Label>
-                              <span className="text-xs text-muted-foreground">{settings?.nodeWeight || 50}%</span>
+                              <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
+                              <span className="text-sm font-medium text-muted-foreground">{settings?.nodeWeight || 50}%</span>
                             </div>
                             <div className="pl-3">
                                 <Slider 
@@ -274,13 +274,13 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                          </div>
 
                          <div className="space-y-2">
-                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">Edge Direction</Label>
+                            <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest block">Edge Direction</Label>
                             <div className="pl-3">
                                  <Select 
                                     value={settings?.nodeDirection || 'directed'} 
                                     onValueChange={(v) => updateSetting("nodeDirection", v)}
                                  >
-                                    <SelectTrigger className="h-8 text-xs w-full">
+                                    <SelectTrigger className="h-8 text-sm w-full">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -294,25 +294,25 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                     {/* Visibility Toggles */}
                     <div className="space-y-3 pt-2">
-                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Visibility</Label>
+                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Visibility</Label>
                         
                         <div className="space-y-3 pl-3">
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Timeline</Label>
+                                <Label className="text-sm font-medium">Timeline</Label>
                                 <Switch 
                                     checked={settings?.showTimeline ?? true}
                                     onCheckedChange={(c) => updateSetting("showTimeline", c)}
                                 />
                             </div>
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">AI Briefing</Label>
+                                <Label className="text-sm font-medium">AI Briefing</Label>
                                 <Switch 
                                     checked={settings?.showAiBriefing ?? true}
                                     onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
                                 />
                             </div>
                              <div className="flex items-center justify-between">
-                                <Label className="text-xs">Legend</Label>
+                                <Label className="text-sm font-medium">Legend</Label>
                                 <Switch 
                                     checked={settings?.showLegend ?? true}
                                     onCheckedChange={(c) => updateSetting("showLegend", c)}
@@ -323,31 +323,31 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                     {/* Display */}
                     <div className="space-y-3 pt-2">
-                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Display</Label>
+                        <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Display</Label>
                         <div className="space-y-3 pl-3">
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Show Node Labels</Label>
+                                <Label className="text-sm font-medium">Show Node Labels</Label>
                                 <Switch 
                                     checked={settings?.showNodeLabels ?? true}
                                     onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
                                 />
                             </div>
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Show Edge Labels</Label>
+                                <Label className="text-sm font-medium">Show Edge Labels</Label>
                                 <Switch 
                                     checked={settings?.showEdgeLabels ?? false}
                                     onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
                                 />
                             </div>
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Curved Edges</Label>
+                                <Label className="text-sm font-medium">Curved Edges</Label>
                                 <Switch 
                                     checked={settings?.curvedEdges ?? true}
                                     onCheckedChange={(c) => updateSetting("curvedEdges", c)}
                                 />
                             </div>
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Particles Effect</Label>
+                                <Label className="text-sm font-medium">Particles Effect</Label>
                                 <Switch 
                                     checked={settings?.particlesEffect ?? true}
                                     onCheckedChange={(c) => updateSetting("particlesEffect", c)}
