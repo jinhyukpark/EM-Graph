@@ -25,7 +25,8 @@ import {
   PlusCircle,
   Edit,
   Trash2,
-  GripVertical
+  GripVertical,
+  Map as MapIcon
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -64,6 +65,19 @@ const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  </div>
+);
+
+const ViewModeCard = ({ icon, label, description, active }: { icon: any, label: string, description: string, active: boolean }) => (
+  <div className={cn(
+    "flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+    active ? "bg-primary/10 border-primary/50 text-primary" : "bg-card border-border text-muted-foreground"
+  )}>
+    <div className={cn("mb-2 p-2 rounded-full", active ? "bg-primary/20" : "bg-secondary")}>
+      {icon}
+    </div>
+    <div className="text-xs font-semibold mb-0.5">{label}</div>
+    <div className="text-[10px] opacity-70 text-center leading-tight">{description}</div>
   </div>
 );
 
@@ -219,13 +233,44 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="View Mode" />
+                    
                     <div className="grid grid-cols-2 gap-2">
-                        <Button variant="outline" size="sm" className="text-xs justify-start h-8 px-2 bg-primary/10 border-primary/20 text-primary">
-                            2D View
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-xs justify-start h-8 px-2">
-                            3D View
-                        </Button>
+                      <ViewModeCard 
+                        icon={<Maximize2 className="w-5 h-5" />} 
+                        label="Lens" 
+                        description="Focus on context" 
+                        active={true}
+                      />
+                      <ViewModeCard 
+                        icon={<Network className="w-5 h-5" />} 
+                        label="Standard" 
+                        description="Force-directed" 
+                        active={false}
+                      />
+                      <ViewModeCard 
+                        icon={<Network className="w-5 h-5 rotate-180" />} 
+                        label="Structure" 
+                        description="Hierarchical tree" 
+                        active={false}
+                      />
+                      <ViewModeCard 
+                        icon={<MapIcon className="w-5 h-5" />} 
+                        label="Map" 
+                        description="Geospatial view" 
+                        active={false}
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                        <Label className="text-xs mb-2 block">Dimension</Label>
+                        <div className="grid grid-cols-2 gap-2 bg-muted/20 p-1 rounded-lg">
+                            <Button variant="ghost" size="sm" className="text-xs h-7 bg-background shadow-sm">
+                                2D View
+                            </Button>
+                            <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground">
+                                3D View
+                            </Button>
+                        </div>
                     </div>
                 </div>
               </div>
