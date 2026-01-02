@@ -91,6 +91,11 @@ class GraphErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
 
 // --- Mock Data ---
 
+import stockPrison from '@assets/stock_images/modern_prison_buildi_9bacaffd.jpg';
+import stockDetective from '@assets/stock_images/police_detective_inv_e00135e9.jpg';
+import stockCriminal from '@assets/stock_images/criminal_mugshot_or__e3300888.jpg';
+import stockVictim from '@assets/stock_images/victim_of_crime_port_a8ed2300.jpg';
+
 const STATUS_OPTIONS = [
   { id: 'draft', label: 'Draft', color: 'bg-slate-500' },
   { id: 'review', label: 'Review', color: 'bg-orange-500' },
@@ -133,9 +138,10 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kang "The Viper"', 
       subLabel: 'Crime Boss',
+      type: 'criminal',
       borderColor: '#ef4444', // red-500
       highlight: true,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop'
+      image: stockCriminal
     },
     style: { width: 80, height: 80 }
   },
@@ -147,6 +153,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Thug A', 
       subLabel: 'Associate',
+      type: 'criminal',
       borderColor: '#ef4444', // red-500
       image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop'
     },
@@ -160,6 +167,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Witness Kim', 
       subLabel: 'Observer',
+      type: 'victim',
       borderColor: '#eab308', // yellow-500
       image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop'
     },
@@ -173,6 +181,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Lee', 
       subLabel: 'Partner',
+      type: 'detective',
       borderColor: '#3b82f6', // blue-500
       image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop'
     },
@@ -186,8 +195,9 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Choi', 
       subLabel: 'Lead Investigator',
+      type: 'detective',
       borderColor: '#3b82f6', // blue-500
-      image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop'
+      image: stockDetective
     },
     style: { width: 70, height: 70 }
   },
@@ -199,6 +209,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Lawyer Han', 
       subLabel: 'Defense Attorney',
+      type: 'criminal',
       borderColor: '#a855f7', // purple-500
       image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'
     },
@@ -212,6 +223,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Park "Razor"', 
       subLabel: 'Enforcer',
+      type: 'criminal',
       borderColor: '#ef4444', // red-500
       image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
     },
@@ -225,6 +237,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kim "Ledger"', 
       subLabel: 'Money Launderer',
+      type: 'criminal',
       borderColor: '#ef4444', // red-500
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop'
     },
@@ -238,8 +251,9 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim A', 
       subLabel: 'Assault',
+      type: 'victim',
       borderColor: '#f97316', // orange-500
-      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop'
+      image: stockVictim
     },
     style: { width: 60, height: 60 }
   },
@@ -251,6 +265,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Case #22-004', 
       subLabel: 'Lawsuit',
+      type: 'detective',
       borderColor: '#a855f7' // purple-500
     },
     style: { width: 60, height: 60 }
@@ -263,6 +278,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim B', 
       subLabel: 'Fraud',
+      type: 'victim',
       borderColor: '#eab308' // yellow-500
     },
     style: { width: 50, height: 50 }
@@ -275,6 +291,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Company X', 
       subLabel: 'Fraud Victim',
+      type: 'victim',
       borderColor: '#eab308' // yellow-500
     },
     style: { width: 60, height: 60 }
@@ -287,6 +304,7 @@ const INITIAL_NODES = [
     data: { 
       label: 'Burner Phone', 
       subLabel: 'Evidence',
+      type: 'detective',
       borderColor: '#64748b' // slate-500
     },
     style: { width: 50, height: 50 }
@@ -299,21 +317,24 @@ const INITIAL_NODES = [
     data: { 
       label: 'Offshore Account', 
       subLabel: 'Asset',
+      type: 'criminal',
       borderColor: '#10b981' // emerald-500
     },
     style: { width: 60, height: 60 }
   },
-  // Bottom Right (Warehouse 4)
+  // Bottom Right (Prison - Replacing Warehouse)
   { 
-    id: 'warehouse_4', 
+    id: 'prison_central', 
     type: 'entity',
     position: { x: 250, y: 350 }, 
     data: { 
-      label: 'Warehouse 4', 
-      subLabel: 'Crime Scene',
-      borderColor: '#10b981' // emerald-500
+      label: 'Seoul Central', 
+      subLabel: 'Prison',
+      type: 'prison',
+      borderColor: '#10b981', // emerald-500
+      image: stockPrison
     },
-    style: { width: 60, height: 60 }
+    style: { width: 75, height: 75 }
   }
 ];
 
@@ -321,7 +342,7 @@ const INITIAL_EDGES = [
   // Red Arrows (Criminal/Hostile)
   { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
   { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-park-warehouse', source: 'park_razor', target: 'warehouse_4', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-park-warehouse', source: 'park_razor', target: 'prison_central', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
   { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
   
   // Blue Lines (Police/Investigation)
@@ -329,7 +350,7 @@ const INITIAL_EDGES = [
   { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
   { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
   { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-lee-warehouse', source: 'det_lee', target: 'warehouse_4', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-lee-warehouse', source: 'det_lee', target: 'prison_central', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
   
   // Purple (Legal)
   { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },

@@ -1,17 +1,30 @@
 import { Handle, Position } from '@xyflow/react';
 import { cn } from "@/lib/utils";
+import { Shield, AlertTriangle, Lock, Heart, User, Gavel, Siren } from "lucide-react";
 
 interface ImageNodeProps {
   data: {
     label: string;
     image?: string;
-    type?: string;
+    type?: string; // 'criminal' | 'detective' | 'prison' | 'victim'
     subLabel?: string;
     highlight?: boolean;
     borderColor?: string;
   };
   selected?: boolean;
 }
+
+const TypeIcon = ({ type, className }: { type?: string, className?: string }) => {
+  if (!type) return null;
+  
+  switch (type.toLowerCase()) {
+    case 'criminal': return <Siren className={className} />;
+    case 'detective': return <Shield className={className} />;
+    case 'prison': return <Lock className={className} />;
+    case 'victim': return <Heart className={className} />;
+    default: return <User className={className} />;
+  }
+};
 
 export default function ImageNode({ data, selected }: ImageNodeProps) {
   // Use borderColor as the main color, default to gray if missing
@@ -33,7 +46,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
       {/* Circle Container - White background with colored border */}
       <div 
         className={cn(
-          "relative rounded-full transition-all duration-300 z-10 flex items-center justify-center shadow-sm overflow-hidden",
+          "relative rounded-full transition-all duration-300 z-10 flex items-center justify-center shadow-sm overflow-hidden group",
           selected ? "ring-4 ring-primary/30 scale-105" : "hover:scale-105",
           data.highlight && "shadow-[0_0_20px_rgba(var(--primary),0.2)]"
         )}
@@ -58,6 +71,16 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
           >
              {data.label.substring(0, 2).toUpperCase()}
           </span>
+        )}
+        
+        {/* Type Icon Overlay */}
+        {data.type && (
+            <div 
+                className="absolute bottom-0 right-0 p-1 rounded-tl-lg bg-background/80 backdrop-blur-sm border-t border-l border-border/50"
+                style={{ color: color }}
+            >
+                <TypeIcon type={data.type} className="w-3 h-3" />
+            </div>
         )}
       </div>
 
