@@ -95,6 +95,11 @@ import stockPrison from '@assets/stock_images/modern_prison_buildi_9bacaffd.jpg'
 import stockDetective from '@assets/stock_images/police_detective_inv_e00135e9.jpg';
 import stockCriminal from '@assets/stock_images/criminal_mugshot_or__e3300888.jpg';
 import stockVictim from '@assets/stock_images/victim_of_crime_port_a8ed2300.jpg';
+import stockCase from '@assets/stock_images/legal_case_file_docu_d34f6df4.jpg';
+import stockVictimB from '@assets/stock_images/portrait_of_a_young__70369a95.jpg';
+import stockCompany from '@assets/stock_images/modern_corporate_off_11c42306.jpg';
+import stockPhone from '@assets/stock_images/old_burner_mobile_ph_af367193.jpg';
+import stockMoney from '@assets/stock_images/stacks_of_money_in_b_5f30198e.jpg';
 
 const STATUS_OPTIONS = [
   { id: 'draft', label: 'Draft', color: 'bg-slate-500' },
@@ -266,7 +271,8 @@ const INITIAL_NODES = [
       label: 'Case #22-004', 
       subLabel: 'Lawsuit',
       type: 'detective',
-      borderColor: '#a855f7' // purple-500
+      borderColor: '#a855f7', // purple-500
+      image: stockCase
     },
     style: { width: 60, height: 60 }
   },
@@ -279,7 +285,8 @@ const INITIAL_NODES = [
       label: 'Victim B', 
       subLabel: 'Fraud',
       type: 'victim',
-      borderColor: '#eab308' // yellow-500
+      borderColor: '#eab308', // yellow-500
+      image: stockVictimB
     },
     style: { width: 50, height: 50 }
   },
@@ -292,7 +299,8 @@ const INITIAL_NODES = [
       label: 'Company X', 
       subLabel: 'Fraud Victim',
       type: 'victim',
-      borderColor: '#eab308' // yellow-500
+      borderColor: '#eab308', // yellow-500
+      image: stockCompany
     },
     style: { width: 60, height: 60 }
   },
@@ -305,7 +313,8 @@ const INITIAL_NODES = [
       label: 'Burner Phone', 
       subLabel: 'Evidence',
       type: 'detective',
-      borderColor: '#64748b' // slate-500
+      borderColor: '#64748b', // slate-500
+      image: stockPhone
     },
     style: { width: 50, height: 50 }
   },
@@ -318,7 +327,8 @@ const INITIAL_NODES = [
       label: 'Offshore Account', 
       subLabel: 'Asset',
       type: 'criminal',
-      borderColor: '#10b981' // emerald-500
+      borderColor: '#10b981', // emerald-500
+      image: stockMoney
     },
     style: { width: 60, height: 60 }
   },
