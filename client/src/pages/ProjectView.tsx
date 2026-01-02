@@ -665,7 +665,7 @@ export default function ProjectView() {
           className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
         >
           <LayoutTemplate className="w-3.5 h-3.5" />
-          Navigation
+          Graph Connect
         </TabsTrigger>
       </TabsList>
     </Tabs>
