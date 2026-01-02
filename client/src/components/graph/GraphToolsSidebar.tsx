@@ -39,7 +39,8 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUp,
-  ArrowLeft
+  ArrowLeft,
+  Waypoints
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -1060,14 +1061,54 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-1.5">
                             <Label className="text-xs font-medium">Sizing Method</Label>
                             <Select defaultValue="centrality">
-                                <SelectTrigger className="h-8 text-xs">
+                                <SelectTrigger className="h-10 text-xs">
                                     <SelectValue placeholder="Select method" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="centrality">Degree Centrality</SelectItem>
-                                    <SelectItem value="pagerank">PageRank Score</SelectItem>
-                                    <SelectItem value="betweenness">Betweenness</SelectItem>
-                                    <SelectItem value="manual">Manual Override</SelectItem>
+                                    <SelectItem value="centrality" className="py-2">
+                                        <div className="flex flex-col gap-0.5 text-left">
+                                            <div className="flex items-center gap-2 font-medium">
+                                                <Network className="w-3 h-3 text-primary" />
+                                                <span>Degree Centrality</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground pl-5">
+                                                Measures direct connections
+                                            </span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="pagerank" className="py-2">
+                                        <div className="flex flex-col gap-0.5 text-left">
+                                            <div className="flex items-center gap-2 font-medium">
+                                                <Share2 className="w-3 h-3 text-primary" />
+                                                <span>PageRank Score</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground pl-5">
+                                                Measures node importance via links
+                                            </span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="betweenness" className="py-2">
+                                        <div className="flex flex-col gap-0.5 text-left">
+                                            <div className="flex items-center gap-2 font-medium">
+                                                <Waypoints className="w-3 h-3 text-primary" />
+                                                <span>Betweenness</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground pl-5">
+                                                Measures bridge role in shortest paths
+                                            </span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="manual" className="py-2">
+                                        <div className="flex flex-col gap-0.5 text-left">
+                                            <div className="flex items-center gap-2 font-medium">
+                                                <Edit className="w-3 h-3 text-primary" />
+                                                <span>Manual Override</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground pl-5">
+                                                Manually set node sizes
+                                            </span>
+                                        </div>
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
