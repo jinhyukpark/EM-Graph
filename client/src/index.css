@@ -199,3 +199,17 @@
 .react-flow__controls-button {
   @apply border-b border-border bg-card fill-foreground hover:bg-secondary transition-colors;
 }
+
+/* Custom Animations */
+@keyframes gradient-xy {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+.animate-gradient-xy {
+    animation: gradient-xy 3s ease infinite;
+    background-size: 200% 200%;
+}
