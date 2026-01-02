@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, Component, ErrorInfo } from "react";
 import Layout from "@/components/layout/Layout";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,45 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+
+// --- Error Boundary ---
+class GraphErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: ErrorInfo) {
+    console.error("GraphErrorBoundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full p-4 text-center bg-muted/10">
+          <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
+          <h3 className="font-semibold text-foreground">Graph Rendering Error</h3>
+          <p className="text-sm text-muted-foreground mt-1">Something went wrong while loading the graph.</p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-4"
+            onClick={() => this.setState({ hasError: false })}
+          >
+            Try Again
+          </Button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 
 // --- Mock Data ---
 
@@ -584,6 +623,12 @@ const WikiLink = ({ children }: { children: string }) => {
 
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const [fileTree, setFileTree] = useState(INITIAL_FILE_TREE);
   const [showExplorer, setShowExplorer] = useState(true);
@@ -1347,7 +1392,9 @@ export default function KnowledgeGarden() {
                          </div>
                         <div className="flex-1 w-full relative">
                           <ReactFlowProvider>
-                            <GraphView />
+                            <GraphErrorBoundary>
+                              {isMounted && <GraphView />}
+                            </GraphErrorBoundary>
                           </ReactFlowProvider>
                         </div>
                       </ResizablePanel>
