@@ -246,27 +246,27 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
             >
               <div className="grid grid-cols-[40px_1fr] gap-x-2 gap-y-1.5 text-sm">
                  {/* ID */}
-                 <div className="text-[11px] font-medium text-muted-foreground flex items-center">
+                 <div className="text-[11px] font-normal text-muted-foreground flex items-center">
                    ID
                  </div>
-                 <div className="font-mono text-[11px] text-foreground/70 flex items-center">
+                 <div className="font-mono text-[12px] text-foreground/70 flex items-center">
                    #{node.id}
                  </div>
 
                  {/* Type */}
-                 <div className="text-[11px] font-medium text-muted-foreground flex items-center">
+                 <div className="text-[11px] font-normal text-muted-foreground flex items-center">
                    Type
                  </div>
-                 <div className="text-[12px] font-medium text-foreground/90 flex items-center">
+                 <div className="text-[12px] font-normal text-foreground/90 flex items-center">
                    {node.category}
                  </div>
 
                  {/* Name */}
-                 <div className="text-[11px] font-medium text-muted-foreground flex items-center pt-0.5">
+                 <div className="text-[11px] font-normal text-muted-foreground flex items-center pt-0.5">
                    Name
                  </div>
                  <div className={cn(
-                   "text-sm font-medium flex items-center leading-none pt-0.5",
+                   "text-[12px] font-normal flex items-center leading-none pt-0.5",
                    selectedNodeId === node.id ? "text-primary" : "text-foreground"
                  )}>
                    {node.name}
@@ -275,10 +275,10 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
                  {/* Info */}
                  {node.representative && (
                    <>
-                     <div className="text-[11px] font-medium text-muted-foreground flex items-center">
+                     <div className="text-[11px] font-normal text-muted-foreground flex items-center">
                        Info
                      </div>
-                     <div className="text-[11px] text-muted-foreground flex items-center">
+                     <div className="text-[12px] font-normal text-muted-foreground flex items-center">
                        {node.representative}
                      </div>
                    </>
