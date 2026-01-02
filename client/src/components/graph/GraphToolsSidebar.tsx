@@ -200,12 +200,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* View / Clustering Tab */}
             {activeTab === "view" && (
               <div className="space-y-6">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Customize the graph layout structure and configure visual elements and interactive features.
-                </p>
-
+                
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
+                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-2">
+                        Customize the graph structure layout view.
+                    </p>
                     
                     <div className="grid grid-cols-2 gap-2 pl-3">
                       <ViewModeCard 
@@ -239,6 +239,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 <div className="space-y-4">
                     <SectionHeader icon={Settings2} title="Graph Settings" />
+                    <p className="text-[11px] text-muted-foreground leading-snug pl-1 mb-2">
+                         Configure visual elements and interactive features.
+                    </p>
                     
                     {/* Node Type Selection Mode */}
                     <div className="space-y-3">
