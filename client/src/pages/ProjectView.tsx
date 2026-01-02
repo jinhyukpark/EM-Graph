@@ -643,6 +643,11 @@ export default function ProjectView() {
   const handleSidebarNodeSelect = (node: any) => {
     // In a real app, you'd select the node in the graph. 
     // Here we just set selectedNode to show the panel
+    if (!node) {
+      setSelectedNode(null);
+      return;
+    }
+    
     setSelectedNode({ 
       id: node.id, 
       data: { label: node.name, type: node.category }, 
@@ -680,7 +685,7 @@ export default function ProjectView() {
           ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNode={selectedNode} /> 
           : undefined
       }
-      sidebarControls={SidebarToggle}
+      sidebarControls={selectedNode ? null : SidebarToggle}
     >
       <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
