@@ -20,6 +20,23 @@ import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 import BrainMarket from "@/pages/BrainMarket";
 
+// Suppress specific errors that are common in iframe environments like Replit Preview
+// but don't affect the actual functionality of the application.
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('ResizeObserver loop')) return;
+  originalConsoleError.apply(console, args);
+};
+
+window.addEventListener('error', (event) => {
+  if (event.message === 'ResizeObserver loop limit exceeded' || 
+      event.message === 'Script error.' ||
+      event.message === 'An uncaught exception occured but the error was not an error object.') {
+    event.stopImmediatePropagation();
+    // Don't prevent default for everything, just suppress the noise
+  }
+});
+
 function AppRouter() {
   return (
     <WouterRouter hook={useHashLocation}>

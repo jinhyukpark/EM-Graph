@@ -627,7 +627,12 @@ export default function KnowledgeGarden() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Add a small delay to ensure layout is stable before rendering heavy graph components
+    // This helps prevent ResizeObserver errors in iframe environments
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const [fileTree, setFileTree] = useState(INITIAL_FILE_TREE);
