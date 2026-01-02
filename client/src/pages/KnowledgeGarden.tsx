@@ -12,7 +12,8 @@ import {
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User,
-  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle
+  Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
+  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -659,6 +660,97 @@ function GraphInsightCard() {
   );
 }
 
+// Timeline Component
+function GraphTimeline() {
+  // Mock data for the timeline
+  const timelineData = Array.from({ length: 60 }, (_, i) => ({
+    date: new Date(2023, 0, 1 + i * 5),
+    value: Math.floor(Math.random() * 50) + 10,
+    hasEvent: Math.random() > 0.8
+  }));
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      {/* Timeline Chart Area */}
+      <div className="h-24 w-full px-4 pt-4 relative">
+        <div className="h-full w-full flex items-end gap-[2px]">
+          {timelineData.map((d, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
+              {/* Event Marker */}
+              {d.hasEvent && (
+                <div className="mb-1 w-2 h-2 rounded-full border border-red-500 bg-transparent group-hover:bg-red-500 transition-colors" />
+              )}
+              
+              {/* Bar */}
+              <div 
+                className={cn(
+                  "w-full rounded-t-sm transition-all duration-200",
+                  d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300 group-hover:bg-slate-400"
+                )}
+                style={{ height: `${d.value}%` }}
+              />
+              
+              {/* Tooltip */}
+              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-md whitespace-nowrap border border-border z-20">
+                {format(d.date, 'MMM d, yyyy')} • {d.value} events
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Month Labels */}
+        <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 pointer-events-none">
+          {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((m, i) => (
+             <span key={i} className="text-[10px] text-muted-foreground font-medium bg-background/50 px-1 rounded translate-y-1/2">{m} 2024</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Control Bar */}
+      <div className="h-10 border-t border-border bg-muted/30 flex items-center justify-between px-4">
+         <div className="flex items-center gap-1">
+             <span className="text-[10px] text-muted-foreground font-medium">Timeline Range:</span>
+             <span className="text-[10px] text-foreground font-semibold">Jan 1, 2024 - Jun 30, 2024</span>
+         </div>
+
+         <div className="flex items-center justify-center gap-2">
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
+                 <ChevronsLeft className="w-4 h-4" />
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
+                 <ChevronLeft className="w-4 h-4" />
+             </Button>
+             <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                onClick={() => setIsPlaying(!isPlaying)}
+             >
+                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
+                 <ChevronRight className="w-4 h-4" />
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
+                 <ChevronsRight className="w-4 h-4" />
+             </Button>
+         </div>
+
+         <div className="flex items-center gap-2">
+             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                 <ZoomOut className="w-3.5 h-3.5" />
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                 <ZoomIn className="w-3.5 h-3.5" />
+             </Button>
+         </div>
+      </div>
+    </div>
+  );
+}
+
 function GraphView() {
   console.log("[GraphView] Component rendering...");
 
@@ -669,21 +761,24 @@ function GraphView() {
     console.log("[GraphView] Hooks initialized successfully", { nodesCount: nodes.length, edgesCount: edges.length });
 
     return (
-      <div className="w-full h-full relative">
+      <div className="w-full h-full relative flex flex-col">
         <GraphInsightCard />
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodeTypes={nodeTypes}
-          fitView
-          className="bg-background"
-        >
-          <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
-          <Controls className="!bg-card !border-border !fill-foreground !shadow-sm" />
-          <GraphLegend />
-        </ReactFlow>
+        <div className="flex-1 relative min-h-0">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              nodeTypes={nodeTypes}
+              fitView
+              className="bg-background"
+            >
+              <Background color="#888" gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-20" />
+              <Controls className="!bg-card !border-border !fill-foreground !shadow-sm !mb-28" />
+              <GraphLegend />
+            </ReactFlow>
+        </div>
+        <GraphTimeline />
       </div>
     );
   } catch (error) {
