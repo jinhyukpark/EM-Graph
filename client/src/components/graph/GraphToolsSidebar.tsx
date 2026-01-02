@@ -1133,43 +1133,165 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* Filters Tab */}
             {activeTab === "filters" && (
               <div className="space-y-4">
-                <SectionHeader icon={Filter} title="Filters" />
-                
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <Label className="text-xs">Min Degree</Label>
-                      <span className="text-xs text-muted-foreground">1</span>
-                    </div>
-                    <Slider defaultValue={[1]} max={20} step={1} className="py-1" />
+                <SectionHeader icon={Filter} title="Node Type Filters" />
+                <div className="space-y-4">
+
+                  {/* Criminal Filter */}
+                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                      <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-red-500" />
+                              <span className="text-sm font-medium">Criminal</span>
+                          </div>
+                          <Switch defaultChecked className="scale-75" />
+                      </div>
+                      
+                      <div className="pl-4 space-y-4 pt-1">
+                          {/* Range Filter */}
+                          <div className="space-y-2">
+                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                  <span>Risk Score</span>
+                                  <span>0 - 100</span>
+                              </div>
+                              <Slider defaultValue={[0, 100]} max={100} step={1} className="py-1" />
+                          </div>
+
+                          {/* Checkbox Filter */}
+                          <div className="space-y-2">
+                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Status</div>
+                             <div className="space-y-1.5">
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="status-incarcerated" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="status-incarcerated" className="text-xs font-normal cursor-pointer">Incarcerated</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="status-atlarge" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="status-atlarge" className="text-xs font-normal cursor-pointer">At Large</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="status-suspect" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="status-suspect" className="text-xs font-normal cursor-pointer">Suspect</Label>
+                                 </div>
+                             </div>
+                          </div>
+                      </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <Label className="text-xs">Edge Weight Threshold</Label>
-                    <Slider defaultValue={[0.2]} max={1} step={0.1} className="py-1" />
+                  {/* Detective Filter */}
+                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                      <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-blue-500" />
+                              <span className="text-sm font-medium">Detective</span>
+                          </div>
+                          <Switch defaultChecked className="scale-75" />
+                      </div>
+                      
+                      <div className="pl-4 space-y-4 pt-1">
+                          {/* Range Filter */}
+                          <div className="space-y-2">
+                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                  <span>Clearance Rate</span>
+                                  <span>50% - 100%</span>
+                              </div>
+                              <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1" />
+                          </div>
+
+                          {/* Checkbox Filter */}
+                          <div className="space-y-2">
+                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
+                             <div className="space-y-1.5">
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="unit-cyber" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="unit-cyber" className="text-xs font-normal cursor-pointer">Cyber Crimes</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="unit-narcotics" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="unit-narcotics" className="text-xs font-normal cursor-pointer">Narcotics</Label>
+                                 </div>
+                             </div>
+                          </div>
+                      </div>
                   </div>
 
-                  <div className="pt-2">
-                    <Label className="text-xs mb-2 block">Visible Types</Label>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                         <Label htmlFor="filter-person" className="text-xs font-normal">Person</Label>
-                         <Switch id="filter-person" defaultChecked className="scale-75" />
+                  {/* Prison Filter */}
+                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                      <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                              <span className="text-sm font-medium">Prison / Location</span>
+                          </div>
+                          <Switch defaultChecked className="scale-75" />
                       </div>
-                      <div className="flex items-center justify-between">
-                         <Label htmlFor="filter-org" className="text-xs font-normal">Organization</Label>
-                         <Switch id="filter-org" defaultChecked className="scale-75" />
+                      
+                      <div className="pl-4 space-y-4 pt-1">
+                          {/* Range Filter */}
+                          <div className="space-y-2">
+                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                  <span>Occupancy</span>
+                                  <span>0% - 100%</span>
+                              </div>
+                              <Slider defaultValue={[0, 90]} max={100} step={1} className="py-1" />
+                          </div>
+
+                          {/* Checkbox Filter */}
+                          <div className="space-y-2">
+                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Security Level</div>
+                             <div className="space-y-1.5">
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="sec-max" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="sec-max" className="text-xs font-normal cursor-pointer">Maximum</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="sec-med" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="sec-med" className="text-xs font-normal cursor-pointer">Medium</Label>
+                                 </div>
+                             </div>
+                          </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                         <Label htmlFor="filter-loc" className="text-xs font-normal">Location</Label>
-                         <Switch id="filter-loc" defaultChecked className="scale-75" />
-                      </div>
-                      <div className="flex items-center justify-between">
-                         <Label htmlFor="filter-event" className="text-xs font-normal">Event</Label>
-                         <Switch id="filter-event" defaultChecked className="scale-75" />
-                      </div>
-                    </div>
                   </div>
+
+                  {/* Victim Filter */}
+                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                      <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-amber-500" />
+                              <span className="text-sm font-medium">Victim</span>
+                          </div>
+                          <Switch defaultChecked className="scale-75" />
+                      </div>
+                      
+                      <div className="pl-4 space-y-4 pt-1">
+                          {/* Range Filter */}
+                          <div className="space-y-2">
+                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                  <span>Damage Amount</span>
+                                  <span>$10k - $500k+</span>
+                              </div>
+                              <Slider defaultValue={[10]} max={100} step={1} className="py-1" />
+                          </div>
+
+                           {/* Checkbox Filter */}
+                          <div className="space-y-2">
+                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
+                             <div className="space-y-1.5">
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                     <Checkbox id="vic-corporate" defaultChecked className="h-3.5 w-3.5" />
+                                     <Label htmlFor="vic-corporate" className="text-xs font-normal cursor-pointer">Corporate</Label>
+                                 </div>
+                             </div>
+                          </div>
+                      </div>
+                  </div>
+
                 </div>
               </div>
             )}
