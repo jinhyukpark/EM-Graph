@@ -259,6 +259,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Layout Type</Label>
+                                <p className="text-[11px] text-muted-foreground mb-3">
+                                  Please select a layout type that can change the analysis form of the graph.
+                                </p>
                                 <div className="grid grid-cols-2 gap-2">
                                     <ViewModeCard 
                                         icon={<Share2 className="w-5 h-5" />}
