@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +22,13 @@ import imgLee from '@assets/stock_images/asian_man_portrait_s_874ea05d.jpg';
 import imgChoi from '@assets/stock_images/asian_woman_portrait_5bef3717.jpg';
 import imgWarehouse from '@assets/stock_images/warehouse_building_i_2038a214.jpg';
 import imgPhone from '@assets/stock_images/smartphone_generic_7f33ffa4.jpg';
+
+import imgMugshot1 from '@assets/stock_images/mugshot_of_a_crimina_0401f1c6.jpg';
+import imgMugshot2 from '@assets/stock_images/mugshot_of_a_crimina_4136a6c1.jpg';
+import imgMugshot3 from '@assets/stock_images/mugshot_of_a_crimina_64a82a3e.jpg';
+import imgEvidence1 from '@assets/stock_images/evidence_photo_crime_bfceb691.jpg';
+import imgEvidence2 from '@assets/stock_images/evidence_photo_crime_5d2c2e54.jpg';
+import imgEvidence3 from '@assets/stock_images/evidence_photo_crime_dcf42457.jpg';
 
 interface NodeData {
   id: string;
@@ -44,8 +51,8 @@ export const MOCK_COMPANY_NODES: NodeData[] = [
     representative: "Male, 35", 
     location: "Seoul", 
     years: 2, 
-    image: imgKang,
-    images: [imgKang, imgStation, imgPhone] 
+    image: imgMugshot1,
+    images: [imgMugshot1, imgMugshot2, imgMugshot3] 
   },
   { id: "2", name: "Kim Ji-hyun", category: "Victim", representative: "Female, 28", location: "Busan", years: 0, image: imgKim },
   { id: "3", name: "Park Dong-wook", category: "Suspect", representative: "Male, 42", location: "Incheon", years: 5, image: imgPark },
@@ -59,18 +66,29 @@ export const MOCK_COMPANY_NODES: NodeData[] = [
     image: imgStation,
     images: [imgStation, imgWarehouse]
   },
-  { id: "5", name: "Stolen Vehicle (12ga 3456)", category: "Evidence", representative: "Hyundai Sonata", location: "Gyeonggi-do", years: 0, image: imgCar },
+  { 
+    id: "5", 
+    name: "Stolen Vehicle (12ga 3456)", 
+    category: "Evidence", 
+    representative: "Hyundai Sonata", 
+    location: "Gyeonggi-do", 
+    years: 0, 
+    image: imgEvidence1,
+    images: [imgEvidence1, imgEvidence2, imgEvidence3]
+  },
   { id: "6", name: "Lee Sang-ho", category: "Witness", representative: "Male, 31", location: "Seoul", years: 0, image: imgLee },
   { id: "7", name: "Choi Yu-jin", category: "Victim", representative: "Female, 24", location: "Seoul", years: 0, image: imgChoi },
   { id: "8", name: "Incheon Port Warehouse", category: "Location", representative: "Industrial Zone", location: "Incheon", years: 10, image: imgWarehouse },
   { id: "9", name: "Burner Phone (Samsung)", category: "Evidence", representative: "Galaxy A12", location: "Seongnam-si", years: 1, image: imgPhone },
-  { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8, image: imgKang }, // Reuse first image for now
+  { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8, image: imgKang }, 
 ];
 
 function NodeImageCarousel({ images, name }: { images: string[], name: string }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const [fullscreenIndex, setFullscreenIndex] = useState(0);
 
   useEffect(() => {
     if (!api) {
@@ -85,6 +103,19 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
     });
   }, [api]);
 
+  const openFullscreen = (index: number) => {
+    setFullscreenIndex(index);
+    setFullscreenOpen(true);
+  };
+
+  const nextImage = () => {
+    setFullscreenIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setFullscreenIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   if (images.length === 0) {
     return (
       <div className="w-full aspect-video flex items-center justify-center bg-secondary/20 text-muted-foreground">
@@ -94,44 +125,105 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
   }
 
   return (
-    <Carousel setApi={setApi} className="w-full">
-      <CarouselContent>
-        {images.map((img, idx) => (
-          <CarouselItem key={idx}>
-            <Dialog>
-              <DialogTrigger asChild>
-                <div className="aspect-video w-full relative cursor-zoom-in group/image">
-                  <img 
-                    src={img} 
-                    alt={`${name} - ${idx + 1}`} 
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover/image:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover/image:opacity-100">
-                    <Maximize2 className="w-8 h-8 text-white drop-shadow-md" />
-                  </div>
-                </div>
-              </DialogTrigger>
-              <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center overflow-hidden">
+    <>
+      <Carousel setApi={setApi} className="w-full">
+        <CarouselContent>
+          {images.map((img, idx) => (
+            <CarouselItem key={idx}>
+              <div 
+                className="aspect-video w-full relative cursor-zoom-in group/image"
+                onClick={() => openFullscreen(idx)}
+              >
                 <img 
                   src={img} 
-                  alt={`${name} - Fullscreen`} 
-                  className="w-full h-full max-h-[90vh] object-contain rounded-md"
+                  alt={`${name} - ${idx + 1}`} 
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover/image:scale-105"
                 />
-              </DialogContent>
-            </Dialog>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      {images.length > 1 && (
-        <>
-          <CarouselPrevious className="left-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
-          <CarouselNext className="right-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
-          <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
-            {current} / {count}
+                <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover/image:opacity-100">
+                  <Maximize2 className="w-8 h-8 text-white drop-shadow-md" />
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {images.length > 1 && (
+          <>
+            <CarouselPrevious className="left-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
+            <CarouselNext className="right-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
+            <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+              {current} / {count}
+            </div>
+          </>
+        )}
+      </Carousel>
+
+      <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
+        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 border-none bg-black/95 shadow-2xl flex flex-col outline-none">
+          {/* Header Controls */}
+          <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-white/70 hover:text-white hover:bg-white/10 rounded-full"
+              onClick={() => setFullscreenOpen(false)}
+            >
+              <X className="w-6 h-6" />
+            </Button>
           </div>
-        </>
-      )}
-    </Carousel>
+
+          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-black/40 backdrop-blur-sm">
+            {/* Main Image */}
+            <img 
+              src={images[fullscreenIndex]} 
+              alt={`${name} - Fullscreen`} 
+              className="max-w-full max-h-[75vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300"
+            />
+
+            {/* Navigation Arrows (Large) */}
+            {images.length > 1 && (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 text-white/70 hover:bg-black/40 hover:text-white transition-all"
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/20 text-white/70 hover:bg-black/40 hover:text-white transition-all"
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnail Strip */}
+          {images.length > 1 && (
+            <div className="h-24 bg-black/80 border-t border-white/10 flex items-center justify-center gap-2 px-4 overflow-x-auto">
+               {images.map((img, idx) => (
+                 <div 
+                   key={idx}
+                   onClick={() => setFullscreenIndex(idx)}
+                   className={cn(
+                     "h-16 aspect-[4/3] rounded-md overflow-hidden cursor-pointer transition-all duration-200 border-2",
+                     fullscreenIndex === idx 
+                       ? "border-primary opacity-100 scale-105" 
+                       : "border-transparent opacity-50 hover:opacity-80 hover:scale-105"
+                   )}
+                 >
+                   <img src={img} className="w-full h-full object-cover" alt="thumbnail" />
+                 </div>
+               ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
