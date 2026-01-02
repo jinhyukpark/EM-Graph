@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit } from "lucide-react";
+import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -550,13 +551,13 @@ const INITIAL_EDGES = [
 ];
 
 // Mock Legend Data (Updated)
-const LEGEND_DATA = [
-  { label: "Criminal", color: "bg-red-500", count: 4, percent: "25%" },
-  { label: "Detective", color: "bg-blue-500", count: 2, percent: "12%" },
-  { label: "Victim/Witness", color: "bg-amber-400", count: 4, percent: "25%" },
-  { label: "Legal/Lawsuit", color: "bg-violet-500", count: 2, percent: "12%" },
-  { label: "Asset/Location", color: "bg-emerald-500", count: 3, percent: "18%" },
-  { label: "Evidence", color: "bg-slate-500", count: 1, percent: "6%" },
+const DEFAULT_LEGEND_ITEMS: LegendItem[] = [
+  { id: "1", label: "Criminal", color: "bg-red-500", alias: "Criminal" },
+  { id: "2", label: "Detective", color: "bg-blue-500", alias: "Detective" },
+  { id: "3", label: "Victim/Witness", color: "bg-amber-400", alias: "Victim/Witness" },
+  { id: "4", label: "Legal/Lawsuit", color: "bg-violet-500", alias: "Legal/Lawsuit" },
+  { id: "5", label: "Asset/Location", color: "bg-emerald-500", alias: "Asset/Location" },
+  { id: "6", label: "Evidence", color: "bg-slate-500", alias: "Evidence" },
 ];
 
 import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
@@ -572,6 +573,10 @@ export default function ProjectView() {
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
+  
+  // Legend State
+  const [legendItems, setLegendItems] = useState<LegendItem[]>(DEFAULT_LEGEND_ITEMS);
+  const [isLegendConfigOpen, setIsLegendConfigOpen] = useState(false);
 
   const onPaneContextMenu = (event: React.MouseEvent | MouseEvent) => {
     event.preventDefault();
@@ -608,7 +613,7 @@ export default function ProjectView() {
   });
 
   // Multi-select state for legend items - initialize with all selected
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(LEGEND_DATA.map(d => d.label));
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(DEFAULT_LEGEND_ITEMS.map(d => d.label));
   const constraintsRef = useRef(null);
   
   const toggleCategory = (category: string) => {
@@ -845,12 +850,11 @@ export default function ProjectView() {
               <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
                  <div className="flex flex-col">
                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                     Legend
-                     <span className="text-[10px] font-normal text-muted-foreground/70 normal-case px-1.5 py-0.5 bg-secondary/50 rounded-full border border-border/50">Field: Category</span>
+                     Category
                    </h3>
                  </div>
                  <div className="flex items-center gap-1">
-                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => { /* Open Edit Dialog */ }}>
+                   <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => setIsLegendConfigOpen(true)}>
                      <Edit className="w-3 h-3" />
                    </Button>
                    <Button variant="ghost" size="icon" className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" onClick={() => setGraphSettings(prev => ({...prev, showLegend: false}))} onPointerDown={(e) => e.stopPropagation()}>
@@ -870,10 +874,15 @@ export default function ProjectView() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
-                    {LEGEND_DATA.map((item, i) => {
+                    {legendItems.map((item, i) => {
                       const isSelected = selectedCategories.includes(item.label);
+                      // Mock stats for new items, use defaults for known ones
+                      // In a real app, this would be computed from graph data
+                      const count = i < 4 ? 4 - i : 1; 
+                      const percent = i < 4 ? `${25 - i * 5}%` : "5%";
+                      
                       return (
-                        <tr key={i} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
+                        <tr key={item.id} className="hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => toggleCategory(item.label)}>
                           <td className="px-3 py-1.5">
                             <Checkbox 
                               checked={isSelected}
@@ -883,12 +892,14 @@ export default function ProjectView() {
                           </td>
                           <td className="px-2 py-1.5">
                             <div className="flex items-center gap-2">
-                              <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                              <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>{item.label}</span>
+                              <div className={cn("w-2 h-2 rounded-full", item.color)} />
+                              <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>
+                                {item.alias || item.label}
+                              </span>
                             </div>
                           </td>
-                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.count}</td>
-                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{item.percent}</td>
+                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{count}</td>
+                          <td className={cn("px-3 py-1.5 text-right font-mono", isSelected ? "text-muted-foreground" : "text-muted-foreground/50")}>{percent}</td>
                         </tr>
                       );
                     })}
@@ -1247,6 +1258,12 @@ export default function ProjectView() {
             </div>
           </SheetContent>
         </Sheet>
+        <LegendConfigDialog 
+           open={isLegendConfigOpen} 
+           onOpenChange={setIsLegendConfigOpen}
+           items={legendItems}
+           onSave={setLegendItems}
+        />
     </Layout>
   );
 }
