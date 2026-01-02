@@ -25,7 +25,10 @@ import CenterEdge from "@/components/graph/CenterEdge";
 // Import stock images
 import victimBImg from '@assets/stock_images/portrait_of_a_young__1114e5ec.jpg';
 import thugAImg from '@assets/stock_images/portrait_of_a_young__7ceb0422.jpg';
-import lawyerHanImg from '@assets/stock_images/portrait_of_a_middle_cd4cfedc.jpg';
+import lawyerHanImg from '@assets/stock_images/portrait_of_a_male_l_cbb92d94.jpg';
+import enforcerImg from '@assets/stock_images/portrait_of_a_male_e_fa4e764a.jpg';
+import laundererImg from '@assets/stock_images/portrait_of_a_male_m_7b9dd078.jpg';
+import warehouseImg from '@assets/stock_images/abandoned_warehouse__5ca79054.jpg';
 
 import { cn } from "@/lib/utils";
 
@@ -331,8 +334,8 @@ const createRadialLayout = () => {
 
   // Inner Circle (Lieutenants & Key Associates)
   const innerCircle = [
-    { id: 'lt-1', label: 'Park "Razor"', sub: 'Enforcer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop' },
-    { id: 'lt-2', label: 'Kim "ledger"', sub: 'Money Launderer', type: 'Criminal', color: '#ef4444', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop' },
+    { id: 'lt-1', label: 'Park "Razor"', sub: 'Enforcer', type: 'Criminal', color: '#ef4444', img: enforcerImg },
+    { id: 'lt-2', label: 'Kim "ledger"', sub: 'Money Launderer', type: 'Criminal', color: '#ef4444', img: laundererImg },
     { id: 'vc-1', label: 'Victim A', sub: 'Assault', type: 'Victim', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop' },
     { id: 'vc-2', label: 'Victim B', sub: 'Fraud', type: 'Victim', color: '#fbbf24', img: victimBImg },
     { id: 'dt-1', label: 'Det. Choi', sub: 'Lead Investigator', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop' },
@@ -362,7 +365,7 @@ const createRadialLayout = () => {
   // Outer Circle (Evidence, Locations, Lower Associates, Court)
   const outerCircle = [
     { id: 'ev-1', label: 'Burner Phone', sub: 'Evidence', type: 'Evidence', color: '#64748b' },
-    { id: 'loc-1', label: 'Warehouse 4', sub: 'Crime Scene', type: 'Location', color: '#10b981' },
+    { id: 'loc-1', label: 'Warehouse 4', sub: 'Crime Scene', type: 'Location', color: '#10b981', img: warehouseImg },
     { id: 'loc-2', label: 'Offshore Account', sub: 'Asset', type: 'Asset', color: '#10b981' },
     { id: 'case-1', label: 'Case #22-004', sub: 'Lawsuit', type: 'Lawsuit', color: '#8b5cf6' },
     { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: thugAImg },
