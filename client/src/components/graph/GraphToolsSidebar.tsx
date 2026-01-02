@@ -3,6 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -80,11 +81,18 @@ const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any
   </div>
 );
 
-const ViewModeCard = ({ icon, label, description, active }: { icon: any, label: string, description: string, active: boolean }) => (
-  <div className={cn(
-    "flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+const ViewModeCard = ({ icon, label, description, active, onClick, topRight }: { icon: any, label: string, description: string, active: boolean, onClick?: () => void, topRight?: React.ReactNode }) => (
+  <div 
+    onClick={onClick}
+    className={cn(
+    "relative flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
     active ? "bg-primary/10 border-primary/50 text-primary" : "bg-card border-border text-muted-foreground"
   )}>
+    {topRight && (
+        <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+            {topRight}
+        </div>
+    )}
     <div className={cn("mb-2 p-2 rounded-full", active ? "bg-primary/20" : "bg-secondary")}>
       {icon}
     </div>
@@ -130,9 +138,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   });
   
   // Layout Edit State
-  const [editLayoutType, setEditLayoutType] = useState('organic');
-  const [editTightness, setEditTightness] = useState([5]);
-  const [editOrientation, setEditOrientation] = useState('down');
+  const [focusedLayout, setFocusedLayout] = useState('organic');
+  const [layoutConfigs, setLayoutConfigs] = useState<Record<string, { enabled: boolean, tightness: number, orientation?: string }>>({
+    organic: { enabled: true, tightness: 5 },
+    sequential: { enabled: false, tightness: 5, orientation: 'down' },
+    hierarchy: { enabled: false, tightness: 5, orientation: 'down' },
+    lens: { enabled: true, tightness: 5 },
+    radial: { enabled: false, tightness: 5 },
+    structural: { enabled: false, tightness: 5 },
+  });
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -246,75 +260,105 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             <div className="space-y-3">
                                 <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Layout Type</Label>
                                 <div className="grid grid-cols-2 gap-2">
-                                    <div onClick={() => setEditLayoutType('organic')}>
-                                        <ViewModeCard 
-                                            icon={<Share2 className="w-5 h-5" />}
-                                            label="Organic"
-                                            description="Natural clustering"
-                                            active={editLayoutType === 'organic'}
-                                        />
-                                    </div>
-                                    <div onClick={() => setEditLayoutType('sequential')}>
-                                        <ViewModeCard 
-                                            icon={<ListEnd className="w-5 h-5" />}
-                                            label="Sequential"
-                                            description="Linear progression"
-                                            active={editLayoutType === 'sequential'}
-                                        />
-                                    </div>
-                                    <div onClick={() => setEditLayoutType('hierarchy')}>
-                                        <ViewModeCard 
-                                            icon={<Workflow className="w-5 h-5" />}
-                                            label="Hierarchy"
-                                            description="Tree structure"
-                                            active={editLayoutType === 'hierarchy'}
-                                        />
-                                    </div>
-                                    <div onClick={() => setEditLayoutType('lens')}>
-                                        <ViewModeCard 
-                                            icon={<Maximize2 className="w-5 h-5" />}
-                                            label="Lens"
-                                            description="Focus context"
-                                            active={editLayoutType === 'lens'}
-                                        />
-                                    </div>
-                                    <div onClick={() => setEditLayoutType('radial')}>
-                                        <ViewModeCard 
-                                            icon={<CircleDashed className="w-5 h-5" />}
-                                            label="Radial"
-                                            description="Circular view"
-                                            active={editLayoutType === 'radial'}
-                                        />
-                                    </div>
-                                    <div onClick={() => setEditLayoutType('structural')}>
-                                        <ViewModeCard 
-                                            icon={<LayoutGridIcon className="w-5 h-5" />}
-                                            label="Structural"
-                                            description="Grid arrangement"
-                                            active={editLayoutType === 'structural'}
-                                        />
-                                    </div>
+                                    <ViewModeCard 
+                                        icon={<Share2 className="w-5 h-5" />}
+                                        label="Organic"
+                                        description="Natural clustering"
+                                        active={focusedLayout === 'organic'}
+                                        onClick={() => setFocusedLayout('organic')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.organic.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, organic: {...prev.organic, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
+                                    <ViewModeCard 
+                                        icon={<ListEnd className="w-5 h-5" />}
+                                        label="Sequential"
+                                        description="Linear progression"
+                                        active={focusedLayout === 'sequential'}
+                                        onClick={() => setFocusedLayout('sequential')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.sequential.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, sequential: {...prev.sequential, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
+                                    <ViewModeCard 
+                                        icon={<Workflow className="w-5 h-5" />}
+                                        label="Hierarchy"
+                                        description="Tree structure"
+                                        active={focusedLayout === 'hierarchy'}
+                                        onClick={() => setFocusedLayout('hierarchy')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.hierarchy.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, hierarchy: {...prev.hierarchy, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
+                                    <ViewModeCard 
+                                        icon={<Maximize2 className="w-5 h-5" />}
+                                        label="Lens"
+                                        description="Focus context"
+                                        active={focusedLayout === 'lens'}
+                                        onClick={() => setFocusedLayout('lens')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.lens.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, lens: {...prev.lens, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
+                                    <ViewModeCard 
+                                        icon={<CircleDashed className="w-5 h-5" />}
+                                        label="Radial"
+                                        description="Circular view"
+                                        active={focusedLayout === 'radial'}
+                                        onClick={() => setFocusedLayout('radial')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.radial.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, radial: {...prev.radial, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
+                                    <ViewModeCard 
+                                        icon={<LayoutGridIcon className="w-5 h-5" />}
+                                        label="Structural"
+                                        description="Grid arrangement"
+                                        active={focusedLayout === 'structural'}
+                                        onClick={() => setFocusedLayout('structural')}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={layoutConfigs.structural.enabled}
+                                                onCheckedChange={(c) => setLayoutConfigs(prev => ({...prev, structural: {...prev.structural, enabled: !!c}}))}
+                                            />
+                                        }
+                                    />
                                 </div>
                             </div>
-
-                            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium shadow-sm">
-                                <Sparkles className="w-4 h-4 mr-2" />
-                                Run Layout
-                            </Button>
 
                             <Separator />
 
                             <div className="space-y-5">
-                                <h4 className="text-sm font-semibold">Configuration</h4>
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-sm font-semibold">Configuration</h4>
+                                    <span className="text-xs text-muted-foreground capitalize">{focusedLayout}</span>
+                                </div>
                                 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
                                         <Label className="text-xs">Tightness</Label>
-                                        <span className="text-xs font-medium bg-secondary px-2 py-0.5 rounded text-muted-foreground">{editTightness}</span>
+                                        <span className="text-xs font-medium bg-secondary px-2 py-0.5 rounded text-muted-foreground">
+                                            {layoutConfigs[focusedLayout]?.tightness ?? 5}
+                                        </span>
                                     </div>
                                     <Slider 
-                                        value={editTightness} 
-                                        onValueChange={setEditTightness}
+                                        value={[layoutConfigs[focusedLayout]?.tightness ?? 5]} 
+                                        onValueChange={(v) => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], tightness: v[0]}}))}
                                         max={10} 
                                         step={1} 
                                         className="py-2" 
@@ -322,7 +366,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     <p className="text-[10px] text-muted-foreground">Adjusts how closely nodes are packed together.</p>
                                 </div>
 
-                                {(editLayoutType === 'hierarchy' || editLayoutType === 'sequential') && (
+                                {(focusedLayout === 'hierarchy' || focusedLayout === 'sequential') && (
                                     <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                                         <Label className="text-xs">Orientation</Label>
                                         <div className="grid grid-cols-4 gap-2">
@@ -334,10 +378,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                             ].map((opt) => (
                                                 <div 
                                                     key={opt.value}
-                                                    onClick={() => setEditOrientation(opt.value)}
+                                                    onClick={() => setLayoutConfigs(prev => ({...prev, [focusedLayout]: {...prev[focusedLayout], orientation: opt.value}}))}
                                                     className={cn(
                                                         "flex flex-col items-center justify-center p-2 rounded border cursor-pointer transition-all",
-                                                        editOrientation === opt.value 
+                                                        layoutConfigs[focusedLayout]?.orientation === opt.value 
                                                             ? "bg-primary/10 border-primary/50 text-primary" 
                                                             : "bg-card border-border text-muted-foreground hover:bg-accent"
                                                     )}
@@ -380,30 +424,54 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     )}
                     
                     <div className="grid grid-cols-2 gap-2 pl-3">
-                      <ViewModeCard 
-                        icon={<Maximize2 className="w-5 h-5" />} 
-                        label="Lens" 
-                        description="Focus on context" 
-                        active={true}
-                      />
-                      <ViewModeCard 
-                        icon={<Network className="w-5 h-5" />} 
-                        label="Standard" 
-                        description="Force-directed" 
-                        active={false}
-                      />
-                      <ViewModeCard 
-                        icon={<Network className="w-5 h-5 rotate-180" />} 
-                        label="Structure" 
-                        description="Hierarchical tree" 
-                        active={false}
-                      />
-                      <ViewModeCard 
-                        icon={<MapIcon className="w-5 h-5" />} 
-                        label="Map" 
-                        description="Geospatial view" 
-                        active={false}
-                      />
+                        {layoutConfigs.organic.enabled && (
+                          <ViewModeCard 
+                            icon={<Share2 className="w-5 h-5" />} 
+                            label="Organic" 
+                            description="Natural clustering" 
+                            active={false}
+                          />
+                        )}
+                        {layoutConfigs.sequential.enabled && (
+                          <ViewModeCard 
+                            icon={<ListEnd className="w-5 h-5" />} 
+                            label="Sequential" 
+                            description="Linear progression" 
+                            active={false}
+                          />
+                        )}
+                        {layoutConfigs.hierarchy.enabled && (
+                          <ViewModeCard 
+                            icon={<Workflow className="w-5 h-5" />} 
+                            label="Hierarchy" 
+                            description="Tree structure" 
+                            active={false}
+                          />
+                        )}
+                        {layoutConfigs.lens.enabled && (
+                          <ViewModeCard 
+                            icon={<Maximize2 className="w-5 h-5" />} 
+                            label="Lens" 
+                            description="Focus on context" 
+                            active={true}
+                          />
+                        )}
+                        {layoutConfigs.radial.enabled && (
+                          <ViewModeCard 
+                            icon={<CircleDashed className="w-5 h-5" />} 
+                            label="Radial" 
+                            description="Circular view" 
+                            active={false}
+                          />
+                        )}
+                        {layoutConfigs.structural.enabled && (
+                          <ViewModeCard 
+                            icon={<LayoutGridIcon className="w-5 h-5" />} 
+                            label="Structural" 
+                            description="Grid arrangement" 
+                            active={false}
+                          />
+                        )}
                     </div>
                 </div>
                 )}
