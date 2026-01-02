@@ -920,7 +920,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* Node Sizing Tab */}
             {activeTab === "sizing" && (
               <div className="space-y-6">
-                <SectionHeader icon={Maximize2} title="그래프분석" />
+                <SectionHeader icon={Maximize2} title="Node Sizing" />
                 
                 <div className="space-y-6">
                     {/* Field-based Sizing Configuration */}
@@ -1029,6 +1029,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                     {/* Global Sizing Settings */}
                     <div className="space-y-4">
+                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
+                            <div className="flex items-center gap-2 mb-1.5">
+                                <Network className="w-4 h-4 text-primary" />
+                                <h4 className="text-sm font-semibold text-foreground">Graph Theory</h4>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                Apply graph theoretical metrics to visualize node importance and centrality.
+                            </p>
+                        </div>
+                        
                         <div className="space-y-1.5">
                             <Label className="text-xs font-medium">Sizing Method</Label>
                             <Select defaultValue="centrality">
