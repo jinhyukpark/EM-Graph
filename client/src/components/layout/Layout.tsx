@@ -4,7 +4,7 @@ import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
@@ -43,6 +43,41 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
   const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
   const [pendingOrg, setPendingOrg] = useState<typeof MOCK_ORGS[0] | null>(null);
+  
+  // Sidebar resizing
+  const [sidebarWidth, setSidebarWidth] = useState(280);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback(
+    (mouseMoveEvent: MouseEvent) => {
+      if (isResizing) {
+        const newWidth = mouseMoveEvent.clientX;
+        if (newWidth > 240 && newWidth < 480) {
+          setSidebarWidth(newWidth);
+        }
+      }
+    },
+    [isResizing]
+  );
+
+  useEffect(() => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
 
   useEffect(() => {
     if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
@@ -129,10 +164,22 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
     <div className="h-screen overflow-hidden bg-background text-foreground flex font-sans selection:bg-primary/20 selection:text-primary">
       
       {/* Sidebar */}
-      <aside className={cn(
-        "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen transition-all duration-300",
-        isCollapsed ? "w-16" : "w-64"
-      )}>
+      <aside 
+        ref={sidebarRef}
+        className={cn(
+          "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen group relative",
+          isCollapsed ? "w-16 transition-all duration-300" : isResizing ? "transition-none" : "transition-all duration-300"
+        )}
+        style={{ width: isCollapsed ? undefined : sidebarWidth }}
+      >
+        {/* Resize Handle */}
+        {!isCollapsed && (
+          <div
+            className="absolute right-0 top-0 w-1 h-full cursor-col-resize hover:bg-primary/50 transition-colors z-50 opacity-0 group-hover:opacity-100"
+            onMouseDown={startResizing}
+          />
+        )}
+
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
           {!isCollapsed && (
