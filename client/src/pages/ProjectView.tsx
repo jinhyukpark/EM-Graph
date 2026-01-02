@@ -110,95 +110,90 @@ function InviteTeamDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-            {/* Team Member Select */}
-            <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase text-muted-foreground">Select from Team</Label>
-                <div className="border rounded-md divide-y max-h-[160px] overflow-y-auto bg-card">
-                    {teamMembers.map(member => (
-                        <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
-                             <div className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8 border border-border">
-                                    <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="text-sm font-medium leading-none">{member.name}</div>
-                                    <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
+        <Tabs defaultValue="team" className="w-full mt-2">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="team">Existing Team</TabsTrigger>
+                <TabsTrigger value="email">Invite by Email</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="team" className="space-y-4 focus-visible:outline-none">
+                <div className="space-y-2">
+                    <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto bg-card">
+                        {teamMembers.map(member => (
+                            <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
+                                 <div className="flex items-center gap-3">
+                                    <Avatar className="h-8 w-8 border border-border">
+                                        <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <div className="text-sm font-medium leading-none">{member.name}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
+                                    </div>
+                                 </div>
+                                 <Button size="sm" variant="outline" className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-primary-foreground">
+                                    Add
+                                 </Button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </TabsContent>
+
+            <TabsContent value="email" className="space-y-4 focus-visible:outline-none">
+                <div className="space-y-2">
+                    <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
+                    <Textarea 
+                        placeholder="Enter email addresses, separated by commas..." 
+                        value={emails}
+                        onChange={(e) => setEmails(e.target.value)}
+                        className="min-h-[120px] resize-none"
+                    />
+                    <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
+                </div>
+
+                <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
+                    <div className="flex flex-col space-y-1">
+                        <span className="text-sm font-medium leading-none">Access Role</span>
+                        <span className="text-xs text-muted-foreground">Set default permissions for new members</span>
+                    </div>
+                    <Select value={role} onValueChange={setRole}>
+                        <SelectTrigger className="w-[140px] h-8 text-xs bg-background">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="admin">
+                                <div className="flex items-center gap-2">
+                                    <Shield className="w-3.5 h-3.5 text-red-500" />
+                                    <span>Admin</span>
                                 </div>
-                             </div>
-                             <Button size="sm" variant="outline" className="h-7 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                Add
-                             </Button>
-                        </div>
-                    ))}
+                            </SelectItem>
+                            <SelectItem value="editor">
+                                 <div className="flex items-center gap-2">
+                                    <Edit2 className="w-3.5 h-3.5 text-blue-500" />
+                                    <span>Editor</span>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="viewer">
+                                 <div className="flex items-center gap-2">
+                                    <Eye className="w-3.5 h-3.5 text-green-500" />
+                                    <span>Viewer</span>
+                                </div>
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
-            </div>
-
-            <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                
+                <div className="pt-2">
+                    <Button type="submit" onClick={() => {
+                        setOpen(false);
+                        setEmails("");
+                    }} className="gap-2 w-full">
+                        <Mail className="w-4 h-4" />
+                        Send Invitations
+                    </Button>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground font-medium">Or invite by email</span>
-                </div>
-            </div>
-
-            {/* Email Input */}
-            <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
-                <Textarea 
-                    placeholder="Enter email addresses, separated by commas..." 
-                    value={emails}
-                    onChange={(e) => setEmails(e.target.value)}
-                    className="min-h-[80px] resize-none"
-                />
-                <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
-            </div>
-
-            {/* Role Selection */}
-            <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
-                <div className="flex flex-col space-y-1">
-                    <span className="text-sm font-medium leading-none">Access Role</span>
-                    <span className="text-xs text-muted-foreground">Set default permissions for new members</span>
-                </div>
-                <Select value={role} onValueChange={setRole}>
-                    <SelectTrigger className="w-[140px] h-8 text-xs bg-background">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="admin">
-                            <div className="flex items-center gap-2">
-                                <Shield className="w-3.5 h-3.5 text-red-500" />
-                                <span>Admin</span>
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="editor">
-                             <div className="flex items-center gap-2">
-                                <Edit2 className="w-3.5 h-3.5 text-blue-500" />
-                                <span>Editor</span>
-                            </div>
-                        </SelectItem>
-                        <SelectItem value="viewer">
-                             <div className="flex items-center gap-2">
-                                <Eye className="w-3.5 h-3.5 text-green-500" />
-                                <span>Viewer</span>
-                            </div>
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-        </div>
-
-        <DialogFooter>
-            <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" onClick={() => {
-                setOpen(false);
-                setEmails("");
-            }} className="gap-2">
-                <Mail className="w-4 h-4" />
-                Send Invitations
-            </Button>
-        </DialogFooter>
+            </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
