@@ -27,7 +27,8 @@ import {
   Trash2,
   GripVertical,
   Map as MapIcon,
-  Eye
+  Eye,
+  Info
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -203,7 +204,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 <div className="space-y-4">
                     <SectionHeader icon={Box} title="Layout Type" />
-                    <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-3">
+                    <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
+                        <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                         <p className="text-[11px] text-muted-foreground leading-snug">
                             Customize the graph structure layout view.
                         </p>
@@ -242,7 +244,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <div className="space-y-6">
                     <div>
                         <SectionHeader icon={Settings2} title="Graph Settings" />
-                        <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
+                        <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
+                            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                             <p className="text-[11px] text-muted-foreground leading-snug">
                                 Configure visual elements and interactive features.
                             </p>
