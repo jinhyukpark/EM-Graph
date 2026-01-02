@@ -258,9 +258,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                         <div className="space-y-6">
                             <div>
-                                <p className="text-xs text-muted-foreground mb-4">
-                                  Please select a layout type that can change the analysis form of the graph.
-                                </p>
+                                <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-6">
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                        <Info className="w-4 h-4 text-primary" />
+                                        <h4 className="text-sm font-semibold text-foreground">Select Layouts</h4>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                      Please select the layout types you want to make available in the graph view. You can configure individual settings for each layout below.
+                                    </p>
+                                </div>
                                 
                                 <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 block">Layout Type</Label>
                                 
