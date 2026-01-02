@@ -182,13 +182,27 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
         {/* Workspace Switcher / Logo Area */}
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-3 justify-between")}>
-          {!isCollapsed && (
+          {!isCollapsed && !isProjectView && (
             <Link href="/dashboard" className="flex items-center gap-2 px-2 hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
                   <Share2 className="w-5 h-5" />
                 </div>
                 <span className="text-lg font-bold tracking-tight">EM-Graph</span>
             </Link>
+          )}
+
+          {!isCollapsed && isProjectView && (
+             <div className="flex items-center gap-2 px-2 flex-1 overflow-hidden">
+                <Link href="/projects" className={cn(
+                    buttonVariants({ variant: "ghost", size: "icon" }),
+                    "shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
+                  )}>
+                    <ArrowLeft className="w-4 h-4" />
+                </Link>
+                <span className="text-base font-bold tracking-tight truncate flex-1" title="City Crime Analysis 2024">
+                  City Crime Analysis 2024
+                </span>
+             </div>
           )}
           
           <Button 
@@ -252,19 +266,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
           
           {isProjectView && !isCollapsed && (
-            <div className="px-4 pt-4 pb-2">
-                <Link href="/projects" className={cn(
-                    buttonVariants({ variant: "ghost", size: "sm" }),
-                    "text-muted-foreground hover:text-foreground gap-1 -ml-2 mb-2 pl-2 pr-4 h-7 text-xs"
-                  )}>
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    Back to Projects
-                </Link>
-                <div className="px-1 mb-2">
-                  <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
-                </div>
-                <div className="h-px bg-border/50 w-full mt-4 mb-2" />
-            </div>
+            <div className="h-px bg-border/50 w-full mb-2" />
           )}
 
           {isProjectView && (
@@ -279,7 +281,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               )}
               
               {!isCollapsed && sidebarControls && (
-                 <div className="mb-2">
+                 <div className="mt-2 mb-2">
                    {sidebarControls}
                  </div>
               )}
