@@ -49,11 +49,16 @@ export default function CompareDialog({ open, onOpenChange, nodes }: CompareDial
     // Simple CSV export
     const headers = ["ID", ...visibleColumns];
     const rows = nodes.map(n => {
+      const data = n.data || {};
       return [
         n.id,
         ...visibleColumns.map(col => {
-            const val = n.data[col];
+            const val = data[col];
             if (val === null || val === undefined) return "";
+            // Handle objects safely for CSV
+            if (typeof val === 'object') {
+                return `"${String(JSON.stringify(val)).replace(/"/g, '""')}"`;
+            }
             return `"${String(val).replace(/"/g, '""')}"`; // Escape quotes
         })
       ].join(",");
@@ -122,24 +127,30 @@ export default function CompareDialog({ open, onOpenChange, nodes }: CompareDial
               </TableRow>
             </TableHeader>
             <TableBody>
-              {nodes.map((node) => (
-                <TableRow key={node.id} className="hover:bg-muted/50">
-                  <TableCell className="font-medium font-mono text-xs">{node.id}</TableCell>
-                  {visibleColumns.map((col) => (
-                    <TableCell key={`${node.id}-${col}`} className="text-xs">
-                      {typeof node.data[col] === 'object' ? (
-                         <span className="text-muted-foreground italic text-[10px]">{JSON.stringify(node.data[col]).substring(0, 30)}...</span>
-                      ) : (
-                        col === 'image' ? (
-                            <img src={node.data[col]} alt="node" className="w-6 h-6 rounded-full object-cover border border-border" />
-                        ) : (
-                            node.data[col]
-                        )
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+              {nodes.map((node) => {
+                const data = node.data || {};
+                return (
+                  <TableRow key={node.id} className="hover:bg-muted/50">
+                    <TableCell className="font-medium font-mono text-xs">{node.id}</TableCell>
+                    {visibleColumns.map((col) => {
+                      const val = data[col];
+                      return (
+                        <TableCell key={`${node.id}-${col}`} className="text-xs">
+                          {typeof val === 'object' && val !== null ? (
+                             <span className="text-muted-foreground italic text-[10px]">{JSON.stringify(val).substring(0, 30)}...</span>
+                          ) : (
+                            col === 'image' && typeof val === 'string' ? (
+                                <img src={val} alt="node" className="w-6 h-6 rounded-full object-cover border border-border" />
+                            ) : (
+                                String(val ?? "")
+                            )
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
