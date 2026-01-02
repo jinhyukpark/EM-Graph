@@ -670,7 +670,6 @@ export default function ProjectView() {
           </TabsTrigger>
         </TabsList>
       </Tabs>
-      <div className="h-px bg-border/50 w-full mt-4" />
     </div>
   );
 

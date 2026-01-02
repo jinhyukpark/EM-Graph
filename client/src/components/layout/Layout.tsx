@@ -263,6 +263,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <div className="px-1 mb-2">
                   <h2 className="font-semibold text-lg leading-tight text-foreground">City Crime Analysis 2024</h2>
                 </div>
+                <div className="h-px bg-border/50 w-full mt-4 mb-2" />
             </div>
           )}
 
