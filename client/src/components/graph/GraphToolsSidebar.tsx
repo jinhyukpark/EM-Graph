@@ -405,6 +405,89 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             </div>
                         </div>
                     </div>
+                ) : editingSection === 'graphSettings' ? (
+                        <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                             <div className="flex items-center justify-between border-b border-border pb-4">
+                                <h4 className="text-sm font-semibold flex items-center gap-2">
+                                    <Edit className="w-4 h-4 text-primary" />
+                                    Edit Control
+                                </h4>
+                                <div className="flex gap-2">
+                                    <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                    <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">Visible Controls</Label>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <CircleDot className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Node Type Selection</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.nodeTypeSelection}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeTypeSelection: c }))}
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Sliders className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Node Weight</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.nodeWeight}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeWeight: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <ArrowRight className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Edge Direction</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.edgeDirection}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, edgeDirection: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Eye className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Visibility Options</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.visibilityGroup}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, visibilityGroup: c }))}
+                                        />
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                <Maximize2 className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <span className="text-sm font-medium">Display Options</span>
+                                        </div>
+                                        <Switch 
+                                            checked={controlVisibility.displayGroup}
+                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, displayGroup: c }))}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                 ) : (
                 <>
                 {visibleSections.layout && (
@@ -489,90 +572,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                 {visibleSections.graphSettings && (
                 <div className="space-y-6">
-                    {editingSection === 'graphSettings' ? (
-                        <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
-                             <div className="flex items-center justify-between border-b border-border pb-4">
-                                <h4 className="text-sm font-semibold flex items-center gap-2">
-                                    <Edit className="w-4 h-4 text-primary" />
-                                    Edit Control
-                                </h4>
-                                <div className="flex gap-2">
-                                    <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
-                                    <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
-                                </div>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">Visible Controls</Label>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded-full">
-                                                <CircleDot className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <span className="text-sm font-medium">Node Type Selection</span>
-                                        </div>
-                                        <Switch 
-                                            checked={controlVisibility.nodeTypeSelection}
-                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeTypeSelection: c }))}
-                                        />
-                                    </div>
-                                    
-                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded-full">
-                                                <Sliders className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <span className="text-sm font-medium">Node Weight</span>
-                                        </div>
-                                        <Switch 
-                                            checked={controlVisibility.nodeWeight}
-                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, nodeWeight: c }))}
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded-full">
-                                                <ArrowRight className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <span className="text-sm font-medium">Edge Direction</span>
-                                        </div>
-                                        <Switch 
-                                            checked={controlVisibility.edgeDirection}
-                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, edgeDirection: c }))}
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded-full">
-                                                <Eye className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <span className="text-sm font-medium">Visibility Options</span>
-                                        </div>
-                                        <Switch 
-                                            checked={controlVisibility.visibilityGroup}
-                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, visibilityGroup: c }))}
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between p-3 rounded-md border bg-card/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-primary/10 p-2 rounded-full">
-                                                <Maximize2 className="w-4 h-4 text-primary" />
-                                            </div>
-                                            <span className="text-sm font-medium">Display Options</span>
-                                        </div>
-                                        <Switch 
-                                            checked={controlVisibility.displayGroup}
-                                            onCheckedChange={(c) => setControlVisibility(prev => ({ ...prev, displayGroup: c }))}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
                     <div>
                         <SectionHeader 
                             icon={Settings2} 
@@ -744,7 +743,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                         )}
                     </div>
-                    )}
               </div>
                 )}
                 
