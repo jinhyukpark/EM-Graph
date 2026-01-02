@@ -1088,10 +1088,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         <div className="flex items-end gap-2">
                                             <div className="flex-1">
                                                 <Select onValueChange={(val) => addField(key, val)}>
-                                                    <SelectTrigger className="h-auto py-2 text-xs bg-secondary/20 border-dashed justify-between">
-                                                        <div className="flex flex-col items-start gap-1">
-                                                            <PlusCircle className="w-4 h-4 text-muted-foreground" />
-                                                            <span className="text-muted-foreground">Add Field...</span>
+                                                    <SelectTrigger className="h-9 w-full text-xs bg-secondary/20 border-dashed text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors">
+                                                        <div className="flex items-center gap-2">
+                                                            <PlusCircle className="w-3.5 h-3.5" />
+                                                            <span>Add Field...</span>
                                                         </div>
                                                     </SelectTrigger>
                                                     <SelectContent>
