@@ -920,42 +920,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* Node Sizing Tab */}
             {activeTab === "sizing" && (
               <div className="space-y-6">
-                <SectionHeader icon={Maximize2} title="Node Styling" />
+                <SectionHeader icon={Maximize2} title="그래프분석" />
                 
                 <div className="space-y-6">
-                    {/* Global Sizing Settings */}
-                    <div className="space-y-4">
-                        <div className="space-y-1.5">
-                            <Label className="text-xs font-medium">Sizing Method</Label>
-                            <Select defaultValue="centrality">
-                                <SelectTrigger className="h-8 text-xs">
-                                    <SelectValue placeholder="Select method" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="centrality">Degree Centrality</SelectItem>
-                                    <SelectItem value="pagerank">PageRank Score</SelectItem>
-                                    <SelectItem value="betweenness">Betweenness</SelectItem>
-                                    <SelectItem value="manual">Manual Override</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="space-y-3 pt-2">
-                            <div className="flex justify-between items-center">
-                                <Label className="text-xs font-medium">Base Size</Label>
-                                <span className="text-xs text-muted-foreground">45px</span>
-                            </div>
-                            <Slider 
-                                defaultValue={[45]} 
-                                max={100} 
-                                step={1} 
-                                className="py-2"
-                            />
-                        </div>
-                    </div>
-
-                    <Separator />
-
                     {/* Field-based Sizing Configuration */}
                     <div>
                         <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
@@ -1055,6 +1022,39 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     </Select>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Global Sizing Settings */}
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <Label className="text-xs font-medium">Sizing Method</Label>
+                            <Select defaultValue="centrality">
+                                <SelectTrigger className="h-8 text-xs">
+                                    <SelectValue placeholder="Select method" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="centrality">Degree Centrality</SelectItem>
+                                    <SelectItem value="pagerank">PageRank Score</SelectItem>
+                                    <SelectItem value="betweenness">Betweenness</SelectItem>
+                                    <SelectItem value="manual">Manual Override</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-3 pt-2">
+                            <div className="flex justify-between items-center">
+                                <Label className="text-xs font-medium">Base Size</Label>
+                                <span className="text-xs text-muted-foreground">45px</span>
+                            </div>
+                            <Slider 
+                                defaultValue={[45]} 
+                                max={100} 
+                                step={1} 
+                                className="py-2"
+                            />
                         </div>
                     </div>
                 </div>
