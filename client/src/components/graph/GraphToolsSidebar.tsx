@@ -201,39 +201,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "view" && (
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <SectionHeader icon={Network} title="Layout & Clustering" />
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-xs">Auto-Clustering</Label>
-                      <Switch />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-xs">Algorithm</Label>
-                      <Select defaultValue="louvain">
-                        <SelectTrigger className="h-8 text-xs">
-                          <SelectValue placeholder="Select algorithm" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="louvain">Louvain</SelectItem>
-                          <SelectItem value="leiden">Leiden</SelectItem>
-                          <SelectItem value="kmeans">K-Means</SelectItem>
-                          <SelectItem value="force">Force Atlas 2</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button variant="outline" size="sm" className="w-full text-xs h-8">
-                      Run Layout
-                    </Button>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                    <SectionHeader icon={Box} title="View Mode" />
+                    <SectionHeader icon={Box} title="Layout Type" />
                     
                     <div className="grid grid-cols-2 gap-2">
                       <ViewModeCard 
@@ -261,24 +229,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         active={false}
                       />
                     </div>
-
-                    <div className="pt-2">
-                        <Label className="text-xs mb-2 block">Dimension</Label>
-                        <div className="grid grid-cols-2 gap-2 bg-muted/20 p-1 rounded-lg">
-                            <Button variant="ghost" size="sm" className="text-xs h-7 bg-background shadow-sm">
-                                2D View
-                            </Button>
-                            <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground">
-                                3D View
-                            </Button>
-                        </div>
-                    </div>
                 </div>
 
                 <Separator />
 
                 <div className="space-y-4">
-                    <SectionHeader icon={Eye} title="Display" />
+                    <SectionHeader icon={Eye} title="Graph Settings" />
                     
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
