@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
@@ -42,8 +42,120 @@ export default function Settings() {
             <TabsTrigger value="team">Team & Roles</TabsTrigger>
             <TabsTrigger value="billing">Billing & License</TabsTrigger>
             <TabsTrigger value="usage">Usage</TabsTrigger>
+            <TabsTrigger value="ai-settings">AI Settings</TabsTrigger>
             <TabsTrigger value="mcp">MCP Integrations</TabsTrigger>
           </TabsList>
+
+          {/* AI Settings Tab */}
+          <TabsContent value="ai-settings" className="space-y-6">
+            <Card className="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 border-indigo-100 dark:from-indigo-950/20 dark:to-purple-950/20 dark:border-indigo-900">
+                <CardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
+                            <Bot className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <div>
+                            <CardTitle>AI Model Configuration</CardTitle>
+                            <CardDescription>Connect your preferred AI models to enhance the platform's capabilities.</CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                        By connecting external LLM (Large Language Model) services, you can unlock advanced features such as automatic graph generation, content summarization, and intelligent insights. 
+                        Please provide valid API keys for the services you wish to use. These keys are stored locally in your browser for security.
+                    </p>
+                </CardContent>
+            </Card>
+
+            <div className="grid gap-6">
+                {/* Claude (Anthropic) */}
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center border border-orange-200">
+                                <span className="font-bold text-orange-700 text-xs">Claude</span>
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg">Anthropic Claude</CardTitle>
+                                <CardDescription>Powerful models for reasoning and coding tasks.</CardDescription>
+                            </div>
+                        </div>
+                        <Badge variant="outline" className="bg-slate-100 text-slate-500">Not Connected</Badge>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="claude-key">API Key</Label>
+                            <div className="flex gap-2">
+                                <Input id="claude-key" type="password" placeholder="sk-ant-..." className="font-mono" />
+                                <Button>Connect</Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-2">
+                                To get an API key, sign up at <a href="https://console.anthropic.com/" target="_blank" rel="noreferrer" className="text-primary hover:underline">console.anthropic.com</a>.
+                                Create a new key in the "API Keys" section of your account settings.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Gemini (Google) */}
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
+                                <span className="font-bold text-blue-700 text-xs">Gemini</span>
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg">Google Gemini</CardTitle>
+                                <CardDescription>Multimodal capabilities and fast processing.</CardDescription>
+                            </div>
+                        </div>
+                        <Badge variant="outline" className="bg-slate-100 text-slate-500">Not Connected</Badge>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="gemini-key">API Key</Label>
+                            <div className="flex gap-2">
+                                <Input id="gemini-key" type="password" placeholder="AIza..." className="font-mono" />
+                                <Button>Connect</Button>
+                            </div>
+                             <p className="text-xs text-muted-foreground mt-2">
+                                You can generate a Gemini API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-primary hover:underline">Google AI Studio</a>.
+                                Ensure your project has the necessary API access enabled.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* OpenAI */}
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
+                                <span className="font-bold text-emerald-700 text-xs">OpenAI</span>
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg">OpenAI GPT-4</CardTitle>
+                                <CardDescription>Industry standard for language tasks.</CardDescription>
+                            </div>
+                        </div>
+                         <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Connected</Badge>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="openai-key">API Key</Label>
+                            <div className="flex gap-2">
+                                <Input id="openai-key" type="password" value="sk-proj-****************************" disabled className="font-mono bg-muted" />
+                                <Button variant="outline" className="text-destructive hover:text-destructive hover:bg-destructive/10">Disconnect</Button>
+                            </div>
+                             <p className="text-xs text-muted-foreground mt-2">
+                                API keys can be managed in the <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer" className="text-primary hover:underline">OpenAI Platform dashboard</a>.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+          </TabsContent>
 
           {/* Account & Security Tab */}
           <TabsContent value="account" className="space-y-6">
