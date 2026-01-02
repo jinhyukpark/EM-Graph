@@ -234,7 +234,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <Separator />
 
                 <div className="space-y-4">
-                    <SectionHeader icon={Eye} title="Graph Settings" />
+                    <SectionHeader icon={Settings2} title="Graph Settings" />
                     
                     {/* Node Type Selection Mode */}
                     <div className="space-y-4">
