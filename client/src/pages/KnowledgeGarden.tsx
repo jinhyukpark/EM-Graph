@@ -573,184 +573,6 @@ const NewsResultList = ({ data }: { data: any[] }) => {
 };
 
 // Separate GraphView component for ReactFlow
-function GraphInsightCard() {
-  const [isExpanded, setIsExpanded] = useState(true);
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="absolute top-4 left-4 z-10 max-w-[320px]"
-    >
-      <div className={cn(
-        "bg-background/90 backdrop-blur-md border border-border/60 shadow-lg rounded-xl overflow-hidden transition-all duration-300",
-        isExpanded ? "w-full" : "w-auto"
-      )}>
-        {/* Header */}
-        <div 
-          className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50 to-transparent border-b border-border/50 cursor-pointer"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-blue-100 text-blue-600">
-              <Sparkles className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-xs font-semibold text-foreground/90">AI Network Briefing</span>
-          </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground">
-             {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-          </Button>
-        </div>
-
-        {/* Content */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="p-3"
-            >
-              <div className="space-y-3">
-                <div>
-                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Domain Analysis</div>
-                   <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                      Criminal Organization Network
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Key Insights</div>
-                   
-                   <div className="p-2 rounded bg-muted/30 border border-border/50 space-y-2">
-                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                        <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
-                        <span>
-                          <strong className="text-foreground">Kang "The Viper"</strong> exhibits highest degree centrality, indicating role as key decision maker.
-                        </span>
-                      </div>
-                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                        <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
-                        <span>
-                          <strong className="text-foreground">Det. Choi</strong> serves as critical bridge node between criminal & legal clusters.
-                        </span>
-                      </div>
-                      <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                         <span className="mt-1 w-1 h-1 rounded-full bg-orange-500 shrink-0" />
-                         <span>
-                            <strong className="text-foreground">Warehouse 4</strong> identified as high-risk asset connected to multiple investigation paths.
-                         </span>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="pt-2 flex justify-end">
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 bg-background hover:bg-muted/50">
-                        <MessageSquare className="w-3 h-3" />
-                        Ask Copilot Details
-                    </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  );
-}
-
-// Timeline Component
-function GraphTimeline() {
-  // Mock data for the timeline
-  const timelineData = Array.from({ length: 60 }, (_, i) => ({
-    date: new Date(2023, 0, 1 + i * 5),
-    value: Math.floor(Math.random() * 50) + 10,
-    hasEvent: Math.random() > 0.8
-  }));
-
-  const [isPlaying, setIsPlaying] = useState(false);
-  
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-      {/* Timeline Chart Area */}
-      <div className="h-24 w-full px-4 pt-4 relative">
-        <div className="h-full w-full flex items-end gap-[2px]">
-          {timelineData.map((d, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
-              {/* Event Marker */}
-              {d.hasEvent && (
-                <div className="mb-1 w-2 h-2 rounded-full border border-red-500 bg-transparent group-hover:bg-red-500 transition-colors" />
-              )}
-              
-              {/* Bar */}
-              <div 
-                className={cn(
-                  "w-full rounded-t-sm transition-all duration-200",
-                  d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300 group-hover:bg-slate-400"
-                )}
-                style={{ height: `${d.value}%` }}
-              />
-              
-              {/* Tooltip */}
-              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-md whitespace-nowrap border border-border z-20">
-                {format(d.date, 'MMM d, yyyy')} • {d.value} events
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        {/* Month Labels */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 pointer-events-none">
-          {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].map((m, i) => (
-             <span key={i} className="text-[10px] text-muted-foreground font-medium bg-background/50 px-1 rounded translate-y-1/2">{m} 2024</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Control Bar */}
-      <div className="h-10 border-t border-border bg-muted/30 flex items-center justify-between px-4">
-         <div className="flex items-center gap-1">
-             <span className="text-[10px] text-muted-foreground font-medium">Timeline Range:</span>
-             <span className="text-[10px] text-foreground font-semibold">Jan 1, 2024 - Jun 30, 2024</span>
-         </div>
-
-         <div className="flex items-center justify-center gap-2">
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronsLeft className="w-4 h-4" />
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronLeft className="w-4 h-4" />
-             </Button>
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
-                onClick={() => setIsPlaying(!isPlaying)}
-             >
-                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronRight className="w-4 h-4" />
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground">
-                 <ChevronsRight className="w-4 h-4" />
-             </Button>
-         </div>
-
-         <div className="flex items-center gap-2">
-             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                 <ZoomOut className="w-3.5 h-3.5" />
-             </Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                 <ZoomIn className="w-3.5 h-3.5" />
-             </Button>
-         </div>
-      </div>
-    </div>
-  );
-}
-
 function GraphView() {
   console.log("[GraphView] Component rendering...");
 
@@ -762,7 +584,6 @@ function GraphView() {
 
     return (
       <div className="w-full h-full relative flex flex-col">
-        <GraphInsightCard />
         <div className="flex-1 relative min-h-0">
             <ReactFlow
               nodes={nodes}
@@ -778,7 +599,6 @@ function GraphView() {
               <GraphLegend />
             </ReactFlow>
         </div>
-        <GraphTimeline />
       </div>
     );
   } catch (error) {
@@ -786,6 +606,7 @@ function GraphView() {
     return <div className="p-4 text-red-500">GraphView Error: {String(error)}</div>;
   }
 }
+
 
 const WikiLink = ({ children }: { children: string }) => {
   const docName = children.replace(/\[\[|\]\]/g, '');
