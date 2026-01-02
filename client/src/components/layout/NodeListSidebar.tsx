@@ -23,16 +23,16 @@ interface NodeData {
 
 // Mock Data matching the screenshot style
 export const MOCK_COMPANY_NODES: NodeData[] = [
-  { id: "1", name: "Mind AI", category: "System Software Development", representative: "Yoo Tae-jun", location: "Seongnam-si", years: 13, image: "https://github.com/shadcn.png" },
-  { id: "2", name: "Blocko", category: "System Software Development", representative: "Kim Won-beom", location: "Seongnam-si", years: 13 },
-  { id: "3", name: "Snow", category: "App Software Development", representative: "Kim Chang-wook", location: "Seongnam-si", years: 11 },
-  { id: "4", name: "Qpix", category: "System Software Development", representative: "Bae Seok-hoon", location: "Seongnam-si", years: 12 },
-  { id: "5", name: "Life Lab", category: "System Software Development", representative: "Yeon Hyun-ju", location: "Seongnam-si", years: 11 },
-  { id: "6", name: "Cloudike", category: "App Software Development", representative: "Lee Sun-woong", location: "Seongnam-si", years: 14 },
-  { id: "7", name: "Carrot Games", category: "System Software Development", representative: "Kim Mi-sun", location: "Seongnam-si", years: 12 },
-  { id: "8", name: "Wine Soft", category: "App Software Development", representative: "Lee Bong-gu", location: "Seongnam-si", years: 17 },
-  { id: "9", name: "Inflearn", category: "System Software Development", representative: "Lee Hyung-ju", location: "Seongnam-si", years: 10 },
-  { id: "10", name: "Exosystems", category: "App Software Development", representative: "Lee Hoo-man", location: "Seongnam-si", years: 10 },
+  { id: "1", name: "Kang Min-su", category: "Suspect", representative: "Male, 35", location: "Seoul", years: 2 },
+  { id: "2", name: "Kim Ji-hyun", category: "Victim", representative: "Female, 28", location: "Busan", years: 0 },
+  { id: "3", name: "Park Dong-wook", category: "Suspect", representative: "Male, 42", location: "Incheon", years: 5 },
+  { id: "4", name: "Gangnam Station Exit 4", category: "Location", representative: "Public Area", location: "Seoul", years: 0 },
+  { id: "5", name: "Stolen Vehicle (12ga 3456)", category: "Evidence", representative: "Hyundai Sonata", location: "Gyeonggi-do", years: 0 },
+  { id: "6", name: "Lee Sang-ho", category: "Witness", representative: "Male, 31", location: "Seoul", years: 0 },
+  { id: "7", name: "Choi Yu-jin", category: "Victim", representative: "Female, 24", location: "Seoul", years: 0 },
+  { id: "8", name: "Incheon Port Warehouse", category: "Location", representative: "Industrial Zone", location: "Incheon", years: 10 },
+  { id: "9", name: "Burner Phone (Samsung)", category: "Evidence", representative: "Galaxy A12", location: "Seongnam-si", years: 1 },
+  { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8 },
 ];
 
 interface NodeListSidebarProps {
@@ -159,11 +159,11 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
       {/* Search Header */}
       <div className="p-4 border-b border-border space-y-4">
         <div>
-          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Corporate Search</h3>
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Network Search</h3>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Input 
-                placeholder="Enter company name..." 
+                placeholder="Enter entity name..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="h-9 text-sm"
@@ -177,7 +177,7 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <h3 className="font-bold text-sm">Related Companies</h3>
+            <h3 className="font-bold text-sm">Related Entities</h3>
             <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
               {filteredNodes.length.toLocaleString()}
             </span>
