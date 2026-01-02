@@ -83,16 +83,17 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
              <h3 className="text-sm font-semibold uppercase tracking-wider">Component Details</h3>
           </div>
           
-          <div className="flex flex-col items-center text-center p-4 bg-secondary/20 rounded-lg border border-border/50">
-             <Avatar className="h-20 w-20 mb-3 border-2 border-background shadow-md">
-                <AvatarImage src={displayImage} />
-                <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
-                  {displayName?.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-             </Avatar>
-             <h2 className="text-lg font-bold leading-tight mb-1">{displayName}</h2>
-             <Badge variant="outline" className="mb-2 bg-background/50">{displayType}</Badge>
-             {displaySub && <p className="text-sm text-muted-foreground">{displaySub}</p>}
+          <div className="w-full aspect-video bg-muted rounded-lg border border-border/50 overflow-hidden mb-0 relative">
+             <img 
+               src={displayImage} 
+               alt={displayName} 
+               className="w-full h-full object-cover"
+             />
+             {!displayImage && (
+               <div className="w-full h-full flex items-center justify-center bg-secondary/20 text-muted-foreground">
+                 <span className="text-xs">No Image</span>
+               </div>
+             )}
           </div>
         </div>
 
