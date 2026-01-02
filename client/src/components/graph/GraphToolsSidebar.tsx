@@ -343,7 +343,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 />
                             </div>
                             <div className="flex items-center justify-between">
-                                <Label className="text-sm font-medium">AI Briefing</Label>
+                                <Label className="text-sm font-medium flex items-center gap-1.5">
+                                    AI Briefing
+                                    <Sparkles className="w-3 h-3 text-primary animate-pulse" />
+                                </Label>
                                 <Switch 
                                     checked={settings?.showAiBriefing ?? true}
                                     onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
