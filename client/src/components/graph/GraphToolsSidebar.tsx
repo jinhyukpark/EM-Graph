@@ -42,7 +42,7 @@ import {
 
 import AICopilotPanel from "./AICopilotPanel";
 
-const SectionHeader = ({ icon: Icon, title, onHide }: { icon: any, title: string, onHide?: () => void }) => (
+const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any, title: string, onHide?: () => void, onEditControl?: () => void }) => (
   <div className="flex items-center justify-between mb-2">
     <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
       <Icon className="w-3.5 h-3.5" /> {title}
@@ -56,7 +56,7 @@ const SectionHeader = ({ icon: Icon, title, onHide }: { icon: any, title: string
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuLabel className="text-xs">Configure Section</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-xs">
+        <DropdownMenuItem className="text-xs" onClick={onEditControl}>
           <Edit className="w-3.5 h-3.5 mr-2" /> Edit Control
         </DropdownMenuItem>
         <DropdownMenuItem className="text-xs">
@@ -111,6 +111,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [showLayoutDescription, setShowLayoutDescription] = useState(true);
   const [showGraphSettingsDescription, setShowGraphSettingsDescription] = useState(true);
   const [visibleSections, setVisibleSections] = useState({ layout: true, graphSettings: true });
+  const [editingSection, setEditingSection] = useState<string | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const updateSetting = (key: keyof GraphSettings, value: any) => {
@@ -206,9 +207,92 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "view" && (
               <div className="space-y-6">
                 
+                {editingSection === 'layout' ? (
+                    <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                        <div className="flex items-center justify-between border-b border-border pb-4">
+                            <h4 className="text-sm font-semibold flex items-center gap-2">
+                                <Edit className="w-4 h-4 text-primary" />
+                                Edit Layout Control
+                            </h4>
+                            <div className="flex gap-2">
+                                <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <Label className="text-xs font-medium text-muted-foreground">Layout Type</Label>
+                                <RadioGroup defaultValue="organic" className="grid gap-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="organic" id="layout-organic" />
+                                        <Label htmlFor="layout-organic" className="font-normal">Organic</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="sequential" id="layout-sequential" />
+                                        <Label htmlFor="layout-sequential" className="font-normal">Sequential</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="hierarchy" id="layout-hierarchy" />
+                                        <Label htmlFor="layout-hierarchy" className="font-normal">Hierarchy</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="lens" id="layout-lens" />
+                                        <Label htmlFor="layout-lens" className="font-normal">Lens</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="radial" id="layout-radial" />
+                                        <Label htmlFor="layout-radial" className="font-normal">Radial</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="structural" id="layout-structural" />
+                                        <Label htmlFor="layout-structural" className="font-normal">Structural</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
+                            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
+                                Run layout
+                            </Button>
+
+                            <div className="space-y-4">
+                                <h4 className="text-lg font-medium">Options</h4>
+                                
+                                <div className="space-y-3">
+                                    <div className="flex justify-between">
+                                        <Label>Tightness</Label>
+                                        <span className="text-sm font-medium">5</span>
+                                    </div>
+                                    <Slider defaultValue={[5]} max={10} step={1} className="py-2" />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-sm text-muted-foreground">Orientation (Hierarchy and Sequential)</Label>
+                                    <Select defaultValue="down">
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select orientation" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="down">Down</SelectItem>
+                                            <SelectItem value="up">Up</SelectItem>
+                                            <SelectItem value="left">Left</SelectItem>
+                                            <SelectItem value="right">Right</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                <>
                 {visibleSections.layout && (
                 <div className="space-y-4">
-                    <SectionHeader icon={Box} title="Layout Type" onHide={() => setVisibleSections(prev => ({...prev, layout: false}))} />
+                    <SectionHeader 
+                        icon={Box} 
+                        title="Layout Type" 
+                        onHide={() => setVisibleSections(prev => ({...prev, layout: false}))} 
+                        onEditControl={() => setEditingSection('layout')}
+                    />
                     {showLayoutDescription && (
                         <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
                             <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -434,6 +518,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             Show Hidden Sections
                         </Button>
                     </div>
+                )}
+                </>
                 )}
             </div>
             )}
