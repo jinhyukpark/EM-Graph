@@ -240,7 +240,7 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               className={cn(
                 "group py-3 px-4 border-b border-slate-300 dark:border-slate-700 cursor-pointer transition-colors",
                 selectedNodeId === node.id 
-                  ? "bg-primary/10" 
+                  ? "bg-primary/20 ring-1 ring-inset ring-primary/20" 
                   : "hover:bg-muted/50"
               )}
             >
