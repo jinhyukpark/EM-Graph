@@ -222,60 +222,22 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               key={node.id}
               onClick={() => onNodeSelect?.(node)}
               className={cn(
-                "group flex gap-3 p-3 rounded-lg border border-transparent cursor-pointer transition-all hover:bg-secondary/50",
+                "group flex flex-col gap-1.5 p-3 rounded-lg border border-transparent cursor-pointer transition-all hover:bg-secondary/50",
                 selectedNodeId === node.id ? "bg-secondary border-primary/20 shadow-sm" : "border-border/0"
               )}
             >
-              {displayFields.image && (
-                <div className="shrink-0 mt-0.5">
-                   {node.image ? (
-                     <Avatar className="h-10 w-10 rounded-md border border-border">
-                       <AvatarImage src={node.image} />
-                       <AvatarFallback className="rounded-md bg-primary/5 text-primary text-xs font-bold">
-                         {node.name.substring(0, 2).toUpperCase()}
-                       </AvatarFallback>
-                     </Avatar>
-                   ) : (
-                     <div className="h-10 w-10 rounded-md bg-secondary flex items-center justify-center text-muted-foreground">
-                        <Briefcase className="w-5 h-5 opacity-50" />
-                     </div>
-                   )}
-                </div>
-              )}
-              
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-start justify-between">
-                  <h4 className={cn("font-bold text-lg truncate", selectedNodeId === node.id ? "text-primary" : "text-foreground")}>
-                    {node.name}
-                  </h4>
-                </div>
-                
-                {displayFields.category && (
-                  <p className="text-base text-muted-foreground truncate font-medium">
-                    {node.category}
-                  </p>
-                )}
-                
-                <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground/80 mt-1.5 font-medium">
-                  {displayFields.representative && (
-                    <div className="flex items-center gap-1">
-                      <User className="w-3 h-3 opacity-70" />
-                      <span>{node.representative}</span>
-                    </div>
-                  )}
-                  {displayFields.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 opacity-70" />
-                      <span>{node.location}</span>
-                    </div>
-                  )}
-                  {displayFields.years && (
-                     <div className="flex items-center gap-1 pl-1 border-l border-border">
-                       <span>{node.years}th year</span>
-                     </div>
-                  )}
-                </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-mono text-muted-foreground bg-secondary/80 border-border/50">
+                  ID: {node.id}
+                </Badge>
+                <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/30">
+                  {node.category}
+                </span>
               </div>
+              
+              <h4 className={cn("font-bold text-base truncate pl-0.5", selectedNodeId === node.id ? "text-primary" : "text-foreground")}>
+                {node.name}
+              </h4>
             </div>
           ))}
         </div>
