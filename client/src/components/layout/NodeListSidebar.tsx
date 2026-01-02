@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 
 // Stock images for mock data
@@ -30,14 +32,33 @@ interface NodeData {
   years: number;
   description?: string;
   image?: string;
+  images?: string[];
 }
 
 // Mock Data matching the screenshot style
 export const MOCK_COMPANY_NODES: NodeData[] = [
-  { id: "1", name: "Kang Min-su", category: "Suspect", representative: "Male, 35", location: "Seoul", years: 2, image: imgKang },
+  { 
+    id: "1", 
+    name: "Kang Min-su", 
+    category: "Suspect", 
+    representative: "Male, 35", 
+    location: "Seoul", 
+    years: 2, 
+    image: imgKang,
+    images: [imgKang, imgStation, imgPhone] 
+  },
   { id: "2", name: "Kim Ji-hyun", category: "Victim", representative: "Female, 28", location: "Busan", years: 0, image: imgKim },
   { id: "3", name: "Park Dong-wook", category: "Suspect", representative: "Male, 42", location: "Incheon", years: 5, image: imgPark },
-  { id: "4", name: "Gangnam Station Exit 4", category: "Location", representative: "Public Area", location: "Seoul", years: 0, image: imgStation },
+  { 
+    id: "4", 
+    name: "Gangnam Station Exit 4", 
+    category: "Location", 
+    representative: "Public Area", 
+    location: "Seoul", 
+    years: 0, 
+    image: imgStation,
+    images: [imgStation, imgWarehouse]
+  },
   { id: "5", name: "Stolen Vehicle (12ga 3456)", category: "Evidence", representative: "Hyundai Sonata", location: "Gyeonggi-do", years: 0, image: imgCar },
   { id: "6", name: "Lee Sang-ho", category: "Witness", representative: "Male, 31", location: "Seoul", years: 0, image: imgLee },
   { id: "7", name: "Choi Yu-jin", category: "Victim", representative: "Female, 24", location: "Seoul", years: 0, image: imgChoi },
@@ -45,6 +66,74 @@ export const MOCK_COMPANY_NODES: NodeData[] = [
   { id: "9", name: "Burner Phone (Samsung)", category: "Evidence", representative: "Galaxy A12", location: "Seongnam-si", years: 1, image: imgPhone },
   { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8, image: imgKang }, // Reuse first image for now
 ];
+
+function NodeImageCarousel({ images, name }: { images: string[], name: string }) {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
+  if (images.length === 0) {
+    return (
+      <div className="w-full aspect-video flex items-center justify-center bg-secondary/20 text-muted-foreground">
+        <span className="text-xs">No Image</span>
+      </div>
+    );
+  }
+
+  return (
+    <Carousel setApi={setApi} className="w-full">
+      <CarouselContent>
+        {images.map((img, idx) => (
+          <CarouselItem key={idx}>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="aspect-video w-full relative cursor-zoom-in group/image">
+                  <img 
+                    src={img} 
+                    alt={`${name} - ${idx + 1}`} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover/image:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover/image:opacity-100">
+                    <Maximize2 className="w-8 h-8 text-white drop-shadow-md" />
+                  </div>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center overflow-hidden">
+                <img 
+                  src={img} 
+                  alt={`${name} - Fullscreen`} 
+                  className="w-full h-full max-h-[90vh] object-contain rounded-md"
+                />
+              </DialogContent>
+            </Dialog>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      {images.length > 1 && (
+        <>
+          <CarouselPrevious className="left-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
+          <CarouselNext className="right-2 opacity-0 group-hover/carousel:opacity-100 transition-opacity" />
+          <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
+            {current} / {count}
+          </div>
+        </>
+      )}
+    </Carousel>
+  );
+}
 
 interface NodeListSidebarProps {
   onNodeSelect?: (node: NodeData) => void;
@@ -71,7 +160,9 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
     const displayName = isGraphNode ? nodeData.label : nodeData.name;
     const displayType = isGraphNode ? nodeData.type : nodeData.category;
     const displaySub = isGraphNode ? nodeData.subLabel : nodeData.representative;
-    const displayImage = isGraphNode ? nodeData.image : nodeData.image;
+    // Handle multiple images
+    const rawImages = isGraphNode ? (nodeData.images || [nodeData.image]) : (nodeData.images || [nodeData.image]);
+    const displayImages = rawImages.filter(Boolean);
     
     return (
       <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
@@ -83,17 +174,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
              <h3 className="text-sm font-semibold uppercase tracking-wider">Component Details</h3>
           </div>
           
-          <div className="w-full aspect-video bg-muted rounded-lg border border-border/50 overflow-hidden mb-0 relative">
-             <img 
-               src={displayImage} 
-               alt={displayName} 
-               className="w-full h-full object-cover"
-             />
-             {!displayImage && (
-               <div className="w-full h-full flex items-center justify-center bg-secondary/20 text-muted-foreground">
-                 <span className="text-xs">No Image</span>
-               </div>
-             )}
+          <div className="w-full bg-muted rounded-lg border border-border/50 overflow-hidden mb-0 relative group/carousel">
+             <NodeImageCarousel images={displayImages} name={displayName} />
           </div>
         </div>
 
