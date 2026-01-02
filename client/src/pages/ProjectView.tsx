@@ -628,18 +628,18 @@ export default function ProjectView() {
     <Tabs value={sidebarMode} onValueChange={(v) => setSidebarMode(v as "nav" | "list")} className="w-full mb-6">
       <TabsList className="w-full grid grid-cols-2 bg-secondary/50 h-10 p-1 rounded-full border border-border/50">
         <TabsTrigger 
-          value="nav" 
-          className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
-        >
-          <LayoutTemplate className="w-3.5 h-3.5" />
-          Navigation
-        </TabsTrigger>
-        <TabsTrigger 
           value="list" 
           className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
         >
           <List className="w-3.5 h-3.5" />
           Node List
+        </TabsTrigger>
+        <TabsTrigger 
+          value="nav" 
+          className="rounded-full flex items-center justify-center gap-2 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-200"
+        >
+          <LayoutTemplate className="w-3.5 h-3.5" />
+          Navigation
         </TabsTrigger>
       </TabsList>
     </Tabs>
