@@ -400,8 +400,28 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                     </div>
                   )}
                   <div className="space-y-0.5">
-                    <ProjectNavItem icon={Network} label="location_hotspots" />
-                    <ProjectNavItem icon={Network} label="supply_chain_nodes" />
+                    <ExpandableNavItem 
+                        icon={Network} 
+                        label="location_hotspots" 
+                        fields={[
+                            { name: "location_id", type: Hash },
+                            { name: "latitude", type: MapPin },
+                            { name: "longitude", type: MapPin },
+                            { name: "intensity", type: Activity },
+                            { name: "last_updated", type: Calendar }
+                        ]}
+                    />
+                    <ExpandableNavItem 
+                        icon={Network} 
+                        label="supply_chain_nodes" 
+                        fields={[
+                            { name: "node_id", type: Hash },
+                            { name: "node_type", type: Type },
+                            { name: "capacity", type: Activity },
+                            { name: "location_name", type: AlignLeft },
+                            { name: "status", type: Activity }
+                        ]}
+                    />
                   </div>
                 </div>
               </div>
