@@ -175,6 +175,85 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     structural: { enabled: false, tightness: 5 },
   });
 
+  // Node Sizing Configuration State
+  const [nodeSizingConfig, setNodeSizingConfig] = useState<Record<string, { type: string, color: string, fields: { id: string, field: string, alias: string }[], availableFields: string[] }>>({
+    criminal: {
+      type: "Criminal",
+      color: "bg-red-500",
+      fields: [
+        { id: "1", field: "risk_score", alias: "Risk Score" },
+        { id: "2", field: "crimes_count", alias: "Crimes Committed" },
+        { id: "3", field: "sentence_years", alias: "Sentence Years" }
+      ],
+      availableFields: ["risk_score", "crimes_count", "sentence_years", "age", "weight", "height"]
+    },
+    detective: {
+      type: "Detective",
+      color: "bg-blue-500",
+      fields: [
+        { id: "1", field: "cases_solved", alias: "Cases Solved" },
+        { id: "2", field: "years_active", alias: "Years Active" }
+      ],
+      availableFields: ["cases_solved", "years_active", "rank_level", "commendations"]
+    },
+    prison: {
+      type: "Prison / Location",
+      color: "bg-emerald-500",
+      fields: [
+        { id: "1", field: "capacity", alias: "Inmate Capacity" },
+        { id: "2", field: "staff_count", alias: "Staff Count" }
+      ],
+      availableFields: ["capacity", "security_level", "staff_count", "budget"]
+    },
+    victim: {
+      type: "Victim",
+      color: "bg-amber-500",
+      fields: [
+        { id: "1", field: "damage_amount", alias: "Financial Damage" },
+        { id: "2", field: "impact_score", alias: "Impact Score" }
+      ],
+      availableFields: ["damage_amount", "impact_score", "recovery_time", "age"]
+    }
+  });
+
+  const updateFieldAlias = (typeKey: string, fieldId: string, newAlias: string) => {
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        fields: prev[typeKey].fields.map(f => f.id === fieldId ? { ...f, alias: newAlias } : f)
+      }
+    }));
+  };
+
+  const addField = (typeKey: string, field: string) => {
+    if (!field) return;
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        fields: [
+          ...prev[typeKey].fields,
+          { 
+            id: Date.now().toString(), 
+            field, 
+            alias: field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) 
+          }
+        ]
+      }
+    }));
+  };
+
+  const removeField = (typeKey: string, fieldId: string) => {
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        fields: prev[typeKey].fields.filter(f => f.id !== fieldId)
+      }
+    }));
+  };
+
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const updateSetting = (key: keyof GraphSettings, value: any) => {
@@ -972,104 +1051,64 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </p>
                             </div>
 
-                            {/* Criminal Config */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-red-500" />
-                                    <Label className="text-sm font-medium">Criminal Fields</Label>
-                                </div>
-                                <div className="grid gap-3 pl-4">
-                                    <div className="grid gap-1.5">
-                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
-                                        <Select defaultValue="risk_score">
-                                            <SelectTrigger className="h-8 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="risk_score">Risk Score</SelectItem>
-                                                <SelectItem value="crimes_count">Crimes Committed</SelectItem>
-                                                <SelectItem value="sentence_years">Sentence Years</SelectItem>
-                                                <SelectItem value="age">Age</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                            {Object.entries(nodeSizingConfig).map(([key, config], index, arr) => (
+                                <div key={key} className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                        <Label className="text-sm font-medium">{config.type} Fields</Label>
                                     </div>
-                                </div>
-                            </div>
-
-                            <Separator />
-
-                            {/* Detective Config */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                    <Label className="text-sm font-medium">Detective Fields</Label>
-                                </div>
-                                <div className="grid gap-3 pl-4">
-                                    <div className="grid gap-1.5">
-                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
-                                        <Select defaultValue="cases_solved">
-                                            <SelectTrigger className="h-8 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="cases_solved">Cases Solved</SelectItem>
-                                                <SelectItem value="years_active">Years Active</SelectItem>
-                                                <SelectItem value="rank_level">Rank Level</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    <div className="grid gap-3 pl-4">
+                                        {config.fields.map((field) => (
+                                            <div key={field.id} className="flex items-end gap-2">
+                                                <div className="flex-1 grid gap-1.5">
+                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
+                                                    <div className="h-8 px-3 py-2 text-xs border rounded-md bg-muted/50 text-muted-foreground flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
+                                                        {field.field}
+                                                    </div>
+                                                </div>
+                                                <div className="flex-[1.5] grid gap-1.5">
+                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
+                                                    <Input 
+                                                        value={field.alias}
+                                                        onChange={(e) => updateFieldAlias(key, field.id, e.target.value)}
+                                                        className="h-8 text-xs"
+                                                    />
+                                                </div>
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                                                    onClick={() => removeField(key, field.id)}
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="flex items-end gap-2">
+                                            <div className="flex-1">
+                                                <Select onValueChange={(val) => addField(key, val)}>
+                                                    <SelectTrigger className="h-8 text-xs bg-secondary/20 border-dashed">
+                                                        <span className="text-muted-foreground flex items-center gap-2">
+                                                            <PlusCircle className="w-3.5 h-3.5" />
+                                                            Add Field...
+                                                        </span>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {config.availableFields
+                                                            .filter(f => !config.fields.some(existing => existing.field === f))
+                                                            .map(f => (
+                                                                <SelectItem key={f} value={f}>{f}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
                                     </div>
+                                    {index < arr.length - 1 && <Separator className="mt-2" />}
                                 </div>
-                            </div>
-
-                            <Separator />
-
-                            {/* Prison Config */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                                    <Label className="text-sm font-medium">Prison / Location Fields</Label>
-                                </div>
-                                <div className="grid gap-3 pl-4">
-                                    <div className="grid gap-1.5">
-                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
-                                        <Select defaultValue="capacity">
-                                            <SelectTrigger className="h-8 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="capacity">Inmate Capacity</SelectItem>
-                                                <SelectItem value="security_level">Security Level</SelectItem>
-                                                <SelectItem value="staff_count">Staff Count</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Separator />
-
-                            {/* Victim Config */}
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-amber-500" />
-                                    <Label className="text-sm font-medium">Victim Fields</Label>
-                                </div>
-                                <div className="grid gap-3 pl-4">
-                                    <div className="grid gap-1.5">
-                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
-                                        <Select defaultValue="damage_amount">
-                                            <SelectTrigger className="h-8 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="damage_amount">Financial Damage</SelectItem>
-                                                <SelectItem value="impact_score">Impact Score</SelectItem>
-                                                <SelectItem value="recovery_time">Recovery Time</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 ) : (
@@ -1090,92 +1129,28 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         />
 
                         <div className="space-y-4">
-                            {/* Criminal Nodes */}
-                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-2 h-2 rounded-full bg-red-500" />
-                                    <span className="text-sm font-medium">Criminal</span>
+                            {Object.entries(nodeSizingConfig).map(([key, config]) => (
+                                <div key={key} className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                        <span className="text-sm font-medium">{config.type}</span>
+                                    </div>
+                                    <div className="pl-4 space-y-2">
+                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
+                                        <Select defaultValue={config.fields[0]?.field || "none"}>
+                                            <SelectTrigger className="h-7 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {config.fields.map(field => (
+                                                    <SelectItem key={field.id} value={field.field}>{field.alias}</SelectItem>
+                                                ))}
+                                                <SelectItem value="none">None (Fixed Size)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                 </div>
-                                <div className="pl-4 space-y-2">
-                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
-                                    <Select defaultValue="risk_score">
-                                        <SelectTrigger className="h-7 text-xs">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="risk_score">Risk Score</SelectItem>
-                                            <SelectItem value="crimes_count">Crimes Committed</SelectItem>
-                                            <SelectItem value="sentence_years">Sentence Years</SelectItem>
-                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            {/* Detective Nodes */}
-                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                    <span className="text-sm font-medium">Detective</span>
-                                </div>
-                                <div className="pl-4 space-y-2">
-                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
-                                    <Select defaultValue="cases_solved">
-                                        <SelectTrigger className="h-7 text-xs">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="cases_solved">Cases Solved</SelectItem>
-                                            <SelectItem value="rank_level">Rank Level</SelectItem>
-                                            <SelectItem value="years_active">Years Active</SelectItem>
-                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            {/* Prison/Location Nodes */}
-                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                                    <span className="text-sm font-medium">Prison / Location</span>
-                                </div>
-                                <div className="pl-4 space-y-2">
-                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
-                                    <Select defaultValue="capacity">
-                                        <SelectTrigger className="h-7 text-xs">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="capacity">Inmate Capacity</SelectItem>
-                                            <SelectItem value="security_level">Security Level</SelectItem>
-                                            <SelectItem value="staff_count">Staff Count</SelectItem>
-                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            {/* Victim Nodes */}
-                            <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-2 h-2 rounded-full bg-amber-500" />
-                                    <span className="text-sm font-medium">Victim</span>
-                                </div>
-                                <div className="pl-4 space-y-2">
-                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
-                                    <Select defaultValue="damage_amount">
-                                        <SelectTrigger className="h-7 text-xs">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="damage_amount">Financial Damage</SelectItem>
-                                            <SelectItem value="impact_score">Impact Score</SelectItem>
-                                            <SelectItem value="none">None (Fixed Size)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
