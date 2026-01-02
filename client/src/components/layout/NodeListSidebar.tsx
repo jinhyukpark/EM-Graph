@@ -245,18 +245,18 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-start justify-between">
-                  <h4 className={cn("font-semibold text-base truncate", selectedNodeId === node.id ? "text-primary" : "text-foreground")}>
+                  <h4 className={cn("font-bold text-lg truncate", selectedNodeId === node.id ? "text-primary" : "text-foreground")}>
                     {node.name}
                   </h4>
                 </div>
                 
                 {displayFields.category && (
-                  <p className="text-sm text-muted-foreground truncate">
+                  <p className="text-base text-muted-foreground truncate font-medium">
                     {node.category}
                   </p>
                 )}
                 
-                <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground/80 mt-1.5">
+                <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground/80 mt-1.5 font-medium">
                   {displayFields.representative && (
                     <div className="flex items-center gap-1">
                       <User className="w-3 h-3 opacity-70" />

@@ -144,16 +144,16 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
   const ProjectNavItem = ({ icon: Icon, label, active, count }: { icon: any, label: string, active?: boolean, count?: number }) => (
     <div className={cn(
-      "flex items-center gap-3 px-3 py-2 rounded-md text-xs transition-colors mb-0.5 cursor-pointer group",
+      "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors mb-0.5 cursor-pointer group",
       active 
-        ? "bg-primary/5 text-primary font-medium" 
+        ? "bg-primary/5 text-primary" 
         : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
       isCollapsed && "justify-center px-2"
     )}>
-      <Icon className="w-3.5 h-3.5" />
+      <Icon className="w-4 h-4" />
       {!isCollapsed && <span className="truncate flex-1">{label}</span>}
       {count !== undefined && !isCollapsed && (
-        <span className="text-[9px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-full group-hover:bg-secondary/80 transition-colors">
+        <span className="text-[10px] bg-secondary text-muted-foreground px-1.5 py-0.5 rounded-full group-hover:bg-secondary/80 transition-colors">
           {count}
         </span>
       )}
