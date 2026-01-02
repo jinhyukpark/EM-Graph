@@ -237,12 +237,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <SectionHeader icon={Settings2} title="Graph Settings" />
                     
                     {/* Node Type Selection Mode */}
-                    <div className="space-y-4">
-                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Node Type Selection</Label>
+                    <div className="space-y-3">
+                        <Label className="text-xs font-medium text-muted-foreground mb-1 block uppercase tracking-wider">Node Type Selection</Label>
                         <RadioGroup 
                             defaultValue={settings?.nodeSelectionMode || 'multi'} 
                             onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
-                            className="flex gap-4 pt-1"
+                            className="flex gap-4 pt-1 pl-3"
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="single" id="mode-single" />
@@ -256,35 +256,39 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     </div>
 
                     {/* Node Weight & Direction */}
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                          <div className="space-y-2">
                             <div className="flex justify-between">
                               <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Node Weight Threshold</Label>
                               <span className="text-xs text-muted-foreground">{settings?.nodeWeight || 50}%</span>
                             </div>
-                            <Slider 
-                                defaultValue={[settings?.nodeWeight || 50]} 
-                                max={100} 
-                                step={1} 
-                                className="py-1" 
-                                onValueChange={(v) => updateSetting("nodeWeight", v[0])}
-                            />
+                            <div className="pl-3">
+                                <Slider 
+                                    defaultValue={[settings?.nodeWeight || 50]} 
+                                    max={100} 
+                                    step={1} 
+                                    className="py-1" 
+                                    onValueChange={(v) => updateSetting("nodeWeight", v[0])}
+                                />
+                            </div>
                          </div>
 
-                         <div className="flex items-center justify-between">
-                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Edge Direction</Label>
-                             <Select 
-                                value={settings?.nodeDirection || 'directed'} 
-                                onValueChange={(v) => updateSetting("nodeDirection", v)}
-                             >
-                                <SelectTrigger className="h-7 text-xs w-[120px]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="directed">Directed</SelectItem>
-                                  <SelectItem value="undirected">Undirected</SelectItem>
-                                </SelectContent>
-                             </Select>
+                         <div className="space-y-2">
+                            <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider block">Edge Direction</Label>
+                            <div className="pl-3">
+                                 <Select 
+                                    value={settings?.nodeDirection || 'directed'} 
+                                    onValueChange={(v) => updateSetting("nodeDirection", v)}
+                                 >
+                                    <SelectTrigger className="h-8 text-xs w-full">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="directed">Directed</SelectItem>
+                                      <SelectItem value="undirected">Undirected</SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                            </div>
                         </div>
                     </div>
 
@@ -292,61 +296,65 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <div className="space-y-3 pt-2">
                         <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Visibility</Label>
                         
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Timeline</Label>
-                            <Switch 
-                                checked={settings?.showTimeline ?? true}
-                                onCheckedChange={(c) => updateSetting("showTimeline", c)}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">AI Briefing</Label>
-                            <Switch 
-                                checked={settings?.showAiBriefing ?? true}
-                                onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
-                            />
-                        </div>
-                         <div className="flex items-center justify-between">
-                            <Label className="text-xs">Legend</Label>
-                            <Switch 
-                                checked={settings?.showLegend ?? true}
-                                onCheckedChange={(c) => updateSetting("showLegend", c)}
-                            />
+                        <div className="space-y-3 pl-3">
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">Timeline</Label>
+                                <Switch 
+                                    checked={settings?.showTimeline ?? true}
+                                    onCheckedChange={(c) => updateSetting("showTimeline", c)}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">AI Briefing</Label>
+                                <Switch 
+                                    checked={settings?.showAiBriefing ?? true}
+                                    onCheckedChange={(c) => updateSetting("showAiBriefing", c)}
+                                />
+                            </div>
+                             <div className="flex items-center justify-between">
+                                <Label className="text-xs">Legend</Label>
+                                <Switch 
+                                    checked={settings?.showLegend ?? true}
+                                    onCheckedChange={(c) => updateSetting("showLegend", c)}
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {/* Display */}
                     <div className="space-y-3 pt-2">
                         <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Display</Label>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Show Node Labels</Label>
-                        <Switch 
-                            checked={settings?.showNodeLabels ?? true}
-                            onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
-                        />
+                        <div className="space-y-3 pl-3">
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">Show Node Labels</Label>
+                                <Switch 
+                                    checked={settings?.showNodeLabels ?? true}
+                                    onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">Show Edge Labels</Label>
+                                <Switch 
+                                    checked={settings?.showEdgeLabels ?? false}
+                                    onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">Curved Edges</Label>
+                                <Switch 
+                                    checked={settings?.curvedEdges ?? true}
+                                    onCheckedChange={(c) => updateSetting("curvedEdges", c)}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs">Particles Effect</Label>
+                                <Switch 
+                                    checked={settings?.particlesEffect ?? true}
+                                    onCheckedChange={(c) => updateSetting("particlesEffect", c)}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <Label className="text-xs">Show Edge Labels</Label>
-                        <Switch 
-                            checked={settings?.showEdgeLabels ?? false}
-                            onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label className="text-xs">Curved Edges</Label>
-                        <Switch 
-                            checked={settings?.curvedEdges ?? true}
-                            onCheckedChange={(c) => updateSetting("curvedEdges", c)}
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label className="text-xs">Particles Effect</Label>
-                        <Switch 
-                            checked={settings?.particlesEffect ?? true}
-                            onCheckedChange={(c) => updateSetting("particlesEffect", c)}
-                        />
-                    </div>
-                </div>
               </div>
             </div>
             )}
