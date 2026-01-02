@@ -215,7 +215,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="absolute right-1 top-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
+                                className="absolute right-1 top-1/2 -translate-y-1/2 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
                                 onClick={() => setShowLayoutDescription(false)}
                             >
                                 <X className="w-3 h-3 text-muted-foreground" />
@@ -265,7 +265,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 <Button 
                                     variant="ghost" 
                                     size="icon" 
-                                    className="absolute right-1 top-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
+                                    className="absolute right-1 top-1/2 -translate-y-1/2 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
                                     onClick={() => setShowGraphSettingsDescription(false)}
                                 >
                                     <X className="w-3 h-3 text-muted-foreground" />
