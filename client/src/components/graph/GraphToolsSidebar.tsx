@@ -41,7 +41,7 @@ import {
 
 import AICopilotPanel from "./AICopilotPanel";
 
-const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
+const SectionHeader = ({ icon: Icon, title, onHide }: { icon: any, title: string, onHide?: () => void }) => (
   <div className="flex items-center justify-between mb-2">
     <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
       <Icon className="w-3.5 h-3.5" /> {title}
@@ -56,13 +56,13 @@ const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
         <DropdownMenuLabel className="text-xs">Configure Section</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-xs">
-          <PlusCircle className="w-3.5 h-3.5 mr-2" /> Add Control
+          <Edit className="w-3.5 h-3.5 mr-2" /> Edit Control
         </DropdownMenuItem>
         <DropdownMenuItem className="text-xs">
           <Edit className="w-3.5 h-3.5 mr-2" /> Edit Layout
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-xs text-destructive focus:text-destructive">
+        <DropdownMenuItem className="text-xs text-destructive focus:text-destructive" onClick={onHide}>
           <Trash2 className="w-3.5 h-3.5 mr-2" /> Hide Section
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -109,6 +109,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [isResizing, setIsResizing] = useState(false);
   const [showLayoutDescription, setShowLayoutDescription] = useState(true);
   const [showGraphSettingsDescription, setShowGraphSettingsDescription] = useState(true);
+  const [visibleSections, setVisibleSections] = useState({ layout: true, graphSettings: true });
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const updateSetting = (key: keyof GraphSettings, value: any) => {
@@ -204,8 +205,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "view" && (
               <div className="space-y-6">
                 
+                {visibleSections.layout && (
                 <div className="space-y-4">
-                    <SectionHeader icon={Box} title="Layout Type" />
+                    <SectionHeader icon={Box} title="Layout Type" onHide={() => setVisibleSections(prev => ({...prev, layout: false}))} />
                     {showLayoutDescription && (
                         <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
                             <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -250,12 +252,14 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                       />
                     </div>
                 </div>
+                )}
 
-                <Separator />
+                {visibleSections.layout && visibleSections.graphSettings && <Separator />}
 
+                {visibleSections.graphSettings && (
                 <div className="space-y-6">
                     <div>
-                        <SectionHeader icon={Settings2} title="Graph Settings" />
+                        <SectionHeader icon={Settings2} title="Graph Settings" onHide={() => setVisibleSections(prev => ({...prev, graphSettings: false}))} />
                         {showGraphSettingsDescription && (
                             <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
                                 <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -411,6 +415,22 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
               </div>
+                )}
+                
+                {/* Manage Sections Button - Show if any section is hidden */}
+                {(!visibleSections.layout || !visibleSections.graphSettings) && (
+                    <div className="pt-4 border-t border-border mt-4">
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-xs"
+                            onClick={() => setVisibleSections({ layout: true, graphSettings: true })}
+                        >
+                            <Eye className="w-3.5 h-3.5 mr-2" />
+                            Show Hidden Sections
+                        </Button>
+                    </div>
+                )}
             </div>
             )}
 
