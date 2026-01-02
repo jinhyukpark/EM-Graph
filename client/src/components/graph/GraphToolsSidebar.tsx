@@ -419,7 +419,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 {/* Manage Sections Button - Show if any section is hidden */}
                 {(!visibleSections.layout || !visibleSections.graphSettings) && (
-                    <div className="pt-4 border-t border-border mt-4">
+                    <div className="pt-4 border-t border-border mt-4 text-center">
+                        {!visibleSections.layout && !visibleSections.graphSettings && (
+                            <p className="text-sm text-muted-foreground mb-3">All sections are currently hidden.</p>
+                        )}
                         <Button 
                             variant="outline" 
                             size="sm" 
