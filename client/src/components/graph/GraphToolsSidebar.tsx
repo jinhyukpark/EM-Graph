@@ -380,7 +380,184 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 </div>
               </div>
             )}
-            {activeTab === "filters" && <><Filter className="w-4 h-4" /> Graph Filters</>}
+            {activeTab === "filters" && (
+                <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                    <SectionHeader icon={Filter} title="Graph Filters" />
+
+                    <div className="space-y-6">
+                        {/* Global Filters */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Global Filters</h4>
+                            </div>
+                            
+                            <div className="space-y-4 px-1">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <Label className="text-xs font-medium">Min Degree</Label>
+                                        <span className="text-xs text-muted-foreground">1</span>
+                                    </div>
+                                    <Slider defaultValue={[1]} max={20} step={1} className="py-2" />
+                                </div>
+                                
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center">
+                                        <Label className="text-xs font-medium">Edge Weight Threshold</Label>
+                                        <span className="text-xs text-muted-foreground">0.2</span>
+                                    </div>
+                                    <Slider defaultValue={[20]} max={100} step={1} className="py-2" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <Separator />
+
+                        {/* Node Type Specific Filters */}
+                        <div>
+                            <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <Info className="w-4 h-4 text-primary" />
+                                    <h4 className="text-sm font-semibold text-foreground">Type-Based Filtering</h4>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                    Refine the graph by filtering specific attributes for each entity type.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                {/* Criminal Filters */}
+                                <div className="rounded-lg border bg-card/50 overflow-hidden">
+                                    <div className="flex items-center justify-between p-3 bg-secondary/30 border-b border-border/50">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-red-500" />
+                                            <span className="text-sm font-medium">Criminal</span>
+                                        </div>
+                                        <Switch defaultChecked />
+                                    </div>
+                                    <div className="p-3 space-y-3">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</Label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['At Large', 'In Custody', 'Deceased', 'Unknown'].map(status => (
+                                                    <div key={status} className="flex items-center gap-1.5 px-2 py-1 rounded bg-secondary/50 border border-border/50 text-[10px] cursor-pointer hover:bg-secondary hover:border-primary/50 transition-colors">
+                                                        <Checkbox id={`status-${status}`} className="w-3 h-3 rounded-sm" defaultChecked />
+                                                        <label htmlFor={`status-${status}`} className="cursor-pointer">{status}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 pt-1">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Risk Level (Min)</Label>
+                                            <Slider defaultValue={[3]} max={10} step={1} className="py-2" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Detective Filters */}
+                                <div className="rounded-lg border bg-card/50 overflow-hidden">
+                                    <div className="flex items-center justify-between p-3 bg-secondary/30 border-b border-border/50">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                            <span className="text-sm font-medium">Detective</span>
+                                        </div>
+                                        <Switch defaultChecked />
+                                    </div>
+                                    <div className="p-3 space-y-3">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Department</Label>
+                                            <Select defaultValue="all">
+                                                <SelectTrigger className="h-7 text-xs">
+                                                    <SelectValue placeholder="Select Dept" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all">All Departments</SelectItem>
+                                                    <SelectItem value="homicide">Homicide</SelectItem>
+                                                    <SelectItem value="narcotics">Narcotics</SelectItem>
+                                                    <SelectItem value="cyber">Cyber Crime</SelectItem>
+                                                    <SelectItem value="fraud">Fraud</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Rank</Label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Detective', 'Sergeant', 'Lieutenant', 'Chief'].map(rank => (
+                                                    <div key={rank} className="flex items-center gap-1.5 px-2 py-1 rounded bg-secondary/50 border border-border/50 text-[10px] cursor-pointer hover:bg-secondary hover:border-primary/50 transition-colors">
+                                                        <Checkbox id={`rank-${rank}`} className="w-3 h-3 rounded-sm" defaultChecked />
+                                                        <label htmlFor={`rank-${rank}`} className="cursor-pointer">{rank}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Prison/Location Filters */}
+                                <div className="rounded-lg border bg-card/50 overflow-hidden">
+                                    <div className="flex items-center justify-between p-3 bg-secondary/30 border-b border-border/50">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                            <span className="text-sm font-medium">Prison / Location</span>
+                                        </div>
+                                        <Switch defaultChecked />
+                                    </div>
+                                    <div className="p-3 space-y-3">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Type</Label>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {['Prison', 'Safehouse', 'Warehouse', 'HQ'].map(type => (
+                                                    <div key={type} className="flex items-center gap-1.5">
+                                                        <Checkbox id={`type-${type}`} className="w-3.5 h-3.5 rounded-sm" defaultChecked />
+                                                        <label htmlFor={`type-${type}`} className="text-xs cursor-pointer">{type}</label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 pt-1">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Security Level</Label>
+                                            <Slider defaultValue={[2]} max={5} step={1} className="py-2" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Victim Filters */}
+                                <div className="rounded-lg border bg-card/50 overflow-hidden">
+                                    <div className="flex items-center justify-between p-3 bg-secondary/30 border-b border-border/50">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                            <span className="text-sm font-medium">Victim</span>
+                                        </div>
+                                        <Switch defaultChecked />
+                                    </div>
+                                    <div className="p-3 space-y-3">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Type</Label>
+                                            <div className="flex gap-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="vic-ind" defaultChecked />
+                                                    <label htmlFor="vic-ind" className="text-xs">Individual</label>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="vic-corp" defaultChecked />
+                                                    <label htmlFor="vic-corp" className="text-xs">Corporate</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Min Damage ($)</Label>
+                                                <span className="text-[10px] text-muted-foreground">10k+</span>
+                                            </div>
+                                            <Slider defaultValue={[10000]} max={1000000} step={1000} className="py-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {activeTab === "report" && <><FileText className="w-4 h-4" /> Analysis Report</>}
           </h3>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setActiveTab(null)}>
