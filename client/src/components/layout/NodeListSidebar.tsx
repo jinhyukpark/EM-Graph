@@ -85,11 +85,11 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
           </div>
         </div>
 
-        <ScrollArea className="flex-1 p-4">
-           <div className="space-y-6">
+        <ScrollArea className="flex-1 p-0">
+           <div className="space-y-0 pb-4">
               {/* Properties Section */}
-              <div className="space-y-3">
-                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="px-4 py-3 border-b border-border/50">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
                    <Settings className="w-3.5 h-3.5" /> Properties
                  </h4>
                  <div className="grid gap-2 text-sm bg-card rounded-md border p-3">
@@ -123,8 +123,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               </div>
 
               {/* Connected Links (Mock for now) */}
-              <div className="space-y-3">
-                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <div className="px-4 py-3 border-b border-border/50">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
                    <Network className="w-3.5 h-3.5" /> Connections
                  </h4>
                  <div className="space-y-2">
@@ -138,7 +138,7 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
                  </div>
               </div>
 
-              <div className="pt-4">
+              <div className="p-4">
                  <Button className="w-full gap-2" variant="secondary">
                     <Filter className="w-4 h-4" /> Filter by this Node
                  </Button>
