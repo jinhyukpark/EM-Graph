@@ -1136,7 +1136,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         <span className="text-sm font-medium">{config.type}</span>
                                     </div>
                                     <div className="pl-4 space-y-2">
-                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sizing Field</Label>
                                         <Select defaultValue={config.fields[0]?.field || "none"}>
                                             <SelectTrigger className="h-7 text-xs">
                                                 <SelectValue />
