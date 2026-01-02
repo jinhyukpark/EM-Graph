@@ -2,7 +2,7 @@ import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -205,14 +205,13 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           
           {isProjectView && (
             <div className={cn("pt-4 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-6")}>
-              <Link href="/projects">
-                <Button variant="ghost" size="sm" className={cn(
+              <Link href="/projects" className={cn(
+                  buttonVariants({ variant: "ghost", size: "sm" }),
                   "text-muted-foreground hover:text-foreground gap-1",
                   isCollapsed ? "p-0 h-8 w-8 justify-center" : "-ml-2 mb-2 pl-2 pr-4"
                 )}>
                   <ArrowLeft className="w-4 h-4" />
                   {!isCollapsed && "Back to Projects"}
-                </Button>
               </Link>
               
               {!isCollapsed && sidebarControls && (
