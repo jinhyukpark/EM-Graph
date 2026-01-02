@@ -559,10 +559,11 @@ export default function ProjectView() {
                <Scale className="w-3.5 h-3.5 mr-2" />
                Compare
             </Button>
-            
-            <div className="pointer-events-auto">
-               <ParticipantsDisplay />
-            </div>
+          </div>
+          
+          {/* Participants - Top Right */}
+          <div className="absolute top-4 right-4 z-10 pointer-events-auto">
+             <ParticipantsDisplay />
           </div>
 
           <CompareDialog 
