@@ -1029,6 +1029,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                     {/* Global Sizing Settings */}
                     <div className="space-y-4">
+                        <SectionHeader icon={Network} title="Graph Theory" />
                         <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
                             <div className="flex items-center gap-2 mb-1.5">
                                 <Info className="w-4 h-4 text-primary" />
