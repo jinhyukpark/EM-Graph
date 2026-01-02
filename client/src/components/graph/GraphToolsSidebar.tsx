@@ -238,12 +238,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <SectionHeader icon={Settings2} title="General Settings" />
                     
                     {/* Node Type Selection Mode */}
-                    <div className="space-y-2">
-                        <Label className="text-xs">Node Type Selection</Label>
+                    <div className="space-y-4">
+                        <Label className="text-xs font-medium">Node Type Selection</Label>
                         <RadioGroup 
                             defaultValue={settings?.nodeSelectionMode || 'multi'} 
                             onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
-                            className="flex gap-4"
+                            className="flex gap-4 pt-1"
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="single" id="mode-single" />
