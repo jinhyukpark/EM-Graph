@@ -1031,7 +1031,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <div className="space-y-4">
                         <div className="bg-secondary/20 border border-border/50 rounded-md p-3 mb-4">
                             <div className="flex items-center gap-2 mb-1.5">
-                                <Network className="w-4 h-4 text-primary" />
+                                <Info className="w-4 h-4 text-primary" />
                                 <h4 className="text-sm font-semibold text-foreground">Graph Theory</h4>
                             </div>
                             <p className="text-xs text-muted-foreground leading-relaxed pl-6">
