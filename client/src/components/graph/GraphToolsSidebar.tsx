@@ -40,7 +40,8 @@ import {
   ArrowRight,
   ArrowUp,
   ArrowLeft,
-  Waypoints
+  Waypoints,
+  EyeOff
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -75,7 +76,7 @@ const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-xs text-destructive focus:text-destructive" onClick={onHide}>
-          <Trash2 className="w-3.5 h-3.5 mr-2" /> Hide Section
+          <EyeOff className="w-3.5 h-3.5 mr-2" /> Hide Section
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -946,9 +947,140 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {/* Node Sizing Tab */}
             {activeTab === "sizing" && (
               <div className="space-y-6">
-                <SectionHeader icon={Maximize2} title="Node Sizing" />
                 
-                <div className="space-y-6">
+                {editingSection === 'sizing' ? (
+                    <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                        <div className="flex items-center justify-between border-b border-border pb-4">
+                            <h4 className="text-sm font-semibold flex items-center gap-2">
+                                <Edit className="w-4 h-4 text-primary" />
+                                Edit Sizing Control
+                            </h4>
+                            <div className="flex gap-2">
+                                <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <Info className="w-4 h-4 text-primary" />
+                                    <h4 className="text-sm font-semibold text-foreground">Configure Sizing Fields</h4>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                  Select the data fields that should be available for controlling node sizes for each entity type.
+                                </p>
+                            </div>
+
+                            {/* Criminal Config */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                                    <Label className="text-sm font-medium">Criminal Fields</Label>
+                                </div>
+                                <div className="grid gap-3 pl-4">
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
+                                        <Select defaultValue="risk_score">
+                                            <SelectTrigger className="h-8 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="risk_score">Risk Score</SelectItem>
+                                                <SelectItem value="crimes_count">Crimes Committed</SelectItem>
+                                                <SelectItem value="sentence_years">Sentence Years</SelectItem>
+                                                <SelectItem value="age">Age</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Detective Config */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                    <Label className="text-sm font-medium">Detective Fields</Label>
+                                </div>
+                                <div className="grid gap-3 pl-4">
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
+                                        <Select defaultValue="cases_solved">
+                                            <SelectTrigger className="h-8 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="cases_solved">Cases Solved</SelectItem>
+                                                <SelectItem value="years_active">Years Active</SelectItem>
+                                                <SelectItem value="rank_level">Rank Level</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Prison Config */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    <Label className="text-sm font-medium">Prison / Location Fields</Label>
+                                </div>
+                                <div className="grid gap-3 pl-4">
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
+                                        <Select defaultValue="capacity">
+                                            <SelectTrigger className="h-8 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="capacity">Inmate Capacity</SelectItem>
+                                                <SelectItem value="security_level">Security Level</SelectItem>
+                                                <SelectItem value="staff_count">Staff Count</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Victim Config */}
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                    <Label className="text-sm font-medium">Victim Fields</Label>
+                                </div>
+                                <div className="grid gap-3 pl-4">
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">Primary Metric</Label>
+                                        <Select defaultValue="damage_amount">
+                                            <SelectTrigger className="h-8 text-xs">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="damage_amount">Financial Damage</SelectItem>
+                                                <SelectItem value="impact_score">Impact Score</SelectItem>
+                                                <SelectItem value="recovery_time">Recovery Time</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                  <div className="space-y-6 animate-in fade-in duration-200">
+                    <SectionHeader 
+                        icon={Maximize2} 
+                        title="Node Sizing" 
+                        onEditControl={() => setEditingSection('sizing')}
+                    />
+                    
+                    <div className="space-y-6">
                     {/* Field-based Sizing Configuration */}
                     <div>
                         <InfoBox 
@@ -1123,7 +1255,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             </div>
                         </div>
                     </div>
-                </div>
+                  </div>
+                )}
               </div>
             )}
 
