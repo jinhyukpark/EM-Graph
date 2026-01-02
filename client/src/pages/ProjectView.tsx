@@ -29,6 +29,7 @@ import lawyerHanImg from '@assets/stock_images/portrait_of_a_male_l_cbb92d94.jpg
 import enforcerImg from '@assets/stock_images/portrait_of_a_male_e_fa4e764a.jpg';
 import laundererImg from '@assets/stock_images/portrait_of_a_male_m_7b9dd078.jpg';
 import warehouseImg from '@assets/stock_images/abandoned_warehouse__5ca79054.jpg';
+import companyLogoImg from '@assets/stock_images/modern_tech_company__bbd857a2.jpg';
 
 import { cn } from "@/lib/utils";
 
@@ -371,7 +372,7 @@ const createRadialLayout = () => {
     { id: 'asn-1', label: 'Thug A', sub: 'Associate', type: 'Criminal', color: '#ef4444', img: thugAImg },
     { id: 'wit-1', label: 'Witness Kim', sub: 'Observer', type: 'Witness', color: '#fbbf24', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop' },
     { id: 'dt-2', label: 'Det. Lee', sub: 'Partner', type: 'Detective', color: '#3b82f6', img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop' },
-    { id: 'vic-3', label: 'Company X', sub: 'Fraud Victim', type: 'Victim', color: '#fbbf24' },
+    { id: 'vic-3', label: 'Company X', sub: 'Fraud Victim', type: 'Victim', color: '#fbbf24', img: companyLogoImg },
   ];
 
   outerCircle.forEach((entity, i) => {
