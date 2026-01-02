@@ -1,6 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -159,6 +159,39 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       )}
     </div>
   );
+
+  const ExpandableNavItem = ({ icon: Icon, label, fields }: { icon: any, label: string, fields?: { name: string, type: any }[] }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className="mb-0.5">
+            <div 
+                className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer group",
+                    isOpen ? "bg-secondary/50 text-foreground" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
+                    isCollapsed && "justify-center px-2"
+                )}
+                onClick={() => !isCollapsed && setIsOpen(!isOpen)}
+            >
+                <Icon className="w-4 h-4 shrink-0" />
+                {!isCollapsed && <span className="truncate flex-1">{label}</span>}
+                {!isCollapsed && fields && (
+                    <ChevronRight className={cn("w-3 h-3 transition-transform opacity-50 group-hover:opacity-100", isOpen && "rotate-90")} />
+                )}
+            </div>
+            {!isCollapsed && isOpen && fields && (
+                <div className="pl-9 pr-2 py-1 space-y-0.5 animate-in slide-in-from-top-1 duration-200">
+                    {fields.map((field, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-[11px] text-muted-foreground py-1 px-2 rounded hover:bg-muted/50 transition-colors cursor-pointer group/field">
+                           <field.type className="w-3 h-3 opacity-50 group-hover/field:opacity-100 transition-opacity" />
+                           <span className="truncate opacity-80 group-hover/field:opacity-100 transition-opacity">{field.name}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+  };
 
   return (
     <div className="h-screen overflow-hidden bg-background text-foreground flex font-sans selection:bg-primary/20 selection:text-primary">
@@ -332,8 +365,29 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                     </div>
                   )}
                   <div className="space-y-0.5">
-                    <ProjectNavItem icon={CircleDot} label="crime_incidents_2024" />
-                    <ProjectNavItem icon={CircleDot} label="suspect_profiles" />
+                    <ExpandableNavItem 
+                        icon={CircleDot} 
+                        label="crime_incidents_2024" 
+                        fields={[
+                            { name: "incident_id", type: Hash },
+                            { name: "date_time", type: Calendar },
+                            { name: "type", type: Type },
+                            { name: "location_lat", type: MapPin },
+                            { name: "description", type: AlignLeft },
+                            { name: "status", type: Activity }
+                        ]}
+                    />
+                    <ExpandableNavItem 
+                        icon={CircleDot} 
+                        label="suspect_profiles" 
+                        fields={[
+                             { name: "suspect_id", type: Hash },
+                             { name: "full_name", type: Type },
+                             { name: "alias", type: Type },
+                             { name: "date_of_birth", type: Calendar },
+                             { name: "risk_level", type: Activity }
+                        ]}
+                    />
                   </div>
                 </div>
 
