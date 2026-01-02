@@ -571,7 +571,7 @@ export default function ProjectView() {
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
-  const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
+  const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("list");
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
   
   // Legend State
