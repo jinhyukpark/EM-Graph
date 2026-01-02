@@ -210,7 +210,7 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
       dragMomentum={false}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="absolute top-4 left-4 z-10 max-w-[320px] group cursor-move"
+      className="absolute top-4 left-4 z-10 max-w-[340px] group cursor-move"
     >
       {/* Moving Light Border Effect */}
       <div className={cn(
@@ -230,16 +230,16 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 <div className="p-1 rounded bg-blue-100 text-blue-600">
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Sparkles className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-semibold text-foreground/90">AI Network Briefing</span>
+                <span className="text-sm font-semibold text-foreground/90">AI Network Briefing</span>
               </div>
               <div className="flex items-center">
                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => setIsExpanded(!isExpanded)}>
-                   {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                   {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </Button>
                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={onClose}>
-                   <X className="w-3.5 h-3.5" />
+                   <X className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -251,35 +251,35 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="p-3"
+                  className="p-4"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Domain Analysis</div>
-                       <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                       <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Domain Analysis</div>
+                       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
                           Criminal Organization Network
                        </div>
                     </div>
 
                     <div className="space-y-2">
-                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Key Insights</div>
+                       <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Key Insights</div>
                        
-                       <div className="p-2 rounded bg-muted/30 border border-border/50 space-y-2">
-                          <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                            <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                       <div className="p-3 rounded bg-muted/30 border border-border/50 space-y-3">
+                          <div className="flex gap-2.5 items-start text-sm text-foreground/80 leading-relaxed">
+                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                             <span>
                               <strong className="text-foreground">Kang "The Viper"</strong> exhibits highest degree centrality, indicating role as key decision maker.
                             </span>
                           </div>
-                          <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                            <span className="mt-1 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                          <div className="flex gap-2.5 items-start text-sm text-foreground/80 leading-relaxed">
+                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                             <span>
                               <strong className="text-foreground">Det. Choi</strong> serves as critical bridge node between criminal & legal clusters.
                             </span>
                           </div>
-                          <div className="flex gap-2 items-start text-xs text-foreground/80 leading-relaxed">
-                             <span className="mt-1 w-1 h-1 rounded-full bg-orange-500 shrink-0" />
+                          <div className="flex gap-2.5 items-start text-sm text-foreground/80 leading-relaxed">
+                             <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
                              <span>
                                 <strong className="text-foreground">Warehouse 4</strong> identified as high-risk asset connected to multiple investigation paths.
                              </span>
@@ -288,8 +288,8 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                     </div>
 
                     <div className="pt-2 flex justify-end">
-                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 bg-background hover:bg-muted/50">
-                            <MessageSquare className="w-3 h-3" />
+                        <Button size="sm" variant="outline" className="h-8 text-sm gap-2 bg-background hover:bg-muted/50">
+                            <MessageSquare className="w-3.5 h-3.5" />
                             Ask Copilot Details
                         </Button>
                     </div>

@@ -55,14 +55,14 @@ import {
 import AICopilotPanel from "./AICopilotPanel";
 
 const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any, title: string, onHide?: () => void, onEditControl?: () => void }) => (
-  <div className="flex items-center justify-between mb-2">
-    <h4 className="text-[11px] font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-      <Icon className="w-3.5 h-3.5 text-primary" /> {title}
+  <div className="flex items-center justify-between mb-3">
+    <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+      <Icon className="w-4 h-4 text-primary" /> {title}
     </h4>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-5 w-5 hover:bg-secondary text-muted-foreground">
-          <MoreHorizontal className="w-3.5 h-3.5" />
+        <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-secondary text-muted-foreground">
+          <MoreHorizontal className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -87,7 +87,7 @@ const ViewModeCard = ({ icon, label, description, active, onClick, topRight }: {
   <div 
     onClick={onClick}
     className={cn(
-    "relative flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+    "relative flex flex-col items-center justify-center p-4 rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
     active ? "bg-primary/10 border-primary/50 text-primary" : "bg-card border-border text-muted-foreground"
   )}>
     {topRight && (
@@ -95,11 +95,11 @@ const ViewModeCard = ({ icon, label, description, active, onClick, topRight }: {
             {topRight}
         </div>
     )}
-    <div className={cn("mb-2 p-2 rounded-full", active ? "bg-primary/20" : "bg-secondary")}>
+    <div className={cn("mb-3 p-2.5 rounded-full", active ? "bg-primary/20" : "bg-secondary")}>
       {icon}
     </div>
-    <div className="text-xs font-semibold mb-0.5">{label}</div>
-    <div className="text-[10px] opacity-70 text-center leading-tight">{description}</div>
+    <div className="text-sm font-semibold mb-1">{label}</div>
+    <div className="text-xs opacity-70 text-center leading-tight">{description}</div>
   </div>
 );
 
@@ -130,14 +130,14 @@ const InfoBox = ({ title, description, icon: Icon }: { title: string, descriptio
   if (!isVisible) return null;
 
   return (
-    <div className="relative group bg-secondary/20 border border-border/50 rounded-md p-3 mb-4 transition-all hover:bg-secondary/30">
+    <div className="relative group bg-secondary/20 border border-border/50 rounded-md p-4 mb-5 transition-all hover:bg-secondary/30">
         <button 
             onClick={() => setIsVisible(false)}
             className="absolute top-2 right-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
         >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
         </button>
-        <div className="flex items-center gap-2 mb-1.5">
+        <div className="flex items-center gap-2.5 mb-2">
             <Icon className="w-4 h-4 text-primary" />
             <h4 className="text-sm font-semibold text-foreground">{title}</h4>
         </div>
@@ -607,7 +607,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     {showLayoutDescription && (
                         <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-3 flex gap-2.5 items-start">
                             <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                            <p className="text-[11px] text-muted-foreground leading-snug pr-4">
+                            <p className="text-xs text-muted-foreground leading-snug pr-4">
                                 Customize the graph structure layout view.
                             </p>
                             <Button 
@@ -688,7 +688,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         {showGraphSettingsDescription && (
                             <div className="group relative bg-primary/5 border border-primary/20 rounded-md p-3 mb-4 flex gap-2.5 items-start">
                                 <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                                <p className="text-[11px] text-muted-foreground leading-snug pr-4">
+                                <p className="text-xs text-muted-foreground leading-snug pr-4">
                                     Configure visual elements and interactive features.
                                 </p>
                                 <Button 
@@ -705,7 +705,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         {/* Node Type Selection Mode */}
                         {controlVisibility.nodeTypeSelection && (
                         <div className="space-y-3 mb-6">
-                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-1 block uppercase tracking-widest">Node Type Selection</Label>
+                            <Label className="text-xs font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Node Type Selection</Label>
                             <RadioGroup 
                                 defaultValue={settings?.nodeSelectionMode || 'multi'} 
                                 onValueChange={(v) => updateSetting("nodeSelectionMode", v)}
@@ -726,9 +726,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         {/* Node Weight & Direction */}
                         <div className="space-y-6">
                              {controlVisibility.nodeWeight && (
-                             <div className="space-y-2">
+                             <div className="space-y-3">
                                 <div className="flex justify-between">
-                                  <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
+                                  <Label className="text-xs font-bold text-muted-foreground/80 uppercase tracking-widest">Node Weight Threshold</Label>
                                   <span className="text-sm font-medium text-muted-foreground">{settings?.nodeWeight || 50}%</span>
                                 </div>
                                 <div className="pl-3">
@@ -744,14 +744,14 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                              )}
 
                              {controlVisibility.edgeDirection && (
-                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest block">Edge Direction</Label>
+                             <div className="space-y-3">
+                                <Label className="text-xs font-bold text-muted-foreground/80 uppercase tracking-widest block">Edge Direction</Label>
                                 <div className="pl-3">
                                      <Select 
                                         value={settings?.nodeDirection || 'directed'} 
                                         onValueChange={(v) => updateSetting("nodeDirection", v)}
                                      >
-                                        <SelectTrigger className="h-8 text-sm w-full">
+                                        <SelectTrigger className="h-9 text-sm w-full">
                                           <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -766,10 +766,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                         {/* Visibility Toggles */}
                         {controlVisibility.visibilityGroup && (
-                        <div className="space-y-3 pt-4">
-                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Visibility</Label>
+                        <div className="space-y-3 pt-5">
+                            <Label className="text-xs font-bold text-muted-foreground/80 mb-3 block uppercase tracking-widest">Visibility</Label>
                             
-                            <div className="space-y-3 pl-3">
+                            <div className="space-y-3.5 pl-3">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-sm font-medium">Timeline</Label>
                                     <Switch 
@@ -814,9 +814,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                         {/* Display */}
                         {controlVisibility.displayGroup && (
-                        <div className="space-y-3 pt-4">
-                            <Label className="text-[10px] font-bold text-muted-foreground/80 mb-2 block uppercase tracking-widest">Display</Label>
-                            <div className="space-y-3 pl-3">
+                        <div className="space-y-3 pt-5">
+                            <Label className="text-xs font-bold text-muted-foreground/80 mb-3 block uppercase tracking-widest">Display</Label>
+                            <div className="space-y-3.5 pl-3">
                                 <div className="flex items-center justify-between">
                                     <Label className="text-sm font-medium">Show Node Labels</Label>
                                     <Switch 
