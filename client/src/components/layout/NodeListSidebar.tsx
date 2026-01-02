@@ -10,6 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
+// Stock images for mock data
+import imgKang from '@assets/stock_images/asian_man_portrait_s_c2051204.jpg';
+import imgKim from '@assets/stock_images/asian_woman_portrait_8e05b02c.jpg';
+import imgPark from '@assets/stock_images/asian_man_portrait_s_8e97e0a5.jpg';
+import imgStation from '@assets/stock_images/subway_station_entra_fd329c94.jpg';
+import imgCar from '@assets/stock_images/hyundai_sonata_silve_5f184276.jpg';
+import imgLee from '@assets/stock_images/asian_man_portrait_s_874ea05d.jpg';
+import imgChoi from '@assets/stock_images/asian_woman_portrait_5bef3717.jpg';
+import imgWarehouse from '@assets/stock_images/warehouse_building_i_2038a214.jpg';
+import imgPhone from '@assets/stock_images/smartphone_generic_7f33ffa4.jpg';
+
 interface NodeData {
   id: string;
   name: string;
@@ -23,16 +34,16 @@ interface NodeData {
 
 // Mock Data matching the screenshot style
 export const MOCK_COMPANY_NODES: NodeData[] = [
-  { id: "1", name: "Kang Min-su", category: "Suspect", representative: "Male, 35", location: "Seoul", years: 2 },
-  { id: "2", name: "Kim Ji-hyun", category: "Victim", representative: "Female, 28", location: "Busan", years: 0 },
-  { id: "3", name: "Park Dong-wook", category: "Suspect", representative: "Male, 42", location: "Incheon", years: 5 },
-  { id: "4", name: "Gangnam Station Exit 4", category: "Location", representative: "Public Area", location: "Seoul", years: 0 },
-  { id: "5", name: "Stolen Vehicle (12ga 3456)", category: "Evidence", representative: "Hyundai Sonata", location: "Gyeonggi-do", years: 0 },
-  { id: "6", name: "Lee Sang-ho", category: "Witness", representative: "Male, 31", location: "Seoul", years: 0 },
-  { id: "7", name: "Choi Yu-jin", category: "Victim", representative: "Female, 24", location: "Seoul", years: 0 },
-  { id: "8", name: "Incheon Port Warehouse", category: "Location", representative: "Industrial Zone", location: "Incheon", years: 10 },
-  { id: "9", name: "Burner Phone (Samsung)", category: "Evidence", representative: "Galaxy A12", location: "Seongnam-si", years: 1 },
-  { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8 },
+  { id: "1", name: "Kang Min-su", category: "Suspect", representative: "Male, 35", location: "Seoul", years: 2, image: imgKang },
+  { id: "2", name: "Kim Ji-hyun", category: "Victim", representative: "Female, 28", location: "Busan", years: 0, image: imgKim },
+  { id: "3", name: "Park Dong-wook", category: "Suspect", representative: "Male, 42", location: "Incheon", years: 5, image: imgPark },
+  { id: "4", name: "Gangnam Station Exit 4", category: "Location", representative: "Public Area", location: "Seoul", years: 0, image: imgStation },
+  { id: "5", name: "Stolen Vehicle (12ga 3456)", category: "Evidence", representative: "Hyundai Sonata", location: "Gyeonggi-do", years: 0, image: imgCar },
+  { id: "6", name: "Lee Sang-ho", category: "Witness", representative: "Male, 31", location: "Seoul", years: 0, image: imgLee },
+  { id: "7", name: "Choi Yu-jin", category: "Victim", representative: "Female, 24", location: "Seoul", years: 0, image: imgChoi },
+  { id: "8", name: "Incheon Port Warehouse", category: "Location", representative: "Industrial Zone", location: "Incheon", years: 10, image: imgWarehouse },
+  { id: "9", name: "Burner Phone (Samsung)", category: "Evidence", representative: "Galaxy A12", location: "Seongnam-si", years: 1, image: imgPhone },
+  { id: "10", name: "Jung Tae-soo", category: "Suspect", representative: "Male, 39", location: "Unknown", years: 8, image: imgKang }, // Reuse first image for now
 ];
 
 interface NodeListSidebarProps {
