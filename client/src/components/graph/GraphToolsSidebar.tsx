@@ -273,6 +273,40 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
                 </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                    <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Display</Label>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-xs">Show Node Labels</Label>
+                        <Switch 
+                            checked={settings?.showNodeLabels ?? true}
+                            onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-xs">Show Edge Labels</Label>
+                        <Switch 
+                            checked={settings?.showEdgeLabels ?? false}
+                            onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-xs">Curved Edges</Label>
+                        <Switch 
+                            checked={settings?.curvedEdges ?? true}
+                            onCheckedChange={(c) => updateSetting("curvedEdges", c)}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label className="text-xs">Particles Effect</Label>
+                        <Switch 
+                            checked={settings?.particlesEffect ?? true}
+                            onCheckedChange={(c) => updateSetting("particlesEffect", c)}
+                        />
+                    </div>
+                </div>
               </div>
             )}
 
@@ -365,39 +399,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
 
-                    <Separator />
-
-                    <div className="space-y-3">
-                        <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Display</Label>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Show Node Labels</Label>
-                            <Switch 
-                                checked={settings?.showNodeLabels ?? true}
-                                onCheckedChange={(c) => updateSetting("showNodeLabels", c)}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Show Edge Labels</Label>
-                            <Switch 
-                                checked={settings?.showEdgeLabels ?? false}
-                                onCheckedChange={(c) => updateSetting("showEdgeLabels", c)}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Curved Edges</Label>
-                            <Switch 
-                                checked={settings?.curvedEdges ?? true}
-                                onCheckedChange={(c) => updateSetting("curvedEdges", c)}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-xs">Particles Effect</Label>
-                            <Switch 
-                                checked={settings?.particlesEffect ?? true}
-                                onCheckedChange={(c) => updateSetting("particlesEffect", c)}
-                            />
-                        </div>
-                    </div>
+                    {/* Display section moved to View Options */}
                 </div>
               </div>
             )}
