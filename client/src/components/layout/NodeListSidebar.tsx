@@ -216,13 +216,13 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
 
       {/* List Content */}
       <ScrollArea className="flex-1">
-        <div className="p-2 space-y-1">
+        <div className="py-2">
           {filteredNodes.map((node) => (
             <div 
               key={node.id}
               onClick={() => onNodeSelect?.(node)}
               className={cn(
-                "group py-3 px-3 border-b border-slate-300 dark:border-slate-700 cursor-pointer transition-colors",
+                "group py-3 px-4 border-b border-slate-300 dark:border-slate-700 cursor-pointer transition-colors",
                 selectedNodeId === node.id 
                   ? "bg-primary/10" 
                   : "hover:bg-muted/50"
