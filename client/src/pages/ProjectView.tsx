@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
@@ -571,6 +571,27 @@ export default function ProjectView() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("nav");
+  const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
+
+  const onPaneContextMenu = (event: React.MouseEvent | MouseEvent) => {
+    event.preventDefault();
+    // Adjust coordinates to be relative to the viewport or container if needed
+    // For fixed position, clientX/Y work well
+    const clientX = 'clientX' in event ? event.clientX : 0;
+    const clientY = 'clientY' in event ? event.clientY : 0;
+    setContextMenu({ x: clientX, y: clientY });
+  };
+
+  const onPaneClick = () => {
+    if (contextMenu) setContextMenu(null);
+  };
+
+  // Close context menu on any click
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
   
   // Graph Settings State
   const [graphSettings, setGraphSettings] = useState<GraphSettings>({
@@ -649,7 +670,7 @@ export default function ProjectView() {
     <Layout 
       sidebar={
         sidebarMode === "list" 
-          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNodeId={selectedNode?.id} /> 
+          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNode={selectedNode} /> 
           : undefined
       }
       sidebarControls={SidebarToggle}
@@ -657,6 +678,35 @@ export default function ProjectView() {
       <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
+          {/* Context Menu */}
+          {contextMenu && (
+            <div 
+              style={{ top: contextMenu.y, left: contextMenu.x }} 
+              className="fixed z-50 min-w-[180px] bg-popover border border-border rounded-lg shadow-xl p-1.5 animate-in fade-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div 
+                  className="flex items-center gap-2 px-2.5 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
+                  onClick={() => {
+                      setContextMenu(null);
+                      // Trigger refresh animation or logic here
+                  }}
+              >
+                  <RefreshCw className="w-4 h-4 text-muted-foreground" />
+                  <span>Refresh Network</span>
+              </div>
+               <div 
+                  className="flex items-center gap-2 px-2.5 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
+                  onClick={() => {
+                      setContextMenu(null);
+                  }}
+              >
+                  <Download className="w-4 h-4 text-muted-foreground" />
+                  <span>Save Snapshot</span>
+              </div>
+            </div>
+          )}
+
           {/* AI Insight Card - Added */}
           {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
           
@@ -705,6 +755,8 @@ export default function ProjectView() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
+            onPaneContextMenu={onPaneContextMenu}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             fitView

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase } from "lucide-react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -38,9 +38,10 @@ export const MOCK_COMPANY_NODES: NodeData[] = [
 interface NodeListSidebarProps {
   onNodeSelect?: (node: NodeData) => void;
   selectedNodeId?: string;
+  selectedNode?: any;
 }
 
-export default function NodeListSidebar({ onNodeSelect, selectedNodeId }: NodeListSidebarProps) {
+export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selectedNode }: NodeListSidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [displayFields, setDisplayFields] = useState({
     category: true,
@@ -49,6 +50,104 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId }: NodeLi
     years: true,
     image: true
   });
+
+  // If a node is selected (passed from parent), show detail view
+  if (selectedNode) {
+    const nodeData = selectedNode.data || selectedNode;
+    const isGraphNode = !!selectedNode.data;
+    
+    // Normalize data for display
+    const displayName = isGraphNode ? nodeData.label : nodeData.name;
+    const displayType = isGraphNode ? nodeData.type : nodeData.category;
+    const displaySub = isGraphNode ? nodeData.subLabel : nodeData.representative;
+    const displayImage = isGraphNode ? nodeData.image : nodeData.image;
+    
+    return (
+      <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center gap-2 mb-4">
+             <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2" onClick={() => onNodeSelect?.(null as any)}>
+               <ArrowLeft className="w-4 h-4" />
+             </Button>
+             <h3 className="text-sm font-bold uppercase tracking-wider">Component Details</h3>
+          </div>
+          
+          <div className="flex flex-col items-center text-center p-4 bg-secondary/20 rounded-lg border border-border/50">
+             <Avatar className="h-20 w-20 mb-3 border-2 border-background shadow-md">
+                <AvatarImage src={displayImage} />
+                <AvatarFallback className="text-lg font-bold bg-primary/10 text-primary">
+                  {displayName?.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+             </Avatar>
+             <h2 className="text-lg font-bold leading-tight mb-1">{displayName}</h2>
+             <Badge variant="outline" className="mb-2 bg-background/50">{displayType}</Badge>
+             {displaySub && <p className="text-sm text-muted-foreground">{displaySub}</p>}
+          </div>
+        </div>
+
+        <ScrollArea className="flex-1 p-4">
+           <div className="space-y-6">
+              {/* Properties Section */}
+              <div className="space-y-3">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                   <Settings className="w-3.5 h-3.5" /> Properties
+                 </h4>
+                 <div className="grid gap-2 text-sm bg-card rounded-md border p-3">
+                    <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
+                       <span className="text-muted-foreground">ID</span>
+                       <span className="font-mono text-xs text-right">{selectedNode.id}</span>
+                    </div>
+                    <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
+                       <span className="text-muted-foreground">Category</span>
+                       <span className="text-right font-medium">{displayType}</span>
+                    </div>
+                    {isGraphNode && (
+                      <>
+                        <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
+                           <span className="text-muted-foreground">Role</span>
+                           <span className="text-right font-medium">{displaySub}</span>
+                        </div>
+                        <div className="grid grid-cols-2 py-1 pt-1">
+                           <span className="text-muted-foreground">Status</span>
+                           <span className="text-right text-emerald-500 font-medium">Active</span>
+                        </div>
+                      </>
+                    )}
+                    {!isGraphNode && (
+                       <div className="grid grid-cols-2 py-1 pt-1">
+                           <span className="text-muted-foreground">Location</span>
+                           <span className="text-right">{nodeData.location}</span>
+                       </div>
+                    )}
+                 </div>
+              </div>
+
+              {/* Connected Links (Mock for now) */}
+              <div className="space-y-3">
+                 <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                   <Network className="w-3.5 h-3.5" /> Connections
+                 </h4>
+                 <div className="space-y-2">
+                    {[1, 2, 3].map(i => (
+                       <div key={i} className="flex items-center gap-3 p-2 rounded-md border bg-card/50 text-sm">
+                          <div className="w-2 h-2 rounded-full bg-blue-500" />
+                          <span className="flex-1">Linked to <span className="font-medium">Node-{Math.floor(Math.random() * 100)}</span></span>
+                          <Badge variant="secondary" className="text-[10px] h-5">Strong</Badge>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+
+              <div className="pt-4">
+                 <Button className="w-full gap-2" variant="secondary">
+                    <Filter className="w-4 h-4" /> Filter by this Node
+                 </Button>
+              </div>
+           </div>
+        </ScrollArea>
+      </div>
+    );
+  }
 
   const filteredNodes = MOCK_COMPANY_NODES.filter(node => 
     node.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
