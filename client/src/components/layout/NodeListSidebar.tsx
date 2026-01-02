@@ -222,8 +222,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               key={node.id}
               onClick={() => onNodeSelect?.(node)}
               className={cn(
-                "group rounded-lg border p-3 cursor-pointer transition-all hover:shadow-md hover:border-primary hover:bg-secondary/10",
-                selectedNodeId === node.id ? "bg-secondary/20 border-primary shadow-sm ring-1 ring-primary/20" : "bg-card border-slate-300 dark:border-slate-700 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                "group py-4 border-b border-border/40 cursor-pointer transition-all hover:bg-secondary/10 px-2 first:pt-2",
+                selectedNodeId === node.id ? "bg-secondary/10" : ""
               )}
             >
               <div className="grid grid-cols-[40px_1fr] gap-x-2 gap-y-1.5 text-sm">
