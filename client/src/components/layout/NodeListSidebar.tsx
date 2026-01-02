@@ -110,7 +110,11 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
                        <span className="font-mono text-xs text-right">{selectedNode.id}</span>
                     </div>
                     <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
-                       <span className="text-muted-foreground">Category</span>
+                       <span className="text-muted-foreground">Name</span>
+                       <span className="text-right font-medium">{displayName}</span>
+                    </div>
+                    <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
+                       <span className="text-muted-foreground">Type</span>
                        <span className="text-right font-medium">{displayType}</span>
                     </div>
                     {isGraphNode && (
