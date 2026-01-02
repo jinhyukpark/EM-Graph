@@ -294,7 +294,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1", isCollapsed ? "px-2 py-4" : "px-4 pb-4")}>
               
               {!isCollapsed && (
-                <div className="px-3 mb-6 mt-2">
+                <div className="mb-6 mt-1">
                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5 opacity-80">
                       <Database className="w-3 h-3" />
                       Graph Database
@@ -324,7 +324,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 {/* Nodes */}
                 <div>
                   {!isCollapsed && (
-                    <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
                       <span>Nodes</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -338,7 +338,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 {/* Links */}
                 <div>
                   {!isCollapsed && (
-                    <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
                       <span>Links</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>

@@ -651,7 +651,7 @@ export default function ProjectView() {
   };
 
   const SidebarToggle = (
-    <div className="w-full mb-6">
+    <div className="w-full mb-2">
       <Tabs value={sidebarMode} onValueChange={(v) => setSidebarMode(v as "nav" | "list")} className="w-full">
         <TabsList className="w-full grid grid-cols-2 bg-muted p-1 rounded-lg border border-border/50 h-auto">
           <TabsTrigger 
