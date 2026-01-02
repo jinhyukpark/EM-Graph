@@ -255,13 +255,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </RadioGroup>
                     </div>
 
-                    <Separator />
-
                     {/* Node Weight & Direction */}
-                    <div className="space-y-3">
-                         <div className="space-y-1">
+                    <div className="space-y-4">
+                         <div className="space-y-2">
                             <div className="flex justify-between">
-                              <Label className="text-xs">Node Weight Threshold</Label>
+                              <Label className="text-xs font-medium">Node Weight Threshold</Label>
                               <span className="text-xs text-muted-foreground">{settings?.nodeWeight || 50}%</span>
                             </div>
                             <Slider 
@@ -274,7 +272,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                          </div>
 
                          <div className="flex items-center justify-between">
-                            <Label className="text-xs">Edge Direction</Label>
+                            <Label className="text-xs font-medium">Edge Direction</Label>
                              <Select 
                                 value={settings?.nodeDirection || 'directed'} 
                                 onValueChange={(v) => updateSetting("nodeDirection", v)}
@@ -290,11 +288,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
 
-                    <Separator />
-
                     {/* Visibility Toggles */}
-                    <div className="space-y-3">
-                        <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Visibility</Label>
+                    <div className="space-y-3 pt-2">
+                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Visibility</Label>
                         
                         <div className="flex items-center justify-between">
                             <Label className="text-xs">Timeline</Label>
@@ -319,11 +315,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
 
-                    <Separator />
-
                     {/* Display */}
-                    <div className="space-y-3">
-                        <Label className="text-xs font-semibold text-muted-foreground mb-2 block">Display</Label>
+                    <div className="space-y-3 pt-2">
+                        <Label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Display</Label>
                         <div className="flex items-center justify-between">
                             <Label className="text-xs">Show Node Labels</Label>
                         <Switch 
