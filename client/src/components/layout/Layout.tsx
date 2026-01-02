@@ -246,17 +246,24 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("overflow-y-auto space-y-6 animate-in slide-in-from-left-5 duration-300 flex-1", isCollapsed ? "px-2 py-4" : "px-4 pb-4")}>
               
               {!isCollapsed && (
-                <div className="px-2">
+                <div className="px-3 mb-6 mt-2">
+                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5 opacity-80">
+                      <Database className="w-3 h-3" />
+                      Graph Database
+                   </div>
                    <Select>
-                      <SelectTrigger className="h-9 text-xs border-dashed bg-secondary/20">
-                         <SelectValue placeholder="그래프 DB를 선택해주세요" />
+                      <SelectTrigger className="h-9 text-xs bg-card hover:bg-accent/50 border-input shadow-sm transition-colors text-muted-foreground data-[placeholder]:text-muted-foreground">
+                         <div className="flex items-center gap-2 truncate">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
+                            <SelectValue placeholder="Select Database..." />
+                         </div>
                       </SelectTrigger>
                       <SelectContent>
                          <SelectItem value="db1">Criminal Network 2024</SelectItem>
                          <SelectItem value="db2">Supply Chain V2</SelectItem>
                          <div className="p-1 border-t border-border mt-1 pt-1">
-                             <Button variant="ghost" className="w-full justify-start h-8 text-xs font-medium text-primary gap-2 px-2">
-                                <Plus className="w-3 h-3" /> 그래프 DB 만들러 가기...
+                             <Button variant="ghost" className="w-full justify-start h-8 text-xs font-medium text-primary gap-2 px-2 hover:bg-primary/5 hover:text-primary">
+                                <Plus className="w-3 h-3" /> Create New Database
                              </Button>
                          </div>
                       </SelectContent>
