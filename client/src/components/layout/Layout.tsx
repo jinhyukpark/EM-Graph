@@ -246,73 +246,31 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               
               {/* Project Structure Tree */}
               <div className="space-y-4">
-                {/* Original Tables */}
+                {/* Nodes */}
                 <div>
                   {!isCollapsed && (
                     <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Table (Original)</span>
+                      <span>Nodes</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   )}
                   <div className="space-y-0.5">
-                    <ProjectNavItem icon={TableIcon} label="crime_incidents_2024" />
-                    <ProjectNavItem icon={TableIcon} label="suspect_profiles" />
+                    <ProjectNavItem icon={CircleDot} label="crime_incidents_2024" />
+                    <ProjectNavItem icon={CircleDot} label="suspect_profiles" />
                   </div>
                 </div>
 
-                {/* Pre-processed Tables */}
+                {/* Links */}
                 <div>
                   {!isCollapsed && (
                     <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Table (Pre-processing)</span>
+                      <span>Links</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   )}
                   <div className="space-y-0.5">
-                    <ProjectNavItem icon={TableIcon} label="location_hotspots" />
-                    <ProjectNavItem icon={TableIcon} label="supply_chain_nodes" />
-                  </div>
-                </div>
-
-                {/* Queries */}
-                <div>
-                  {!isCollapsed && (
-                    <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Query</span>
-                      <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  )}
-                  <div className="space-y-0.5">
-                    <ProjectNavItem icon={FileText} label="High Severity Crimes" />
-                    <ProjectNavItem icon={FileText} label="District Analysis" />
-                  </div>
-                </div>
-
-                {/* Graphs */}
-                <div>
-                  {!isCollapsed && (
-                    <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>그래프 분석</span>
-                      <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  )}
-                  <div className="space-y-0.5">
-                    <ProjectNavItem icon={Network} label="Crime Network 2024" active />
-                    <ProjectNavItem icon={Network} label="Supply Chain Risk" />
-                  </div>
-                </div>
-
-                {/* Pre-process Diagrams (NEW) */}
-                <div>
-                  {!isCollapsed && (
-                    <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Pre-process</span>
-                      <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  )}
-                  <div className="space-y-0.5">
-                    <ProjectNavItem icon={Workflow} label="Data Pipeline v1" />
-                    <ProjectNavItem icon={Workflow} label="Suspect Linkage Flow" />
+                    <ProjectNavItem icon={Network} label="location_hotspots" />
+                    <ProjectNavItem icon={Network} label="supply_chain_nodes" />
                   </div>
                 </div>
               </div>
