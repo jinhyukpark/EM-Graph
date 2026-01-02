@@ -75,12 +75,12 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
     
     return (
       <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="px-4 py-3 border-b border-border">
+          <div className="flex items-center gap-2 mb-2">
              <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2" onClick={() => onNodeSelect?.(null as any)}>
                <ArrowLeft className="w-4 h-4" />
              </Button>
-             <h3 className="text-sm font-bold uppercase tracking-wider">Component Details</h3>
+             <h3 className="text-sm font-semibold uppercase tracking-wider">Component Details</h3>
           </div>
           
           <div className="flex flex-col items-center text-center p-4 bg-secondary/20 rounded-lg border border-border/50">
