@@ -836,7 +836,6 @@ export default function ProjectView() {
               </div>
             </motion.div>
             
-            <Controls className="!bg-card !border-border !fill-foreground !shadow-sm !mb-28" />
           </ReactFlow>
 
           {/* Timeline - Added */}
