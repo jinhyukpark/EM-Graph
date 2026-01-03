@@ -715,6 +715,7 @@ export default function ProjectView() {
         </div>
       ) : (
         /* Graph View */
+        <>
       <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
@@ -1298,7 +1299,7 @@ export default function ProjectView() {
            items={legendItems}
            onSave={setLegendItems}
         />
-        </div>
+        </>
       )}
     </Layout>
   );
