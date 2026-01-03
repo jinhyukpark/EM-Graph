@@ -42,7 +42,19 @@ const TABLE_NAMES: Record<string, string> = {
     't5': 'Supply_Chain_Nodes'
 };
 
-export default function ERDTablePanel({ tableId, onClose }: { tableId: string | null, onClose: () => void }) {
+export default function ERDTablePanel({ 
+    activeTableId, 
+    openTables, 
+    onTabChange, 
+    onTabClose,
+    onClose 
+}: { 
+    activeTableId: string | null, 
+    openTables: string[],
+    onTabChange: (id: string) => void,
+    onTabClose: (id: string) => void,
+    onClose: () => void 
+}) {
   const [height, setHeight] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -76,11 +88,11 @@ export default function ERDTablePanel({ tableId, onClose }: { tableId: string | 
     };
   }, [isResizing]);
 
-  if (!tableId || !MOCK_DATA[tableId]) return null;
+  if (!activeTableId || !MOCK_DATA[activeTableId]) return null;
 
-  const data = MOCK_DATA[tableId];
+  const data = MOCK_DATA[activeTableId];
   const columns = Object.keys(data[0]);
-  const tableName = TABLE_NAMES[tableId];
+  const activeTableName = TABLE_NAMES[activeTableId];
 
   return (
     <div 
@@ -99,30 +111,60 @@ export default function ERDTablePanel({ tableId, onClose }: { tableId: string | 
           <div className="w-16 h-1 rounded-full bg-border group-hover:bg-primary/50 mt-0.5 transition-colors" />
        </div>
 
-       <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30 shrink-0">
-          <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-blue-100 text-blue-600 rounded-md">
-                 <TableIcon className="w-4 h-4" />
-              </div>
-              <div>
-                  <h3 className="text-sm font-semibold flex items-center gap-2">
-                    {tableName}
-                    <span className="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] border">Table View</span>
-                  </h3>
-                  <p className="text-[10px] text-muted-foreground">{data.length} records found</p>
-              </div>
+       {/* Tab Bar */}
+       <div className="flex items-center justify-between px-2 pt-2 border-b bg-muted/30 shrink-0">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+              {openTables.map(tableId => (
+                  <div 
+                    key={tableId}
+                    onClick={() => onTabChange(tableId)}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-t-md cursor-pointer border-t border-x transition-colors min-w-[120px] max-w-[200px]",
+                        activeTableId === tableId 
+                            ? "bg-background border-border text-foreground -mb-px relative z-10 font-semibold" 
+                            : "bg-muted/50 border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                      <TableIcon className={cn("w-3.5 h-3.5", activeTableId === tableId ? "text-blue-500" : "text-muted-foreground")} />
+                      <span className="truncate flex-1">{TABLE_NAMES[tableId]}</span>
+                      <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onTabClose(tableId);
+                        }}
+                        className="p-0.5 rounded-full hover:bg-destructive/10 hover:text-destructive opacity-70 hover:opacity-100"
+                      >
+                          <X className="w-3 h-3" />
+                      </button>
+                  </div>
+              ))}
+          </div>
+          <div className="flex items-center gap-2 pb-1 pr-2">
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-7 w-7">
+                <X className="w-4 h-4" />
+            </Button>
+          </div>
+       </div>
+
+       {/* Toolbar */}
+       <div className="flex items-center justify-between px-4 py-2 border-b bg-background shrink-0">
+          <div className="flex items-center gap-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                {activeTableName}
+                <span className="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] border">Table View</span>
+              </h3>
+              <div className="h-4 w-px bg-border" />
+              <p className="text-[10px] text-muted-foreground">{data.length} records found</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5">
                 <Database className="w-3.5 h-3.5" />
                 Query Table
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-7 w-7">
-                <X className="w-4 h-4" />
-            </Button>
           </div>
        </div>
-       <ScrollArea className="flex-1 w-full">
+
+       <ScrollArea className="flex-1 w-full bg-card/30">
          <div className="p-0">
             <Table>
             <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">

@@ -569,7 +569,9 @@ export default function ProjectView() {
   
   // New state for View Mode (Graph vs ERD)
   const [viewMode, setViewMode] = useState<'graph' | 'erd'>('graph');
-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  // Support multiple open tables for tabs
+  const [openTables, setOpenTables] = useState<string[]>([]);
+  const [activeTableId, setActiveTableId] = useState<string | null>(null);
 
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
   
@@ -665,7 +667,26 @@ export default function ProjectView() {
   
   // Callback when a node is selected in the ERD Graph
   const handleErdNodeSelect = (nodeId: string | null) => {
-      setSelectedTableId(nodeId);
+      if (nodeId) {
+          setOpenTables(prev => {
+              if (!prev.includes(nodeId)) {
+                  return [...prev, nodeId];
+              }
+              return prev;
+          });
+          setActiveTableId(nodeId);
+      }
+  };
+  
+  const handleCloseTable = (tableId: string) => {
+      setOpenTables(prev => {
+          const newTables = prev.filter(id => id !== tableId);
+          // If we closed the active table, activate the last one if available
+          if (activeTableId === tableId) {
+              setActiveTableId(newTables.length > 0 ? newTables[newTables.length - 1] : null);
+          }
+          return newTables;
+      });
   };
 
   const SidebarToggle = (
@@ -709,8 +730,17 @@ export default function ProjectView() {
         /* ERD View */
         <div className="relative w-full h-full overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
             <ERDGraphView onNodeSelect={handleErdNodeSelect} />
-            {selectedTableId && (
-                <ERDTablePanel tableId={selectedTableId} onClose={() => setSelectedTableId(null)} />
+            {openTables.length > 0 && (
+                <ERDTablePanel 
+                    activeTableId={activeTableId} 
+                    openTables={openTables}
+                    onTabChange={setActiveTableId}
+                    onTabClose={handleCloseTable}
+                    onClose={() => {
+                        setOpenTables([]);
+                        setActiveTableId(null);
+                    }} 
+                />
             )}
         </div>
       ) : (
