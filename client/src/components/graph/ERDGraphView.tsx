@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel } from '@xyflow/react';
+import { useCallback, useState, useEffect } from 'react';
+import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel, useOnSelectionChange } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
   return (
-    <Card className={cn("w-56 shadow-md border-2 transition-all bg-card", selected ? "border-primary ring-2 ring-primary/20" : "border-border")}>
+    <Card className={cn(
+      "w-56 shadow-md border-2 transition-all duration-300 bg-card", 
+      selected ? "border-primary ring-2 ring-primary/20 scale-105 z-10" : "border-border",
+      data.dimmed ? "opacity-30 grayscale blur-[1px]" : "opacity-100"
+    )}>
       <CardHeader className="p-3 bg-muted/50 border-b flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground/80">{data.label}</CardTitle>
         <div className="w-2 h-2 rounded-full bg-primary/50" />
@@ -111,14 +115,55 @@ const INITIAL_EDGES = [
   },
 ];
 
+function GraphInteractionHandler({ onSelectionChange }: { onSelectionChange: (selectedNodeIds: string[]) => void }) {
+  useOnSelectionChange({
+    onChange: ({ nodes }) => {
+      onSelectionChange(nodes.map((n) => n.id));
+    },
+  });
+  return null;
+}
+
 export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: string | null) => void }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [edgeType, setEdgeType] = useState('default');
   const [showAIExplanation, setShowAIExplanation] = useState(false);
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+
+  // Update styles when selection changes
+  useEffect(() => {
+    if (selectedNodeIds.length === 0) {
+      // Reset everything
+      setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, dimmed: false } })));
+      setEdges((eds) => eds.map((e) => ({ ...e, style: { strokeWidth: 2, stroke: '#94a3b8', opacity: 1 }, animated: false })));
+      return;
+    }
+
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: { ...n.data, dimmed: !selectedNodeIds.includes(n.id) },
+      }))
+    );
+
+    setEdges((eds) =>
+      eds.map((e) => {
+        const isConnectedToSelected = selectedNodeIds.includes(e.source) && selectedNodeIds.includes(e.target);
+        
+        if (isConnectedToSelected) {
+          return { ...e, style: { strokeWidth: 3, stroke: '#ef4444', opacity: 1 }, animated: true }; // Red highlight for selected connection
+        } else {
+          return { ...e, style: { strokeWidth: 1, stroke: '#94a3b8', opacity: 0.2 }, animated: false }; // Dim others
+        }
+      })
+    );
+  }, [selectedNodeIds, setNodes, setEdges]);
 
   const onEdgeMouseEnter = useCallback(
     (_: React.MouseEvent, edge: any) => {
+      if (selectedNodeIds.length > 0) return; // Disable hover effects during selection mode
+
       if (!edge.data?.sourceField || !edge.data?.targetField) return;
 
       setEdges((eds) =>
@@ -147,10 +192,12 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         })
       );
     },
-    [setEdges, setNodes]
+    [setEdges, setNodes, selectedNodeIds]
   );
 
   const onEdgeMouseLeave = useCallback(() => {
+    if (selectedNodeIds.length > 0) return; // Disable hover reset during selection mode
+
     // Reset styles
     setEdges((eds) =>
       eds.map((e) => ({
@@ -166,7 +213,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         data: { ...n.data, highlightedFields: [] },
       }))
     );
-  }, [setEdges, setNodes]);
+  }, [setEdges, setNodes, selectedNodeIds]);
 
   const toggleEdgeType = () => {
     const types = ['default', 'straight', 'step', 'smoothstep'];
@@ -196,12 +243,16 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
     );
   };
 
+  const handlePaneClick = () => {
+    onNodeSelect(null);
+    setSelectedNodeIds([]); // Clear selection visually
+  };
+
   return (
     <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
       <div className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm border rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
         ERD Schema View
       </div>
-      
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -209,12 +260,16 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
-        onPaneClick={() => onNodeSelect(null)}
+        onPaneClick={handlePaneClick}
         onEdgeMouseEnter={onEdgeMouseEnter}
         onEdgeMouseLeave={onEdgeMouseLeave}
         fitView
         className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
+        // Enable multi-selection
+        selectionOnDrag
+        panOnDrag={selectedNodeIds.length === 0} // Allow pan only when not selecting
       >
+        <GraphInteractionHandler onSelectionChange={setSelectedNodeIds} />
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
         <Panel position="top-right" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex gap-1.5">
