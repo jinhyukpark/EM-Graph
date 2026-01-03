@@ -4,8 +4,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X } from "lucide-react";
+import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
@@ -82,6 +88,7 @@ const INITIAL_EDGES = [
       source: 't1', 
       target: 't2', 
       label: 'Involved In', 
+      type: 'step',
       style: { strokeWidth: 2, stroke: '#94a3b8' }, 
       markerEnd: { type: MarkerType.ArrowClosed },
       data: { sourceField: 'id', targetField: 'description' } // Mock relationship
@@ -91,6 +98,7 @@ const INITIAL_EDGES = [
       source: 't3', 
       target: 't2', 
       label: 'Occurred At', 
+      type: 'step',
       style: { strokeWidth: 2, stroke: '#94a3b8' }, 
       markerEnd: { type: MarkerType.ArrowClosed },
       data: { sourceField: 'loc_id', targetField: 'location_id' }
@@ -100,6 +108,7 @@ const INITIAL_EDGES = [
       source: 't2', 
       target: 't4', 
       label: 'Yielded', 
+      type: 'step',
       style: { strokeWidth: 2, stroke: '#94a3b8' }, 
       markerEnd: { type: MarkerType.ArrowClosed },
       data: { sourceField: 'incident_id', targetField: 'incident_id' }
@@ -109,6 +118,7 @@ const INITIAL_EDGES = [
       source: 't3', 
       target: 't5', 
       label: 'Contains', 
+      type: 'step',
       style: { strokeWidth: 2, stroke: '#94a3b8' }, 
       markerEnd: { type: MarkerType.ArrowClosed },
       data: { sourceField: 'loc_id', targetField: 'location_id' }
@@ -118,7 +128,7 @@ const INITIAL_EDGES = [
 export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: string | null) => void }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
-  const [edgeType, setEdgeType] = useState('default');
+  const [edgeType, setEdgeType] = useState('step');
   const [showAIExplanation, setShowAIExplanation] = useState(false);
 
   // Helper to highlight edge and fields based on an edge ID
@@ -229,13 +239,9 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
     highlightConnection(null);
   }, [highlightConnection]);
 
-  const toggleEdgeType = () => {
-    const types = ['default', 'straight', 'step', 'smoothstep'];
-    const nextIndex = (types.indexOf(edgeType) + 1) % types.length;
-    const nextType = types[nextIndex];
-    setEdgeType(nextType);
-    
-    setEdges((eds) => eds.map(e => ({ ...e, type: nextType === 'default' ? undefined : nextType })));
+  const changeEdgeType = (type: string) => {
+    setEdgeType(type);
+    setEdges((eds) => eds.map(e => ({ ...e, type: type === 'default' ? undefined : type })));
   };
 
   const organizeLayout = () => {
@@ -277,14 +283,37 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         <Controls />
         <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
           <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={toggleEdgeType}>
-                  <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
-            </Tooltip>
+            <DropdownMenu>
+                <Tooltip>
+                <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                        <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                    </Button>
+                    </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
+                </Tooltip>
+                
+                <DropdownMenuContent align="start" sideOffset={5}>
+                    <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
+                        {edgeType === 'default' && <Check className="w-3 h-3" />}
+                        <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
+                        {edgeType === 'straight' && <Check className="w-3 h-3" />}
+                        <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
+                        {edgeType === 'step' && <Check className="w-3 h-3" />}
+                        <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
+                        {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
+                        <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
 
             <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
 
