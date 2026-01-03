@@ -63,7 +63,49 @@ const TableNode = ({ data, selected }: any) => {
 
 const nodeTypes = { tableNode: TableNode };
 
-// Calculate initial connection status
+const INITIAL_EDGES = [
+  { 
+      id: 'e1-2', 
+      source: 't1', 
+      target: 't2', 
+      label: 'Involved In', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
+  },
+  { 
+      id: 'e3-2', 
+      source: 't3', 
+      target: 't2', 
+      label: 'Occurred At', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
+  },
+  { 
+      id: 'e2-4', 
+      source: 't2', 
+      target: 't4', 
+      label: 'Yielded', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'incident_id', targetField: 'incident_id' }
+  },
+  { 
+      id: 'e3-5', 
+      source: 't3', 
+      target: 't5', 
+      label: 'Contains', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
+  },
+];
+
 const connectedSources = new Set(INITIAL_EDGES.map(e => e.source));
 const connectedTargets = new Set(INITIAL_EDGES.map(e => e.target));
 
@@ -122,49 +164,6 @@ const INITIAL_NODES = [
           isSource: connectedSources.has('t5'),
           isTarget: connectedTargets.has('t5')
       } 
-  },
-];
-
-const INITIAL_EDGES = [
-  { 
-      id: 'e1-2', 
-      source: 't1', 
-      target: 't2', 
-      label: 'Involved In', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
-  },
-  { 
-      id: 'e3-2', 
-      source: 't3', 
-      target: 't2', 
-      label: 'Occurred At', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
-  },
-  { 
-      id: 'e2-4', 
-      source: 't2', 
-      target: 't4', 
-      label: 'Yielded', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'incident_id', targetField: 'incident_id' }
-  },
-  { 
-      id: 'e3-5', 
-      source: 't3', 
-      target: 't5', 
-      label: 'Contains', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
   },
 ];
 
@@ -324,6 +323,15 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       >
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
+        
+        {/* Info Banner */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-blue-50/90 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800 text-xs shadow-sm backdrop-blur-sm flex items-center gap-2">
+            <div className="bg-blue-500 rounded-full p-0.5 text-white">
+                <Check className="w-3 h-3" />
+            </div>
+            <span>This is a visualization view. To modify schema or insert data, please use the <strong>Database</strong> menu.</span>
+        </div>
+
         <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
           <TooltipProvider delayDuration={0}>
             <DropdownMenu>
