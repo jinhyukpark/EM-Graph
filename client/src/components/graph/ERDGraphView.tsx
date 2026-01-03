@@ -477,33 +477,23 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
             </section>
 
             <section className="space-y-3">
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Supply Chain Context</h3>
-              <p className="text-sm text-foreground/80 leading-relaxed italic bg-muted/20 p-3 rounded-lg border border-dashed">
-                Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
-              </p>
-            </section>
-
-            <section className="space-y-3">
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Schema Definitions</h3>
-              <div className="space-y-3">
-                <div className="p-3 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-lg border border-indigo-100/50 space-y-1">
-                  <div className="text-xs font-bold flex items-center gap-2 text-indigo-600">
-                    <Grid className="w-3 h-3" />
-                    Node Tables
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Strategic Analysis Points</h3>
+              <div className="space-y-2">
+                {[
+                  { title: "Network Hub Identification", desc: "Pinpoint central entities like 'Crime_Incidents_2024' that orchestrate the flow of the entire criminal network." },
+                  { title: "Risk Correlation", desc: "Analyze the relationship between 'Location_Hotspots' and incident density to predict future high-risk activity zones." },
+                  { title: "Asset Attribution", desc: "Trace 'Evidence_Log' connections back to 'Suspects_Profiles' to establish clear chains of ownership and involvement." },
+                  { title: "Logistics Vulnerability", desc: "Evaluate how 'Supply_Chain_Nodes' intersect with criminal incidents to identify exploited infrastructure." },
+                  { title: "Temporal Patterning", desc: "Correlate 'date_time' across multiple incidents to reveal the operational rhythm and schedule of the crime network." }
+                ].map((item, i) => (
+                  <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 group hover:border-indigo-200 transition-colors">
+                    <div className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      {item.title}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground leading-relaxed italic">{item.desc}</div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Primary entities representing actors (Suspects), locations, and physical assets. Each node acts as a central point for property data.
-                  </p>
-                </div>
-                <div className="p-3 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-lg border border-indigo-100/50 space-y-1">
-                  <div className="text-xs font-bold flex items-center gap-2 text-indigo-600">
-                    <Workflow className="w-3 h-3" />
-                    Link Relationships
-                  </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Connective logic defining how entities interact (e.g., "Involved In", "Occurred At"). These are the "Links" that map the crime network.
-                  </p>
-                </div>
+                ))}
               </div>
             </section>
           </div>
