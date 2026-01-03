@@ -9,6 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
+  if (!data || !data.columns) {
+    console.error("TableNode rendered with missing data:", data);
+    return null;
+  }
   return (
     <Card className={cn("w-56 shadow-md border-2 transition-all bg-card", selected ? "border-primary ring-2 ring-primary/20" : "border-border")}>
       <CardHeader className="p-3 bg-muted/50 border-b flex flex-row items-center justify-between space-y-0">
@@ -253,7 +257,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onSelectionChange={onSelectionChange}
         onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
         onPaneClick={() => onNodeSelect(null)}
         onEdgeMouseEnter={onEdgeMouseEnter}
