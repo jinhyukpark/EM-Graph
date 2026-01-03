@@ -123,21 +123,30 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   // Helper to highlight edge and fields based on an edge ID
   const highlightConnection = useCallback((edgeId: string | null) => {
-    if (!edgeId) {
+    if (edgeId === null) {
        // Reset
-       setEdges((eds) =>
-         eds.map((e) => ({
-           ...e,
-           style: { stroke: '#94a3b8', strokeWidth: 2 },
-           animated: false,
-         }))
-       );
-       setNodes((nds) =>
-         nds.map((n) => ({
-           ...n,
-           data: { ...n.data, highlightedFields: [] },
-         }))
-       );
+       setEdges((eds) => {
+           // Only update if there are animated edges to clean up to avoid loop
+           const needsUpdate = eds.some(e => (e as any).animated);
+           if (!needsUpdate) return eds;
+           
+           return eds.map((e) => ({
+             ...e,
+             style: { stroke: '#94a3b8', strokeWidth: 2 },
+             animated: false,
+           }));
+       });
+
+       setNodes((nds) => {
+           // Only update if there are highlighted fields to clean up
+           const needsUpdate = nds.some(n => (n.data as any).highlightedFields && (n.data as any).highlightedFields.length > 0);
+           if (!needsUpdate) return nds;
+
+           return nds.map((n) => ({
+             ...n,
+             data: { ...n.data, highlightedFields: [] },
+           }));
+       });
        return;
     }
 
