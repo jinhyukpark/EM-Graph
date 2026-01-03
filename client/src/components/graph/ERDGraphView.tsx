@@ -314,9 +314,15 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   return (
     <div className="w-full h-full flex flex-col bg-slate-50/50 dark:bg-slate-950/30">
-      <div className="w-full bg-amber-100/80 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-center backdrop-blur-sm z-50">
-         <AlertTriangle className="w-3.5 h-3.5 mr-2" />
-         <span>Limited Functionality Mode: Only simple data modification and relationship analysis are available.</span>
+      <div className="w-full bg-slate-100/80 border-b border-slate-200 px-4 py-2 text-xs text-slate-600 flex items-center justify-between backdrop-blur-sm z-50">
+         <div className="flex items-center">
+            <AlertTriangle className="w-3.5 h-3.5 mr-2 text-slate-500" />
+            <span>Limited Functionality Mode: Only simple data modification and relationship analysis are available.</span>
+         </div>
+         <Button variant="ghost" size="sm" className="h-6 text-xs text-primary hover:text-primary/80 hover:bg-primary/5 px-2 gap-1">
+            Go to Data Menu
+            <ArrowLeftRight className="w-3 h-3 ml-0.5" />
+         </Button>
       </div>
       
       <div className="flex-1 relative w-full h-full">
