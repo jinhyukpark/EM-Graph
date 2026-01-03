@@ -22,6 +22,8 @@ import { AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 
 import CenterEdge from "@/components/graph/CenterEdge";
+import ERDGraphView from "@/components/graph/ERDGraphView";
+import ERDTablePanel from "@/components/graph/ERDTablePanel";
 
 // Import stock images
 import victimBImg from '@assets/stock_images/portrait_of_a_young__1114e5ec.jpg';
@@ -280,9 +282,9 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                     </div>
 
                     <div className="pt-1 flex justify-end">
-                        <Button size="sm" variant="ghost" className="h-8 text-sm gap-2 hover:bg-transparent hover:text-primary px-0 font-medium">
-                            <ArrowRight className="w-4 h-4" />
+                        <Button size="sm" variant="ghost" className="h-8 text-sm gap-2 hover:bg-transparent hover:text-primary px-0 font-medium group/btn">
                             Ask Copilot Details
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                         </Button>
                     </div>
                   </div>
@@ -564,6 +566,11 @@ export default function ProjectView() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("list");
+  
+  // New state for View Mode (Graph vs ERD)
+  const [viewMode, setViewMode] = useState<'graph' | 'erd'>('graph');
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number } | null>(null);
   
   // Legend State
@@ -633,6 +640,11 @@ export default function ProjectView() {
   };
 
   const handleSidebarNodeSelect = (node: any) => {
+    // If we are in ERD mode, node is a table
+    if (viewMode === 'erd') {
+        return;
+    }
+
     // In a real app, you'd select the node in the graph. 
     // Here we just set selectedNode to show the panel
     if (!node) {
@@ -649,6 +661,11 @@ export default function ProjectView() {
       }, 
       position: { x: 0, y: 0 } // dummy position
     });
+  };
+  
+  // Callback when a node is selected in the ERD Graph
+  const handleErdNodeSelect = (nodeId: string | null) => {
+      setSelectedTableId(nodeId);
   };
 
   const SidebarToggle = (
@@ -678,11 +695,26 @@ export default function ProjectView() {
     <Layout 
       sidebar={
         sidebarMode === "list" 
-          ? <NodeListSidebar onNodeSelect={handleSidebarNodeSelect} selectedNode={selectedNode} /> 
+          ? <NodeListSidebar 
+              onNodeSelect={handleSidebarNodeSelect} 
+              selectedNode={selectedNode} 
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            /> 
           : undefined
       }
-      sidebarControls={selectedNode ? null : SidebarToggle}
+      sidebarControls={selectedNode ? null : null}
     >
+      {viewMode === 'erd' ? (
+        /* ERD View */
+        <div className="relative w-full h-full overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
+            <ERDGraphView onNodeSelect={handleErdNodeSelect} />
+            {selectedTableId && (
+                <ERDTablePanel tableId={selectedTableId} onClose={() => setSelectedTableId(null)} />
+            )}
+        </div>
+      ) : (
+        /* Graph View */
       <div className="flex h-full overflow-hidden">
         {/* Main Graph Area */}
         <div className="relative flex-1 bg-background h-full" ref={constraintsRef}>
@@ -1266,6 +1298,8 @@ export default function ProjectView() {
            items={legendItems}
            onSave={setLegendItems}
         />
+        </div>
+      )}
     </Layout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight, Database, Table as TableIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
@@ -231,10 +232,22 @@ interface NodeListSidebarProps {
   onNodeSelect?: (node: NodeData) => void;
   selectedNodeId?: string;
   selectedNode?: any;
+  viewMode?: 'graph' | 'erd';
+  onViewModeChange?: (mode: 'graph' | 'erd') => void;
 }
 
-export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selectedNode }: NodeListSidebarProps) {
+export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selectedNode, viewMode = 'graph', onViewModeChange }: NodeListSidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Define mock database tables for ERD view sidebar list
+  const erdTables = [
+      { id: 't2', name: 'crime_incidents_2024', type: 'Table', count: 1450 },
+      { id: 't1', name: 'suspect_profiles', type: 'Table', count: 320 },
+      { id: 't3', name: 'location_hotspots', type: 'Table', count: 85 },
+      { id: 't4', name: 'evidence_log', type: 'Table', count: 2100 },
+      { id: 't5', name: 'supply_chain_nodes', type: 'Table', count: 45 },
+  ];
+
   const [displayFields, setDisplayFields] = useState({
     category: true,
     representative: true,
@@ -346,8 +359,81 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
 
   return (
     <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
+      
+      {/* View Mode Toggle */}
+      <div className="px-4 pt-4 pb-2">
+        <div className="bg-muted p-1 rounded-lg grid grid-cols-2 gap-1">
+            <button
+                onClick={() => onViewModeChange?.('graph')}
+                className={cn(
+                    "flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-medium transition-all",
+                    viewMode === 'graph' 
+                        ? "bg-background text-foreground shadow-sm" 
+                        : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                )}
+            >
+                <Network className="w-3.5 h-3.5" />
+                Node List
+            </button>
+            <button
+                onClick={() => onViewModeChange?.('erd')}
+                className={cn(
+                    "flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-medium transition-all",
+                    viewMode === 'erd' 
+                        ? "bg-background text-foreground shadow-sm" 
+                        : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                )}
+            >
+                <Database className="w-3.5 h-3.5" />
+                Graph Connect
+            </button>
+        </div>
+      </div>
+
+      {viewMode === 'erd' ? (
+          /* ERD View Sidebar Content */
+          <div className="flex flex-col flex-1 overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Graph Database</h3>
+                  <Select defaultValue="main_db">
+                    <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Select Database" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="main_db">City Crime Analysis DB</SelectItem>
+                        <SelectItem value="archive">Archive_2023</SelectItem>
+                    </SelectContent>
+                  </Select>
+              </div>
+              
+              <ScrollArea className="flex-1">
+                <div className="py-2">
+                    <div className="px-4 pb-2 pt-1">
+                        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Nodes</h4>
+                        {erdTables.slice(0, 2).map((table) => (
+                            <div key={table.id} className="flex items-center gap-2 py-1.5 px-2 hover:bg-muted/50 rounded-md cursor-pointer text-sm mb-0.5 group">
+                                <TableIcon className="w-3.5 h-3.5 text-blue-500" />
+                                <span className="text-foreground/80 group-hover:text-foreground">{table.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="px-4 pb-2 pt-1">
+                        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Links</h4>
+                        {erdTables.slice(2).map((table) => (
+                            <div key={table.id} className="flex items-center gap-2 py-1.5 px-2 hover:bg-muted/50 rounded-md cursor-pointer text-sm mb-0.5 group">
+                                <Network className="w-3.5 h-3.5 text-emerald-500" />
+                                <span className="text-foreground/80 group-hover:text-foreground">{table.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+              </ScrollArea>
+          </div>
+      ) : (
+      /* Normal Node List Content */
+      <>
       {/* Search Header */}
-      <div className="p-4 border-b border-border space-y-4">
+      <div className="p-4 border-b border-border space-y-4 pt-2">
         <div>
           <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Network Search</h3>
           <div className="flex gap-2">
@@ -462,6 +548,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
           ))}
         </div>
       </ScrollArea>
+      </>
+      )}
     </div>
   );
 }
