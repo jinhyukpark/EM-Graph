@@ -20,7 +20,7 @@ const TableNode = ({ data, selected }: any) => {
     return null;
   }
   return (
-    <Card className={cn("w-56 shadow-md border-2 transition-all bg-card", selected ? "border-primary ring-2 ring-primary/20" : "border-border")}>
+    <Card className={cn("w-56 shadow-md border-2 transition-all bg-card group", selected ? "border-primary ring-2 ring-primary/20" : "border-border")}>
       <CardHeader className="p-3 bg-muted/50 border-b flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground/80">{data.label}</CardTitle>
         <div className="w-2 h-2 rounded-full bg-primary/50" />
@@ -41,44 +41,87 @@ const TableNode = ({ data, selected }: any) => {
         })}
         </div>
       </CardContent>
-      <Handle type="target" position={Position.Left} className="w-3 h-3 bg-muted-foreground border-2 border-background" />
-      <Handle type="source" position={Position.Right} className="w-3 h-3 bg-muted-foreground border-2 border-background" />
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        className={cn(
+            "w-3 h-3 bg-muted-foreground border-2 border-background transition-opacity", 
+            data.isTarget ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        )} 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className={cn(
+            "w-3 h-3 bg-muted-foreground border-2 border-background transition-opacity", 
+            data.isSource ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        )} 
+      />
     </Card>
   );
 };
 
 const nodeTypes = { tableNode: TableNode };
 
+// Calculate initial connection status
+const connectedSources = new Set(INITIAL_EDGES.map(e => e.source));
+const connectedTargets = new Set(INITIAL_EDGES.map(e => e.target));
+
 const INITIAL_NODES = [
   { 
       id: 't1', 
       type: 'tableNode', 
       position: { x: 100, y: 150 }, 
-      data: { label: 'Suspects_Profiles', columns: ['id', 'full_name', 'alias', 'status', 'last_seen'] } 
+      data: { 
+          label: 'Suspects_Profiles', 
+          columns: ['id', 'full_name', 'alias', 'status', 'last_seen'],
+          isSource: connectedSources.has('t1'),
+          isTarget: connectedTargets.has('t1')
+      } 
   },
   { 
       id: 't2', 
       type: 'tableNode', 
       position: { x: 500, y: 50 }, 
-      data: { label: 'Crime_Incidents_2024', columns: ['incident_id', 'type', 'date_time', 'location_id', 'description'] } 
+      data: { 
+          label: 'Crime_Incidents_2024', 
+          columns: ['incident_id', 'type', 'date_time', 'location_id', 'description'],
+          isSource: connectedSources.has('t2'),
+          isTarget: connectedTargets.has('t2')
+      } 
   },
   { 
       id: 't3', 
       type: 'tableNode', 
       position: { x: 500, y: 350 }, 
-      data: { label: 'Location_Hotspots', columns: ['loc_id', 'address', 'district', 'risk_level'] } 
+      data: { 
+          label: 'Location_Hotspots', 
+          columns: ['loc_id', 'address', 'district', 'risk_level'],
+          isSource: connectedSources.has('t3'),
+          isTarget: connectedTargets.has('t3')
+      } 
   },
   { 
       id: 't4', 
       type: 'tableNode', 
       position: { x: 900, y: 200 }, 
-      data: { label: 'Evidence_Log', columns: ['evidence_id', 'incident_id', 'type', 'custody_chain'] } 
+      data: { 
+          label: 'Evidence_Log', 
+          columns: ['evidence_id', 'incident_id', 'type', 'custody_chain'],
+          isSource: connectedSources.has('t4'),
+          isTarget: connectedTargets.has('t4')
+      } 
   },
   { 
       id: 't5', 
       type: 'tableNode', 
       position: { x: 900, y: 400 }, 
-      data: { label: 'Supply_Chain_Nodes', columns: ['node_id', 'location_id', 'operator', 'capacity'] } 
+      data: { 
+          label: 'Supply_Chain_Nodes', 
+          columns: ['node_id', 'location_id', 'operator', 'capacity'],
+          isSource: connectedSources.has('t5'),
+          isTarget: connectedTargets.has('t5')
+      } 
   },
 ];
 
