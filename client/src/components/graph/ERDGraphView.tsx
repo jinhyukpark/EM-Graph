@@ -275,33 +275,37 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       >
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
-        <Panel position="top-left" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex flex-col gap-1.5">
-          <TooltipProvider>
+        <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={toggleEdgeType}>
-                  <Workflow className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={toggleEdgeType}>
+                  <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">Change Link Type ({edgeType})</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
             </Tooltip>
+
+            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={organizeLayout}>
-                  <Layout className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={organizeLayout}>
+                  <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">Organize Layout</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
             </Tooltip>
+
+            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8 text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-800 dark:hover:bg-indigo-950" onClick={() => setShowAIExplanation(true)}>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-indigo-50/50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-all" onClick={() => setShowAIExplanation(true)}>
                   <Sparkles className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">AI Schema Explanation</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Panel>
