@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X, Check } from "lucide-react";
+import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X, Check, AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -313,81 +313,88 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
   };
 
   return (
-    <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onSelectionChange={onSelectionChange}
-        onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
-        onPaneClick={() => onNodeSelect(null)}
-        onEdgeMouseEnter={onEdgeMouseEnter}
-        onEdgeMouseLeave={onEdgeMouseLeave}
-        fitView
-        className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
-      >
-        <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
-        <Controls />
-        <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
-          <TooltipProvider delayDuration={0}>
-            <DropdownMenu>
+    <div className="w-full h-full flex flex-col bg-slate-50/50 dark:bg-slate-950/30">
+      <div className="w-full bg-amber-100/80 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-center backdrop-blur-sm z-50">
+         <AlertTriangle className="w-3.5 h-3.5 mr-2" />
+         <span>Limited Functionality Mode: Only simple data modification and relationship analysis are available.</span>
+      </div>
+      
+      <div className="flex-1 relative w-full h-full">
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onSelectionChange={onSelectionChange}
+            onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
+            onPaneClick={() => onNodeSelect(null)}
+            onEdgeMouseEnter={onEdgeMouseEnter}
+            onEdgeMouseLeave={onEdgeMouseLeave}
+            fitView
+            className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
+        >
+            <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
+            <Controls />
+            <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
+            <TooltipProvider delayDuration={0}>
+                <DropdownMenu>
+                    <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                            <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                        </Button>
+                        </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
+                    </Tooltip>
+                    
+                    <DropdownMenuContent align="start" sideOffset={5}>
+                        <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
+                            {edgeType === 'default' && <Check className="w-3 h-3" />}
+                            <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
+                            {edgeType === 'straight' && <Check className="w-3 h-3" />}
+                            <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
+                            {edgeType === 'step' && <Check className="w-3 h-3" />}
+                            <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
+                            {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
+                            <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
+
                 <Tooltip>
                 <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                        <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={organizeLayout}>
+                    <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                     </Button>
-                    </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
+                <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
                 </Tooltip>
-                
-                <DropdownMenuContent align="start" sideOffset={5}>
-                    <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
-                        {edgeType === 'default' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
-                        {edgeType === 'straight' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
-                        {edgeType === 'step' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
-                        {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
 
-            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
+                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={organizeLayout}>
-                  <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
-            </Tooltip>
-
-            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-indigo-50/50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-all" onClick={() => setShowAIExplanation(true)}>
-                  <Sparkles className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </Panel>
-      </ReactFlow>
+                <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-indigo-50/50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-all" onClick={() => setShowAIExplanation(true)}>
+                    <Sparkles className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            </Panel>
+        </ReactFlow>
+      </div>
 
       <Dialog open={showAIExplanation} onOpenChange={setShowAIExplanation}>
         <DialogContent className="sm:max-w-[500px]">
