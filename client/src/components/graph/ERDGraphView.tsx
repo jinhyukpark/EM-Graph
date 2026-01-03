@@ -29,13 +29,6 @@ const TableNode = ({ data, selected }: any) => {
         <div className="divide-y divide-border/50">
         {data.columns.map((col: string, i: number) => {
            const isHighlighted = data.highlightedFields?.includes(col);
-           
-           // If any field is highlighted, hide non-highlighted fields
-           const hasHighlightedFields = data.highlightedFields && data.highlightedFields.length > 0;
-           if (hasHighlightedFields && !isHighlighted) {
-               return null;
-           }
-
            return (
             <div key={i} className={cn("flex items-center justify-between px-3 py-2 text-[11px] transition-colors", isHighlighted ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/30")}>
                <div className="flex items-center gap-2 text-foreground/70">
@@ -70,49 +63,7 @@ const TableNode = ({ data, selected }: any) => {
 
 const nodeTypes = { tableNode: TableNode };
 
-const INITIAL_EDGES = [
-  { 
-      id: 'e1-2', 
-      source: 't1', 
-      target: 't2', 
-      label: 'Involved In', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
-  },
-  { 
-      id: 'e3-2', 
-      source: 't3', 
-      target: 't2', 
-      label: 'Occurred At', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
-  },
-  { 
-      id: 'e2-4', 
-      source: 't2', 
-      target: 't4', 
-      label: 'Yielded', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'incident_id', targetField: 'incident_id' }
-  },
-  { 
-      id: 'e3-5', 
-      source: 't3', 
-      target: 't5', 
-      label: 'Contains', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
-  },
-];
-
+// Calculate initial connection status
 const connectedSources = new Set(INITIAL_EDGES.map(e => e.source));
 const connectedTargets = new Set(INITIAL_EDGES.map(e => e.target));
 
@@ -171,6 +122,49 @@ const INITIAL_NODES = [
           isSource: connectedSources.has('t5'),
           isTarget: connectedTargets.has('t5')
       } 
+  },
+];
+
+const INITIAL_EDGES = [
+  { 
+      id: 'e1-2', 
+      source: 't1', 
+      target: 't2', 
+      label: 'Involved In', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
+  },
+  { 
+      id: 'e3-2', 
+      source: 't3', 
+      target: 't2', 
+      label: 'Occurred At', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
+  },
+  { 
+      id: 'e2-4', 
+      source: 't2', 
+      target: 't4', 
+      label: 'Yielded', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'incident_id', targetField: 'incident_id' }
+  },
+  { 
+      id: 'e3-5', 
+      source: 't3', 
+      target: 't5', 
+      label: 'Contains', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
   },
 ];
 
@@ -290,7 +284,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   const changeEdgeType = (type: string) => {
     setEdgeType(type);
-    setEdges((eds) => eds.map(e => ({ ...e, type })));
+    setEdges((eds) => eds.map(e => ({ ...e, type: type === 'default' ? undefined : type })));
   };
 
   const organizeLayout = () => {
@@ -330,15 +324,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       >
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
-        
-        {/* Info Banner */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 bg-blue-50/95 dark:bg-blue-950/90 text-blue-700 dark:text-blue-300 px-6 py-2 rounded-full border border-blue-200 dark:border-blue-800 text-xs font-medium shadow-md backdrop-blur-md flex items-center gap-2">
-            <div className="bg-blue-500 rounded-full p-0.5 text-white">
-                <Check className="w-3 h-3" />
-            </div>
-            <span>이 뷰는 시각화 전용입니다. 스키마 수정이나 데이터 삽입은 <strong>Database</strong> 메뉴를 이용해주세요.</span>
-        </div>
-
         <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
           <TooltipProvider delayDuration={0}>
             <DropdownMenu>
@@ -350,25 +335,25 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                     </Button>
                     </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">연결선 타입 변경 ({edgeType})</TooltipContent>
+                <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
                 </Tooltip>
                 
                 <DropdownMenuContent align="start" sideOffset={5}>
                     <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
                         {edgeType === 'default' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'default' ? 'pl-5' : ''}>곡선 (기본)</span>
+                        <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
                         {edgeType === 'straight' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'straight' ? 'pl-5' : ''}>직선</span>
+                        <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
                         {edgeType === 'step' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'step' ? 'pl-5' : ''}>계단형 (직각)</span>
+                        <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
                         {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
-                        <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>부드러운 계단형</span>
+                        <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -381,7 +366,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">레이아웃 자동 정렬</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
             </Tooltip>
 
             <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
@@ -392,7 +377,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   <Sparkles className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">AI 스키마 분석</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Panel>
@@ -403,29 +388,29 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-indigo-600">
                <Sparkles className="h-5 w-5" />
-               AI 스키마 분석
+               AI Schema Analysis
             </DialogTitle>
             <DialogDescription>
-              현재 엔티티 관계 및 데이터 흐름에 대한 분석 결과입니다.
+              Analysis of the current entity relationships and data flow.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
              <div className="bg-muted/30 p-4 rounded-lg text-sm leading-relaxed border space-y-3">
                 <p>
-                  <strong className="text-foreground">관계 개요:</strong><br/>
-                  이 스키마는 범죄 용의자 프로필, 사건, 그리고 증거물 간의 관계를 연결합니다. 중심 허브인 <code className="text-xs bg-muted px-1 py-0.5 rounded border">Crime_Incidents_2024</code> 테이블이 용의자, 장소, 증거를 하나로 묶어주는 역할을 합니다.
+                  <strong className="text-foreground">Relationship Overview:</strong><br/>
+                  The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-xs bg-muted px-1 py-0.5 rounded border">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
                 </p>
                 <p>
-                  <strong className="text-foreground">핵심 데이터 흐름:</strong><br/>
-                  용의자는 "Involved In" 관계를 통해 사건과 연결됩니다. 사건은 특정 "Location_Hotspots"에서 발생하며, "Evidence_Log"에 기록된 증거물을 산출합니다.
+                  <strong className="text-foreground">Key Data Flow:</strong><br/>
+                  Suspects are linked to incidents via "Involved In". Incidents occur at specific "Location_Hotspots" and yield items in the "Evidence_Log".
                 </p>
                 <p>
-                  <strong className="text-foreground">공급망 문맥:</strong><br/>
-                  장소 정보에는 "Supply_Chain_Nodes"도 포함되어 있어, 물류 거점과 고위험 활동 지역 간의 상관관계를 분석할 수 있음을 시사합니다.
+                  <strong className="text-foreground">Supply Chain Context:</strong><br/>
+                  Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
                 </p>
              </div>
              <div className="flex justify-end">
-                <Button size="sm" onClick={() => setShowAIExplanation(false)}>분석 닫기</Button>
+                <Button size="sm" onClick={() => setShowAIExplanation(false)}>Close Analysis</Button>
              </div>
           </div>
         </DialogContent>
