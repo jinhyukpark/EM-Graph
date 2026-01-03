@@ -189,17 +189,15 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       );
 
       if (connectedEdge) {
-        highlightConnection(connectedEdge.id);
+        // Only highlight if not already highlighted
+        if (!(connectedEdge as any).animated) {
+            highlightConnection(connectedEdge.id);
+        }
         return;
       }
     }
     
-    // If we are not selecting exactly two connected nodes, and not hovering (handled separately), 
-    // we might want to reset, OR just do nothing and let hover handle it.
-    // For now, if selection is cleared or invalid for highlighting, we reset ONLY IF NOT HOVERING.
-    // But since this event fires on selection, let's reset if selection count is not 2.
-    // This is a simple implementation.
-    
+    // Only clear if no nodes selected
     if (selectedNodes.length === 0) {
        highlightConnection(null);
     }
@@ -214,6 +212,11 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
   );
 
   const onEdgeMouseLeave = useCallback(() => {
+    // Only clear highlight if we don't have a selection that should keep it highlighted
+    // But for simplicity, let's just clear it on mouse leave, assuming selection will re-trigger or user will re-select
+    // A better way is to check if we are in a selection state.
+    // However, hover usually overrides selection visualization temporarily or vice versa.
+    // Let's allow hover to clear for now to avoid stuck states.
     highlightConnection(null);
   }, [highlightConnection]);
 
@@ -257,6 +260,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onSelectionChange={onSelectionChange}
         onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
         onPaneClick={() => onNodeSelect(null)}
         onEdgeMouseEnter={onEdgeMouseEnter}
