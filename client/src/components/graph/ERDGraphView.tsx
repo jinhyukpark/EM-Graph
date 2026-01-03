@@ -314,17 +314,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   return (
     <div className="w-full h-full flex flex-col bg-slate-50/50 dark:bg-slate-950/30">
-      <div className="w-full bg-slate-100/80 border-b border-slate-200 px-4 py-2 text-xs text-slate-600 flex items-center justify-between backdrop-blur-sm z-50">
-         <div className="flex items-center">
-            <AlertTriangle className="w-3.5 h-3.5 mr-2 text-slate-500" />
-            <span>Limited Functionality Mode: Only simple data modification and relationship analysis are available.</span>
-         </div>
-         <Button variant="ghost" size="sm" className="h-6 text-xs text-primary hover:text-primary/80 hover:bg-primary/5 px-2 gap-1">
-            Go to Data Menu
-            <ArrowLeftRight className="w-3 h-3 ml-0.5" />
-         </Button>
-      </div>
-      
       <div className="flex-1 relative w-full h-full">
         <ReactFlow
             nodes={nodes}
@@ -342,6 +331,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         >
             <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
             <Controls />
+            
             <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
             <TooltipProvider delayDuration={0}>
                 <DropdownMenu>
@@ -398,6 +388,27 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                 <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
                 </Tooltip>
             </TooltipProvider>
+            </Panel>
+
+            <Panel position="top-right" className="m-4">
+              <Card className="w-64 bg-background/90 backdrop-blur-md border-slate-200 shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-4">
+                <div className="h-1 bg-primary/20" />
+                <CardHeader className="p-4 pb-2 flex flex-row items-center gap-2 space-y-0">
+                  <div className="p-1.5 rounded-md bg-slate-100 dark:bg-slate-800">
+                    <AlertTriangle className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <CardTitle className="text-sm font-semibold">Mode Info</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-2 space-y-4">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Currently in <span className="font-medium text-foreground">Limited Functionality Mode</span>. You can perform simple data modifications and relationship analysis.
+                  </p>
+                  <Button variant="outline" size="sm" className="w-full text-xs h-8 gap-2 border-primary/20 hover:bg-primary/5 hover:text-primary transition-all group">
+                    Go to DB Settings
+                    <ArrowLeftRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </Button>
+                </CardContent>
+              </Card>
             </Panel>
         </ReactFlow>
       </div>
