@@ -475,56 +475,56 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
             </Button>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-8 space-y-12 no-scrollbar">
-            <section className="space-y-6">
-              <h3 className="text-[16px] font-bold uppercase tracking-widest text-muted-foreground">Entity Statistics</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
-                  <div className="text-[14px] text-muted-foreground uppercase font-bold tracking-tight mb-2">Node Tables</div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-indigo-600 italic">5</span>
-                    <span className="text-[16px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">entities</span>
+          <div className="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Entity Statistics</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Node Tables</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-indigo-600 italic">5</span>
+                    <span className="text-[10px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">entities</span>
                   </div>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
-                  <div className="text-[14px] text-muted-foreground uppercase font-bold tracking-tight mb-2">Link Edges</div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-indigo-600 italic">4</span>
-                    <span className="text-[16px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">relationships</span>
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Link Edges</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-indigo-600 italic">4</span>
+                    <span className="text-[10px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">relationships</span>
                   </div>
                 </div>
               </div>
             </section>
 
-            <section className="space-y-6">
-              <h3 className="text-[16px] font-bold uppercase tracking-widest text-muted-foreground">Relationship Overview</h3>
-              <p className="text-[20px] text-foreground/80 leading-relaxed bg-indigo-50/30 dark:bg-indigo-950/10 p-8 rounded-2xl border border-indigo-100/50 dark:border-indigo-900/30">
-                The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-[16px] bg-muted px-2.5 py-0.5 rounded border font-mono font-bold">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Relationship Overview</h3>
+              <p className="text-sm text-foreground/80 leading-relaxed bg-indigo-50/30 dark:bg-indigo-950/10 p-3 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
+                The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded border font-mono">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
               </p>
             </section>
 
-            <section className="space-y-6">
-              <h3 className="text-[16px] font-bold uppercase tracking-widest text-muted-foreground">Key Data Flow</h3>
-              <div className="space-y-6">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Key Data Flow</h3>
+              <div className="space-y-2">
                 {[
                   { title: "Suspects", desc: "Linked to incidents via 'Involved In'" },
                   { title: "Incidents", desc: "Occur at 'Location_Hotspots'" },
                   { title: "Evidence", desc: "Yielded from incident sites" }
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-6 items-start group">
-                    <div className="w-3.5 h-3.5 rounded-full bg-indigo-400 mt-2.5 group-hover:scale-150 transition-transform" />
-                    <div className="space-y-2">
-                      <div className="text-[20px] font-bold">{item.title}</div>
-                      <div className="text-[17px] text-muted-foreground">{item.desc}</div>
+                  <div key={i} className="flex gap-3 items-start group">
+                    <div className="w-1 h-1 rounded-full bg-indigo-400 mt-2 group-hover:scale-150 transition-transform" />
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-bold">{item.title}</div>
+                      <div className="text-[11px] text-muted-foreground">{item.desc}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section className="space-y-6">
-              <h3 className="text-[16px] font-bold uppercase tracking-widest text-muted-foreground">Strategic Analysis Points</h3>
-              <div className="space-y-6">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Strategic Analysis Points</h3>
+              <div className="space-y-2">
                 {[
                   { title: "Network Hub Identification", desc: "Pinpoint central entities like 'Crime_Incidents_2024' that orchestrate the flow of the entire criminal network." },
                   { title: "Risk Correlation", desc: "Analyze the relationship between 'Location_Hotspots' and incident density to predict future high-risk activity zones." },
@@ -532,19 +532,19 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   { title: "Logistics Vulnerability", desc: "Evaluate how 'Supply_Chain_Nodes' intersect with criminal incidents to identify exploited infrastructure." },
                   { title: "Temporal Patterning", desc: "Correlate 'date_time' across multiple incidents to reveal the operational rhythm and schedule of the crime network." }
                 ].map((item, i) => (
-                  <div key={i} className="p-8 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-indigo-200 transition-colors">
-                    <div className="text-[20px] font-bold text-slate-900 dark:text-slate-100 flex items-center gap-4 mb-2.5">
-                      <div className="w-3.5 h-3.5 rounded-full bg-indigo-500" />
+                  <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 group hover:border-indigo-200 transition-colors">
+                    <div className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                       {item.title}
                     </div>
-                    <div className="text-[16px] text-muted-foreground leading-relaxed italic">{item.desc}</div>
+                    <div className="text-[11px] text-muted-foreground leading-relaxed italic">{item.desc}</div>
                   </div>
                 ))}
               </div>
             </section>
           </div>
 
-          <div className="p-4 border-t bg-muted/10 shrink-0">
+          <div className="p-4 border-t bg-muted/10">
             <Button size="sm" className="w-full gap-2" variant="outline" onClick={() => setShowAIExplanation(false)}>
               <Check className="w-3 h-3" />
               Acknowledge Analysis
