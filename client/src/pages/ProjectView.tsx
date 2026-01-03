@@ -253,15 +253,7 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                   exit={{ height: 0, opacity: 0 }}
                   className="p-4"
                 >
-                  <div className="space-y-4">
-                    <div>
-                       <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Domain Analysis</div>
-                       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                          Criminal Organization Network
-                       </div>
-                    </div>
-
+                  <div className="space-y-2">
                     <div className="space-y-2">
                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Key Insights</div>
                        
@@ -287,7 +279,7 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                        </div>
                     </div>
 
-                    <div className="pt-3 flex justify-end">
+                    <div className="pt-1 flex justify-end">
                         <Button size="sm" variant="ghost" className="h-8 text-sm gap-2 hover:bg-transparent hover:text-primary px-0 font-medium">
                             <ArrowRight className="w-4 h-4" />
                             Ask Copilot Details
