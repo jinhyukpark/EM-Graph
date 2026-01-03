@@ -390,22 +390,22 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
             </TooltipProvider>
             </Panel>
 
-            <Panel position="top-right" className="m-4">
-              <Card className="w-64 bg-background/90 backdrop-blur-md border-slate-200 shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-4">
-                <div className="h-1 bg-primary/20" />
-                <CardHeader className="p-4 pb-2 flex flex-row items-center gap-2 space-y-0">
-                  <div className="p-1.5 rounded-md bg-slate-100 dark:bg-slate-800">
-                    <AlertTriangle className="w-4 h-4 text-slate-500" />
+            <Panel position="top-right" className="m-6">
+              <Card className="w-72 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in slide-in-from-right-6 duration-500">
+                <div className="h-1.5 bg-indigo-500/80" />
+                <CardHeader className="p-5 pb-2 flex flex-row items-center gap-3 space-y-0">
+                  <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40">
+                    <AlertTriangle className="w-5 h-5 text-indigo-500" />
                   </div>
-                  <CardTitle className="text-sm font-semibold">Mode Info</CardTitle>
+                  <CardTitle className="text-base font-bold text-slate-900 dark:text-slate-100">Mode Info</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-2 space-y-4">
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Currently in <span className="font-medium text-foreground">Limited Functionality Mode</span>. You can perform simple data modifications and relationship analysis.
+                <CardContent className="p-5 pt-3 space-y-5">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                    Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. You can perform simple data modifications and relationship analysis.
                   </p>
-                  <Button variant="outline" size="sm" className="w-full text-xs h-8 gap-2 border-primary/20 hover:bg-primary/5 hover:text-primary transition-all group">
+                  <Button variant="default" size="default" className="w-full text-sm h-10 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 dark:shadow-none transition-all group rounded-xl">
                     Go to DB Settings
-                    <ArrowLeftRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowLeftRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </CardContent>
               </Card>
