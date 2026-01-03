@@ -431,6 +431,26 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
           
           <div className="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar">
             <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Entity Statistics</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Node Tables</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-indigo-600 italic">5</span>
+                    <span className="text-[10px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">entities</span>
+                  </div>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 transition-all hover:border-indigo-200">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Link Edges</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xl font-black text-indigo-600 italic">4</span>
+                    <span className="text-[10px] text-muted-foreground font-medium underline decoration-indigo-200 decoration-2 underline-offset-2">relationships</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Relationship Overview</h3>
               <p className="text-sm text-foreground/80 leading-relaxed bg-indigo-50/30 dark:bg-indigo-950/10 p-3 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
                 The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded border font-mono">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
@@ -461,6 +481,30 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
               <p className="text-sm text-foreground/80 leading-relaxed italic bg-muted/20 p-3 rounded-lg border border-dashed">
                 Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
               </p>
+            </section>
+
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Schema Definitions</h3>
+              <div className="space-y-3">
+                <div className="p-3 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-lg border border-indigo-100/50 space-y-1">
+                  <div className="text-xs font-bold flex items-center gap-2 text-indigo-600">
+                    <Grid className="w-3 h-3" />
+                    Node Tables
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Primary entities representing actors (Suspects), locations, and physical assets. Each node acts as a central point for property data.
+                  </p>
+                </div>
+                <div className="p-3 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-lg border border-indigo-100/50 space-y-1">
+                  <div className="text-xs font-bold flex items-center gap-2 text-indigo-600">
+                    <Workflow className="w-3 h-3" />
+                    Link Relationships
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Connective logic defining how entities interact (e.g., "Involved In", "Occurred At"). These are the "Links" that map the crime network.
+                  </p>
+                </div>
+              </div>
             </section>
           </div>
 
