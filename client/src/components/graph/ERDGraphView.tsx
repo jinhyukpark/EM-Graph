@@ -64,8 +64,57 @@ const TableNode = ({ data, selected }: any) => {
 const nodeTypes = { tableNode: TableNode };
 
 // Calculate initial connection status
-const connectedSources = new Set(INITIAL_EDGES.map(e => e.source));
-const connectedTargets = new Set(INITIAL_EDGES.map(e => e.target));
+const connectedSources = new Set<string>();
+const connectedTargets = new Set<string>();
+
+const INITIAL_EDGES = [
+  { 
+      id: 'e1-2', 
+      source: 't1', 
+      target: 't2', 
+      label: 'Involved In', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
+  },
+  { 
+      id: 'e3-2', 
+      source: 't3', 
+      target: 't2', 
+      label: 'Occurred At', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
+  },
+  { 
+      id: 'e2-4', 
+      source: 't2', 
+      target: 't4', 
+      label: 'Yielded', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'incident_id', targetField: 'incident_id' }
+  },
+  { 
+      id: 'e3-5', 
+      source: 't3', 
+      target: 't5', 
+      label: 'Contains', 
+      type: 'step',
+      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
+      markerEnd: { type: MarkerType.ArrowClosed },
+      data: { sourceField: 'loc_id', targetField: 'location_id' }
+  },
+];
+
+// Populate connection sets
+INITIAL_EDGES.forEach(e => {
+    connectedSources.add(e.source);
+    connectedTargets.add(e.target);
+});
 
 const INITIAL_NODES = [
   { 
@@ -122,49 +171,6 @@ const INITIAL_NODES = [
           isSource: connectedSources.has('t5'),
           isTarget: connectedTargets.has('t5')
       } 
-  },
-];
-
-const INITIAL_EDGES = [
-  { 
-      id: 'e1-2', 
-      source: 't1', 
-      target: 't2', 
-      label: 'Involved In', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'id', targetField: 'description' } // Mock relationship
-  },
-  { 
-      id: 'e3-2', 
-      source: 't3', 
-      target: 't2', 
-      label: 'Occurred At', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
-  },
-  { 
-      id: 'e2-4', 
-      source: 't2', 
-      target: 't4', 
-      label: 'Yielded', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'incident_id', targetField: 'incident_id' }
-  },
-  { 
-      id: 'e3-5', 
-      source: 't3', 
-      target: 't5', 
-      label: 'Contains', 
-      type: 'step',
-      style: { strokeWidth: 2, stroke: '#94a3b8' }, 
-      markerEnd: { type: MarkerType.ArrowClosed },
-      data: { sourceField: 'loc_id', targetField: 'location_id' }
   },
 ];
 
