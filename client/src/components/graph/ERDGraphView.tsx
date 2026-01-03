@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel } from '@xyflow/react';
+import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel, OnSelectionChangeParams } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -117,56 +117,101 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
   const [edgeType, setEdgeType] = useState('default');
   const [showAIExplanation, setShowAIExplanation] = useState(false);
 
+  // Helper to highlight edge and fields based on an edge ID
+  const highlightConnection = useCallback((edgeId: string | null) => {
+    if (!edgeId) {
+       // Reset
+       setEdges((eds) =>
+         eds.map((e) => ({
+           ...e,
+           style: { stroke: '#94a3b8', strokeWidth: 2 },
+           animated: false,
+         }))
+       );
+       setNodes((nds) =>
+         nds.map((n) => ({
+           ...n,
+           data: { ...n.data, highlightedFields: [] },
+         }))
+       );
+       return;
+    }
+
+    setEdges((eds) =>
+      eds.map((e) => {
+        if (e.id === edgeId) {
+           return { ...e, style: { ...e.style, stroke: '#3b82f6', strokeWidth: 3 }, animated: true };
+        }
+        return { ...e, style: { ...e.style, stroke: '#e2e8f0', strokeWidth: 1 }, animated: false };
+      })
+    );
+    
+    // Find the edge to get fields
+    setEdges(eds => {
+       const edge = eds.find(e => e.id === edgeId);
+       if (edge && edge.data) {
+          setNodes((nds) =>
+            nds.map((n) => {
+              if (n.id === edge.source) {
+                return {
+                  ...n,
+                  data: { ...n.data, highlightedFields: [edge.data.sourceField] },
+                };
+              }
+              if (n.id === edge.target) {
+                return {
+                  ...n,
+                  data: { ...n.data, highlightedFields: [edge.data.targetField] },
+                };
+              }
+              return { ...n, data: { ...n.data, highlightedFields: [] } };
+            })
+          );
+       }
+       return eds;
+    });
+
+  }, [setEdges, setNodes]);
+
+
+  const onSelectionChange = useCallback(({ nodes: selectedNodes }: OnSelectionChangeParams) => {
+    if (selectedNodes.length === 2) {
+      // Check if there is an edge connecting these two nodes
+      const sourceId = selectedNodes[0].id;
+      const targetId = selectedNodes[1].id;
+      
+      const connectedEdge = edges.find(
+        (e) => (e.source === sourceId && e.target === targetId) || (e.source === targetId && e.target === sourceId)
+      );
+
+      if (connectedEdge) {
+        highlightConnection(connectedEdge.id);
+        return;
+      }
+    }
+    
+    // If we are not selecting exactly two connected nodes, and not hovering (handled separately), 
+    // we might want to reset, OR just do nothing and let hover handle it.
+    // For now, if selection is cleared or invalid for highlighting, we reset ONLY IF NOT HOVERING.
+    // But since this event fires on selection, let's reset if selection count is not 2.
+    // This is a simple implementation.
+    
+    if (selectedNodes.length === 0) {
+       highlightConnection(null);
+    }
+  }, [edges, highlightConnection]);
+
   const onEdgeMouseEnter = useCallback(
     (_: React.MouseEvent, edge: any) => {
       if (!edge.data?.sourceField || !edge.data?.targetField) return;
-
-      setEdges((eds) =>
-        eds.map((e) =>
-          e.id === edge.id
-            ? { ...e, style: { ...e.style, stroke: '#3b82f6', strokeWidth: 3 }, animated: true } // Blue highlight
-            : { ...e, style: { ...e.style, stroke: '#e2e8f0', strokeWidth: 1 } } // Dim others
-        )
-      );
-
-      setNodes((nds) =>
-        nds.map((n) => {
-          if (n.id === edge.source) {
-            return {
-              ...n,
-              data: { ...n.data, highlightedFields: [edge.data.sourceField] },
-            };
-          }
-          if (n.id === edge.target) {
-            return {
-              ...n,
-              data: { ...n.data, highlightedFields: [edge.data.targetField] },
-            };
-          }
-          return { ...n, data: { ...n.data, highlightedFields: [] } };
-        })
-      );
+      highlightConnection(edge.id);
     },
-    [setEdges, setNodes]
+    [highlightConnection]
   );
 
   const onEdgeMouseLeave = useCallback(() => {
-    // Reset styles
-    setEdges((eds) =>
-      eds.map((e) => ({
-        ...e,
-        style: { stroke: '#94a3b8', strokeWidth: 2 },
-        animated: false,
-      }))
-    );
-
-    setNodes((nds) =>
-      nds.map((n) => ({
-        ...n,
-        data: { ...n.data, highlightedFields: [] },
-      }))
-    );
-  }, [setEdges, setNodes]);
+    highlightConnection(null);
+  }, [highlightConnection]);
 
   const toggleEdgeType = () => {
     const types = ['default', 'straight', 'step', 'smoothstep'];
@@ -208,6 +253,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onSelectionChange={onSelectionChange}
         onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
         onPaneClick={() => onNodeSelect(null)}
         onEdgeMouseEnter={onEdgeMouseEnter}
