@@ -29,6 +29,13 @@ const TableNode = ({ data, selected }: any) => {
         <div className="divide-y divide-border/50">
         {data.columns.map((col: string, i: number) => {
            const isHighlighted = data.highlightedFields?.includes(col);
+           
+           // If any field is highlighted, hide non-highlighted fields
+           const hasHighlightedFields = data.highlightedFields && data.highlightedFields.length > 0;
+           if (hasHighlightedFields && !isHighlighted) {
+               return null;
+           }
+
            return (
             <div key={i} className={cn("flex items-center justify-between px-3 py-2 text-[11px] transition-colors", isHighlighted ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/30")}>
                <div className="flex items-center gap-2 text-foreground/70">
