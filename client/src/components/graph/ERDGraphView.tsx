@@ -429,12 +429,17 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                     <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40">
                       <AlertTriangle className="w-4 h-4 text-indigo-500" />
                     </div>
-                    <CardTitle className="text-sm font-bold">Mode Info</CardTitle>
+                    <CardTitle className="text-sm font-bold text-slate-900 dark:text-slate-100">Mode Info</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 pt-2 space-y-4">
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                      Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. Simple modifications available.
-                    </p>
+                    <div className="space-y-3">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                        Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. Simple modifications available.
+                      </p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-500 leading-relaxed border-t pt-2 border-slate-100 dark:border-slate-800 italic">
+                        Provides detailed insights into the graph data and the relationship network currently applied.
+                      </p>
+                    </div>
                     <Button variant="default" size="sm" className="w-full text-xs h-8 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100 dark:shadow-none transition-all group rounded-lg">
                       Go to DB Settings
                       <ArrowLeftRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
