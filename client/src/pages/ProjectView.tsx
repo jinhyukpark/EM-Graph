@@ -235,6 +235,9 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                 <span className="text-sm font-semibold text-foreground/90">AI Network Briefing</span>
               </div>
               <div className="flex items-center">
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary mr-1" onClick={(e) => { e.stopPropagation(); /* Add refresh logic here */ }}>
+                   <RefreshCw className="w-3.5 h-3.5" />
+                </Button>
                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => setIsExpanded(!isExpanded)}>
                    {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </Button>
@@ -251,9 +254,9 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="p-4"
+                  className="max-h-[400px] overflow-y-auto"
                 >
-                  <div className="space-y-4">
+                  <div className="p-4 space-y-4">
                     <div>
                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Domain Analysis</div>
                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
