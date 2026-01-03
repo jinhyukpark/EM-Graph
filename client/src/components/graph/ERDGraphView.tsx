@@ -543,12 +543,8 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
               </div>
             </section>
           </div>
-          </div>
-          </div>
-          </div>
-          </div>
 
-          <div className="p-4 border-t bg-muted/10">
+          <div className="p-4 border-t bg-muted/10 shrink-0">
             <Button size="sm" className="w-full gap-2" variant="outline" onClick={() => setShowAIExplanation(false)}>
               <Check className="w-3 h-3" />
               Acknowledge Analysis
