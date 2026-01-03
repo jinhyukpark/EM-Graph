@@ -4,8 +4,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X } from "lucide-react";
+import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X, ChevronDown } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
@@ -215,13 +216,9 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
     );
   }, [setEdges, setNodes, selectedNodeIds]);
 
-  const toggleEdgeType = () => {
-    const types = ['default', 'straight', 'step', 'smoothstep'];
-    const nextIndex = (types.indexOf(edgeType) + 1) % types.length;
-    const nextType = types[nextIndex];
-    setEdgeType(nextType);
-    
-    setEdges((eds) => eds.map(e => ({ ...e, type: nextType === 'default' ? undefined : nextType })));
+  const changeEdgeType = (type: string) => {
+    setEdgeType(type);
+    setEdges((eds) => eds.map(e => ({ ...e, type: type === 'default' ? undefined : type })));
   };
 
   const organizeLayout = () => {
@@ -250,9 +247,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   return (
     <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
-      <div className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm border rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
-        ERD Schema View
-      </div>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -272,33 +266,59 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         <GraphInteractionHandler onSelectionChange={setSelectedNodeIds} />
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
-        <Panel position="top-right" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex gap-1.5">
+        <Panel position="top-left" className="bg-background/95 backdrop-blur-md p-2 rounded-xl border shadow-lg flex flex-col gap-2">
           <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={toggleEdgeType}>
-                  <Workflow className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Change Link Type ({edgeType})</TooltipContent>
-            </Tooltip>
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-muted">
+                      <Workflow className="h-5 w-5 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent side="right">Connection Style</TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent align="start" side="right" className="ml-2 w-40">
+                <DropdownMenuLabel>Link Style</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => changeEdgeType('default')}>
+                  <span className={cn("mr-2", edgeType === 'default' ? "opacity-100" : "opacity-0")}>✓</span>
+                  Bezier (Default)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')}>
+                  <span className={cn("mr-2", edgeType === 'smoothstep' ? "opacity-100" : "opacity-0")}>✓</span>
+                  Smooth Step
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeEdgeType('step')}>
+                  <span className={cn("mr-2", edgeType === 'step' ? "opacity-100" : "opacity-0")}>✓</span>
+                  Step
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeEdgeType('straight')}>
+                  <span className={cn("mr-2", edgeType === 'straight' ? "opacity-100" : "opacity-0")}>✓</span>
+                  Straight
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8" onClick={organizeLayout}>
-                  <Layout className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-muted" onClick={organizeLayout}>
+                  <Layout className="h-5 w-5 text-muted-foreground" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Organize Layout</TooltipContent>
+              <TooltipContent side="right">Auto Layout</TooltipContent>
             </Tooltip>
+
+            <div className="h-px bg-border w-full my-1" />
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8 text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-800 dark:hover:bg-indigo-950" onClick={() => setShowAIExplanation(true)}>
-                  <Sparkles className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 text-indigo-600 dark:text-indigo-400" onClick={() => setShowAIExplanation(true)}>
+                  <Sparkles className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>AI Schema Explanation</TooltipContent>
+              <TooltipContent side="right">AI Analysis</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Panel>
