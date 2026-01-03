@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel, OnSelectionChangeParams } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -179,6 +179,37 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [edgeType, setEdgeType] = useState('step');
   const [showAIExplanation, setShowAIExplanation] = useState(false);
+  const [panelWidth, setPanelWidth] = useState(320);
+  const isResizing = useRef(false);
+
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    isResizing.current = true;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', stopResizing);
+    document.body.style.cursor = 'col-resize';
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    isResizing.current = false;
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', stopResizing);
+    document.body.style.cursor = 'default';
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isResizing.current) return;
+    const newWidth = window.innerWidth - e.clientX;
+    if (newWidth > 200 && newWidth < 800) {
+      setPanelWidth(newWidth);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', stopResizing);
+    };
+  }, [handleMouseMove, stopResizing]);
 
   // Helper to highlight edge and fields based on an edge ID
   const highlightConnection = useCallback((edgeId: string | null) => {
@@ -415,11 +446,21 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         </div>
 
         {/* Side Analysis Panel */}
-        <div className={cn(
-          "h-full bg-background border-l border-border transition-all duration-300 ease-in-out overflow-hidden flex flex-col shadow-2xl z-50",
-          showAIExplanation ? "w-80 opacity-100" : "w-0 opacity-0"
-        )}>
-          <div className="p-4 border-b flex items-center justify-between bg-muted/30">
+        <div 
+          className={cn(
+            "h-full bg-background border-l border-border transition-all duration-300 ease-in-out flex flex-col shadow-2xl z-50 relative",
+            showAIExplanation ? "opacity-100" : "w-0 opacity-0 border-none"
+          )}
+          style={{ width: showAIExplanation ? panelWidth : 0 }}
+        >
+          {/* Resize Handle */}
+          {showAIExplanation && (
+            <div
+              className="absolute left-0 top-0 w-1 h-full cursor-col-resize hover:bg-indigo-500/30 transition-colors z-[60]"
+              onMouseDown={startResizing}
+            />
+          )}
+          <div className="p-4 border-b flex items-center justify-between bg-muted/30 shrink-0">
             <div className="flex items-center gap-2 text-indigo-600 font-bold">
               <Sparkles className="h-4 w-4" />
               <span className="text-sm">AI Schema Analysis</span>
