@@ -463,7 +463,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
           <div className="p-4 border-b flex items-center justify-between bg-muted/30 shrink-0">
             <div className="flex items-center gap-2 text-indigo-600 font-bold">
               <Sparkles className="h-4 w-4" />
-              <span className="text-sm italic tracking-tight">AI Schema Analysis</span>
+              <span className="text-sm">AI Schema Analysis</span>
             </div>
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setShowAIExplanation(false)}>
               <X className="h-4 w-4" />
@@ -471,16 +471,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
           </div>
           
           <div className="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar">
-            <section className="p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200 dark:shadow-none text-white space-y-2 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-              <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:rotate-12 transition-transform">
-                <Workflow className="w-12 h-12" />
-              </div>
-              <h3 className="text-xs font-bold uppercase tracking-widest opacity-80">System Info</h3>
-              <p className="text-sm font-medium leading-relaxed relative z-10">
-                현재 적용되어 있는 관계망의 Graph 데이터에 대한 핵심 정보를 실시간으로 분석하여 제공합니다.
-              </p>
-            </section>
-
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Entity Statistics</h3>
               <div className="grid grid-cols-2 gap-3">
