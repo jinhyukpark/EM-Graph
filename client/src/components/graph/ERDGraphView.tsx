@@ -1,21 +1,16 @@
-import { useCallback, useState, useEffect } from 'react';
-import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel, useOnSelectionChange } from '@xyflow/react';
+import { useCallback, useState } from 'react';
+import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X, ChevronDown } from "lucide-react";
+import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
   return (
-    <Card className={cn(
-      "w-56 shadow-md border-2 transition-all duration-300 bg-card", 
-      selected ? "border-primary ring-2 ring-primary/20 scale-105 z-10" : "border-border",
-      data.dimmed ? "opacity-30 grayscale blur-[1px]" : "opacity-100"
-    )}>
+    <Card className={cn("w-56 shadow-md border-2 transition-all bg-card", selected ? "border-primary ring-2 ring-primary/20" : "border-border")}>
       <CardHeader className="p-3 bg-muted/50 border-b flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-xs font-bold uppercase tracking-wider text-foreground/80">{data.label}</CardTitle>
         <div className="w-2 h-2 rounded-full bg-primary/50" />
@@ -116,65 +111,14 @@ const INITIAL_EDGES = [
   },
 ];
 
-function GraphInteractionHandler({ onSelectionChange }: { onSelectionChange: (selectedNodeIds: string[]) => void }) {
-  useOnSelectionChange({
-    onChange: ({ nodes }) => {
-      onSelectionChange(nodes.map((n) => n.id));
-    },
-  });
-  return null;
-}
-
 export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: string | null) => void }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [edgeType, setEdgeType] = useState('default');
   const [showAIExplanation, setShowAIExplanation] = useState(false);
-  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
-
-  // Update styles when selection changes
-  useEffect(() => {
-    if (selectedNodeIds.length === 0) {
-      // Reset everything
-      setNodes((nds) => nds.map((n) => ({ ...n, data: { ...n.data, dimmed: false } })));
-      setEdges((eds) => eds.map((e) => ({ ...e, style: { strokeWidth: 2, stroke: '#94a3b8', opacity: 1 }, animated: false })));
-      return;
-    }
-
-    setNodes((nds) =>
-      nds.map((n) => ({
-        ...n,
-        data: { ...n.data, dimmed: !selectedNodeIds.includes(n.id) },
-      }))
-    );
-
-    setEdges((eds) =>
-      eds.map((e) => {
-        const isConnectedToSelected = selectedNodeIds.includes(e.source) && selectedNodeIds.includes(e.target);
-        
-        if (isConnectedToSelected) {
-          return { 
-            ...e, 
-            style: { strokeWidth: 2.5, stroke: '#2563eb', opacity: 1 }, // Blue highlight to match selection
-            animated: true,
-            zIndex: 1000 
-          }; 
-        } else {
-          return { 
-            ...e, 
-            style: { strokeWidth: 1, stroke: '#94a3b8', opacity: 0.2 }, 
-            animated: false,
-            zIndex: 0
-          }; // Dim others
-        }
-      })
-    );
-  }, [selectedNodeIds, setNodes, setEdges]);
 
   const onEdgeMouseEnter = useCallback(
     (_: React.MouseEvent, edge: any) => {
-      if (selectedNodeIds.length > 0) return; // Disable hover effects during selection mode
-
       if (!edge.data?.sourceField || !edge.data?.targetField) return;
 
       setEdges((eds) =>
@@ -203,12 +147,10 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         })
       );
     },
-    [setEdges, setNodes, selectedNodeIds]
+    [setEdges, setNodes]
   );
 
   const onEdgeMouseLeave = useCallback(() => {
-    if (selectedNodeIds.length > 0) return; // Disable hover reset during selection mode
-
     // Reset styles
     setEdges((eds) =>
       eds.map((e) => ({
@@ -224,11 +166,15 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         data: { ...n.data, highlightedFields: [] },
       }))
     );
-  }, [setEdges, setNodes, selectedNodeIds]);
+  }, [setEdges, setNodes]);
 
-  const changeEdgeType = (type: string) => {
-    setEdgeType(type);
-    setEdges((eds) => eds.map(e => ({ ...e, type: type === 'default' ? undefined : type })));
+  const toggleEdgeType = () => {
+    const types = ['default', 'straight', 'step', 'smoothstep'];
+    const nextIndex = (types.indexOf(edgeType) + 1) % types.length;
+    const nextType = types[nextIndex];
+    setEdgeType(nextType);
+    
+    setEdges((eds) => eds.map(e => ({ ...e, type: nextType === 'default' ? undefined : nextType })));
   };
 
   const organizeLayout = () => {
@@ -250,13 +196,12 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
     );
   };
 
-  const handlePaneClick = () => {
-    onNodeSelect(null);
-    setSelectedNodeIds([]); // Clear selection visually
-  };
-
   return (
     <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
+      <div className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm border rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
+        ERD Schema View
+      </div>
+      
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -264,71 +209,41 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
-        onPaneClick={handlePaneClick}
+        onPaneClick={() => onNodeSelect(null)}
         onEdgeMouseEnter={onEdgeMouseEnter}
         onEdgeMouseLeave={onEdgeMouseLeave}
         fitView
         className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
-        // Enable multi-selection
-        selectionOnDrag
-        panOnDrag={selectedNodeIds.length === 0} // Allow pan only when not selecting
       >
-        <GraphInteractionHandler onSelectionChange={setSelectedNodeIds} />
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
-        <Panel position="top-left" className="bg-background/95 backdrop-blur-md p-2 rounded-xl border shadow-lg flex flex-col gap-2">
+        <Panel position="top-right" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex gap-1.5">
           <TooltipProvider>
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-muted">
-                      <Workflow className="h-5 w-5 text-muted-foreground" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent side="right">Connection Style</TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent align="start" side="right" className="ml-2 w-40">
-                <DropdownMenuLabel>Link Style</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => changeEdgeType('default')}>
-                  <span className={cn("mr-2", edgeType === 'default' ? "opacity-100" : "opacity-0")}>✓</span>
-                  Bezier (Default)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')}>
-                  <span className={cn("mr-2", edgeType === 'smoothstep' ? "opacity-100" : "opacity-0")}>✓</span>
-                  Smooth Step
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeEdgeType('step')}>
-                  <span className={cn("mr-2", edgeType === 'step' ? "opacity-100" : "opacity-0")}>✓</span>
-                  Step
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeEdgeType('straight')}>
-                  <span className={cn("mr-2", edgeType === 'straight' ? "opacity-100" : "opacity-0")}>✓</span>
-                  Straight
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-muted" onClick={organizeLayout}>
-                  <Layout className="h-5 w-5 text-muted-foreground" />
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={toggleEdgeType}>
+                  <Workflow className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">Auto Layout</TooltipContent>
+              <TooltipContent>Change Link Type ({edgeType})</TooltipContent>
             </Tooltip>
 
-            <div className="h-px bg-border w-full my-1" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={organizeLayout}>
+                  <Layout className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Organize Layout</TooltipContent>
+            </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 text-indigo-600 dark:text-indigo-400" onClick={() => setShowAIExplanation(true)}>
-                  <Sparkles className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="h-8 w-8 text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-800 dark:hover:bg-indigo-950" onClick={() => setShowAIExplanation(true)}>
+                  <Sparkles className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">AI Analysis</TooltipContent>
+              <TooltipContent>AI Schema Explanation</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Panel>
