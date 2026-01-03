@@ -287,11 +287,13 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                        </div>
                     </div>
 
-                    <div className="pt-2 flex justify-end">
-                        <Button size="sm" variant="outline" className="h-8 text-sm gap-2 bg-background hover:bg-muted/50">
-                            <MessageSquare className="w-3.5 h-3.5" />
-                            Ask Copilot Details
-                        </Button>
+                    <div className="pt-3 flex justify-end">
+                        <div className="w-full mt-1 border-t border-border/50 flex items-center justify-between group/prompt cursor-pointer hover:bg-muted/30 -mx-4 px-4 py-2 transition-colors">
+                            <span className="text-xs font-medium text-muted-foreground group-hover/prompt:text-primary transition-colors">Ask Copilot Details</span>
+                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center group-hover/prompt:bg-primary group-hover/prompt:text-primary-foreground transition-all">
+                                <ArrowRight className="w-3.5 h-3.5" />
+                            </div>
+                        </div>
                     </div>
                   </div>
                 </motion.div>
