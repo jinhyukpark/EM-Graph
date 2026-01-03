@@ -1,7 +1,11 @@
 import { useCallback, useState } from 'react';
-import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant } from '@xyflow/react';
+import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant, Panel } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Activity, Layout, Sparkles, Workflow, ArrowLeftRight, Grid, FileText, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 // Custom Table Node
 const TableNode = ({ data, selected }: any) => {
@@ -110,6 +114,8 @@ const INITIAL_EDGES = [
 export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: string | null) => void }) {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+  const [edgeType, setEdgeType] = useState('default');
+  const [showAIExplanation, setShowAIExplanation] = useState(false);
 
   const onEdgeMouseEnter = useCallback(
     (_: React.MouseEvent, edge: any) => {
@@ -162,11 +168,40 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
     );
   }, [setEdges, setNodes]);
 
+  const toggleEdgeType = () => {
+    const types = ['default', 'straight', 'step', 'smoothstep'];
+    const nextIndex = (types.indexOf(edgeType) + 1) % types.length;
+    const nextType = types[nextIndex];
+    setEdgeType(nextType);
+    
+    setEdges((eds) => eds.map(e => ({ ...e, type: nextType === 'default' ? undefined : nextType })));
+  };
+
+  const organizeLayout = () => {
+    // Simple mock layout reorganization
+    // In a real app, this would use dagre or elkjs
+    const newNodes = [
+       { id: 't1', position: { x: 50, y: 100 } },
+       { id: 't2', position: { x: 400, y: 100 } },
+       { id: 't4', position: { x: 750, y: 100 } },
+       { id: 't3', position: { x: 400, y: 400 } },
+       { id: 't5', position: { x: 750, y: 400 } },
+    ];
+    
+    setNodes((nds) => 
+      nds.map(n => {
+        const newPos = newNodes.find(nn => nn.id === n.id);
+        return newPos ? { ...n, position: newPos.position } : n;
+      })
+    );
+  };
+
   return (
     <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
       <div className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm border rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
         ERD Schema View
       </div>
+      
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -182,7 +217,70 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       >
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
+        <Panel position="top-right" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex gap-1.5">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={toggleEdgeType}>
+                  <Workflow className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Change Link Type ({edgeType})</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={organizeLayout}>
+                  <Layout className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Organize Layout</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-8 w-8 text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:text-indigo-400 dark:border-indigo-800 dark:hover:bg-indigo-950" onClick={() => setShowAIExplanation(true)}>
+                  <Sparkles className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>AI Schema Explanation</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </Panel>
       </ReactFlow>
+
+      <Dialog open={showAIExplanation} onOpenChange={setShowAIExplanation}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-indigo-600">
+               <Sparkles className="h-5 w-5" />
+               AI Schema Analysis
+            </DialogTitle>
+            <DialogDescription>
+              Analysis of the current entity relationships and data flow.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+             <div className="bg-muted/30 p-4 rounded-lg text-sm leading-relaxed border space-y-3">
+                <p>
+                  <strong className="text-foreground">Relationship Overview:</strong><br/>
+                  The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-xs bg-muted px-1 py-0.5 rounded border">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
+                </p>
+                <p>
+                  <strong className="text-foreground">Key Data Flow:</strong><br/>
+                  Suspects are linked to incidents via "Involved In". Incidents occur at specific "Location_Hotspots" and yield items in the "Evidence_Log".
+                </p>
+                <p>
+                  <strong className="text-foreground">Supply Chain Context:</strong><br/>
+                  Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
+                </p>
+             </div>
+             <div className="flex justify-end">
+                <Button size="sm" onClick={() => setShowAIExplanation(false)}>Close Analysis</Button>
+             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
