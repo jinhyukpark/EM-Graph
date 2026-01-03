@@ -259,10 +259,6 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   return (
     <div className="w-full h-full bg-slate-50/50 dark:bg-slate-950/30">
-      <div className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm border rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
-        ERD Schema View
-      </div>
-      
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -279,7 +275,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
       >
         <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
-        <Panel position="top-right" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex gap-1.5">
+        <Panel position="top-left" className="bg-background/90 backdrop-blur-sm p-1.5 rounded-lg border shadow-sm flex flex-col gap-1.5">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -287,7 +283,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   <Workflow className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Change Link Type ({edgeType})</TooltipContent>
+              <TooltipContent side="right">Change Link Type ({edgeType})</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -296,7 +292,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   <Layout className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Organize Layout</TooltipContent>
+              <TooltipContent side="right">Organize Layout</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -305,7 +301,7 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   <Sparkles className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>AI Schema Explanation</TooltipContent>
+              <TooltipContent side="right">AI Schema Explanation</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </Panel>
