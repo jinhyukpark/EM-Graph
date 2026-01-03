@@ -288,9 +288,13 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                     </div>
 
                     <div className="pt-2 flex justify-end">
-                        <Button size="sm" variant="outline" className="h-8 text-sm gap-2 bg-background hover:bg-muted/50">
-                            <MessageSquare className="w-3.5 h-3.5" />
-                            Ask Copilot Details
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 p-0 pr-1"
+                        >
+                            Ask Copilot Details 
+                            <ArrowRight className="w-3.5 h-3.5" />
                         </Button>
                     </div>
                   </div>
