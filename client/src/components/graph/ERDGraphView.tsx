@@ -153,9 +153,19 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         const isConnectedToSelected = selectedNodeIds.includes(e.source) && selectedNodeIds.includes(e.target);
         
         if (isConnectedToSelected) {
-          return { ...e, style: { strokeWidth: 3, stroke: '#ef4444', opacity: 1 }, animated: true }; // Red highlight for selected connection
+          return { 
+            ...e, 
+            style: { strokeWidth: 2.5, stroke: '#2563eb', opacity: 1 }, // Blue highlight to match selection
+            animated: true,
+            zIndex: 1000 
+          }; 
         } else {
-          return { ...e, style: { strokeWidth: 1, stroke: '#94a3b8', opacity: 0.2 }, animated: false }; // Dim others
+          return { 
+            ...e, 
+            style: { strokeWidth: 1, stroke: '#94a3b8', opacity: 0.2 }, 
+            animated: false,
+            zIndex: 0
+          }; // Dim others
         }
       })
     );
