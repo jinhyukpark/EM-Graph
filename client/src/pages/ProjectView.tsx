@@ -203,34 +203,6 @@ function InviteTeamDialog() {
 // AI Insight Card
 function GraphInsightCard({ onClose }: { onClose: () => void }) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [size, setSize] = useState({ width: 340, height: 450 });
-  const [isResizing, setIsResizing] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isResizing) return;
-      
-      setSize(prev => ({
-        width: Math.max(300, prev.width + e.movementX),
-        height: Math.max(200, prev.height + e.movementY)
-      }));
-    };
-
-    const handleMouseUp = () => {
-      setIsResizing(false);
-    };
-
-    if (isResizing) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
 
   return (
     <motion.div 
@@ -238,8 +210,7 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
       dragMomentum={false}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="absolute top-4 left-4 z-10 group"
-      style={{ width: isExpanded ? size.width : 'auto' }}
+      className="absolute top-4 left-4 z-10 max-w-[340px] group cursor-move"
     >
       {/* Moving Light Border Effect */}
       <div className={cn(
@@ -249,14 +220,10 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 opacity-60 animate-gradient-xy" />
         
         {/* Main Card Content */}
-        <div 
-            ref={cardRef}
-            className="relative bg-background/95 backdrop-blur-md rounded-[10px] overflow-hidden flex flex-col"
-            style={{ height: isExpanded ? size.height : 'auto' }}
-        >
+        <div className="relative h-full bg-background/95 backdrop-blur-md rounded-[10px] overflow-hidden">
             {/* Header */}
             <div 
-              className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50/50 to-transparent border-b border-border/50 shrink-0 cursor-move"
+              className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50/50 to-transparent border-b border-border/50"
             >
               <div 
                 className="flex items-center gap-2 cursor-pointer"
@@ -268,9 +235,6 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                 <span className="text-sm font-semibold text-foreground/90">AI Network Briefing</span>
               </div>
               <div className="flex items-center">
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary mr-1" onClick={(e) => { e.stopPropagation(); /* Add refresh logic here */ }}>
-                   <RefreshCw className="w-3.5 h-3.5" />
-                </Button>
                 <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => setIsExpanded(!isExpanded)}>
                    {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </Button>
@@ -281,15 +245,15 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
             </div>
 
             {/* Content */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               {isExpanded && (
                 <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex-1 overflow-y-auto min-h-0"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="p-4"
                 >
-                  <div className="p-4 space-y-4">
+                  <div className="space-y-4">
                     <div>
                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Domain Analysis</div>
                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -324,33 +288,15 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
                     </div>
 
                     <div className="pt-2 flex justify-end">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 p-0 pr-1"
-                        >
-                            Ask Copilot Details 
-                            <ArrowRight className="w-3.5 h-3.5" />
+                        <Button size="sm" variant="outline" className="h-8 text-sm gap-2 bg-background hover:bg-muted/50">
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            Ask Copilot Details
                         </Button>
                     </div>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
-            
-            {/* Resize Handle */}
-            {isExpanded && (
-                <div 
-                    className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-end justify-end p-0.5 opacity-50 hover:opacity-100 z-50"
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsResizing(true);
-                    }}
-                >
-                    <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-foreground/50 rounded-br-[1px]" />
-                </div>
-            )}
         </div>
       </div>
     </motion.div>
