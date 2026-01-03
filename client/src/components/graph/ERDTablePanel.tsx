@@ -1,7 +1,9 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Database, Table as TableIcon } from "lucide-react";
+import { X, Database, Table as TableIcon, GripHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 const MOCK_DATA: Record<string, any[]> = {
   't1': [
@@ -41,6 +43,39 @@ const TABLE_NAMES: Record<string, string> = {
 };
 
 export default function ERDTablePanel({ tableId, onClose }: { tableId: string | null, onClose: () => void }) {
+  const [height, setHeight] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      
+      const newHeight = window.innerHeight - e.clientY;
+      // Min height 150px, Max height 80% of screen
+      if (newHeight >= 150 && newHeight <= window.innerHeight * 0.8) {
+        setHeight(newHeight);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      document.body.style.cursor = 'default';
+    };
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'row-resize';
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'default';
+    };
+  }, [isResizing]);
+
   if (!tableId || !MOCK_DATA[tableId]) return null;
 
   const data = MOCK_DATA[tableId];
@@ -48,8 +83,23 @@ export default function ERDTablePanel({ tableId, onClose }: { tableId: string | 
   const tableName = TABLE_NAMES[tableId];
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-72 bg-background border-t border-border shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.1)] animate-in slide-in-from-bottom-10 z-20 flex flex-col">
-       <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+    <div 
+      ref={panelRef}
+      className="absolute bottom-0 left-0 right-0 bg-background border-t border-border shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.1)] animate-in slide-in-from-bottom-10 z-20 flex flex-col"
+      style={{ height: `${height}px` }}
+    >
+       {/* Resize Handle */}
+       <div 
+         className="absolute top-0 left-0 right-0 h-1.5 cursor-row-resize hover:bg-primary/50 transition-colors z-30 group flex justify-center"
+         onMouseDown={(e) => {
+           e.preventDefault();
+           setIsResizing(true);
+         }}
+       >
+          <div className="w-16 h-1 rounded-full bg-border group-hover:bg-primary/50 mt-0.5 transition-colors" />
+       </div>
+
+       <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30 shrink-0">
           <div className="flex items-center gap-2">
               <div className="p-1.5 bg-blue-100 text-blue-600 rounded-md">
                  <TableIcon className="w-4 h-4" />
@@ -75,7 +125,7 @@ export default function ERDTablePanel({ tableId, onClose }: { tableId: string | 
        <ScrollArea className="flex-1 w-full">
          <div className="p-0">
             <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
+            <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
                 <TableRow className="hover:bg-transparent border-b border-border">
                 {columns.map(col => (
                     <TableHead key={col} className="h-9 text-xs font-semibold text-foreground/70 uppercase tracking-wider">{col}</TableHead>

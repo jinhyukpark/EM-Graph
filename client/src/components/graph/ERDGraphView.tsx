@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType } from '@xyflow/react';
+import { ReactFlow, useNodesState, useEdgesState, Background, Controls, Handle, Position, MarkerType, BackgroundVariant } from '@xyflow/react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -87,12 +87,12 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onNodeClick={(_, node) => onNodeSelect(node.id)}
+        onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
         onPaneClick={() => onNodeSelect(null)}
         fitView
         className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
       >
-        <Background gap={20} color="#cbd5e1" variant="dots" />
+        <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
         <Controls />
       </ReactFlow>
     </div>
