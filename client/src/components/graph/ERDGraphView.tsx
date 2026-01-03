@@ -433,16 +433,16 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
                   </CardHeader>
                   <CardContent className="p-4 pt-2 space-y-4">
                     <div className="space-y-3">
-                      <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                      <p className="text-[13px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                         Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. Simple modifications available.
                       </p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-500 leading-relaxed border-t pt-2 border-slate-100 dark:border-slate-800 italic">
+                      <p className="text-[12px] text-slate-500 dark:text-slate-500 leading-relaxed border-t pt-2 border-slate-100 dark:border-slate-800 italic font-medium">
                         Provides detailed insights into the graph data and the relationship network currently applied.
                       </p>
                     </div>
-                    <Button variant="default" size="sm" className="w-full text-xs h-8 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100 dark:shadow-none transition-all group rounded-lg">
+                    <Button variant="default" size="default" className="w-full text-sm h-10 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100 dark:shadow-none transition-all group rounded-lg font-bold">
                       Go to DB Settings
-                      <ArrowLeftRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                      <ArrowLeftRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                     </Button>
                   </CardContent>
                 </Card>
