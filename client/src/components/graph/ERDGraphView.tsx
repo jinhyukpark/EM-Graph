@@ -314,137 +314,164 @@ export default function ERDGraphView({ onNodeSelect }: { onNodeSelect: (nodeId: 
 
   return (
     <div className="w-full h-full flex flex-col bg-slate-50/50 dark:bg-slate-950/30">
-      <div className="flex-1 relative w-full h-full">
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onSelectionChange={onSelectionChange}
-            onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
-            onPaneClick={() => onNodeSelect(null)}
-            onEdgeMouseEnter={onEdgeMouseEnter}
-            onEdgeMouseLeave={onEdgeMouseLeave}
-            fitView
-            className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
-        >
-            <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
-            <Controls />
-            
-            <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
-            <TooltipProvider delayDuration={0}>
-                <DropdownMenu>
-                    <Tooltip>
-                    <TooltipTrigger asChild>
-                        <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                            <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
-                        </Button>
-                        </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
-                    </Tooltip>
-                    
-                    <DropdownMenuContent align="start" sideOffset={5}>
-                        <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
-                            {edgeType === 'default' && <Check className="w-3 h-3" />}
-                            <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
-                            {edgeType === 'straight' && <Check className="w-3 h-3" />}
-                            <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
-                            {edgeType === 'step' && <Check className="w-3 h-3" />}
-                            <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
-                            {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
-                            <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+      <div className="flex-1 relative w-full h-full overflow-hidden flex">
+        <div className="flex-1 relative">
+          <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={nodeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onSelectionChange={onSelectionChange}
+              onNodeDoubleClick={(_, node) => onNodeSelect(node.id)}
+              onPaneClick={() => onNodeSelect(null)}
+              onEdgeMouseEnter={onEdgeMouseEnter}
+              onEdgeMouseLeave={onEdgeMouseLeave}
+              fitView
+              className="bg-grid-slate-200/50 dark:bg-grid-slate-800/20"
+          >
+              <Background gap={20} color="#cbd5e1" variant={BackgroundVariant.Dots} />
+              <Controls />
+              
+              <Panel position="top-left" className="bg-background/80 backdrop-blur-md p-1.5 rounded-full border shadow-lg flex items-center gap-1.5">
+              <TooltipProvider delayDuration={0}>
+                  <DropdownMenu>
+                      <Tooltip>
+                      <TooltipTrigger asChild>
+                          <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                              <Workflow className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                          </Button>
+                          </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-xs">Change Link Type ({edgeType})</TooltipContent>
+                      </Tooltip>
+                      
+                      <DropdownMenuContent align="start" sideOffset={5}>
+                          <DropdownMenuItem onClick={() => changeEdgeType('default')} className="text-xs gap-2">
+                              {edgeType === 'default' && <Check className="w-3 h-3" />}
+                              <span className={edgeType !== 'default' ? 'pl-5' : ''}>Bezier (Default)</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => changeEdgeType('straight')} className="text-xs gap-2">
+                              {edgeType === 'straight' && <Check className="w-3 h-3" />}
+                              <span className={edgeType !== 'straight' ? 'pl-5' : ''}>Straight</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => changeEdgeType('step')} className="text-xs gap-2">
+                              {edgeType === 'step' && <Check className="w-3 h-3" />}
+                              <span className={edgeType !== 'step' ? 'pl-5' : ''}>Step (Orthogonal)</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => changeEdgeType('smoothstep')} className="text-xs gap-2">
+                              {edgeType === 'smoothstep' && <Check className="w-3 h-3" />}
+                              <span className={edgeType !== 'smoothstep' ? 'pl-5' : ''}>Smooth Step</span>
+                          </DropdownMenuItem>
+                      </DropdownMenuContent>
+                  </DropdownMenu>
 
-                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
+                  <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
 
-                <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={organizeLayout}>
-                    <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                  <Tooltip>
+                  <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" onClick={organizeLayout}>
+                      <Layout className="h-4 w-4 text-slate-600 dark:text-slate-300" />
+                      </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
+                  </Tooltip>
+
+                  <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
+
+                  <Tooltip>
+                  <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className={cn("h-9 w-9 rounded-full transition-all", showAIExplanation ? "bg-indigo-600 text-white shadow-indigo-200" : "bg-indigo-50/50 text-indigo-600 hover:bg-indigo-100")} onClick={() => setShowAIExplanation(!showAIExplanation)}>
+                      <Sparkles className="h-4 w-4" />
+                      </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+              </Panel>
+
+              <Panel position="top-right" className="m-6">
+                <Card className="w-72 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-2 border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden animate-in fade-in slide-in-from-right-6 duration-500">
+                  <div className="h-1.5 bg-indigo-500/80" />
+                  <CardHeader className="p-4 pb-2 flex flex-row items-center gap-3 space-y-0">
+                    <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40">
+                      <AlertTriangle className="w-4 h-4 text-indigo-500" />
+                    </div>
+                    <CardTitle className="text-sm font-bold">Mode Info</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-2 space-y-4">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                      Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. Simple modifications available.
+                    </p>
+                    <Button variant="default" size="sm" className="w-full text-xs h-8 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100 dark:shadow-none transition-all group rounded-lg">
+                      Go to DB Settings
+                      <ArrowLeftRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                     </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">Organize Layout</TooltipContent>
-                </Tooltip>
+                  </CardContent>
+                </Card>
+              </Panel>
+          </ReactFlow>
+        </div>
 
-                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
-
-                <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-indigo-50/50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-all" onClick={() => setShowAIExplanation(true)}>
-                    <Sparkles className="h-4 w-4" />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">AI Schema Explanation</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            </Panel>
-
-            <Panel position="top-right" className="m-6">
-              <Card className="w-72 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in slide-in-from-right-6 duration-500">
-                <div className="h-1.5 bg-indigo-500/80" />
-                <CardHeader className="p-5 pb-2 flex flex-row items-center gap-3 space-y-0">
-                  <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40">
-                    <AlertTriangle className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <CardTitle className="text-base font-bold text-slate-900 dark:text-slate-100">Mode Info</CardTitle>
-                </CardHeader>
-                <CardContent className="p-5 pt-3 space-y-5">
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                    Currently in <span className="text-indigo-600 dark:text-indigo-400 font-bold">Limited Functionality Mode</span>. You can perform simple data modifications and relationship analysis.
-                  </p>
-                  <Button variant="default" size="default" className="w-full text-sm h-10 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 dark:shadow-none transition-all group rounded-xl">
-                    Go to DB Settings
-                    <ArrowLeftRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </Panel>
-        </ReactFlow>
-      </div>
-
-      <Dialog open={showAIExplanation} onOpenChange={setShowAIExplanation}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-indigo-600">
-               <Sparkles className="h-5 w-5" />
-               AI Schema Analysis
-            </DialogTitle>
-            <DialogDescription>
-              Analysis of the current entity relationships and data flow.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-             <div className="bg-muted/30 p-4 rounded-lg text-sm leading-relaxed border space-y-3">
-                <p>
-                  <strong className="text-foreground">Relationship Overview:</strong><br/>
-                  The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-xs bg-muted px-1 py-0.5 rounded border">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
-                </p>
-                <p>
-                  <strong className="text-foreground">Key Data Flow:</strong><br/>
-                  Suspects are linked to incidents via "Involved In". Incidents occur at specific "Location_Hotspots" and yield items in the "Evidence_Log".
-                </p>
-                <p>
-                  <strong className="text-foreground">Supply Chain Context:</strong><br/>
-                  Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
-                </p>
-             </div>
-             <div className="flex justify-end">
-                <Button size="sm" onClick={() => setShowAIExplanation(false)}>Close Analysis</Button>
-             </div>
+        {/* Side Analysis Panel */}
+        <div className={cn(
+          "h-full bg-background border-l border-border transition-all duration-300 ease-in-out overflow-hidden flex flex-col shadow-2xl z-50",
+          showAIExplanation ? "w-80 opacity-100" : "w-0 opacity-0"
+        )}>
+          <div className="p-4 border-b flex items-center justify-between bg-muted/30">
+            <div className="flex items-center gap-2 text-indigo-600 font-bold">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-sm">AI Schema Analysis</span>
+            </div>
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setShowAIExplanation(false)}>
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+          
+          <div className="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Relationship Overview</h3>
+              <p className="text-sm text-foreground/80 leading-relaxed bg-indigo-50/30 dark:bg-indigo-950/10 p-3 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
+                The schema connects criminal profiles with incidents and evidence. The central hub is <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded border font-mono">Crime_Incidents_2024</code>, which links suspects, locations, and evidence together.
+              </p>
+            </section>
+
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Key Data Flow</h3>
+              <div className="space-y-2">
+                {[
+                  { title: "Suspects", desc: "Linked to incidents via 'Involved In'" },
+                  { title: "Incidents", desc: "Occur at 'Location_Hotspots'" },
+                  { title: "Evidence", desc: "Yielded from incident sites" }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3 items-start group">
+                    <div className="w-1 h-1 rounded-full bg-indigo-400 mt-2 group-hover:scale-150 transition-transform" />
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-bold">{item.title}</div>
+                      <div className="text-[11px] text-muted-foreground">{item.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Supply Chain Context</h3>
+              <p className="text-sm text-foreground/80 leading-relaxed italic bg-muted/20 p-3 rounded-lg border border-dashed">
+                Locations also contain "Supply_Chain_Nodes", suggesting a possible correlation between logistics hubs and high-risk activity areas.
+              </p>
+            </section>
+          </div>
+
+          <div className="p-4 border-t bg-muted/10">
+            <Button size="sm" className="w-full gap-2" variant="outline" onClick={() => setShowAIExplanation(false)}>
+              <Check className="w-3 h-3" />
+              Acknowledge Analysis
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
