@@ -121,27 +121,35 @@ export default function DatabaseManager() {
   const [isGraphDescVisible, setIsGraphDescVisible] = useState(true);
   const [isPreprocessDescVisible, setIsPreprocessDescVisible] = useState(true);
 
-  const mockTableData = [
-    { idx: 1, company_name: "illunex", age: 8, member: 40, regdate: "2025-09-27 16:16:12" },
-    { idx: 2, company_name: "samsung", age: 50, member: 40000, regdate: "2025-09-27 16:16:52" },
-    { idx: 3, company_name: "lg_electronics", age: 45, member: 35000, regdate: "2025-09-28 09:30:00" },
-    { idx: 4, company_name: "sk_hynix", age: 38, member: 28000, regdate: "2025-09-28 10:15:22" },
-    { idx: 5, company_name: "naver", age: 22, member: 5000, regdate: "2025-09-29 14:20:11" },
-    { idx: 6, company_name: "kakao", age: 15, member: 4200, regdate: "2025-09-29 15:45:33" },
-  ];
+  const [mockTableDataState, setMockTableDataState] = useState(MOCK_TABLE_DATA);
 
-  const [isAddFieldOpen, setIsAddFieldOpen] = useState(false);
-  const [newFieldName, setNewFieldName] = useState("");
-  const [newFieldValues, setNewFieldValues] = useState<Record<number, string>>({});
+  const [isAddRowOpen, setIsAddRowOpen] = useState(false);
+  const [newRowData, setNewRowData] = useState({
+    company_name: "",
+    age: "",
+    member: ""
+  });
 
-  const handleAddField = () => {
-    // In a real app, this would update the table schema and data
-    setIsAddFieldOpen(false);
-    setNewFieldName("");
-    setNewFieldValues({});
+  const handleAddRow = () => {
+    const newIdx = Math.max(...mockTableDataState.map(r => r.idx)) + 1;
+    const now = new Date();
+    const formattedDate = now.toISOString().replace('T', ' ').substring(0, 19);
+
+    const newRow = {
+      idx: newIdx,
+      company_name: newRowData.company_name,
+      age: parseInt(newRowData.age) || 0,
+      member: parseInt(newRowData.member.replace(/,/g, '')) || 0,
+      regdate: formattedDate
+    };
+
+    setMockTableDataState([...mockTableDataState, newRow]);
+    setIsAddRowOpen(false);
+    setNewRowData({ company_name: "", age: "", member: "" });
+    
     toast({
-      title: "Field Added",
-      description: `New field "${newFieldName}" has been added to the table.`,
+      title: "Row Added",
+      description: `New record for "${newRow.company_name}" has been added.`,
     });
   };
 
@@ -159,72 +167,60 @@ export default function DatabaseManager() {
           </Button>
           <div className="flex items-center gap-2">
             <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
-            <span className="text-sm text-muted-foreground">{mockTableData.length} rows generated</span>
+            <span className="text-sm text-muted-foreground">{mockTableDataState.length} rows generated</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={isAddFieldOpen} onOpenChange={setIsAddFieldOpen}>
+          <Dialog open={isAddRowOpen} onOpenChange={setIsAddRowOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
                 <Plus className="h-4 w-4" />
-                Add New Field
+                Add New Row
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Add New Field</DialogTitle>
+                <DialogTitle>Add New Row</DialogTitle>
                 <DialogDescription>
-                  Define a new column and provide values for the existing rows.
+                  Enter values for the new record.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="fieldName">Field Name</Label>
+                  <Label htmlFor="company_name">COMPANY_NAME</Label>
                   <Input 
-                    id="fieldName" 
-                    placeholder="e.g., STATUS, CATEGORY" 
-                    value={newFieldName}
-                    onChange={(e) => setNewFieldName(e.target.value)}
+                    id="company_name" 
+                    value={newRowData.company_name}
+                    onChange={(e) => setNewRowData({...newRowData, company_name: e.target.value})}
+                    placeholder="e.g. Acme Corp"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label>Row Values</Label>
-                  <ScrollArea className="h-[200px] border rounded-md p-2">
-                    <div className="space-y-3 p-1">
-                      {mockTableData.map((row) => (
-                        <div key={row.idx} className="flex items-center gap-3 mb-2">
-                          <div className="flex-1 min-w-0 grid grid-cols-[30px_1fr] gap-2 items-center">
-                            <span className="text-xs font-mono text-muted-foreground">#{row.idx}</span>
-                            <div className="flex flex-col">
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <span className="font-semibold text-[10px] uppercase">company_name:</span>
-                                <span className="truncate text-foreground font-medium">{row.company_name}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <span className="font-semibold text-[10px] uppercase">age:</span>
-                                <span>{row.age}</span>
-                                <span className="text-border mx-1">|</span>
-                                <span className="font-semibold text-[10px] uppercase">member:</span>
-                                <span>{row.member.toLocaleString()}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <Input 
-                            size={1}
-                            placeholder="Value..." 
-                            className="w-32 h-8 text-xs shrink-0"
-                            value={newFieldValues[row.idx] || ""}
-                            onChange={(e) => setNewFieldValues(prev => ({ ...prev, [row.idx]: e.target.value }))}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="age">AGE</Label>
+                    <Input 
+                      id="age" 
+                      type="number"
+                      value={newRowData.age}
+                      onChange={(e) => setNewRowData({...newRowData, age: e.target.value})}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="member">MEMBER</Label>
+                    <Input 
+                      id="member" 
+                      type="number"
+                      value={newRowData.member}
+                      onChange={(e) => setNewRowData({...newRowData, member: e.target.value})}
+                      placeholder="0"
+                    />
+                  </div>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddFieldOpen(false)}>Cancel</Button>
-                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddField}>Add Field</Button>
+                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>Cancel</Button>
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>Add Row</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -246,7 +242,7 @@ export default function DatabaseManager() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockTableData.map((row) => (
+            {mockTableDataState.map((row) => (
               <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
                 <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
                 <TableCell className="py-2 text-xs font-semibold text-foreground pl-4">{row.company_name}</TableCell>
