@@ -765,17 +765,17 @@ export default function DatabaseManager() {
                   ) : (
                     <div className="flex flex-col h-full overflow-hidden">
                       <div className="h-12 border-b border-border bg-background flex items-center justify-between px-4 shrink-0">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                           <Button 
                             variant="ghost" 
-                            size="sm" 
-                            className="h-8 px-2 gap-2 text-muted-foreground hover:text-foreground"
+                            size="icon" 
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded-full transition-colors"
                             onClick={() => setActiveTabId('Graph')}
+                            title="Back to List"
                           >
-                            <ChevronLeft className="w-4 h-4" />
-                            <span className="text-xs font-medium">Back to List</span>
+                            <ChevronLeft className="w-5 h-5" />
                           </Button>
-                          <div className="h-4 w-px bg-border" />
+                          <div className="h-4 w-px bg-border mx-1" />
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
                               <Network className="w-5 h-5" />
