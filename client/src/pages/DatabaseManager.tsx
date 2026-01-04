@@ -721,7 +721,7 @@ export default function DatabaseManager() {
                           <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                               <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Data Pipelines</h3>
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Preprocessing</h3>
                               <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
                             </div>
                             <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('preprocessing')}>
