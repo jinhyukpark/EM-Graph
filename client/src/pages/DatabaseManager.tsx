@@ -195,27 +195,25 @@ export default function DatabaseManager() {
                     placeholder="e.g. Acme Corp"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="age">AGE</Label>
-                    <Input 
-                      id="age" 
-                      type="number"
-                      value={newRowData.age}
-                      onChange={(e) => setNewRowData({...newRowData, age: e.target.value})}
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="member">MEMBER</Label>
-                    <Input 
-                      id="member" 
-                      type="number"
-                      value={newRowData.member}
-                      onChange={(e) => setNewRowData({...newRowData, member: e.target.value})}
-                      placeholder="0"
-                    />
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="age">AGE</Label>
+                  <Input 
+                    id="age" 
+                    type="number"
+                    value={newRowData.age}
+                    onChange={(e) => setNewRowData({...newRowData, age: e.target.value})}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="member">MEMBER</Label>
+                  <Input 
+                    id="member" 
+                    type="number"
+                    value={newRowData.member}
+                    onChange={(e) => setNewRowData({...newRowData, member: e.target.value})}
+                    placeholder="0"
+                  />
                 </div>
               </div>
               <DialogFooter>
