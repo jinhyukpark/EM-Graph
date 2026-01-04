@@ -528,7 +528,7 @@ export default function DatabaseManager() {
       <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
         
         {/* Sidebar: Navigation */}
-        <div className="w-64 border-r border-border bg-card/30 flex flex-col">
+        <div className="w-64 border-r border-border bg-card/30 flex flex-col h-full">
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Select value={selectedProjectId} onValueChange={handleProjectChange}>
               <SelectTrigger className="w-full bg-background/50 h-9 text-sm">
