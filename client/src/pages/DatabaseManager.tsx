@@ -777,12 +777,14 @@ export default function DatabaseManager() {
                           </Button>
                           <div className="h-4 w-px bg-border" />
                           <div className="flex items-center gap-2">
-                            <Network className="w-4 h-4 text-emerald-500" />
+                            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                              <Network className="w-5 h-5" />
+                            </div>
                             <input 
                               type="text" 
                               defaultValue={activeTab.title}
-                              className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-foreground p-0 w-[300px]"
-                              placeholder="Untitled Graph"
+                              className="bg-transparent border-none focus:ring-0 text-lg font-bold text-foreground p-0 w-[400px]"
+                              placeholder="Enter Graph Name..."
                               onChange={(e) => {
                                 const newTabs = tabs.map(t => 
                                   t.id === activeTabId ? { ...t, title: e.target.value } : t
@@ -792,12 +794,23 @@ export default function DatabaseManager() {
                             />
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-200 text-[10px] uppercase">Draft</Badge>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
+                          </div>
+                          <Button variant="outline" size="sm" className="h-8 gap-2 border-dashed">
+                            <Save className="w-3.5 h-3.5" />
+                            <span>Save Changes</span>
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex-1 overflow-auto">
-                        {isGraphBuilderOpen ? (
+                      <div className="flex-1 overflow-auto bg-secondary/5">
+                        <div className="max-w-6xl mx-auto p-6">
+                          <div className="mb-8">
+                            <p className="text-sm text-muted-foreground mt-1">Define relationships between your data tables to generate complex graph structures.</p>
+                          </div>
+                          {isGraphBuilderOpen ? (
                           <GraphBuilderForm />
                         ) : (
                           <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
