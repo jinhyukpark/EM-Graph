@@ -116,6 +116,8 @@ export default function DatabaseManager() {
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
 
+  const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
+
   const mockTableData = [
     { idx: 1, company_name: "illunex", age: 8, member: 40, regdate: "2025-09-27 16:16:12" },
     { idx: 2, company_name: "samsung", age: 50, member: 40000, regdate: "2025-09-27 16:16:52" },
@@ -924,10 +926,25 @@ export default function DatabaseManager() {
                   ) : (
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
+                        {isDescriptionVisible && (
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
+                            <button 
+                              onClick={() => setIsDescriptionVisible(false)}
+                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                              title="Dismiss"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                              Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
+                            </p>
+                          </div>
+                        )}
+
                         {/* Saved Tables Section */}
                         {(activeTabId === 'Table' || activeTabId === 'Original' || activeTabId === 'Custom') && (
                           <section id="SavedTables">
-                            <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-2">
                                 <ChevronDown className="w-4 h-4 text-muted-foreground" />
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
@@ -937,12 +954,6 @@ export default function DatabaseManager() {
                                 <Plus className="w-4 h-4" />
                                 Create New Table
                               </Button>
-                            </div>
-
-                            <div className="mb-6 p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50">
-                              <p className="text-sm text-indigo-900/70 leading-relaxed">
-                                Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
-                              </p>
                             </div>
                             
                             <div className="pl-6 space-y-8">
