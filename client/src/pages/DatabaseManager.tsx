@@ -782,18 +782,6 @@ export default function DatabaseManager() {
                                 <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
                                   <Network className="w-6 h-6" />
                                 </div>
-                                <input 
-                                  type="text" 
-                                  defaultValue={activeTab.title}
-                                  className="bg-transparent border-none focus:ring-0 text-2xl font-bold text-foreground p-0 w-[400px]"
-                                  placeholder="Enter Graph Name..."
-                                  onChange={(e) => {
-                                    const newTabs = tabs.map(t => 
-                                      t.id === activeTabId ? { ...t, title: e.target.value } : t
-                                    );
-                                    setTabs(newTabs);
-                                  }}
-                                />
                               </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -808,8 +796,20 @@ export default function DatabaseManager() {
                             </div>
                           </div>
 
-                          <div className="mb-8 ml-12">
-                            <p className="text-sm text-muted-foreground">Define relationships between your data tables to generate complex graph structures.</p>
+                          <div className="mb-4 ml-12">
+                            <input 
+                              type="text" 
+                              defaultValue={activeTab.title}
+                              className="bg-transparent border-none focus:ring-0 text-3xl font-bold text-foreground p-0 w-full"
+                              placeholder="Enter Graph Name..."
+                              onChange={(e) => {
+                                const newTabs = tabs.map(t => 
+                                  t.id === activeTabId ? { ...t, title: e.target.value } : t
+                                );
+                                setTabs(newTabs);
+                              }}
+                            />
+                            <p className="text-sm text-muted-foreground mt-1">Define relationships between your data tables to generate complex graph structures.</p>
                           </div>
 
                           {isGraphBuilderOpen ? (
