@@ -73,8 +73,11 @@ export default function Settings() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center border border-orange-200">
-                                <span className="font-bold text-orange-700 text-xs">Claude</span>
+                            <div className="h-10 w-10 rounded-full bg-[#F0EFEA] flex items-center justify-center border border-[#D9D9D9]">
+                                <svg role="img" viewBox="0 0 24 24" className="w-6 h-6 text-[#D97757]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.92 5h3.603L24 20.306h-3.604l-1.04-2.887h-5.698l-1.04 2.887H9L16.92 5.001zm2.748 9.387L17.756 8.78l-1.91 5.606h3.822zM2.4 9.076h3.603L9.606 20.306H6.002l-1.04-2.887H-0.736L-1.776 20.306H-5.38L2.4 9.076zm2.748 5.485L3.236 10.158l-1.91 4.403h3.822z"/>
+                                    <path d="M13.83 2h3.603L24 19.48h-3.604l-1.343-3.797H9.25L7.907 19.48H4.303L13.83 2.001zM17.38 12.8L15.42 7.167 13.46 12.8h3.92z"/>
+                                </svg>
                             </div>
                             <div>
                                 <CardTitle className="text-lg">Anthropic Claude</CardTitle>
@@ -102,8 +105,10 @@ export default function Settings() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
-                                <span className="font-bold text-blue-700 text-xs">Gemini</span>
+                            <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
+                                <svg role="img" viewBox="0 0 24 24" className="w-6 h-6 text-[#1a73e8]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.876.64a.89.89 0 0 0-1.752 0 17.068 17.068 0 0 1-7.79 9.873A16.924 16.924 0 0 1 .639 11.124a.89.89 0 0 0 0 1.752 16.924 16.924 0 0 1 2.695.611 17.068 17.068 0 0 1 7.79 9.873.89.89 0 0 0 1.752 0 17.068 17.068 0 0 1 7.79-9.873 16.924 16.924 0 0 1 2.695-.611.89.89 0 0 0 0-1.752 16.924 16.924 0 0 1-2.695-.611 17.068 17.068 0 0 1-7.79-9.873Z"/>
+                                </svg>
                             </div>
                             <div>
                                 <CardTitle className="text-lg">Google Gemini</CardTitle>
@@ -131,8 +136,10 @@ export default function Settings() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                                <span className="font-bold text-emerald-700 text-xs">OpenAI</span>
+                            <div className="h-10 w-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                                <svg role="img" viewBox="0 0 24 24" className="w-6 h-6 text-[#10a37f]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.3829a.7712.7712 0 0 0-.7806 0L6.4803 11.7514V9.419a.0804.0804 0 0 1 .0332-.0615l4.854-2.7912a4.4944 4.4944 0 0 1 7.8016 1.9102l-.1326.0474zm6.5098-1.8001v5.6773a.0757.0757 0 0 1-.0379.052l-4.8303 2.7865a4.485 4.485 0 0 1-2.8622 1.0503l.161-.09 4.7594-2.7582a.7664.7664 0 0 0 .3879-.6765V6.7456l2.0201-1.1685a.0757.0757 0 0 1 .071 0 4.504 4.504 0 0 1 .331 4.3739zM8.38 12.0123l3.6052-2.0673v4.1683l-3.6052 2.0673z"/>
+                                </svg>
                             </div>
                             <div>
                                 <CardTitle className="text-lg">OpenAI GPT-4</CardTitle>
