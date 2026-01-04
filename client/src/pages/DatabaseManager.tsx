@@ -763,53 +763,55 @@ export default function DatabaseManager() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col h-full overflow-hidden">
-                      <div className="h-12 border-b border-border bg-background flex items-center justify-between px-4 shrink-0">
-                        <div className="flex items-center gap-3">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded-full transition-colors"
-                            onClick={() => setActiveTabId('Graph')}
-                            title="Back to List"
-                          >
-                            <ChevronLeft className="w-5 h-5" />
-                          </Button>
-                          <div className="h-4 w-px bg-border mx-1" />
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                              <Network className="w-5 h-5" />
+                    <div className="flex flex-col h-full overflow-hidden bg-secondary/5">
+                      <div className="flex-1 overflow-auto">
+                        <div className="max-w-6xl mx-auto p-8">
+                          {/* Back Button and Title Area */}
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-4">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded-full transition-colors"
+                                onClick={() => setActiveTabId('Graph')}
+                                title="Back to List"
+                              >
+                                <ChevronLeft className="w-5 h-5" />
+                              </Button>
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                                  <Network className="w-6 h-6" />
+                                </div>
+                                <input 
+                                  type="text" 
+                                  defaultValue={activeTab.title}
+                                  className="bg-transparent border-none focus:ring-0 text-2xl font-bold text-foreground p-0 w-[400px]"
+                                  placeholder="Enter Graph Name..."
+                                  onChange={(e) => {
+                                    const newTabs = tabs.map(t => 
+                                      t.id === activeTabId ? { ...t, title: e.target.value } : t
+                                    );
+                                    setTabs(newTabs);
+                                  }}
+                                />
+                              </div>
                             </div>
-                            <input 
-                              type="text" 
-                              defaultValue={activeTab.title}
-                              className="bg-transparent border-none focus:ring-0 text-lg font-bold text-foreground p-0 w-[400px]"
-                              placeholder="Enter Graph Name..."
-                              onChange={(e) => {
-                                const newTabs = tabs.map(t => 
-                                  t.id === activeTabId ? { ...t, title: e.target.value } : t
-                                );
-                                setTabs(newTabs);
-                              }}
-                            />
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
+                              </div>
+                              <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50">
+                                <Save className="w-4 h-4" />
+                                <span className="font-semibold">Save Changes</span>
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
+
+                          <div className="mb-8 ml-12">
+                            <p className="text-sm text-muted-foreground">Define relationships between your data tables to generate complex graph structures.</p>
                           </div>
-                          <Button variant="outline" size="sm" className="h-8 gap-2 border-dashed">
-                            <Save className="w-3.5 h-3.5" />
-                            <span>Save Changes</span>
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="flex-1 overflow-auto bg-secondary/5">
-                        <div className="max-w-6xl mx-auto p-6">
-                          <div className="mb-8">
-                            <p className="text-sm text-muted-foreground mt-1">Define relationships between your data tables to generate complex graph structures.</p>
-                          </div>
+
                           {isGraphBuilderOpen ? (
                             <GraphBuilderForm />
                           ) : (
