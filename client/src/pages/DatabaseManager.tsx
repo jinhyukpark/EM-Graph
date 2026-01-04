@@ -142,6 +142,9 @@ export default function DatabaseManager() {
       setTabs([...tabs, { id: item.id, type: item.type === 'table' ? 'pipeline-result' : item.type, title: item.name, data: item.type === 'table' ? MOCK_TABLE_DATA : undefined }]);
     }
     setActiveTabId(item.id);
+    if (item.type === 'graph') {
+      setIsGraphBuilderOpen(true);
+    }
   };
 
   const closeTab = (e: React.MouseEvent, tabId: string) => {
@@ -697,7 +700,12 @@ export default function DatabaseManager() {
                             ))}
                             <Card 
                               className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
-                              onClick={() => createNew('graph')}
+                              onClick={() => {
+                                const id = `graph-builder-${Date.now()}`;
+                                setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
+                                setActiveTabId(id);
+                                setIsGraphBuilderOpen(true);
+                              }}
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
