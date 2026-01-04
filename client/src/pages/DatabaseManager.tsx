@@ -804,7 +804,12 @@ export default function DatabaseManager() {
                                 setTabs(newTabs);
                               }}
                             />
-                            <p className="text-sm text-muted-foreground mt-1">Define relationships between your data tables to generate complex graph structures.</p>
+                            <input 
+                              type="text" 
+                              defaultValue="Define relationships between your data tables to generate complex graph structures."
+                              className="bg-transparent border-none focus:ring-0 text-sm text-muted-foreground p-0 w-full mt-1"
+                              placeholder="Enter description..."
+                            />
                           </div>
 
                           {isGraphBuilderOpen ? (
