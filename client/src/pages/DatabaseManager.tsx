@@ -727,7 +727,7 @@ export default function DatabaseManager() {
                             <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {sidebarItems.find(c => c.category === "Graph")?.items.map((graph) => (
+                            {SIDEBAR_ITEMS.find(c => c.category === "Graph")?.items.map((graph) => (
                               <Card key={graph.id} className="group hover:border-emerald-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(graph)}>
                                 <CardContent className="p-4 flex items-center gap-3">
                                   <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
@@ -763,20 +763,35 @@ export default function DatabaseManager() {
                       </div>
                     </div>
                   ) : (
-                    isGraphBuilderOpen ? (
-                      <GraphBuilderForm />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
-                         <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-                           <Network className="w-8 h-8 text-primary/50" />
-                         </div>
-                         <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
-                         <p className="max-w-md text-center mt-2 mb-6 text-sm">
-                           Configure your graph settings in the Graph view to visualize relationships between tables.
-                         </p>
-                         <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                    <div className="flex flex-col h-full overflow-hidden">
+                      <div className="h-12 border-b border-border bg-background flex items-center px-4 shrink-0">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 px-2 gap-2 text-muted-foreground hover:text-foreground"
+                          onClick={() => setActiveTabId('Graph')}
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                          <span className="text-xs font-medium">Back to List</span>
+                        </Button>
                       </div>
-                    )
+                      <div className="flex-1 overflow-auto">
+                        {isGraphBuilderOpen ? (
+                          <GraphBuilderForm />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
+                             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                               <Network className="w-8 h-8 text-primary/50" />
+                             </div>
+                             <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
+                             <p className="max-w-md text-center mt-2 mb-6 text-sm">
+                               Configure your graph settings in the Graph view to visualize relationships between tables.
+                             </p>
+                             <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : activeTab.type === 'table' ? (
