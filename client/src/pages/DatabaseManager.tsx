@@ -782,7 +782,7 @@ export default function DatabaseManager() {
                         <section>
                           <div className="flex items-center gap-2 mb-6">
                             <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Knowledge Graphs</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
                             <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
