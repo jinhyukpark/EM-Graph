@@ -1091,67 +1091,61 @@ export default function DatabaseManager() {
                               </Button>
                             </div>
                             
-                            <div className="pl-6 space-y-8">
-                              {/* Original Tables Sub-section */}
-                              {(activeTabId === 'Table' || activeTabId === 'Original') && (
-                                <section id="Original">
-                                  <div className="flex items-center gap-2 mb-4">
-                                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Original</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-secondary/30">Source</Badge>
-                                  </div>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Original")?.items.map((table) => (
-                                      <Card key={table.id} className={`group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-primary ring-1 ring-primary/20 shadow-sm" : ""}`} onClick={() => setSelectedTable(table.name)}>
-                                        <CardContent className="p-4 flex items-center gap-3">
-                                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-primary text-white" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"}`}>
-                                            <TableIcon className="w-5 h-5" />
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-semibold truncate">{table.name}</div>
-                                            <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                              <span>1,420 rows</span>
-                                              <span className="w-1 h-1 rounded-full bg-border" />
-                                              <span>Read-Write</span>
-                                            </div>
-                                          </div>
-                                        </CardContent>
-                                      </Card>
-                                    ))}
-                                  </div>
-                                </section>
-                              )}
+                                <div className="space-y-6">
+                                  {(activeTabId === 'Table' || activeTabId === 'Original') && (
+                                    <div className="space-y-3">
+                                      <div className="flex items-center gap-2 px-1">
+                                        <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Original</span>
+                                        <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-slate-100 text-slate-500 border-slate-200">SOURCE</Badge>
+                                      </div>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                        {sidebarItems.find(c => c.category === 'Table')?.subcategories?.find(s => s.name === 'Original')?.items.map((table) => (
+                                          <Card key={table.id} className="group hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50" onClick={() => openTab(table)}>
+                                            <CardContent className="p-4 flex items-center gap-4">
+                                              <div className="p-2 rounded-lg bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm border border-primary/10">
+                                                <TableIcon className="w-5 h-5" />
+                                              </div>
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{table.name}</h4>
+                                                <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5 font-medium">
+                                                  1,420 rows <span className="w-1 h-1 rounded-full bg-muted-foreground/30" /> Read-Write
+                                                </p>
+                                              </div>
+                                            </CardContent>
+                                          </Card>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
 
-                              {/* Custom Tables Sub-section */}
-                              {(activeTabId === 'Table' || activeTabId === 'Custom') && (
-                                <section id="Custom">
-                                  <div className="flex items-center gap-2 mb-4">
-                                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Custom</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processed</Badge>
-                                  </div>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Custom")?.items.map((table) => (
-                                      <Card key={table.id} className={`group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-sm" : ""}`} onClick={() => setSelectedTable(table.name)}>
-                                        <CardContent className="p-4 flex items-center gap-3">
-                                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-indigo-600 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"}`}>
-                                            <TableIcon className="w-5 h-5" />
-                                          </div>
-                                          <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-semibold truncate">{table.name}</div>
-                                            <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                              <span>582 rows</span>
-                                              <span className="w-1 h-1 rounded-full bg-border" />
-                                              <span>Derived</span>
-                                            </div>
-                                          </div>
-                                        </CardContent>
-                                      </Card>
-                                    ))}
-                                  </div>
-                                </section>
-                              )}
-                            </div>
+                                  {(activeTabId === 'Table' || activeTabId === 'Custom') && (
+                                    <div className="space-y-3">
+                                      <div className="flex items-center gap-2 px-1">
+                                        <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Custom</span>
+                                        <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-indigo-50 text-indigo-500 border-indigo-100 uppercase font-bold tracking-tighter">Processed</Badge>
+                                      </div>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                        {sidebarItems.find(c => c.category === 'Table')?.subcategories?.find(s => s.name === 'Custom')?.items.map((table) => (
+                                          <Card key={table.id} className="group hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50" onClick={() => openTab(table)}>
+                                            <CardContent className="p-4 flex items-center gap-4">
+                                              <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm border border-indigo-100">
+                                                <TableIcon className="w-5 h-5" />
+                                              </div>
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold truncate text-foreground group-hover:text-indigo-600 transition-colors">{table.name}</h4>
+                                                <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5 font-medium">
+                                                  582 rows <span className="w-1 h-1 rounded-full bg-muted-foreground/30" /> Derived
+                                                </p>
+                                              </div>
+                                            </CardContent>
+                                          </Card>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                           </section>
                         )}
 
