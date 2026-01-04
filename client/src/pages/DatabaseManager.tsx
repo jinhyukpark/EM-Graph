@@ -578,10 +578,6 @@ export default function DatabaseManager() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem className="text-xs gap-2" onClick={() => createNew(category.category.toLowerCase() as any)}>
-                          <Plus className="w-3.5 h-3.5" />
-                          Create New {category.category === 'PREPROCESSING' ? 'Pipeline' : category.category.charAt(0).toUpperCase() + category.category.slice(1).toLowerCase()}
-                        </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs gap-2">
                           <Plus className="w-3.5 h-3.5" />
                           Create Category
@@ -642,28 +638,7 @@ export default function DatabaseManager() {
                                   >
                                     <item.icon className="w-4 h-4" />
                                     <div className="flex-1 text-left truncate">{item.name}</div>
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                          <Button variant="ghost" size="icon" className="h-6 w-6">
-                                            <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                          </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="w-40">
-                                          <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive" onClick={(e) => {
-                                            e.stopPropagation();
-                                            toast({
-                                              title: "Item Dropped",
-                                              description: `${item.name} has been successfully dropped.`,
-                                            });
-                                          }}>
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                            Drop {item.type === 'table' ? 'Table' : item.type === 'query' ? 'Query' : 'Item'}
-                                          </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                      </DropdownMenu>
-                                      {activeTabId === item.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                                    </div>
+                                    {activeTabId === item.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
                                   </button>
                                 ))}
                               </div>
