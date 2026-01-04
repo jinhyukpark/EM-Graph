@@ -281,6 +281,9 @@ export default function DatabaseManager() {
       setTabs([...tabs, { id: item.id, type: item.type === 'table' ? 'pipeline-result' : item.type, title: item.name, data: item.type === 'table' ? MOCK_TABLE_DATA : undefined }]);
     }
     setActiveTabId(item.id);
+    if (item.type === 'table') {
+      setSelectedTable(item.name);
+    }
     if (item.type === 'graph') {
       setIsGraphBuilderOpen(true);
     }
