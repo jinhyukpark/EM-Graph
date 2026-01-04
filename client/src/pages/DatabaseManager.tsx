@@ -525,7 +525,7 @@ export default function DatabaseManager() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
+      <div className="flex h-full overflow-hidden bg-background">
         
         {/* Sidebar: Navigation */}
         <div className="w-64 border-r border-border bg-card/30 flex flex-col h-full">
