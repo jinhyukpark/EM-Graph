@@ -722,6 +722,42 @@ export default function DatabaseManager() {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 bg-background">
           {!selectedProjectId ? (
+            <div className="flex-1 flex flex-col min-w-0 bg-background">
+               <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0 opacity-60 pointer-events-none select-none grayscale-[0.5]">
+                <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 text-white gap-2 shadow-sm mr-2" disabled>
+                  <Plus className="w-4 h-4" />
+                  <span className="font-medium">New Query</span>
+                </Button>
+
+                <div className="h-4 w-px bg-border mx-2" />
+
+                <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
+                  <TableIcon className="w-4 h-4" />
+                  <span className="font-medium">Table</span>
+                </Button>
+                
+                <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
+                  <FileCode className="w-4 h-4" />
+                  <span className="font-medium">Query</span>
+                </Button>
+
+                <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
+                  <Network className="w-4 h-4" />
+                  <span className="font-medium">Graph</span>
+                </Button>
+
+                <div className="h-4 w-px bg-border mx-2" />
+
+                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
+                  <Import className="w-4 h-4" />
+                  <span className="font-medium">Import</span>
+                </Button>
+
+                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
+                  <FileUp className="w-4 h-4" />
+                  <span className="font-medium">Export</span>
+                </Button>
+             </div>
             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
               <div className="w-24 h-24 rounded-full bg-secondary/30 flex items-center justify-center mb-6">
                 <LayoutDashboard className="w-12 h-12 opacity-20" />
@@ -731,6 +767,7 @@ export default function DatabaseManager() {
                 Choose a project from the sidebar to view and manage your data tables, queries, and graph visualizations.
               </p>
             </div>
+          </div>
           ) : (
             <>
               {/* Tab Bar & Toolbar */}
