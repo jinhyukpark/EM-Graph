@@ -811,19 +811,20 @@ export default function DatabaseManager() {
                             <p className="text-sm text-muted-foreground mt-1">Define relationships between your data tables to generate complex graph structures.</p>
                           </div>
                           {isGraphBuilderOpen ? (
-                          <GraphBuilderForm />
-                        ) : (
-                          <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
-                             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-                               <Network className="w-8 h-8 text-primary/50" />
-                             </div>
-                             <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
-                             <p className="max-w-md text-center mt-2 mb-6 text-sm">
-                               Configure your graph settings in the Graph view to visualize relationships between tables.
-                             </p>
-                             <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
-                          </div>
-                        )}
+                            <GraphBuilderForm />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
+                               <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                                 <Network className="w-8 h-8 text-primary/50" />
+                               </div>
+                               <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
+                               <p className="max-w-md text-center mt-2 mb-6 text-sm">
+                                 Configure your graph settings in the Graph view to visualize relationships between tables.
+                               </p>
+                               <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
