@@ -419,9 +419,16 @@ export default function DatabaseManager() {
           <div className="flex flex-col bg-background">
              {/* Action Toolbar - Styled like the screenshot - Aligned to h-16 */}
              <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0">
+                <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm mr-2" onClick={() => createNew('query')}>
+                  <Plus className="w-4 h-4" />
+                  <span className="font-medium">New Query</span>
+                </Button>
+
+                <div className="h-4 w-px bg-border mx-2" />
+
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('table')}>
-                  <Database className="w-4 h-4" />
-                  <span className="font-medium">Database</span>
+                  <TableIcon className="w-4 h-4" />
+                  <span className="font-medium">Table</span>
                 </Button>
                 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('query')}>
@@ -436,7 +443,7 @@ export default function DatabaseManager() {
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('preprocessing')}>
                   <Workflow className="w-4 h-4" />
-                  <span className="font-medium">Pre-process</span>
+                  <span className="font-medium">Pre-Process</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
