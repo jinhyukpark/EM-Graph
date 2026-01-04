@@ -192,13 +192,27 @@ export default function DatabaseManager() {
                   <ScrollArea className="h-[200px] border rounded-md p-2">
                     <div className="space-y-3 p-1">
                       {mockTableData.map((row) => (
-                        <div key={row.idx} className="flex items-center gap-3">
-                          <span className="text-xs font-mono text-muted-foreground w-8">#{row.idx}</span>
-                          <span className="text-xs font-medium truncate w-24 text-muted-foreground">{row.company_name}</span>
+                        <div key={row.idx} className="flex items-center gap-3 mb-2">
+                          <div className="flex-1 min-w-0 grid grid-cols-[30px_1fr] gap-2 items-center">
+                            <span className="text-xs font-mono text-muted-foreground">#{row.idx}</span>
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span className="font-semibold text-[10px] uppercase">company_name:</span>
+                                <span className="truncate text-foreground font-medium">{row.company_name}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span className="font-semibold text-[10px] uppercase">age:</span>
+                                <span>{row.age}</span>
+                                <span className="text-border mx-1">|</span>
+                                <span className="font-semibold text-[10px] uppercase">member:</span>
+                                <span>{row.member.toLocaleString()}</span>
+                              </div>
+                            </div>
+                          </div>
                           <Input 
                             size={1}
                             placeholder="Value..." 
-                            className="h-8 text-xs"
+                            className="w-32 h-8 text-xs shrink-0"
                             value={newFieldValues[row.idx] || ""}
                             onChange={(e) => setNewFieldValues(prev => ({ ...prev, [row.idx]: e.target.value }))}
                           />
