@@ -117,6 +117,9 @@ export default function DatabaseManager() {
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
 
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
+  const [isQueryDescVisible, setIsQueryDescVisible] = useState(true);
+  const [isGraphDescVisible, setIsGraphDescVisible] = useState(true);
+  const [isPreprocessDescVisible, setIsPreprocessDescVisible] = useState(true);
 
   const mockTableData = [
     { idx: 1, company_name: "illunex", age: 8, member: 40, regdate: "2025-09-27 16:16:12" },
@@ -700,11 +703,31 @@ export default function DatabaseManager() {
                   {activeTabId === 'PREPROCESSING' ? (
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
+                        {isPreprocessDescVisible && (
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
+                            <button 
+                              onClick={() => setIsPreprocessDescVisible(false)}
+                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                              title="Dismiss"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                              Build and automate data transformation pipelines. Connect multiple steps to clean, filter, and enrich your raw data into refined assets for analysis.
+                            </p>
+                          </div>
+                        )}
                         <section>
-                          <div className="flex items-center gap-2 mb-6">
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Data Pipelines</h3>
-                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2">
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Data Pipelines</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
+                            </div>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('preprocessing')}>
+                              <Plus className="w-4 h-4" />
+                              Create New Pipeline
+                            </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {SIDEBAR_ITEMS.find(c => c.category === "PREPROCESSING")?.items.map((tool) => (
@@ -781,11 +804,40 @@ export default function DatabaseManager() {
                   {activeTabId === 'Graph' ? (
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
+                        {isGraphDescVisible && (
+                          <div className="group relative p-4 rounded-lg bg-emerald-50/50 border border-emerald-100/50 transition-all hover:bg-emerald-50">
+                            <button 
+                              onClick={() => setIsGraphDescVisible(false)}
+                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-emerald-100 text-emerald-400 transition-all"
+                              title="Dismiss"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <p className="text-sm text-emerald-900/70 leading-relaxed pr-8">
+                              Visualize complex relationships between your data entities. Explore connections, patterns, and network structures within your saved tables.
+                            </p>
+                          </div>
+                        )}
                         <section>
-                          <div className="flex items-center gap-2 mb-6">
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
-                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2">
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="bg-primary hover:bg-primary/90 text-white gap-2"
+                              onClick={() => {
+                                const id = `graph-builder-${Date.now()}`;
+                                setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
+                                setActiveTabId(id);
+                                setIsGraphBuilderOpen(true);
+                              }}
+                            >
+                              <Plus className="w-4 h-4" />
+                              Create New Graph
+                            </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {SIDEBAR_ITEMS.find(c => c.category === "Graph")?.items.map((graph) => (
@@ -1029,11 +1081,31 @@ export default function DatabaseManager() {
                   {activeTabId === 'Query' ? (
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
+                        {isQueryDescVisible && (
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
+                            <button 
+                              onClick={() => setIsQueryDescVisible(false)}
+                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                              title="Dismiss"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                              Write and save SQL queries to extract specific insights from your repository. Access your library of saved queries for rapid data exploration.
+                            </p>
+                          </div>
+                        )}
                         <section>
-                          <div className="flex items-center gap-2 mb-6">
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
-                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2">
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                            </div>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('query')}>
+                              <Plus className="w-4 h-4" />
+                              Create New Query
+                            </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {sidebarItems.find(c => c.category === "Query")?.items.map((query) => (
