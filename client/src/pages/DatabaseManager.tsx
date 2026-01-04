@@ -764,16 +764,37 @@ export default function DatabaseManager() {
                     </div>
                   ) : (
                     <div className="flex flex-col h-full overflow-hidden">
-                      <div className="h-12 border-b border-border bg-background flex items-center px-4 shrink-0">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 px-2 gap-2 text-muted-foreground hover:text-foreground"
-                          onClick={() => setActiveTabId('Graph')}
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                          <span className="text-xs font-medium">Back to List</span>
-                        </Button>
+                      <div className="h-12 border-b border-border bg-background flex items-center justify-between px-4 shrink-0">
+                        <div className="flex items-center gap-4">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 px-2 gap-2 text-muted-foreground hover:text-foreground"
+                            onClick={() => setActiveTabId('Graph')}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                            <span className="text-xs font-medium">Back to List</span>
+                          </Button>
+                          <div className="h-4 w-px bg-border" />
+                          <div className="flex items-center gap-2">
+                            <Network className="w-4 h-4 text-emerald-500" />
+                            <input 
+                              type="text" 
+                              defaultValue={activeTab.title}
+                              className="bg-transparent border-none focus:ring-0 text-sm font-semibold text-foreground p-0 w-[300px]"
+                              placeholder="Untitled Graph"
+                              onChange={(e) => {
+                                const newTabs = tabs.map(t => 
+                                  t.id === activeTabId ? { ...t, title: e.target.value } : t
+                                );
+                                setTabs(newTabs);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-200 text-[10px] uppercase">Draft</Badge>
+                        </div>
                       </div>
                       <div className="flex-1 overflow-auto">
                         {isGraphBuilderOpen ? (
