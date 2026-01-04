@@ -37,7 +37,7 @@ export default function Settings() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-[800px]">
+          <TabsList className="grid w-full grid-cols-6 lg:w-[900px]">
             <TabsTrigger value="account">Account & Security</TabsTrigger>
             <TabsTrigger value="team">Team & Roles</TabsTrigger>
             <TabsTrigger value="billing">Billing & License</TabsTrigger>
