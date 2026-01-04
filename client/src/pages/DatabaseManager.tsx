@@ -697,7 +697,7 @@ export default function DatabaseManager() {
                 <div className="flex flex-col h-full bg-background">
                   {activeTabId === 'PREPROCESSING' ? (
                     <div className="flex-1 overflow-auto p-6">
-                      <div className="max-w-6xl mx-auto space-y-8">
+                      <div className="space-y-8">
                         <section>
                           <div className="flex items-center gap-2 mb-6">
                             <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -778,7 +778,7 @@ export default function DatabaseManager() {
                 <div className="flex flex-col h-full bg-background">
                   {activeTabId === 'Graph' ? (
                     <div className="flex-1 overflow-auto p-6">
-                      <div className="max-w-6xl mx-auto space-y-8">
+                      <div className="space-y-8">
                         <section>
                           <div className="flex items-center gap-2 mb-6">
                             <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -824,7 +824,7 @@ export default function DatabaseManager() {
                   ) : (
                     <div className="flex flex-col h-full overflow-hidden bg-secondary/5">
                       <div className="flex-1 overflow-auto">
-                        <div className="max-w-6xl mx-auto p-8">
+                        <div className="p-8">
                           {/* Back Button and Title Area */}
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-4">
@@ -923,7 +923,7 @@ export default function DatabaseManager() {
                     <TableDetailView tableName={selectedTable} />
                   ) : (
                     <div className="flex-1 overflow-auto p-6">
-                      <div className="max-w-6xl mx-auto space-y-8">
+                      <div className="space-y-8">
                         {/* Original Tables Section */}
                         {(activeTabId === 'Table' || activeTabId === 'Original') && (
                           <section id="Original">
@@ -991,7 +991,7 @@ export default function DatabaseManager() {
                 <div className="flex flex-col h-full bg-background">
                   {activeTabId === 'Query' ? (
                     <div className="flex-1 overflow-auto p-6">
-                      <div className="max-w-6xl mx-auto space-y-8">
+                      <div className="space-y-8">
                         <section>
                           <div className="flex items-center gap-2 mb-6">
                             <ChevronDown className="w-4 h-4 text-muted-foreground" />
