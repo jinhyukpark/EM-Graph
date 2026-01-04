@@ -105,7 +105,7 @@ export default function DatabaseManager() {
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph"]);
-  const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>(["Original", "Custom"]);
+  const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
   const activeTab = tabs.find(t => t.id === activeTabId);
@@ -382,7 +382,11 @@ export default function DatabaseManager() {
                 <div key={idx} className="space-y-1">
                   <button 
                     onClick={() => toggleCategory(category.category)}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
+                    className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-colors uppercase tracking-wider rounded-md ${
+                      activeTab?.type?.toLowerCase() === category.category.toLowerCase() 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    }`}
                   >
                     {expandedCategories.includes(category.category) ? (
                       <ChevronDown className="w-3 h-3" />
