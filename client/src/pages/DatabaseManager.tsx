@@ -845,7 +845,7 @@ export default function DatabaseManager() {
                             </div>
                             <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('preprocessing')}>
                               <Plus className="w-4 h-4" />
-                              Create New Pipeline
+                              Create Preprocessing
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -872,7 +872,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Pipeline</span>
+                                <span className="text-xs font-medium">New Preprocessing</span>
                               </div>
                             </Card>
                           </div>
