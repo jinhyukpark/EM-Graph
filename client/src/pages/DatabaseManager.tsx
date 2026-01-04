@@ -480,22 +480,42 @@ export default function DatabaseManager() {
 
                 <div className="h-4 w-px bg-border mx-2" />
 
-                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('table')}>
+                <Button 
+                  variant={activeTab?.type === 'table' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'table' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => createNew('table')}
+                >
                   <TableIcon className="w-4 h-4" />
                   <span className="font-medium">Table</span>
                 </Button>
                 
-                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('query')}>
+                <Button 
+                  variant={activeTab?.type === 'query' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'query' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => createNew('query')}
+                >
                   <FileCode className="w-4 h-4" />
                   <span className="font-medium">Query</span>
                 </Button>
 
-                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('graph')}>
+                <Button 
+                  variant={activeTab?.type === 'graph' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'graph' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => createNew('graph')}
+                >
                   <Network className="w-4 h-4" />
                   <span className="font-medium">Graph</span>
                 </Button>
 
-                <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-2" onClick={() => createNew('preprocessing')}>
+                <Button 
+                  variant={activeTab?.type === 'preprocessing' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'preprocessing' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => createNew('preprocessing')}
+                >
                   <Workflow className="w-4 h-4" />
                   <span className="font-medium">Pre-Process</span>
                 </Button>
