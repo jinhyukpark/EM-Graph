@@ -629,7 +629,51 @@ export default function DatabaseManager() {
           <div className="flex-1 overflow-hidden relative">
             {activeTab ? (
               activeTab.type === 'preprocessing' ? (
-                <DataPreprocessingBuilder onRun={handleRunPipeline} />
+                <div className="flex flex-col h-full bg-background">
+                  {activeTabId === 'PREPROCESSING' ? (
+                    <div className="flex-1 overflow-auto p-6">
+                      <div className="max-w-6xl mx-auto space-y-8">
+                        <section>
+                          <div className="flex items-center gap-2 mb-6">
+                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Data Pipelines</h3>
+                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {SIDEBAR_ITEMS.find(c => c.category === "PREPROCESSING")?.items.map((tool) => (
+                              <Card key={tool.id} className="group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(tool)}>
+                                <CardContent className="p-4 flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                    <Workflow className="w-5 h-5" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-semibold truncate">{tool.name}</div>
+                                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                      <span>Active Pipeline</span>
+                                      <span className="w-1 h-1 rounded-full bg-border" />
+                                      <span>Ready</span>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                            <Card 
+                              className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
+                              onClick={() => createNew('preprocessing')}
+                            >
+                              <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                                <Plus className="w-5 h-5" />
+                                <span className="text-xs font-medium">New Pipeline</span>
+                              </div>
+                            </Card>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+                  ) : (
+                    <DataPreprocessingBuilder onRun={handleRunPipeline} />
+                  )}
+                </div>
               ) : activeTab.type === 'pipeline-result' ? (
                 <div className="flex flex-col h-full bg-background border-t-4 border-indigo-500/20">
                   <div className="h-12 border-b border-border bg-indigo-50/10 flex items-center justify-between px-4">
