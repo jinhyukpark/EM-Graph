@@ -930,7 +930,7 @@ export default function DatabaseManager() {
                  autoFocus
                />
                <p className="text-xs text-muted-foreground">
-                 This table will be saved to the "Table > Custom" category.
+                 This table will be saved to the "Table &gt; Custom" category.
                </p>
             </div>
           </div>
