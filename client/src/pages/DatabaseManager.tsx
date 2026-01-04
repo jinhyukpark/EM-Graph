@@ -413,7 +413,7 @@ export default function DatabaseManager() {
                                 {sub.items.map((item) => (
                                   <button
                                     key={item.id}
-                                    onDoubleClick={() => openTab(item)}
+                                    onClick={() => openTab(item)}
                                     className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors ${
                                       activeTabId === item.id 
                                         ? "bg-primary/10 text-primary font-medium" 
@@ -433,7 +433,7 @@ export default function DatabaseManager() {
                         category.items?.map((item) => (
                           <button
                             key={item.id}
-                            onDoubleClick={() => openTab(item)}
+                            onClick={() => openTab(item)}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                               activeTabId === item.id 
                                 ? "bg-primary/10 text-primary font-medium" 
