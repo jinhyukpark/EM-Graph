@@ -28,17 +28,22 @@ import {
 // Mock Database Schema & Data
 const SIDEBAR_ITEMS = [
   {
-    category: "Table (Original)",
-    items: [
-      { id: "t1", name: "crime_incidents_2024", icon: TableIcon, type: "table" },
-      { id: "t2", name: "suspect_profiles", icon: TableIcon, type: "table" },
-    ]
-  },
-  {
-    category: "Table (Pre-processing)",
-    items: [
-      { id: "t3", name: "location_hotspots", icon: TableIcon, type: "table" },
-      { id: "t4", name: "supply_chain_nodes", icon: TableIcon, type: "table" },
+    category: "Table",
+    subcategories: [
+      {
+        name: "Original",
+        items: [
+          { id: "t1", name: "crime_incidents_2024", icon: TableIcon, type: "table" },
+          { id: "t2", name: "suspect_profiles", icon: TableIcon, type: "table" },
+        ]
+      },
+      {
+        name: "Custom",
+        items: [
+          { id: "t3", name: "location_hotspots", icon: TableIcon, type: "table" },
+          { id: "t4", name: "supply_chain_nodes", icon: TableIcon, type: "table" },
+        ]
+      }
     ]
   },
   {
@@ -99,7 +104,8 @@ export default function DatabaseManager() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table (Original)", "Table (Pre-processing)", "Query", "Graph"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph"]);
+  const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>(["Original", "Custom"]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
   const activeTab = tabs.find(t => t.id === activeTabId);
@@ -109,6 +115,14 @@ export default function DatabaseManager() {
       prev.includes(categoryName) 
         ? prev.filter(c => c !== categoryName)
         : [...prev, categoryName]
+    );
+  };
+
+  const toggleSubcategory = (subName: string) => {
+    setExpandedSubcategories(prev => 
+      prev.includes(subName) 
+        ? prev.filter(s => s !== subName)
+        : [...prev, subName]
     );
   };
 
@@ -265,16 +279,19 @@ export default function DatabaseManager() {
   const handleSaveResult = () => {
     if (!newTableName.trim()) return;
 
-    // 1. Add to Sidebar Items under Pre-processing
+    // 1. Add to Sidebar Items under Custom
     const newSidebarItems = [...sidebarItems];
-    const preProcCategory = newSidebarItems.find(c => c.category === "Table (Pre-processing)");
-    if (preProcCategory) {
-      preProcCategory.items.push({
-        id: `t-${Date.now()}`,
-        name: newTableName,
-        icon: TableIcon,
-        type: "table"
-      });
+    const tableCategory = newSidebarItems.find(c => c.category === "Table");
+    if (tableCategory && tableCategory.subcategories) {
+      const customSub = tableCategory.subcategories.find(s => s.name === "Custom");
+      if (customSub) {
+        customSub.items.push({
+          id: `t-${Date.now()}`,
+          name: newTableName,
+          icon: TableIcon,
+          type: "table"
+        });
+      }
     }
     setSidebarItems(newSidebarItems);
 
@@ -284,7 +301,7 @@ export default function DatabaseManager() {
     
     toast({
       title: "Table Saved",
-      description: `Result saved as '${newTableName}' in Pre-processing tables.`,
+      description: `Result saved as '${newTableName}' in Custom tables.`,
     });
   };
 
@@ -377,21 +394,58 @@ export default function DatabaseManager() {
                   
                   {expandedCategories.includes(category.category) && (
                     <div className="space-y-0.5 animate-in slide-in-from-top-2 duration-200 pl-2">
-                      {category.items.map((item) => (
-                        <button
-                          key={item.id}
-                          onDoubleClick={() => openTab(item)}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                            activeTabId === item.id 
-                              ? "bg-primary/10 text-primary font-medium" 
-                              : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                          }`}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <div className="flex-1 text-left truncate">{item.name}</div>
-                          {activeTabId === item.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                        </button>
-                      ))}
+                      {category.subcategories ? (
+                        category.subcategories.map((sub, sIdx) => (
+                          <div key={sIdx} className="space-y-0.5">
+                            <button 
+                              onClick={() => toggleSubcategory(sub.name)}
+                              className="w-full flex items-center gap-2 px-3 py-1 text-[11px] font-semibold text-muted-foreground/70 hover:text-foreground transition-colors uppercase tracking-tight"
+                            >
+                              {expandedSubcategories.includes(sub.name) ? (
+                                <ChevronDown className="w-2.5 h-2.5" />
+                              ) : (
+                                <ChevronRight className="w-2.5 h-2.5" />
+                              )}
+                              {sub.name}
+                            </button>
+                            {expandedSubcategories.includes(sub.name) && (
+                              <div className="pl-3 space-y-0.5">
+                                {sub.items.map((item) => (
+                                  <button
+                                    key={item.id}
+                                    onDoubleClick={() => openTab(item)}
+                                    className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                                      activeTabId === item.id 
+                                        ? "bg-primary/10 text-primary font-medium" 
+                                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                                    }`}
+                                  >
+                                    <item.icon className="w-4 h-4" />
+                                    <div className="flex-1 text-left truncate">{item.name}</div>
+                                    {activeTabId === item.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        category.items?.map((item) => (
+                          <button
+                            key={item.id}
+                            onDoubleClick={() => openTab(item)}
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                              activeTabId === item.id 
+                                ? "bg-primary/10 text-primary font-medium" 
+                                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                            }`}
+                          >
+                            <item.icon className="w-4 h-4" />
+                            <div className="flex-1 text-left truncate">{item.name}</div>
+                            {activeTabId === item.id && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                          </button>
+                        ))
+                      )}
                     </div>
                   )}
                 </div>
@@ -876,7 +930,7 @@ export default function DatabaseManager() {
                  autoFocus
                />
                <p className="text-xs text-muted-foreground">
-                 This table will be saved to the "Table (Pre-processing)" category.
+                 This table will be saved to the "Table > Custom" category.
                </p>
             </div>
           </div>
