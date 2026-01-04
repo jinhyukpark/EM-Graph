@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -772,17 +772,12 @@ export default function DatabaseManager() {
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded-full transition-colors"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded-full transition-colors -ml-1"
                                 onClick={() => setActiveTabId('Graph')}
                                 title="Back to List"
                               >
-                                <ChevronLeft className="w-5 h-5" />
+                                <ArrowLeft className="w-5 h-5" />
                               </Button>
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                                  <Network className="w-6 h-6" />
-                                </div>
-                              </div>
                             </div>
                             <div className="flex items-center gap-3">
                               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -796,7 +791,7 @@ export default function DatabaseManager() {
                             </div>
                           </div>
 
-                          <div className="mb-4 ml-12">
+                          <div className="mb-4 ml-0">
                             <input 
                               type="text" 
                               defaultValue={activeTab.title}
