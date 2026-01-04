@@ -59,6 +59,12 @@ const SIDEBAR_ITEMS = [
       { id: "g1", name: "Crime Network 2024", icon: Network, type: "graph" },
       { id: "g2", name: "Supply Chain Risk", icon: Network, type: "graph" },
     ]
+  },
+  {
+    category: "Tool",
+    items: [
+      { id: "p1", name: "Pre-Process", icon: Workflow, type: "preprocessing" },
+    ]
   }
 ];
 
@@ -104,7 +110,7 @@ export default function DatabaseManager() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph", "Tool"]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
@@ -574,16 +580,6 @@ export default function DatabaseManager() {
                 >
                   <Network className="w-4 h-4" />
                   <span className="font-medium">Graph</span>
-                </Button>
-
-                <Button 
-                  variant={activeTab?.type === 'preprocessing' ? 'secondary' : 'ghost'} 
-                  size="sm" 
-                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'preprocessing' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
-                  onClick={() => createNew('preprocessing')}
-                >
-                  <Workflow className="w-4 h-4" />
-                  <span className="font-medium">Pre-Process</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
