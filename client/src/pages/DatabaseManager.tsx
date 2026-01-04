@@ -578,6 +578,10 @@ export default function DatabaseManager() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem className="text-xs gap-2" onClick={() => createNew(category.category.toLowerCase() as any)}>
+                          <Plus className="w-3.5 h-3.5" />
+                          Create New {category.category === 'PREPROCESSING' ? 'Pipeline' : category.category.charAt(0).toUpperCase() + category.category.slice(1).toLowerCase()}
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs gap-2">
                           <Plus className="w-3.5 h-3.5" />
                           Create Category
