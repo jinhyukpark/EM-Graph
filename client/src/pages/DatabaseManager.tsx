@@ -651,7 +651,7 @@ export default function DatabaseManager() {
                     </div>
                   </div>
                 </div>
-              ) : (
+              ) : activeTab.type === 'query' ? (
                 <div className="flex flex-col h-full">
                   {/* Query/Table Toolbar */}
                   <div className="h-12 border-b border-border bg-background/50 flex items-center justify-between px-4">
@@ -841,6 +841,13 @@ export default function DatabaseManager() {
                       </div>
                     </ResizablePanel>
                   </ResizablePanelGroup>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center">
+                    <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                    <p>Select an item from the sidebar or create a new one</p>
+                  </div>
                 </div>
               )
             ) : (
