@@ -221,28 +221,28 @@ export default function DatabaseManager() {
         </div>
       </div>
       <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b bg-muted/20">
-              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 w-16">IDX</th>
-              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">COMPANY_NAME</th>
-              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">AGE</th>
-              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">MEMBER</th>
-              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">REGDATE</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+            <TableRow>
+              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider w-16 pl-4">IDX</TableHead>
+              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">COMPANY_NAME</TableHead>
+              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">AGE</TableHead>
+              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">MEMBER</TableHead>
+              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">REGDATE</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {mockTableData.map((row) => (
-              <tr key={row.idx} className="border-b hover:bg-muted/10 transition-colors group">
-                <td className="p-4 text-sm font-mono text-muted-foreground/50">{row.idx}</td>
-                <td className="p-4 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{row.company_name}</td>
-                <td className="p-4 text-sm text-foreground/80">{row.age}</td>
-                <td className="p-4 text-sm text-foreground/80">{row.member.toLocaleString()}</td>
-                <td className="p-4 text-sm text-muted-foreground tabular-nums">{row.regdate}</td>
-              </tr>
+              <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
+                <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
+                <TableCell className="py-2 text-xs font-semibold text-foreground pl-4">{row.company_name}</TableCell>
+                <TableCell className="py-2 text-xs text-foreground/80 pl-4">{row.age}</TableCell>
+                <TableCell className="py-2 text-xs text-foreground/80 pl-4">{row.member.toLocaleString()}</TableCell>
+                <TableCell className="py-2 text-xs text-muted-foreground tabular-nums pl-4">{row.regdate}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
