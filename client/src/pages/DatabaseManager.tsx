@@ -379,7 +379,7 @@ export default function DatabaseManager() {
     { id: "project-beta", name: "Supply Chain Analysis" },
     { id: "project-gamma", name: "Social Network Study" }
   ]);
-  const [selectedProjectId, setSelectedProjectId] = useState("project-alpha");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
