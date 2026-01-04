@@ -427,7 +427,7 @@ export default function DatabaseManager() {
                       {category.subcategories ? (
                         category.subcategories.map((sub, sIdx) => (
                           <div key={sIdx} className="space-y-0.5">
-                            <div className="w-full flex items-center gap-2 px-3 py-1 rounded-md group hover:bg-secondary/30">
+                            <div className={`w-full flex items-center gap-2 px-3 py-1 rounded-md group ${activeTabId === sub.name ? "bg-primary/10" : "hover:bg-secondary/30"}`}>
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -436,15 +436,25 @@ export default function DatabaseManager() {
                                 className="p-0.5 hover:bg-primary/20 rounded transition-colors"
                               >
                                 {expandedSubcategories.includes(sub.name) ? (
-                                  <ChevronDown className="w-2.5 h-2.5 text-primary" />
+                                  <ChevronDown className={`w-2.5 h-2.5 ${activeTabId === sub.name ? "text-primary" : "text-muted-foreground"}`} />
                                 ) : (
-                                  <ChevronRight className="w-2.5 h-2.5 text-muted-foreground" />
+                                  <ChevronRight className={`w-2.5 h-2.5 ${activeTabId === sub.name ? "text-primary" : "text-muted-foreground"}`} />
                                 )}
                               </button>
                               
-                              <span className="flex-1 text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-tight">
+                              <button 
+                                onClick={() => {
+                                  if (!tabs.find(t => t.id === sub.name)) {
+                                    setTabs([...tabs, { id: sub.name, type: 'table', title: sub.name }]);
+                                  }
+                                  setActiveTabId(sub.name);
+                                }}
+                                className={`flex-1 text-left text-[11px] font-semibold uppercase tracking-tight ${
+                                  activeTabId === sub.name ? "text-primary" : "text-muted-foreground/70 group-hover:text-foreground"
+                                }`}
+                              >
                                 {sub.name}
-                              </span>
+                              </button>
                             </div>
                             {expandedSubcategories.includes(sub.name) && (
                               <div className="pl-3 space-y-0.5">
@@ -676,7 +686,7 @@ export default function DatabaseManager() {
                   <div className="flex-1 overflow-auto p-6">
                     <div className="max-w-6xl mx-auto space-y-8">
                       {/* Original Tables Section */}
-                      <section>
+                      <section id="Original">
                         <div className="flex items-center gap-2 mb-4">
                           <ChevronDown className="w-4 h-4 text-muted-foreground" />
                           <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Original</h3>
@@ -684,9 +694,9 @@ export default function DatabaseManager() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Original")?.items.map((table) => (
-                            <Card key={table.id} className="group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(table)}>
+                            <Card key={table.id} className={`group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-primary ring-1 ring-primary/20 shadow-sm" : ""}`} onClick={() => openTab(table)}>
                               <CardContent className="p-4 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-primary text-white" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"}`}>
                                   <TableIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -704,7 +714,7 @@ export default function DatabaseManager() {
                       </section>
 
                       {/* Custom Tables Section */}
-                      <section>
+                      <section id="Custom">
                         <div className="flex items-center gap-2 mb-4">
                           <ChevronDown className="w-4 h-4 text-muted-foreground" />
                           <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Custom</h3>
@@ -712,9 +722,9 @@ export default function DatabaseManager() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Custom")?.items.map((table) => (
-                            <Card key={table.id} className="group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(table)}>
+                            <Card key={table.id} className={`group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-sm" : ""}`} onClick={() => openTab(table)}>
                               <CardContent className="p-4 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-indigo-600 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"}`}>
                                   <TableIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
