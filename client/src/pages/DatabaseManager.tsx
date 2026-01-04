@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -379,7 +379,7 @@ export default function DatabaseManager() {
     { id: "project-beta", name: "Supply Chain Analysis" },
     { id: "project-gamma", name: "Social Network Study" }
   ]);
-  const [selectedProjectId, setSelectedProjectId] = useState("project-alpha");
+  const [selectedProjectId, setSelectedProjectId] = useState("");
   const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
@@ -552,7 +552,16 @@ export default function DatabaseManager() {
           </div>
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-2">
-              {sidebarItems.map((category, idx) => (
+              {!selectedProjectId ? (
+                <div className="p-4 flex flex-col items-center justify-center text-center h-40 text-muted-foreground/50">
+                  <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center mb-3">
+                    <Database className="w-5 h-5 opacity-50" />
+                  </div>
+                  <p className="text-xs font-medium">No Project Selected</p>
+                  <p className="text-[10px] mt-1 opacity-70">Select a project to view contents</p>
+                </div>
+              ) : (
+                sidebarItems.map((category, idx) => (
                 <div key={idx} className={`space-y-1 ${category.isTool ? "mt-8 pt-6 border-t border-border/50" : ""}`}>
                   {category.isTool && (
                     <div className="px-4 mb-2">
@@ -693,6 +702,7 @@ export default function DatabaseManager() {
                   )}
                 </div>
               ))}
+            )}
             </div>
           </ScrollArea>
           <div className="p-4 border-t border-border bg-secondary/10">
@@ -711,9 +721,20 @@ export default function DatabaseManager() {
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 bg-background">
-          
-          {/* Tab Bar & Toolbar */}
-          <div className="flex flex-col bg-background">
+          {!selectedProjectId ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
+              <div className="w-24 h-24 rounded-full bg-secondary/30 flex items-center justify-center mb-6">
+                <LayoutDashboard className="w-12 h-12 opacity-20" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Select a Project</h3>
+              <p className="text-sm text-center max-w-sm leading-relaxed text-muted-foreground/70">
+                Choose a project from the sidebar to view and manage your data tables, queries, and graph visualizations.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Tab Bar & Toolbar */}
+              <div className="flex flex-col bg-background">
              {/* Action Toolbar - Styled like the screenshot - Aligned to h-16 */}
              <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0">
                 <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm mr-2" onClick={() => createNew('query')}>
@@ -1659,6 +1680,9 @@ export default function DatabaseManager() {
               </div>
             )}
           </div>
+        </div>
+            </>
+          )}
         </div>
       </div>
       <Dialog open={isSaveResultDialogOpen} onOpenChange={setIsSaveResultDialogOpen}>
