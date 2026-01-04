@@ -380,38 +380,67 @@ export default function DatabaseManager() {
             <div className="p-2 space-y-2">
               {sidebarItems.map((category, idx) => (
                 <div key={idx} className="space-y-1">
-                  <button 
-                    onClick={() => toggleCategory(category.category)}
-                    className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs font-bold transition-colors uppercase tracking-wider rounded-md ${
+                  <div 
+                    className={`w-full flex items-center gap-2 px-3 py-1.5 transition-colors rounded-md group ${
                       activeTab?.type?.toLowerCase() === category.category.toLowerCase() 
-                        ? "bg-primary/10 text-primary" 
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                        ? "bg-primary/10" 
+                        : "hover:bg-secondary/50"
                     }`}
                   >
-                    {expandedCategories.includes(category.category) ? (
-                      <ChevronDown className="w-3 h-3" />
-                    ) : (
-                      <ChevronRight className="w-3 h-3" />
-                    )}
-                    {category.category}
-                  </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleCategory(category.category);
+                      }}
+                      className="p-1 hover:bg-primary/20 rounded transition-colors"
+                    >
+                      {expandedCategories.includes(category.category) ? (
+                        <ChevronDown className="w-3 h-3 text-primary" />
+                      ) : (
+                        <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                      )}
+                    </button>
+                    
+                    <button 
+                      onClick={() => {
+                        if (category.category === "Table") createNew('table');
+                        else if (category.category === "Query") createNew('query');
+                        else if (category.category === "Graph") createNew('graph');
+                      }}
+                      className={`flex-1 text-left text-xs font-bold uppercase tracking-wider ${
+                        activeTab?.type?.toLowerCase() === category.category.toLowerCase() 
+                          ? "text-primary" 
+                          : "text-muted-foreground group-hover:text-foreground"
+                      }`}
+                    >
+                      {category.category}
+                    </button>
+                  </div>
                   
                   {expandedCategories.includes(category.category) && (
                     <div className="space-y-0.5 animate-in slide-in-from-top-2 duration-200 pl-2">
                       {category.subcategories ? (
                         category.subcategories.map((sub, sIdx) => (
                           <div key={sIdx} className="space-y-0.5">
-                            <button 
-                              onClick={() => toggleSubcategory(sub.name)}
-                              className="w-full flex items-center gap-2 px-3 py-1 text-[11px] font-semibold text-muted-foreground/70 hover:text-foreground transition-colors uppercase tracking-tight"
-                            >
-                              {expandedSubcategories.includes(sub.name) ? (
-                                <ChevronDown className="w-2.5 h-2.5" />
-                              ) : (
-                                <ChevronRight className="w-2.5 h-2.5" />
-                              )}
-                              {sub.name}
-                            </button>
+                            <div className="w-full flex items-center gap-2 px-3 py-1 rounded-md group hover:bg-secondary/30">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleSubcategory(sub.name);
+                                }}
+                                className="p-0.5 hover:bg-primary/20 rounded transition-colors"
+                              >
+                                {expandedSubcategories.includes(sub.name) ? (
+                                  <ChevronDown className="w-2.5 h-2.5 text-primary" />
+                                ) : (
+                                  <ChevronRight className="w-2.5 h-2.5 text-muted-foreground" />
+                                )}
+                              </button>
+                              
+                              <span className="flex-1 text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-tight">
+                                {sub.name}
+                              </span>
+                            </div>
                             {expandedSubcategories.includes(sub.name) && (
                               <div className="pl-3 space-y-0.5">
                                 {sub.items.map((item) => (
