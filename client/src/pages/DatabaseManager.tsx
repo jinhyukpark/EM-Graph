@@ -111,7 +111,7 @@ export default function DatabaseManager() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph", "PREPROCESSING"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
