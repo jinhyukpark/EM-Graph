@@ -383,31 +383,31 @@ export default function DatabaseManager() {
   const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedTablesForEdit, setSelectedTablesForEdit] = useState<string[]>([]);
+  const [selectedItemsForEdit, setSelectedItemsForEdit] = useState<string[]>([]);
 
-  const toggleTableSelection = (tableName: string) => {
-    setSelectedTablesForEdit(prev => 
-      prev.includes(tableName) 
-        ? prev.filter(t => t !== tableName) 
-        : [...prev, tableName]
+  const toggleItemSelection = (itemId: string) => {
+    setSelectedItemsForEdit(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(t => t !== itemId) 
+        : [...prev, itemId]
     );
   };
 
   const handleBulkDelete = () => {
     toast({
-      title: "Tables Deleted",
-      description: `${selectedTablesForEdit.length} tables have been removed.`,
+      title: "Items Deleted",
+      description: `${selectedItemsForEdit.length} items have been removed.`,
     });
-    setSelectedTablesForEdit([]);
+    setSelectedItemsForEdit([]);
     setIsEditMode(false);
   };
 
   const handleBulkCopy = () => {
     toast({
       title: "Copies Created",
-      description: `Successfully created copies for ${selectedTablesForEdit.length} tables.`,
+      description: `Successfully created copies for ${selectedItemsForEdit.length} items.`,
     });
-    setSelectedTablesForEdit([]);
+    setSelectedItemsForEdit([]);
     setIsEditMode(false);
   };
 
@@ -941,44 +941,116 @@ export default function DatabaseManager() {
                           </div>
                         )}
                         <section>
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-2">
-                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
-                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
-                            </div>
-                            <Button 
-                              size="sm" 
-                              className="bg-primary hover:bg-primary/90 text-white gap-2"
-                              onClick={() => {
-                                const id = `graph-builder-${Date.now()}`;
-                                setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
-                                setActiveTabId(id);
-                                setIsGraphBuilderOpen(true);
-                              }}
-                            >
-                              <Plus className="w-4 h-4" />
-                              Create New Graph
-                            </Button>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {SIDEBAR_ITEMS.find(c => c.category === "Graph")?.items.map((graph) => (
-                              <Card key={graph.id} className="group hover:border-emerald-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(graph)}>
-                                <CardContent className="p-4 flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                    <Network className="w-5 h-5" />
+                                <div className="flex items-center justify-between mb-6">
+                                  <div className="flex items-center gap-2">
+                                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-semibold truncate">{graph.name}</div>
-                                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>12 nodes</span>
-                                      <span className="w-1 h-1 rounded-full bg-border" />
-                                      <span>8 edges</span>
-                                    </div>
+                                  <div className="flex items-center gap-2">
+                                    {isEditMode ? (
+                                      <>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          onClick={() => {
+                                            setIsEditMode(false);
+                                            setSelectedItemsForEdit([]);
+                                          }}
+                                          className="h-8 text-xs px-3"
+                                        >
+                                          Cancel
+                                        </Button>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          disabled={selectedItemsForEdit.length === 0}
+                                          onClick={handleBulkCopy}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Copy className="w-3.5 h-3.5" />
+                                          Make Copy
+                                        </Button>
+                                        <Button 
+                                          variant="destructive" 
+                                          size="sm" 
+                                          disabled={selectedItemsForEdit.length === 0}
+                                          onClick={handleBulkDelete}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                          Delete ({selectedItemsForEdit.length})
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          onClick={() => setIsEditMode(true)}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Edit3 className="w-3.5 h-3.5" />
+                                          Edit
+                                        </Button>
+                                        <Button 
+                                          size="sm" 
+                                          className="bg-primary hover:bg-primary/90 text-white gap-2"
+                                          onClick={() => {
+                                            const id = `graph-builder-${Date.now()}`;
+                                            setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
+                                            setActiveTabId(id);
+                                            setIsGraphBuilderOpen(true);
+                                          }}
+                                        >
+                                          <Plus className="w-4 h-4" />
+                                          Create New Graph
+                                        </Button>
+                                      </>
+                                    )}
                                   </div>
-                                </CardContent>
-                              </Card>
-                            ))}
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {SIDEBAR_ITEMS.find(c => c.category === "Graph")?.items.map((graph) => (
+                                    <Card 
+                                      key={graph.id} 
+                                      className={`group relative hover:border-emerald-500/50 cursor-pointer transition-all hover:shadow-md ${
+                                        isEditMode && selectedItemsForEdit.includes(graph.id) ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                                      }`} 
+                                      onClick={() => isEditMode ? toggleItemSelection(graph.id) : openTab(graph)}
+                                    >
+                                      {isEditMode && (
+                                        <div className="absolute top-2 right-2 z-10">
+                                          <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                            selectedItemsForEdit.includes(graph.id)
+                                              ? "bg-primary border-primary text-white"
+                                              : "border-muted-foreground/30 bg-background"
+                                          }`}>
+                                            {selectedItemsForEdit.includes(graph.id) && <Check className="w-3 h-3" />}
+                                          </div>
+                                        </div>
+                                      )}
+                                      <CardContent className="p-4 flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                                          isEditMode && selectedItemsForEdit.includes(graph.id)
+                                            ? "bg-primary text-white"
+                                            : "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
+                                        }`}>
+                                          <Network className="w-5 h-5" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className={`text-sm font-semibold truncate transition-colors ${
+                                            isEditMode && selectedItemsForEdit.includes(graph.id) ? 'text-primary' : ''
+                                          }`}>{graph.name}</div>
+                                          <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                            <span>12 nodes</span>
+                                            <span className="w-1 h-1 rounded-full bg-border" />
+                                            <span>8 edges</span>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  ))}
                             <Card 
                               className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
                               onClick={() => {
@@ -1317,39 +1389,111 @@ export default function DatabaseManager() {
                           </div>
                         )}
                         <section>
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-2">
-                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
-                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
-                            </div>
-                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('query')}>
-                              <Plus className="w-4 h-4" />
-                              Create New Query
-                            </Button>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {sidebarItems.find(c => c.category === "Query")?.items.map((query) => (
-                              <Card key={query.id} className="group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(query)}>
-                                <CardContent className="p-4 flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                    <FileCode className="w-5 h-5" />
+                                <div className="flex items-center justify-between mb-6">
+                                  <div className="flex items-center gap-2">
+                                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-semibold truncate">{query.name}</div>
-                                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>1 month ago</span>
-                                      <span className="w-1 h-1 rounded-full bg-border" />
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-4 h-4 rounded-full bg-indigo-100 flex items-center justify-center">
-                                          <User className="w-2.5 h-2.5 text-indigo-600" />
+                                  <div className="flex items-center gap-2">
+                                    {isEditMode ? (
+                                      <>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          onClick={() => {
+                                            setIsEditMode(false);
+                                            setSelectedItemsForEdit([]);
+                                          }}
+                                          className="h-8 text-xs px-3"
+                                        >
+                                          Cancel
+                                        </Button>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          disabled={selectedItemsForEdit.length === 0}
+                                          onClick={handleBulkCopy}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Copy className="w-3.5 h-3.5" />
+                                          Make Copy
+                                        </Button>
+                                        <Button 
+                                          variant="destructive" 
+                                          size="sm" 
+                                          disabled={selectedItemsForEdit.length === 0}
+                                          onClick={handleBulkDelete}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                          Delete ({selectedItemsForEdit.length})
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          onClick={() => setIsEditMode(true)}
+                                          className="h-8 text-xs px-3 gap-2"
+                                        >
+                                          <Edit3 className="w-3.5 h-3.5" />
+                                          Edit
+                                        </Button>
+                                        <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('query')}>
+                                          <Plus className="w-4 h-4" />
+                                          Create New Query
+                                        </Button>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {sidebarItems.find(c => c.category === "Query")?.items.map((query) => (
+                                    <Card 
+                                      key={query.id} 
+                                      className={`group relative hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md ${
+                                        isEditMode && selectedItemsForEdit.includes(query.id) ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                                      }`} 
+                                      onClick={() => isEditMode ? toggleItemSelection(query.id) : openTab(query)}
+                                    >
+                                      {isEditMode && (
+                                        <div className="absolute top-2 right-2 z-10">
+                                          <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                            selectedItemsForEdit.includes(query.id)
+                                              ? "bg-primary border-primary text-white"
+                                              : "border-muted-foreground/30 bg-background"
+                                          }`}>
+                                            {selectedItemsForEdit.includes(query.id) && <Check className="w-3 h-3" />}
+                                          </div>
                                         </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            ))}
+                                      )}
+                                      <CardContent className="p-4 flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                                          isEditMode && selectedItemsForEdit.includes(query.id)
+                                            ? "bg-primary text-white"
+                                            : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"
+                                        }`}>
+                                          <FileCode className="w-5 h-5" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className={`text-sm font-semibold truncate transition-colors ${
+                                            isEditMode && selectedItemsForEdit.includes(query.id) ? 'text-primary' : ''
+                                          }`}>{query.name}</div>
+                                          <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                            <span>1 month ago</span>
+                                            <span className="w-1 h-1 rounded-full bg-border" />
+                                            <div className="flex items-center gap-1">
+                                              <div className="w-4 h-4 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                <User className="w-2.5 h-2.5 text-indigo-600" />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  ))}
                             <Card 
                               className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
                               onClick={() => createNew('query')}
