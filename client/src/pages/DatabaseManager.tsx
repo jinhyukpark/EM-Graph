@@ -773,9 +773,7 @@ export default function DatabaseManager() {
                       <div className="space-y-8">
                         {isPreprocessDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
-                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <Info className="w-4 h-4" />
-                            </div>
+                            <Info className="w-4 h-4 mt-0.5 text-indigo-600 shrink-0" />
                             <div className="flex-1">
                               <button 
                                 onClick={() => setIsPreprocessDescVisible(false)}
@@ -879,9 +877,7 @@ export default function DatabaseManager() {
                       <div className="space-y-8">
                         {isGraphDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-emerald-50/50 border border-emerald-100/50 transition-all hover:bg-emerald-50 flex items-start gap-3">
-                            <div className="mt-0.5 p-1.5 rounded-md bg-emerald-100/50 text-emerald-600 shrink-0">
-                              <Info className="w-4 h-4" />
-                            </div>
+                            <Info className="w-4 h-4 mt-0.5 text-emerald-600 shrink-0" />
                             <div className="flex-1">
                               <button 
                                 onClick={() => setIsGraphDescVisible(false)}
@@ -1058,9 +1054,7 @@ export default function DatabaseManager() {
                       <div className="space-y-8">
                         {isDescriptionVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
-                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <Info className="w-4 h-4" />
-                            </div>
+                            <Info className="w-4 h-4 mt-0.5 text-indigo-600 shrink-0" />
                             <div className="flex-1">
                               <button 
                                 onClick={() => setIsDescriptionVisible(false)}
@@ -1160,9 +1154,7 @@ export default function DatabaseManager() {
                       <div className="space-y-8">
                         {isQueryDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
-                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <Info className="w-4 h-4" />
-                            </div>
+                            <Info className="w-4 h-4 mt-0.5 text-indigo-600 shrink-0" />
                             <div className="flex-1">
                               <button 
                                 onClick={() => setIsQueryDescVisible(false)}
