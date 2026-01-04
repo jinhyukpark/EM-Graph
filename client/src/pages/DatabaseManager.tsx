@@ -701,7 +701,7 @@ export default function DatabaseManager() {
                     </div>
                   )}
                 </div>
-              ))}
+              ))
             )}
             </div>
           </ScrollArea>
@@ -1680,7 +1680,6 @@ export default function DatabaseManager() {
               </div>
             )}
           </div>
-        </div>
             </>
           )}
         </div>
