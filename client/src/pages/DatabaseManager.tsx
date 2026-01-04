@@ -774,7 +774,7 @@ export default function DatabaseManager() {
                         {isPreprocessDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
                             <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <Workflow className="w-4 h-4" />
+                              <Info className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
                               <button 
@@ -880,7 +880,7 @@ export default function DatabaseManager() {
                         {isGraphDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-emerald-50/50 border border-emerald-100/50 transition-all hover:bg-emerald-50 flex items-start gap-3">
                             <div className="mt-0.5 p-1.5 rounded-md bg-emerald-100/50 text-emerald-600 shrink-0">
-                              <Network className="w-4 h-4" />
+                              <Info className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
                               <button 
@@ -1059,7 +1059,7 @@ export default function DatabaseManager() {
                         {isDescriptionVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
                             <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <TableIcon className="w-4 h-4" />
+                              <Info className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
                               <button 
@@ -1167,7 +1167,7 @@ export default function DatabaseManager() {
                         {isQueryDescVisible && (
                           <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
                             <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
-                              <FileCode className="w-4 h-4" />
+                              <Info className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
                               <button 
@@ -1240,11 +1240,6 @@ export default function DatabaseManager() {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                            <Plus className="w-3 h-3" />
-                            Insert Row
-                          </Button>
-                          <div className="h-4 w-px bg-border mx-1" />
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => setIsSaveDialogOpen(true)}>
                             <Save className="w-3 h-3" />
                             Save
