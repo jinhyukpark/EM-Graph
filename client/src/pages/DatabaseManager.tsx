@@ -136,8 +136,10 @@ export default function DatabaseManager() {
   };
 
   const openTab = (item: any) => {
+    // If it's a generic table type (from the main TABLE view), we might not have a specific data table to show yet,
+    // but typically this item will be a specific table object.
     if (!tabs.find(t => t.id === item.id)) {
-      setTabs([...tabs, { id: item.id, type: item.type, title: item.name }]);
+      setTabs([...tabs, { id: item.id, type: item.type === 'table' ? 'pipeline-result' : item.type, title: item.name, data: item.type === 'table' ? MOCK_TABLE_DATA : undefined }]);
     }
     setActiveTabId(item.id);
   };
@@ -652,109 +654,64 @@ export default function DatabaseManager() {
                   </div>
                 )
               ) : activeTab.type === 'table' ? (
-                <div className="flex flex-col h-full">
-                   {/* Table Toolbar */}
-                   <div className="h-12 border-b border-border bg-background/50 flex items-center justify-between px-4">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="font-mono text-[10px] bg-secondary/50">Read-Write</Badge>
-                      <span className="text-xs text-muted-foreground">1,420 rows</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
-                        <Search className="w-3 h-3 absolute left-2.5 top-2 text-muted-foreground" />
-                        <Input placeholder="Filter data..." className="h-7 pl-8 w-48 text-xs" />
-                      </div>
-                      <div className="h-4 w-px bg-border mx-1" />
-                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
-                        <Plus className="w-3 h-3" />
-                        Insert Row
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Full Height Table Grid */}
-                  <div className="flex-1 overflow-hidden bg-background">
-                    <div className="h-full overflow-auto">
-                      <Table>
-                        <TableHeader className="bg-secondary/20 sticky top-0 z-10">
-                          <TableRow>
-                            <TableHead className="w-[60px]">idx</TableHead>
-                            <TableHead>company_name</TableHead>
-                            <TableHead>age</TableHead>
-                            <TableHead>member</TableHead>
-                            <TableHead>regdate</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {tableData.map((row) => (
-                            <TableRow key={row.idx} className="hover:bg-secondary/30">
-                              <TableCell className="font-mono text-xs text-muted-foreground">{row.idx}</TableCell>
-                              
-                              {/* Editable Cell: Company Name */}
-                              <TableCell 
-                                onDoubleClick={() => handleCellDoubleClick(row.idx, 'company_name', row.company_name)}
-                                className="cursor-pointer hover:bg-secondary/50 transition-colors p-0 h-10 relative"
-                              >
-                                {editingCell?.rowIdx === row.idx && editingCell.field === 'company_name' ? (
-                                  <Input 
-                                    autoFocus
-                                    value={editingCell.value}
-                                    onChange={handleCellChange}
-                                    onBlur={handleCellBlur}
-                                    onKeyDown={handleKeyDown}
-                                    className="h-full w-full rounded-none border-primary px-4 bg-background absolute inset-0"
-                                  />
-                                ) : (
-                                  <div className="px-4 py-2 h-full flex items-center font-medium">{row.company_name}</div>
-                                )}
-                              </TableCell>
-
-                              {/* Editable Cell: Age */}
-                              <TableCell 
-                                onDoubleClick={() => handleCellDoubleClick(row.idx, 'age', row.age)}
-                                className="cursor-pointer hover:bg-secondary/50 transition-colors p-0 h-10 relative"
-                              >
-                                {editingCell?.rowIdx === row.idx && editingCell.field === 'age' ? (
-                                  <Input 
-                                    autoFocus
-                                    type="number"
-                                    value={editingCell.value}
-                                    onChange={handleCellChange}
-                                    onBlur={handleCellBlur}
-                                    onKeyDown={handleKeyDown}
-                                    className="h-full w-full rounded-none border-primary px-4 bg-background absolute inset-0"
-                                  />
-                                ) : (
-                                  <div className="px-4 py-2 h-full flex items-center">{row.age}</div>
-                                )}
-                              </TableCell>
-
-                              {/* Editable Cell: Member */}
-                              <TableCell 
-                                onDoubleClick={() => handleCellDoubleClick(row.idx, 'member', row.member)}
-                                className="cursor-pointer hover:bg-secondary/50 transition-colors p-0 h-10 relative"
-                              >
-                                {editingCell?.rowIdx === row.idx && editingCell.field === 'member' ? (
-                                  <Input 
-                                    autoFocus
-                                    type="number"
-                                    value={editingCell.value}
-                                    onChange={handleCellChange}
-                                    onBlur={handleCellBlur}
-                                    onKeyDown={handleKeyDown}
-                                    className="h-full w-full rounded-none border-primary px-4 bg-background absolute inset-0"
-                                  />
-                                ) : (
-                                  <div className="px-4 py-2 h-full flex items-center">{row.member}</div>
-                                )}
-                              </TableCell>
-
-                              <TableCell className="text-muted-foreground text-xs font-mono">{row.regdate}</TableCell>
-                            </TableRow>
+                <div className="flex flex-col h-full bg-background">
+                  <div className="flex-1 overflow-auto p-6">
+                    <div className="max-w-6xl mx-auto space-y-8">
+                      {/* Original Tables Section */}
+                      <section>
+                        <div className="flex items-center gap-2 mb-4">
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Original</h3>
+                          <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-secondary/30">Source</Badge>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Original")?.items.map((table) => (
+                            <Card key={table.id} className="group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(table)}>
+                              <CardContent className="p-4 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                  <TableIcon className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-semibold truncate">{table.name}</div>
+                                  <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                    <span>1,420 rows</span>
+                                    <span className="w-1 h-1 rounded-full bg-border" />
+                                    <span>Read-Write</span>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
                           ))}
-                        </TableBody>
-                      </Table>
+                        </div>
+                      </section>
+
+                      {/* Custom Tables Section */}
+                      <section>
+                        <div className="flex items-center gap-2 mb-4">
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Custom</h3>
+                          <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processed</Badge>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Custom")?.items.map((table) => (
+                            <Card key={table.id} className="group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md" onClick={() => openTab(table)}>
+                              <CardContent className="p-4 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                  <TableIcon className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-semibold truncate">{table.name}</div>
+                                  <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                    <span>582 rows</span>
+                                    <span className="w-1 h-1 rounded-full bg-border" />
+                                    <span>Derived</span>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </section>
                     </div>
                   </div>
                 </div>
