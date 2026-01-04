@@ -927,10 +927,22 @@ export default function DatabaseManager() {
                         {/* Saved Tables Section */}
                         {(activeTabId === 'Table' || activeTabId === 'Original' || activeTabId === 'Custom') && (
                           <section id="SavedTables">
-                            <div className="flex items-center gap-2 mb-6">
-                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
-                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
+                                <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                              </div>
+                              <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2">
+                                <Plus className="w-4 h-4" />
+                                Create New Table
+                              </Button>
+                            </div>
+
+                            <div className="mb-6 p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50">
+                              <p className="text-sm text-indigo-900/70 leading-relaxed">
+                                Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
+                              </p>
                             </div>
                             
                             <div className="pl-6 space-y-8">
