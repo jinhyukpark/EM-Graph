@@ -804,11 +804,28 @@ export default function DatabaseManager() {
                                 setTabs(newTabs);
                               }}
                             />
-                            <input 
-                              type="text" 
+                            <textarea 
                               defaultValue="Define relationships between your data tables to generate complex graph structures."
-                              className="bg-transparent border-none focus:ring-0 text-sm text-muted-foreground p-0 w-full mt-1"
+                              className="bg-transparent border-none focus:ring-0 text-sm text-muted-foreground p-0 w-full mt-1 resize-none overflow-hidden"
+                              rows={1}
                               placeholder="Enter description..."
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  // Allow standard Enter behavior (new line) 
+                                  // but ensure textarea expands
+                                }
+                              }}
+                              onInput={(e) => {
+                                const target = e.target as HTMLTextAreaElement;
+                                target.style.height = 'auto';
+                                target.style.height = target.scrollHeight + 'px';
+                              }}
+                              ref={(el) => {
+                                if (el) {
+                                  el.style.height = 'auto';
+                                  el.style.height = el.scrollHeight + 'px';
+                                }
+                              }}
                             />
                           </div>
 
