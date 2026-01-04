@@ -384,7 +384,7 @@ export default function DatabaseManager() {
                 <div key={idx} className="space-y-1">
                   <div 
                     className={`w-full flex items-center gap-2 px-3 py-1.5 transition-colors rounded-md group ${
-                      activeTab?.type?.toLowerCase() === category.category.toLowerCase() 
+                      activeTabId === category.category
                         ? "bg-primary/10" 
                         : "hover:bg-secondary/50"
                     }`}
@@ -397,20 +397,23 @@ export default function DatabaseManager() {
                       className="p-1 hover:bg-primary/20 rounded transition-colors"
                     >
                       {expandedCategories.includes(category.category) ? (
-                        <ChevronDown className="w-3 h-3 text-primary" />
+                        <ChevronDown className={`w-3 h-3 ${activeTabId === category.category ? 'text-primary' : 'text-muted-foreground'}`} />
                       ) : (
-                        <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                        <ChevronRight className={`w-3 h-3 ${activeTabId === category.category ? 'text-primary' : 'text-muted-foreground'}`} />
                       )}
                     </button>
                     
                     <button 
                       onClick={() => {
-                        if (category.category === "Table") createNew('table');
-                        else if (category.category === "Query") createNew('query');
-                        else if (category.category === "Graph") createNew('graph');
+                        const id = category.category;
+                        if (!tabs.find(t => t.id === id)) {
+                          const type = category.category.toLowerCase() as any;
+                          setTabs([...tabs, { id, type, title: category.category }]);
+                        }
+                        setActiveTabId(id);
                       }}
                       className={`flex-1 text-left text-xs font-bold uppercase tracking-wider ${
-                        activeTab?.type?.toLowerCase() === category.category.toLowerCase() 
+                        activeTabId === category.category
                           ? "text-primary" 
                           : "text-muted-foreground group-hover:text-foreground"
                       }`}
@@ -516,30 +519,45 @@ export default function DatabaseManager() {
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button 
-                  variant={activeTab?.type === 'table' ? 'secondary' : 'ghost'} 
+                  variant={activeTabId === 'Table' ? 'secondary' : 'ghost'} 
                   size="sm" 
-                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'table' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
-                  onClick={() => createNew('table')}
+                  className={`h-9 px-3 gap-2 ${activeTabId === 'Table' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => {
+                    if (!tabs.find(t => t.id === 'Table')) {
+                      setTabs([...tabs, { id: 'Table', type: 'table', title: 'Table' }]);
+                    }
+                    setActiveTabId('Table');
+                  }}
                 >
                   <TableIcon className="w-4 h-4" />
                   <span className="font-medium">Table</span>
                 </Button>
                 
                 <Button 
-                  variant={activeTab?.type === 'query' ? 'secondary' : 'ghost'} 
+                  variant={activeTabId === 'Query' ? 'secondary' : 'ghost'} 
                   size="sm" 
-                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'query' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
-                  onClick={() => createNew('query')}
+                  className={`h-9 px-3 gap-2 ${activeTabId === 'Query' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => {
+                    if (!tabs.find(t => t.id === 'Query')) {
+                      setTabs([...tabs, { id: 'Query', type: 'query', title: 'Query' }]);
+                    }
+                    setActiveTabId('Query');
+                  }}
                 >
                   <FileCode className="w-4 h-4" />
                   <span className="font-medium">Query</span>
                 </Button>
 
                 <Button 
-                  variant={activeTab?.type === 'graph' ? 'secondary' : 'ghost'} 
+                  variant={activeTabId === 'Graph' ? 'secondary' : 'ghost'} 
                   size="sm" 
-                  className={`h-9 px-3 gap-2 ${activeTab?.type === 'graph' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
-                  onClick={() => createNew('graph')}
+                  className={`h-9 px-3 gap-2 ${activeTabId === 'Graph' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'}`} 
+                  onClick={() => {
+                    if (!tabs.find(t => t.id === 'Graph')) {
+                      setTabs([...tabs, { id: 'Graph', type: 'graph', title: 'Graph' }]);
+                    }
+                    setActiveTabId('Graph');
+                  }}
                 >
                   <Network className="w-4 h-4" />
                   <span className="font-medium">Graph</span>
