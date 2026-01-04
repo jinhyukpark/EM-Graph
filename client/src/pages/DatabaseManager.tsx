@@ -130,6 +130,21 @@ export default function DatabaseManager() {
     { idx: 6, company_name: "kakao", age: 15, member: 4200, regdate: "2025-09-29 15:45:33" },
   ];
 
+  const [isAddFieldOpen, setIsAddFieldOpen] = useState(false);
+  const [newFieldName, setNewFieldName] = useState("");
+  const [newFieldValues, setNewFieldValues] = useState<Record<number, string>>({});
+
+  const handleAddField = () => {
+    // In a real app, this would update the table schema and data
+    setIsAddFieldOpen(false);
+    setNewFieldName("");
+    setNewFieldValues({});
+    toast({
+      title: "Field Added",
+      description: `New field "${newFieldName}" has been added to the table.`,
+    });
+  };
+
   const TableDetailView = ({ tableName }: { tableName: string }) => (
     <div className="flex flex-col h-full bg-background animate-in fade-in slide-in-from-right-4 duration-300">
       <div className="flex items-center justify-between p-4 border-b">
@@ -147,10 +162,63 @@ export default function DatabaseManager() {
             <span className="text-sm text-muted-foreground">{mockTableData.length} rows generated</span>
           </div>
         </div>
-        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
-          <Save className="h-4 w-4" />
-          Save to Table
-        </Button>
+        <div className="flex items-center gap-2">
+          <Dialog open={isAddFieldOpen} onOpenChange={setIsAddFieldOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
+                <Plus className="h-4 w-4" />
+                Add New Field
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Add New Field</DialogTitle>
+                <DialogDescription>
+                  Define a new column and provide values for the existing rows.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="fieldName">Field Name</Label>
+                  <Input 
+                    id="fieldName" 
+                    placeholder="e.g., STATUS, CATEGORY" 
+                    value={newFieldName}
+                    onChange={(e) => setNewFieldName(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Row Values</Label>
+                  <ScrollArea className="h-[200px] border rounded-md p-2">
+                    <div className="space-y-3 p-1">
+                      {mockTableData.map((row) => (
+                        <div key={row.idx} className="flex items-center gap-3">
+                          <span className="text-xs font-mono text-muted-foreground w-8">#{row.idx}</span>
+                          <span className="text-xs font-medium truncate w-24 text-muted-foreground">{row.company_name}</span>
+                          <Input 
+                            size={1}
+                            placeholder="Value..." 
+                            className="h-8 text-xs"
+                            value={newFieldValues[row.idx] || ""}
+                            onChange={(e) => setNewFieldValues(prev => ({ ...prev, [row.idx]: e.target.value }))}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsAddFieldOpen(false)}>Cancel</Button>
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddField}>Add Field</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
+            <Save className="h-4 w-4" />
+            Save to Table
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-auto">
         <table className="w-full border-collapse">
