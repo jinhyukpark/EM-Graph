@@ -930,6 +930,7 @@ export default function DatabaseManager() {
                             <div className="flex items-center gap-2 mb-6">
                               <ChevronDown className="w-4 h-4 text-muted-foreground" />
                               <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
                             </div>
                             
                             <div className="pl-6 space-y-8">
