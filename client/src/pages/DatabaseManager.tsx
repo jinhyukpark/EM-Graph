@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -382,7 +382,34 @@ export default function DatabaseManager() {
   const [selectedProjectId, setSelectedProjectId] = useState("project-alpha");
   const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
-  const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedTablesForEdit, setSelectedTablesForEdit] = useState<string[]>([]);
+
+  const toggleTableSelection = (tableName: string) => {
+    setSelectedTablesForEdit(prev => 
+      prev.includes(tableName) 
+        ? prev.filter(t => t !== tableName) 
+        : [...prev, tableName]
+    );
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "Tables Deleted",
+      description: `${selectedTablesForEdit.length} tables have been removed.`,
+    });
+    setSelectedTablesForEdit([]);
+    setIsEditMode(false);
+  };
+
+  const handleBulkCopy = () => {
+    toast({
+      title: "Copies Created",
+      description: `Successfully created copies for ${selectedTablesForEdit.length} tables.`,
+    });
+    setSelectedTablesForEdit([]);
+    setIsEditMode(false);
+  };
 
   const handleProjectChange = (value: string) => {
     if (value === "create_new") {
@@ -1100,10 +1127,63 @@ export default function DatabaseManager() {
                                 <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
                                 <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
                               </div>
-                              <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2">
-                                <Plus className="w-4 h-4" />
-                                Create New Table
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                {isEditMode ? (
+                                  <>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      onClick={() => {
+                                        setIsEditMode(false);
+                                        setSelectedTablesForEdit([]);
+                                      }}
+                                      className="h-8 text-xs px-3"
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      disabled={selectedTablesForEdit.length === 0}
+                                      onClick={handleBulkCopy}
+                                      className="h-8 text-xs px-3 gap-2"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                      Make Copy
+                                    </Button>
+                                    <Button 
+                                      variant="destructive" 
+                                      size="sm" 
+                                      disabled={selectedTablesForEdit.length === 0}
+                                      onClick={handleBulkDelete}
+                                      className="h-8 text-xs px-3 gap-2"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      Delete ({selectedTablesForEdit.length})
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      onClick={() => setIsEditMode(true)}
+                                      className="h-8 text-xs px-3 gap-2"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                      Edit
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      className="bg-primary hover:bg-primary/90 text-white gap-2"
+                                      onClick={() => setIsCreateTableOpen(true)}
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                      Create New Table
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
                             </div>
                             
                                 <div className="space-y-6">
@@ -1116,13 +1196,36 @@ export default function DatabaseManager() {
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                                         {sidebarItems.find(c => c.category === 'Table')?.subcategories?.find(s => s.name === 'Original')?.items.map((table) => (
-                                          <Card key={table.id} className="group hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50" onClick={() => openTab(table)}>
+                                          <Card 
+                                            key={table.id} 
+                                            className={`group relative hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50 ${
+                                              isEditMode && selectedTablesForEdit.includes(table.name) ? 'border-primary bg-primary/5 ring-1 ring-primary' : ''
+                                            }`} 
+                                            onClick={() => isEditMode ? toggleTableSelection(table.name) : openTab(table)}
+                                          >
+                                            {isEditMode && (
+                                              <div className="absolute top-2 right-2 z-10">
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                                  selectedTablesForEdit.includes(table.name)
+                                                    ? "bg-primary border-primary text-white"
+                                                    : "border-muted-foreground/30 bg-background"
+                                                }`}>
+                                                  {selectedTablesForEdit.includes(table.name) && <Check className="w-3 h-3" />}
+                                                </div>
+                                              </div>
+                                            )}
                                             <CardContent className="p-4 flex items-center gap-4">
-                                              <div className="p-2 rounded-lg bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm border border-primary/10">
+                                              <div className={`p-2 rounded-lg transition-colors shadow-sm border ${
+                                                isEditMode && selectedTablesForEdit.includes(table.name)
+                                                  ? "bg-primary text-white border-primary"
+                                                  : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white border-primary/10"
+                                              }`}>
                                                 <TableIcon className="w-5 h-5" />
                                               </div>
                                               <div className="flex-1 min-w-0">
-                                                <h4 className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{table.name}</h4>
+                                                <h4 className={`text-sm font-semibold truncate transition-colors ${
+                                                  isEditMode && selectedTablesForEdit.includes(table.name) ? 'text-primary' : 'text-foreground group-hover:text-primary'
+                                                }`}>{table.name}</h4>
                                                 <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5 font-medium">
                                                   1,420 rows <span className="w-1 h-1 rounded-full bg-muted-foreground/30" /> Read-Write
                                                 </p>
@@ -1143,13 +1246,36 @@ export default function DatabaseManager() {
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                                         {sidebarItems.find(c => c.category === 'Table')?.subcategories?.find(s => s.name === 'Custom')?.items.map((table) => (
-                                          <Card key={table.id} className="group hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50" onClick={() => openTab(table)}>
+                                          <Card 
+                                            key={table.id} 
+                                            className={`group relative hover:border-primary/50 hover:shadow-md transition-all cursor-pointer border-border/50 ${
+                                              isEditMode && selectedTablesForEdit.includes(table.name) ? 'border-indigo-600 bg-indigo-50/50 ring-1 ring-indigo-600' : ''
+                                            }`} 
+                                            onClick={() => isEditMode ? toggleTableSelection(table.name) : openTab(table)}
+                                          >
+                                            {isEditMode && (
+                                              <div className="absolute top-2 right-2 z-10">
+                                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                                  selectedTablesForEdit.includes(table.name)
+                                                    ? "bg-indigo-600 border-indigo-600 text-white"
+                                                    : "border-muted-foreground/30 bg-background"
+                                                }`}>
+                                                  {selectedTablesForEdit.includes(table.name) && <Check className="w-3 h-3" />}
+                                                </div>
+                                              </div>
+                                            )}
                                             <CardContent className="p-4 flex items-center gap-4">
-                                              <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-sm border border-indigo-100">
+                                              <div className={`p-2 rounded-lg transition-colors shadow-sm border ${
+                                                isEditMode && selectedTablesForEdit.includes(table.name)
+                                                  ? "bg-indigo-600 text-white border-indigo-600"
+                                                  : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white border-indigo-100"
+                                              }`}>
                                                 <TableIcon className="w-5 h-5" />
                                               </div>
                                               <div className="flex-1 min-w-0">
-                                                <h4 className="text-sm font-semibold truncate text-foreground group-hover:text-indigo-600 transition-colors">{table.name}</h4>
+                                                <h4 className={`text-sm font-semibold truncate transition-colors ${
+                                                  isEditMode && selectedTablesForEdit.includes(table.name) ? 'text-indigo-600' : 'text-foreground group-hover:text-indigo-600'
+                                                }`}>{table.name}</h4>
                                                 <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 mt-0.5 font-medium">
                                                   582 rows <span className="w-1 h-1 rounded-full bg-muted-foreground/30" /> Derived
                                                 </p>
