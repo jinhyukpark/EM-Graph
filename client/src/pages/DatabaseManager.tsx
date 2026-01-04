@@ -114,6 +114,65 @@ export default function DatabaseManager() {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+
+  const mockTableData = [
+    { idx: 1, company_name: "illunex", age: 8, member: 40, regdate: "2025-09-27 16:16:12" },
+    { idx: 2, company_name: "samsung", age: 50, member: 40000, regdate: "2025-09-27 16:16:52" },
+    { idx: 3, company_name: "lg_electronics", age: 45, member: 35000, regdate: "2025-09-28 09:30:00" },
+    { idx: 4, company_name: "sk_hynix", age: 38, member: 28000, regdate: "2025-09-28 10:15:22" },
+    { idx: 5, company_name: "naver", age: 22, member: 5000, regdate: "2025-09-29 14:20:11" },
+    { idx: 6, company_name: "kakao", age: 15, member: 4200, regdate: "2025-09-29 15:45:33" },
+  ];
+
+  const TableDetailView = ({ tableName }: { tableName: string }) => (
+    <div className="flex flex-col h-full bg-background animate-in fade-in slide-in-from-right-4 duration-300">
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setSelectedTable(null)}
+            className="hover:bg-accent"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
+            <span className="text-sm text-muted-foreground">{mockTableData.length} rows generated</span>
+          </div>
+        </div>
+        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
+          <Save className="h-4 w-4" />
+          Save to Table
+        </Button>
+      </div>
+      <div className="flex-1 overflow-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b bg-muted/20">
+              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 w-16">IDX</th>
+              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">COMPANY_NAME</th>
+              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">AGE</th>
+              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">MEMBER</th>
+              <th className="text-left p-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">REGDATE</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mockTableData.map((row) => (
+              <tr key={row.idx} className="border-b hover:bg-muted/10 transition-colors group">
+                <td className="p-4 text-sm font-mono text-muted-foreground/50">{row.idx}</td>
+                <td className="p-4 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{row.company_name}</td>
+                <td className="p-4 text-sm text-foreground/80">{row.age}</td>
+                <td className="p-4 text-sm text-foreground/80">{row.member.toLocaleString()}</td>
+                <td className="p-4 text-sm text-muted-foreground tabular-nums">{row.regdate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   const activeTab = tabs.find(t => t.id === activeTabId);
 
@@ -860,69 +919,73 @@ export default function DatabaseManager() {
                 </div>
               ) : activeTab.type === 'table' ? (
                 <div className="flex flex-col h-full bg-background">
-                  <div className="flex-1 overflow-auto p-6">
-                    <div className="max-w-6xl mx-auto space-y-8">
-                      {/* Original Tables Section */}
-                      {(activeTabId === 'Table' || activeTabId === 'Original') && (
-                        <section id="Original">
-                          <div className="flex items-center gap-2 mb-4">
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Original</h3>
-                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-secondary/30">Source</Badge>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Original")?.items.map((table) => (
-                              <Card key={table.id} className={`group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-primary ring-1 ring-primary/20 shadow-sm" : ""}`} onClick={() => openTab(table)}>
-                                <CardContent className="p-4 flex items-center gap-3">
-                                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-primary text-white" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"}`}>
-                                    <TableIcon className="w-5 h-5" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-semibold truncate">{table.name}</div>
-                                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>1,420 rows</span>
-                                      <span className="w-1 h-1 rounded-full bg-border" />
-                                      <span>Read-Write</span>
+                  {selectedTable ? (
+                    <TableDetailView tableName={selectedTable} />
+                  ) : (
+                    <div className="flex-1 overflow-auto p-6">
+                      <div className="max-w-6xl mx-auto space-y-8">
+                        {/* Original Tables Section */}
+                        {(activeTabId === 'Table' || activeTabId === 'Original') && (
+                          <section id="Original">
+                            <div className="flex items-center gap-2 mb-4">
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Original</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-secondary/30">Source</Badge>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Original")?.items.map((table) => (
+                                <Card key={table.id} className={`group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-primary ring-1 ring-primary/20 shadow-sm" : ""}`} onClick={() => setSelectedTable(table.name)}>
+                                  <CardContent className="p-4 flex items-center gap-3">
+                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-primary text-white" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"}`}>
+                                      <TableIcon className="w-5 h-5" />
                                     </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            ))}
-                          </div>
-                        </section>
-                      )}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-sm font-semibold truncate">{table.name}</div>
+                                      <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                        <span>1,420 rows</span>
+                                        <span className="w-1 h-1 rounded-full bg-border" />
+                                        <span>Read-Write</span>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          </section>
+                        )}
 
-                      {/* Custom Tables Section */}
-                      {(activeTabId === 'Table' || activeTabId === 'Custom') && (
-                        <section id="Custom">
-                          <div className="flex items-center gap-2 mb-4">
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Custom</h3>
-                            <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processed</Badge>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Custom")?.items.map((table) => (
-                              <Card key={table.id} className={`group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-sm" : ""}`} onClick={() => openTab(table)}>
-                                <CardContent className="p-4 flex items-center gap-3">
-                                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-indigo-600 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"}`}>
-                                    <TableIcon className="w-5 h-5" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-semibold truncate">{table.name}</div>
-                                    <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>582 rows</span>
-                                      <span className="w-1 h-1 rounded-full bg-border" />
-                                      <span>Derived</span>
+                        {/* Custom Tables Section */}
+                        {(activeTabId === 'Table' || activeTabId === 'Custom') && (
+                          <section id="Custom">
+                            <div className="flex items-center gap-2 mb-4">
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Custom</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processed</Badge>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {sidebarItems.find(c => c.category === "Table")?.subcategories?.find(s => s.name === "Custom")?.items.map((table) => (
+                                <Card key={table.id} className={`group hover:border-indigo-500/50 cursor-pointer transition-all hover:shadow-md ${activeTabId === table.id ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-sm" : ""}`} onClick={() => setSelectedTable(table.name)}>
+                                  <CardContent className="p-4 flex items-center gap-3">
+                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${activeTabId === table.id ? "bg-indigo-600 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"}`}>
+                                      <TableIcon className="w-5 h-5" />
                                     </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            ))}
-                          </div>
-                        </section>
-                      )}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-sm font-semibold truncate">{table.name}</div>
+                                      <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                                        <span>582 rows</span>
+                                        <span className="w-1 h-1 rounded-full bg-border" />
+                                        <span>Derived</span>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          </section>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : activeTab.type === 'query' ? (
                 <div className="flex flex-col h-full bg-background">
