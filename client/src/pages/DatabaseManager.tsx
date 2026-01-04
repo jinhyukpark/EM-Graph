@@ -62,6 +62,7 @@ const SIDEBAR_ITEMS = [
   },
   {
     category: "PREPROCESSING",
+    isTool: true,
     items: [
       { id: "p1", name: "Pre-Process", icon: Workflow, type: "preprocessing" },
     ]
@@ -390,7 +391,12 @@ export default function DatabaseManager() {
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-2">
               {sidebarItems.map((category, idx) => (
-                <div key={idx} className="space-y-1">
+                <div key={idx} className={`space-y-1 ${category.isTool ? "mt-8 pt-6 border-t border-border/50" : ""}`}>
+                  {category.isTool && (
+                    <div className="px-4 mb-2">
+                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">External Tools</span>
+                    </div>
+                  )}
                   <div 
                     className={`w-full flex items-center gap-2 px-3 py-1.5 transition-colors rounded-md group ${
                       activeTabId === category.category
