@@ -61,7 +61,7 @@ const SIDEBAR_ITEMS = [
     ]
   },
   {
-    category: "Tool",
+    category: "PREPROCESSING",
     items: [
       { id: "p1", name: "Pre-Process", icon: Workflow, type: "preprocessing" },
     ]
@@ -110,7 +110,7 @@ export default function DatabaseManager() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph", "Tool"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Table", "Query", "Graph", "PREPROCESSING"]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
