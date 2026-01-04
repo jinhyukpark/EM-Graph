@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { QueryTemplateDialog } from "@/components/database/QueryTemplateDialog";
 import DataPreprocessingBuilder from "@/components/database/DataPreprocessingBuilder";
+import GraphBuilderForm from "@/components/graph/GraphBuilderForm";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -220,6 +221,7 @@ export default function DatabaseManager() {
   const [selectedProjectId, setSelectedProjectId] = useState("project-alpha");
   const [isCreateProjectDialogOpen, setIsCreateProjectDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
+  const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
 
   const handleProjectChange = (value: string) => {
     if (value === "create_new") {
@@ -521,16 +523,20 @@ export default function DatabaseManager() {
                   </div>
                 </div>
               ) : activeTab.type === 'graph' ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
-                   <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-                     <Network className="w-8 h-8 text-primary/50" />
-                   </div>
-                   <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
-                   <p className="max-w-md text-center mt-2 mb-6 text-sm">
-                     Configure your graph settings in the Graph view to visualize relationships between tables.
-                   </p>
-                   <Button onClick={() => setLocation('/graph-builder')}>Open Graph Builder</Button>
-                </div>
+                isGraphBuilderOpen ? (
+                  <GraphBuilderForm />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-secondary/5">
+                     <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                       <Network className="w-8 h-8 text-primary/50" />
+                     </div>
+                     <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
+                     <p className="max-w-md text-center mt-2 mb-6 text-sm">
+                       Configure your graph settings in the Graph view to visualize relationships between tables.
+                     </p>
+                     <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                  </div>
+                )
               ) : activeTab.type === 'table' ? (
                 <div className="flex flex-col h-full">
                    {/* Table Toolbar */}
