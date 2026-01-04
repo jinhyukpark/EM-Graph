@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
@@ -115,8 +115,6 @@ export default function DatabaseManager() {
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
-
-  const { toast } = (function() { try { return require("@/hooks/use-toast"); } catch(e) { return { toast: () => {} }; } })();
 
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(true);
   const [isQueryDescVisible, setIsQueryDescVisible] = useState(true);
@@ -649,7 +647,7 @@ export default function DatabaseManager() {
               ))}
             </div>
           </ScrollArea>
-          <div className="p-4 border-t border-border bg-secondary/10 shrink-0">
+          <div className="p-4 border-t border-border bg-secondary/10">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
               <span>Connection Status</span>
               <span className="flex items-center gap-1.5 text-emerald-500 font-medium">
@@ -657,21 +655,14 @@ export default function DatabaseManager() {
                 Connected
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="text-[10px] font-mono text-muted-foreground/70">
-                PostgreSQL 15.4 (Local)
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                  JD
-                </div>
-              </div>
+            <div className="text-[10px] font-mono text-muted-foreground/70">
+              PostgreSQL 15.4 (Local)
             </div>
           </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0 bg-background h-full overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 bg-background">
           
           {/* Tab Bar & Toolbar */}
           <div className="flex flex-col bg-background">
