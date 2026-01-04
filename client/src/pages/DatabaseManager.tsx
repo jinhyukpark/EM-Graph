@@ -772,17 +772,22 @@ export default function DatabaseManager() {
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
                         {isPreprocessDescVisible && (
-                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
-                            <button 
-                              onClick={() => setIsPreprocessDescVisible(false)}
-                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
-                              title="Dismiss"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                              Build and automate data transformation pipelines. Connect multiple steps to clean, filter, and enrich your raw data into refined assets for analysis.
-                            </p>
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
+                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
+                              <Workflow className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                              <button 
+                                onClick={() => setIsPreprocessDescVisible(false)}
+                                className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                                title="Dismiss"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                              <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                                Build and automate data transformation pipelines. Connect multiple steps to clean, filter, and enrich your raw data into refined assets for analysis.
+                              </p>
+                            </div>
                           </div>
                         )}
                         <section>
@@ -873,17 +878,22 @@ export default function DatabaseManager() {
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
                         {isGraphDescVisible && (
-                          <div className="group relative p-4 rounded-lg bg-emerald-50/50 border border-emerald-100/50 transition-all hover:bg-emerald-50">
-                            <button 
-                              onClick={() => setIsGraphDescVisible(false)}
-                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-emerald-100 text-emerald-400 transition-all"
-                              title="Dismiss"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                            <p className="text-sm text-emerald-900/70 leading-relaxed pr-8">
-                              Visualize complex relationships between your data entities. Explore connections, patterns, and network structures within your saved tables.
-                            </p>
+                          <div className="group relative p-4 rounded-lg bg-emerald-50/50 border border-emerald-100/50 transition-all hover:bg-emerald-50 flex items-start gap-3">
+                            <div className="mt-0.5 p-1.5 rounded-md bg-emerald-100/50 text-emerald-600 shrink-0">
+                              <Network className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                              <button 
+                                onClick={() => setIsGraphDescVisible(false)}
+                                className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-emerald-100 text-emerald-400 transition-all"
+                                title="Dismiss"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                              <p className="text-sm text-emerald-900/70 leading-relaxed pr-8">
+                                Visualize complex relationships between your data entities. Explore connections, patterns, and network structures within your saved tables.
+                              </p>
+                            </div>
                           </div>
                         )}
                         <section>
@@ -1047,17 +1057,22 @@ export default function DatabaseManager() {
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
                         {isDescriptionVisible && (
-                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
-                            <button 
-                              onClick={() => setIsDescriptionVisible(false)}
-                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
-                              title="Dismiss"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                              Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
-                            </p>
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
+                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
+                              <TableIcon className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                              <button 
+                                onClick={() => setIsDescriptionVisible(false)}
+                                className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                                title="Dismiss"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                              <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                                Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
+                              </p>
+                            </div>
                           </div>
                         )}
 
@@ -1150,17 +1165,22 @@ export default function DatabaseManager() {
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
                         {isQueryDescVisible && (
-                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50">
-                            <button 
-                              onClick={() => setIsQueryDescVisible(false)}
-                              className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
-                              title="Dismiss"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                            <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                              Write and save SQL queries to extract specific insights from your repository. Access your library of saved queries for rapid data exploration.
-                            </p>
+                          <div className="group relative p-4 rounded-lg bg-indigo-50/50 border border-indigo-100/50 transition-all hover:bg-indigo-50 flex items-start gap-3">
+                            <div className="mt-0.5 p-1.5 rounded-md bg-indigo-100/50 text-indigo-600 shrink-0">
+                              <FileCode className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                              <button 
+                                onClick={() => setIsQueryDescVisible(false)}
+                                className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-indigo-100 text-indigo-400 transition-all"
+                                title="Dismiss"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                              <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
+                                Write and save SQL queries to extract specific insights from your repository. Access your library of saved queries for rapid data exploration.
+                              </p>
+                            </div>
                           </div>
                         )}
                         <section>
