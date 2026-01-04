@@ -792,16 +792,26 @@ export default function DatabaseManager() {
                           </div>
 
                           <div className="mb-4 ml-0">
-                            <input 
-                              type="text" 
+                            <textarea 
                               defaultValue={activeTab.title}
-                              className="bg-transparent border-none focus:ring-0 text-3xl font-bold text-foreground p-0 w-full"
+                              className="bg-transparent border-none focus:ring-0 text-3xl font-bold text-foreground p-0 w-full resize-none overflow-hidden"
+                              rows={1}
                               placeholder="Enter Graph Name..."
-                              onChange={(e) => {
+                              onInput={(e) => {
+                                const target = e.target as HTMLTextAreaElement;
+                                target.style.height = 'auto';
+                                target.style.height = target.scrollHeight + 'px';
+                                
                                 const newTabs = tabs.map(t => 
-                                  t.id === activeTabId ? { ...t, title: e.target.value } : t
+                                  t.id === activeTabId ? { ...t, title: target.value } : t
                                 );
                                 setTabs(newTabs);
+                              }}
+                              ref={(el) => {
+                                if (el) {
+                                  el.style.height = 'auto';
+                                  el.style.height = el.scrollHeight + 'px';
+                                }
                               }}
                             />
                             <textarea 
