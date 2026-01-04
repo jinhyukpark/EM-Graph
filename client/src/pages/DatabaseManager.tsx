@@ -186,6 +186,26 @@ export default function DatabaseManager() {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="idx">IDX (Auto-generated)</Label>
+                    <Input 
+                      id="idx" 
+                      value={Math.max(...mockTableDataState.map(r => r.idx)) + 1}
+                      disabled
+                      className="bg-muted text-muted-foreground"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="regdate">REGDATE (Auto-generated)</Label>
+                    <Input 
+                      id="regdate" 
+                      value={new Date().toISOString().replace('T', ' ').substring(0, 19)}
+                      disabled
+                      className="bg-muted text-muted-foreground"
+                    />
+                  </div>
+                </div>
                 <div className="grid gap-2">
                   <Label htmlFor="company_name">COMPANY_NAME</Label>
                   <Input 
