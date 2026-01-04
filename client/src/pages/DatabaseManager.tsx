@@ -570,6 +570,24 @@ export default function DatabaseManager() {
                     >
                       {category.category}
                     </button>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem className="text-xs gap-2">
+                          <Plus className="w-3.5 h-3.5" />
+                          Create Category
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive">
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete Category
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                   
                   {expandedCategories.includes(category.category) && (
