@@ -162,7 +162,7 @@ export default function ResourcesManager() {
                 <button
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors group ${
                     activeCategory === category.id 
                       ? "bg-primary/10 text-primary font-medium" 
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -175,6 +175,25 @@ export default function ResourcesManager() {
                   <span className="text-xs bg-secondary/50 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                     {category.count}
                   </span>
+                  {category.id !== 'all' && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreVertical className="w-3 h-3 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); /* Delete logic */ }}>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </button>
               ))}
             </div>
