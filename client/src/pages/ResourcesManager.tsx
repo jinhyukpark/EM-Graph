@@ -26,20 +26,23 @@ import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+import heroBanner from "@assets/generated_images/modern_abstract_hero_banner_for_marketing.png";
+import userAvatar from "@assets/generated_images/user_avatar_professional_headshot.png";
+
 // Mock Data
 const INITIAL_RESOURCES = [
-  { id: 1, name: "logo-white.svg", type: "image", ext: "svg", size: "12 KB", date: "2024-03-15", folder: "Branding" },
-  { id: 2, name: "hero-banner.jpg", type: "image", ext: "jpg", size: "2.4 MB", date: "2024-03-14", folder: "Marketing" },
-  { id: 3, name: "Q1_Report.pdf", type: "document", ext: "pdf", size: "4.1 MB", date: "2024-03-10", folder: "Reports" },
-  { id: 4, name: "dataset_v1.csv", type: "document", ext: "csv", size: "850 KB", date: "2024-03-08", folder: "Data" },
-  { id: 5, name: "intro_video.mp4", type: "media", ext: "mp4", size: "45.2 MB", date: "2024-03-05", folder: "Marketing" },
-  { id: 6, name: "crime_stats_2023.xlsx", type: "document", ext: "xlsx", size: "1.2 MB", date: "2024-03-01", folder: "Data" },
-  { id: 7, name: "user_avatar_01.png", type: "image", ext: "png", size: "450 KB", date: "2024-02-28", folder: "Users" },
-  { id: 8, name: "meeting_notes.txt", type: "document", ext: "txt", size: "2 KB", date: "2024-02-28", folder: "Notes" },
-  { id: 9, name: "background_texture.png", type: "image", ext: "png", size: "3.5 MB", date: "2024-02-25", folder: "Assets" },
-  { id: 10, name: "system_config.json", type: "code", ext: "json", size: "4 KB", date: "2024-02-20", folder: "Config" },
-  { id: 11, name: "chart_style.css", type: "code", ext: "css", size: "8 KB", date: "2024-02-18", folder: "Styles" },
-  { id: 12, name: "alert_sound.mp3", type: "media", ext: "mp3", size: "1.2 MB", date: "2024-02-15", folder: "Assets" },
+  { id: 1, name: "logo-white.svg", type: "image", ext: "svg", size: "12 KB", date: "2024-03-15", folder: "Branding", url: null },
+  { id: 2, name: "hero-banner.jpg", type: "image", ext: "jpg", size: "2.4 MB", date: "2024-03-14", folder: "Marketing", url: heroBanner },
+  { id: 3, name: "Q1_Report.pdf", type: "document", ext: "pdf", size: "4.1 MB", date: "2024-03-10", folder: "Reports", url: null },
+  { id: 4, name: "dataset_v1.csv", type: "document", ext: "csv", size: "850 KB", date: "2024-03-08", folder: "Data", url: null },
+  { id: 5, name: "intro_video.mp4", type: "media", ext: "mp4", size: "45.2 MB", date: "2024-03-05", folder: "Marketing", url: null },
+  { id: 6, name: "crime_stats_2023.xlsx", type: "document", ext: "xlsx", size: "1.2 MB", date: "2024-03-01", folder: "Data", url: null },
+  { id: 7, name: "user_avatar_01.png", type: "image", ext: "png", size: "450 KB", date: "2024-02-28", folder: "Users", url: userAvatar },
+  { id: 8, name: "meeting_notes.txt", type: "document", ext: "txt", size: "2 KB", date: "2024-02-28", folder: "Notes", url: null },
+  { id: 9, name: "background_texture.png", type: "image", ext: "png", size: "3.5 MB", date: "2024-02-25", folder: "Assets", url: heroBanner }, // Using hero banner as placeholder for failed generation
+  { id: 10, name: "system_config.json", type: "code", ext: "json", size: "4 KB", date: "2024-02-20", folder: "Config", url: null },
+  { id: 11, name: "chart_style.css", type: "code", ext: "css", size: "8 KB", date: "2024-02-18", folder: "Styles", url: null },
+  { id: 12, name: "alert_sound.mp3", type: "media", ext: "mp3", size: "1.2 MB", date: "2024-02-15", folder: "Assets", url: null },
 ];
 
 const INITIAL_CATEGORIES = [
@@ -66,6 +69,8 @@ export default function ResourcesManager() {
   // Category Management State
   const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+
+  const [selectedResource, setSelectedResource] = useState<any>(null);
 
   const handleCreateCategory = () => {
     if (!newCategoryName.trim()) return;
@@ -359,10 +364,26 @@ export default function ResourcesManager() {
             {viewMode === 'grid' ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {filteredResources.map((resource) => (
-                  <Card key={resource.id} className="group hover:border-primary/50 transition-all hover:shadow-md cursor-pointer overflow-hidden">
+                  <Card 
+                    key={resource.id} 
+                    className="group hover:border-primary/50 transition-all hover:shadow-md cursor-pointer overflow-hidden"
+                    onDoubleClick={() => {
+                      if (resource.url || resource.type === 'image' || resource.type === 'media') {
+                        setSelectedResource(resource);
+                      }
+                    }}
+                  >
                     <CardContent className="p-0">
-                      <div className="aspect-square bg-secondary/10 flex items-center justify-center relative group-hover:bg-secondary/20 transition-colors">
-                        {getIcon(resource.type)}
+                      <div className="aspect-square bg-secondary/10 flex items-center justify-center relative group-hover:bg-secondary/20 transition-colors overflow-hidden">
+                        {resource.type === 'image' && resource.url ? (
+                          <img 
+                            src={resource.url} 
+                            alt={resource.name}
+                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                          />
+                        ) : (
+                          getIcon(resource.type)
+                        )}
                         
                         {/* Overlay Actions */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]">
@@ -561,6 +582,52 @@ export default function ResourcesManager() {
             <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
             <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>Create Category</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedResource} onOpenChange={(open) => !open && setSelectedResource(null)}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black/95 border-none text-white">
+          <div className="relative w-full h-full min-h-[50vh] flex items-center justify-center">
+             <Button 
+               variant="ghost" 
+               size="icon" 
+               className="absolute top-2 right-2 text-white/70 hover:text-white hover:bg-white/10 z-50"
+               onClick={() => setSelectedResource(null)}
+             >
+               <X className="w-5 h-5" />
+             </Button>
+             
+             {selectedResource && (
+               <div className="w-full h-full flex flex-col items-center justify-center">
+                  {selectedResource.type === 'image' && selectedResource.url ? (
+                    <img 
+                      src={selectedResource.url} 
+                      alt={selectedResource.name}
+                      className="max-w-full max-h-[80vh] object-contain"
+                    />
+                  ) : selectedResource.type === 'media' ? (
+                     <div className="text-center p-12">
+                       <FileVideo className="w-24 h-24 mx-auto mb-4 text-white/50" />
+                       <p className="text-xl font-medium">Video Preview Unavailable</p>
+                       <p className="text-sm text-white/50 mt-2">{selectedResource.name}</p>
+                     </div>
+                  ) : (
+                    <div className="text-center p-12">
+                       <File className="w-24 h-24 mx-auto mb-4 text-white/50" />
+                       <p className="text-xl font-medium">Preview Unavailable</p>
+                       <p className="text-sm text-white/50 mt-2">{selectedResource.name}</p>
+                     </div>
+                  )}
+                  
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                    <h3 className="text-lg font-medium">{selectedResource.name}</h3>
+                    <p className="text-sm text-white/60">
+                      {selectedResource.size} • {selectedResource.ext.toUpperCase()} • {selectedResource.date}
+                    </p>
+                  </div>
+               </div>
+             )}
+          </div>
         </DialogContent>
       </Dialog>
     </Layout>
