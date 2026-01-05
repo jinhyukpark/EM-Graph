@@ -454,7 +454,7 @@ export default function ResourcesManager() {
                             <p className="text-[10px] text-muted-foreground/80 truncate mt-0.5" title={`https://em-graph.app/assets/${resource.folder.toLowerCase()}/${resource.name}`}>
                               https://em-graph.app/assets/{resource.folder.toLowerCase()}/{resource.name}
                             </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">{resource.size} • {resource.ext.toUpperCase()}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">{resource.size} • {resource.ext.toUpperCase()} • {resource.date}</p>
                           </div>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
