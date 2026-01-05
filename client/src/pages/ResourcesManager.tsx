@@ -181,42 +181,51 @@ export default function ResourcesManager() {
                 </DropdownMenu>
               </div>
               {CATEGORIES.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors group ${
-                    activeCategory === category.id 
-                      ? "bg-primary/10 text-primary font-medium" 
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <category.icon className="w-4 h-4" />
-                    {category.label}
-                  </div>
-                  <span className="text-xs bg-secondary/50 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-                    {category.count}
-                  </span>
-                  {category.id !== 'all' && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreVertical className="w-3 h-3 text-muted-foreground" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); /* Delete logic */ }}>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                <div key={category.id} className={category.id === 'all' ? 'mb-2' : 'ml-4'}>
+                  <button
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors group ${
+                      activeCategory === category.id 
+                        ? "bg-primary/10 text-primary font-medium" 
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <category.icon className="w-4 h-4" />
+                      {category.label}
+                    </div>
+                    <span className="text-xs bg-secondary/50 px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                      {category.count}
+                    </span>
+                    {category.id !== 'all' && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreVertical className="w-3 h-3 text-muted-foreground" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); /* Delete logic */ }}>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </button>
+                  {category.id === 'all' && (
+                    <div className="ml-5 mt-2 border-l border-border/60 pl-2">
+                       {/* This empty div acts as a visual connector guide, though the mapping below handles the items. 
+                           Since we're mapping flat, we just use the ml-4 on the container div above for indentation. 
+                           If we want a strict tree, we might change the CATEGORIES structure, but visual indentation works for now. 
+                       */}
+                    </div>
                   )}
-                </button>
+                </div>
               ))}
             </div>
 
