@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Folder, FileImage, FileText, FileVideo, FileAudio, File, 
   Search, Plus, Upload, MoreVertical, Grid, List, Filter,
-  Download, Trash2, ExternalLink, Clock, HardDrive
+  Download, Trash2, ExternalLink, Clock, HardDrive, X, CloudUpload
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -20,9 +20,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 // Mock Data
-const RESOURCES = [
+const INITIAL_RESOURCES = [
   { id: 1, name: "logo-white.svg", type: "image", ext: "svg", size: "12 KB", date: "2024-03-15", folder: "Branding" },
   { id: 2, name: "hero-banner.jpg", type: "image", ext: "jpg", size: "2.4 MB", date: "2024-03-14", folder: "Marketing" },
   { id: 3, name: "Q1_Report.pdf", type: "document", ext: "pdf", size: "4.1 MB", date: "2024-03-10", folder: "Reports" },
@@ -46,24 +48,86 @@ const CATEGORIES = [
 ];
 
 export default function ResourcesManager() {
+  const [resources, setResources] = useState(INITIAL_RESOURCES);
   const [activeCategory, setActiveCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Upload State
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredResources = RESOURCES.filter(resource => {
+  const filteredResources = resources.filter(resource => {
     const matchesCategory = activeCategory === "all" || resource.type === activeCategory;
     const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  const getIcon = (type: string) => {
+  const getIcon = (type: string, className = "w-8 h-8") => {
     switch (type) {
-      case "image": return <FileImage className="w-8 h-8 text-blue-500" />;
-      case "document": return <FileText className="w-8 h-8 text-orange-500" />;
-      case "media": return <FileVideo className="w-8 h-8 text-purple-500" />;
-      case "code": return <File className="w-8 h-8 text-slate-500" />;
-      default: return <File className="w-8 h-8 text-gray-500" />;
+      case "image": return <FileImage className={`${className} text-blue-500`} />;
+      case "document": return <FileText className={`${className} text-orange-500`} />;
+      case "media": return <FileVideo className={`${className} text-purple-500`} />;
+      case "code": return <File className={`${className} text-slate-500`} />;
+      default: return <File className={`${className} text-gray-500`} />;
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFiles(prev => [...prev, ...Array.from(e.target.files || [])]);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setSelectedFiles(prev => [...prev, ...Array.from(e.dataTransfer.files)]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUploadConfirm = () => {
+    if (selectedFiles.length === 0) return;
+
+    const newResources = selectedFiles.map((file, i) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      let type = 'document';
+      
+      // Basic type detection
+      if (['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'].includes(ext)) type = 'image';
+      else if (['mp4', 'mov', 'avi', 'mp3', 'wav', 'mkv'].includes(ext)) type = 'media';
+      else if (['json', 'css', 'js', 'ts', 'html', 'py', 'sql'].includes(ext)) type = 'code';
+      
+      return {
+        id: Date.now() + i,
+        name: file.name,
+        type: type,
+        ext: ext,
+        size: (file.size / 1024 < 1024) ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+        date: new Date().toISOString().split('T')[0],
+        folder: activeCategory === 'all' ? 'Uploads' : CATEGORIES.find(c => c.id === activeCategory)?.label || 'Uploads'
+      };
+    });
+
+    setResources(prev => [...newResources, ...prev]);
+    setIsUploadOpen(false);
+    setSelectedFiles([]);
+    
+    toast({
+      title: "Upload Successful",
+      description: `${newResources.length} file(s) have been added to ${activeCategory === 'all' ? 'Resources' : CATEGORIES.find(c => c.id === activeCategory)?.label}.`,
+    });
   };
 
   return (
@@ -72,7 +136,10 @@ export default function ResourcesManager() {
         {/* Sidebar */}
         <div className="w-64 border-r border-border bg-card/30 flex flex-col">
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
-            <Button className="w-full bg-primary text-primary-foreground shadow-sm">
+            <Button 
+              className="w-full bg-primary text-primary-foreground shadow-sm"
+              onClick={() => setIsUploadOpen(true)}
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload New
             </Button>
@@ -234,8 +301,7 @@ export default function ResourcesManager() {
                       <tr key={resource.id} className="group hover:bg-secondary/10 transition-colors">
                         <td className="px-4 py-3 text-center">
                           <div className="w-8 h-8 flex items-center justify-center">
-                            {getIcon(resource.type).props.className = "w-5 h-5"}
-                            {getIcon(resource.type)}
+                            {getIcon(resource.type, "w-5 h-5")}
                           </div>
                         </td>
                         <td className="px-4 py-3 font-medium text-foreground">{resource.name}</td>
@@ -258,6 +324,73 @@ export default function ResourcesManager() {
           </ScrollArea>
         </div>
       </div>
+
+      <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Upload New Resource</DialogTitle>
+            <DialogDescription>
+              Add files to your <strong>{CATEGORIES.find(c => c.id === activeCategory)?.label || 'project'}</strong> library.
+            </DialogDescription>
+          </DialogHeader>
+          <div 
+            className="border-2 border-dashed border-border rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-secondary/30 hover:border-primary/50 transition-all cursor-pointer bg-secondary/5 gap-3"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-1">
+              <CloudUpload className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-foreground">Click to upload or drag and drop</p>
+              <p className="text-xs text-muted-foreground">SVG, PNG, JPG, PDF or MP4 (max. 10MB)</p>
+            </div>
+            <input 
+              type="file" 
+              className="hidden" 
+              ref={fileInputRef} 
+              onChange={handleFileSelect} 
+              multiple 
+            />
+          </div>
+
+          {selectedFiles.length > 0 && (
+            <ScrollArea className="max-h-[200px] w-full pr-4">
+              <div className="space-y-2">
+                {selectedFiles.map((file, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-secondary/30 rounded-md border border-border/50 text-sm group">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded bg-background border flex items-center justify-center shrink-0">
+                        <File className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{file.name}</p>
+                        <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive" onClick={(e) => { e.stopPropagation(); removeFile(i); }}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+
+          <DialogFooter className="sm:justify-between flex-row items-center gap-2">
+            <div className="text-xs text-muted-foreground">
+              {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'No files selected'}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+              <Button size="sm" onClick={handleUploadConfirm} disabled={selectedFiles.length === 0}>
+                Upload Files
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
