@@ -155,8 +155,30 @@ export default function ResourcesManager() {
           
           <ScrollArea className="flex-1 py-4">
             <div className="px-3 space-y-1">
-              <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between group">
                 Categories
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity -mr-1"
+                    >
+                      <MoreVertical className="w-3 h-3 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>
+                      <Plus className="w-3.5 h-3.5 mr-2" />
+                      Create Category
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                     <DropdownMenuItem className="text-destructive">
+                      <Trash2 className="w-3.5 h-3.5 mr-2" />
+                      Delete Category
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               {CATEGORIES.map(category => (
                 <button
