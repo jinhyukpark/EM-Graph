@@ -623,6 +623,9 @@ export default function DatabaseManager() {
                           setTabs([...tabs, { id, type, title: category.category }]);
                         }
                         setActiveTabId(id);
+                        if (id === 'Table') {
+                          setSelectedTable(null);
+                        }
                       }}
                       className={`flex-1 text-left text-xs font-bold uppercase tracking-wider ${
                         activeTabId === category.category
@@ -816,6 +819,7 @@ export default function DatabaseManager() {
                       setTabs([...tabs, { id: 'Table', type: 'table', title: 'Table' }]);
                     }
                     setActiveTabId('Table');
+                    setSelectedTable(null);
                   }}
                 >
                   <TableIcon className="w-4 h-4" />
