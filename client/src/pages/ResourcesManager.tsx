@@ -42,7 +42,7 @@ const INITIAL_RESOURCES = [
   { id: 12, name: "alert_sound.mp3", type: "media", ext: "mp3", size: "1.2 MB", date: "2024-02-15", folder: "Assets" },
 ];
 
-const CATEGORIES = [
+const INITIAL_CATEGORIES = [
   { id: "all", label: "All Resources", icon: Folder, count: 12 },
   { id: "image", label: "Images", icon: FileImage, count: 4 },
   { id: "document", label: "Documents", icon: FileText, count: 4 },
@@ -52,6 +52,7 @@ const CATEGORIES = [
 
 export default function ResourcesManager() {
   const [resources, setResources] = useState(INITIAL_RESOURCES);
+  const [categories, setCategories] = useState(INITIAL_CATEGORIES);
   const [activeCategory, setActiveCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,8 +60,57 @@ export default function ResourcesManager() {
   // Upload State
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("all"); // Added state for category selection in dialog
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Category Management State
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+
+  const handleCreateCategory = () => {
+    if (!newCategoryName.trim()) return;
+    
+    const id = newCategoryName.toLowerCase().replace(/\s+/g, '-');
+    
+    // Check if category already exists
+    if (categories.some(c => c.id === id)) {
+      toast({
+        title: "Category exists",
+        description: "A category with this name already exists.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newCategory = {
+      id,
+      label: newCategoryName,
+      icon: Folder, // Default icon for user created categories
+      count: 0
+    };
+
+    setCategories(prev => [...prev, newCategory]);
+    setNewCategoryName("");
+    setIsCreateCategoryOpen(false);
+    toast({
+      title: "Category Created",
+      description: `Category "${newCategoryName}" has been created.`
+    });
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    if (id === 'all') return;
+    
+    setCategories(prev => prev.filter(c => c.id !== id));
+    if (activeCategory === id) {
+      setActiveCategory('all');
+    }
+    
+    toast({
+      title: "Category Deleted",
+      description: "Category has been removed."
+    });
+  };
 
   const filteredResources = resources.filter(resource => {
     const matchesCategory = activeCategory === "all" || resource.type === activeCategory;
@@ -120,7 +170,7 @@ export default function ResourcesManager() {
         ext: ext,
         size: (file.size / 1024 < 1024) ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
         date: new Date().toISOString().split('T')[0],
-        folder: selectedCategory === 'all' ? (activeCategory === 'all' ? 'Uploads' : CATEGORIES.find(c => c.id === activeCategory)?.label || 'Uploads') : CATEGORIES.find(c => c.id === selectedCategory)?.label || 'Uploads'
+        folder: selectedCategory === 'all' ? (activeCategory === 'all' ? 'Uploads' : categories.find(c => c.id === activeCategory)?.label || 'Uploads') : categories.find(c => c.id === selectedCategory)?.label || 'Uploads'
       };
     });
 
@@ -168,19 +218,19 @@ export default function ResourcesManager() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsCreateCategoryOpen(true)}>
                       <Plus className="w-3.5 h-3.5 mr-2" />
                       Create Category
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                     <DropdownMenuItem className="text-destructive">
+                     <DropdownMenuItem className="text-destructive" disabled>
                       <Trash2 className="w-3.5 h-3.5 mr-2" />
                       Delete Category
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {CATEGORIES.map(category => (
+              {categories.map(category => (
                 <div key={category.id} className={category.id === 'all' ? 'mb-2' : 'ml-4'}>
                   <button
                     onClick={() => setActiveCategory(category.id)}
@@ -212,7 +262,15 @@ export default function ResourcesManager() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); /* Delete logic */ }}>Delete</DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-destructive" 
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              handleDeleteCategory(category.id);
+                            }}
+                          >
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}
@@ -400,7 +458,7 @@ export default function ResourcesManager() {
                </SelectTrigger>
                <SelectContent>
                  <SelectItem value="all">Auto-detect / General</SelectItem>
-                 {CATEGORIES.filter(c => c.id !== 'all').map(category => (
+                 {categories.filter(c => c.id !== 'all').map(category => (
                    <SelectItem key={category.id} value={category.id}>
                      <div className="flex items-center gap-2">
                        <category.icon className="w-4 h-4 text-muted-foreground" />
@@ -467,6 +525,38 @@ export default function ResourcesManager() {
                 Upload Files
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Category</DialogTitle>
+            <DialogDescription>
+              Create a new folder to organize your resources.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="e.g. Project Assets"
+                className="col-span-3"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCreateCategory();
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>Create Category</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
