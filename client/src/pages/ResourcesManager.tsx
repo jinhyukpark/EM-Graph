@@ -72,6 +72,15 @@ export default function ResourcesManager() {
 
   const [selectedResource, setSelectedResource] = useState<any>(null);
 
+  // Resource Management State
+  const [renamingResource, setRenamingResource] = useState<any>(null);
+  const [newName, setNewName] = useState("");
+  
+  const [movingResource, setMovingResource] = useState<any>(null);
+  const [targetMoveCategory, setTargetMoveCategory] = useState("");
+
+  const [deletingResource, setDeletingResource] = useState<any>(null);
+
   const handleCreateCategory = () => {
     if (!newCategoryName.trim()) return;
     
@@ -114,6 +123,49 @@ export default function ResourcesManager() {
     toast({
       title: "Category Deleted",
       description: "Category has been removed."
+    });
+  };
+
+  const handleRenameResource = () => {
+    if (!renamingResource || !newName.trim()) return;
+
+    setResources(prev => prev.map(r => 
+      r.id === renamingResource.id ? { ...r, name: newName } : r
+    ));
+
+    setRenamingResource(null);
+    setNewName("");
+    toast({
+      title: "Resource Renamed",
+      description: `Resource renamed to "${newName}".`
+    });
+  };
+
+  const handleMoveResource = () => {
+    if (!movingResource || !targetMoveCategory) return;
+
+    const targetLabel = categories.find(c => c.id === targetMoveCategory)?.label || "Uploads";
+
+    setResources(prev => prev.map(r => 
+      r.id === movingResource.id ? { ...r, folder: targetLabel } : r
+    ));
+
+    setMovingResource(null);
+    setTargetMoveCategory("");
+    toast({
+      title: "Resource Moved",
+      description: `Resource moved to "${targetLabel}".`
+    });
+  };
+
+  const handleDeleteResource = () => {
+    if (!deletingResource) return;
+
+    setResources(prev => prev.filter(r => r.id !== deletingResource.id));
+    setDeletingResource(null);
+    toast({
+      title: "Resource Deleted",
+      description: "Resource has been permanently deleted."
     });
   };
 
@@ -411,10 +463,16 @@ export default function ResourcesManager() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Rename</DropdownMenuItem>
-                              <DropdownMenuItem>Move to...</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { setRenamingResource(resource); setNewName(resource.name); }}>
+                                Rename
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => { setMovingResource(resource); }}>
+                                Move to...
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => setDeletingResource(resource)}>
+                                Delete
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -628,6 +686,90 @@ export default function ResourcesManager() {
                </div>
              )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Resource Dialog */}
+      <Dialog open={!!renamingResource} onOpenChange={(open) => !open && setRenamingResource(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename Resource</DialogTitle>
+            <DialogDescription>
+              Enter a new name for the resource.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="resource-name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="resource-name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="col-span-3"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRenameResource();
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenamingResource(null)}>Cancel</Button>
+            <Button onClick={handleRenameResource} disabled={!newName.trim() || newName === renamingResource?.name}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Move Resource Dialog */}
+      <Dialog open={!!movingResource} onOpenChange={(open) => !open && setMovingResource(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Move Resource</DialogTitle>
+            <DialogDescription>
+              Select a destination category for this resource.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="move-category">Destination Category</Label>
+              <Select value={targetMoveCategory} onValueChange={setTargetMoveCategory}>
+                <SelectTrigger id="move-category">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.filter(c => c.id !== 'all').map(category => (
+                    <SelectItem key={category.id} value={category.id}>
+                      <div className="flex items-center gap-2">
+                        <category.icon className="w-4 h-4 text-muted-foreground" />
+                        {category.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMovingResource(null)}>Cancel</Button>
+            <Button onClick={handleMoveResource} disabled={!targetMoveCategory}>Move Resource</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Resource Confirmation Dialog */}
+      <Dialog open={!!deletingResource} onOpenChange={(open) => !open && setDeletingResource(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Resource</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deletingResource?.name}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDeletingResource(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteResource}>Delete Permanently</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </Layout>
