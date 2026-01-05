@@ -23,6 +23,9 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
 // Mock Data
 const INITIAL_RESOURCES = [
   { id: 1, name: "logo-white.svg", type: "image", ext: "svg", size: "12 KB", date: "2024-03-15", folder: "Branding" },
@@ -56,6 +59,7 @@ export default function ResourcesManager() {
   // Upload State
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all"); // Added state for category selection in dialog
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filteredResources = resources.filter(resource => {
@@ -116,17 +120,18 @@ export default function ResourcesManager() {
         ext: ext,
         size: (file.size / 1024 < 1024) ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
         date: new Date().toISOString().split('T')[0],
-        folder: activeCategory === 'all' ? 'Uploads' : CATEGORIES.find(c => c.id === activeCategory)?.label || 'Uploads'
+        folder: selectedCategory === 'all' ? (activeCategory === 'all' ? 'Uploads' : CATEGORIES.find(c => c.id === activeCategory)?.label || 'Uploads') : CATEGORIES.find(c => c.id === selectedCategory)?.label || 'Uploads'
       };
     });
 
     setResources(prev => [...newResources, ...prev]);
     setIsUploadOpen(false);
     setSelectedFiles([]);
+    setSelectedCategory("all"); // Reset category selection
     
     toast({
       title: "Upload Successful",
-      description: `${newResources.length} file(s) have been added to ${activeCategory === 'all' ? 'Resources' : CATEGORIES.find(c => c.id === activeCategory)?.label}.`,
+      description: `${newResources.length} file(s) have been added.`,
     });
   };
 
@@ -138,7 +143,10 @@ export default function ResourcesManager() {
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Button 
               className="w-full bg-primary text-primary-foreground shadow-sm"
-              onClick={() => setIsUploadOpen(true)}
+              onClick={() => {
+                setIsUploadOpen(true);
+                setSelectedCategory(activeCategory === 'all' ? 'all' : activeCategory);
+              }}
             >
               <Upload className="w-4 h-4 mr-2" />
               Upload New
@@ -330,9 +338,30 @@ export default function ResourcesManager() {
           <DialogHeader>
             <DialogTitle>Upload New Resource</DialogTitle>
             <DialogDescription>
-              Add files to your <strong>{CATEGORIES.find(c => c.id === activeCategory)?.label || 'project'}</strong> library.
+              Add files to your project library.
             </DialogDescription>
           </DialogHeader>
+          
+          <div className="grid gap-2 mb-4">
+             <Label htmlFor="category-select" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Target Category</Label>
+             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+               <SelectTrigger id="category-select" className="h-9">
+                 <SelectValue placeholder="Select a category" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="all">Auto-detect / General</SelectItem>
+                 {CATEGORIES.filter(c => c.id !== 'all').map(category => (
+                   <SelectItem key={category.id} value={category.id}>
+                     <div className="flex items-center gap-2">
+                       <category.icon className="w-4 h-4 text-muted-foreground" />
+                       {category.label}
+                     </div>
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+          </div>
+
           <div 
             className="border-2 border-dashed border-border rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-secondary/30 hover:border-primary/50 transition-all cursor-pointer bg-secondary/5 gap-3"
             onDragOver={handleDragOver}
