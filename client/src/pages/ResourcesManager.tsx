@@ -378,6 +378,9 @@ export default function ResourcesManager() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <h4 className="font-medium text-sm truncate" title={resource.name}>{resource.name}</h4>
+                            <p className="text-[10px] text-muted-foreground/80 truncate mt-0.5" title={`https://em-graph.app/assets/${resource.folder.toLowerCase()}/${resource.name}`}>
+                              https://em-graph.app/assets/{resource.folder.toLowerCase()}/{resource.name}
+                            </p>
                             <p className="text-xs text-muted-foreground mt-0.5">{resource.size} • {resource.ext.toUpperCase()}</p>
                           </div>
                           <DropdownMenu>
