@@ -294,114 +294,116 @@ export default function DatabaseManager() {
         </div>
       </div>
       <div className="flex-1 overflow-auto">
-        <Table>
-          <TableHeader className="bg-secondary/20 sticky top-0 z-10">
-            <TableRow>
-              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider w-16 pl-4">IDX</TableHead>
-              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">COMPANY_NAME</TableHead>
-              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">AGE</TableHead>
-              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">MEMBER</TableHead>
-              <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">REGDATE</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedData.map((row) => (
-              <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
-                <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
-                <TableCell 
-                  className="py-2 text-xs font-semibold text-foreground pl-4 cursor-pointer hover:bg-primary/5"
-                  onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'company_name', value: row.company_name })}
-                >
-                  {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'company_name' ? (
-                    <Input 
-                      value={inlineEditCell.value}
-                      onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                      onBlur={handleInlineCellSave}
-                      onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                      className="h-6 text-xs py-0 px-1"
-                      autoFocus
-                    />
-                  ) : row.company_name}
-                </TableCell>
-                <TableCell 
-                  className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
-                  onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'age', value: row.age })}
-                >
-                  {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'age' ? (
-                    <Input 
-                      type="number"
-                      value={inlineEditCell.value}
-                      onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                      onBlur={handleInlineCellSave}
-                      onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                      className="h-6 text-xs py-0 px-1 w-20"
-                      autoFocus
-                    />
-                  ) : row.age}
-                </TableCell>
-                <TableCell 
-                  className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
-                  onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'member', value: row.member })}
-                >
-                  {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'member' ? (
-                    <Input 
-                      type="number"
-                      value={inlineEditCell.value}
-                      onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                      onBlur={handleInlineCellSave}
-                      onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                      className="h-6 text-xs py-0 px-1 w-24"
-                      autoFocus
-                    />
-                  ) : row.member.toLocaleString()}
-                </TableCell>
-                <TableCell className="py-2 text-xs text-muted-foreground tabular-nums pl-4">{row.regdate}</TableCell>
+        <div>
+          <Table>
+            <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+              <TableRow>
+                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider w-16 pl-4">IDX</TableHead>
+                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">COMPANY_NAME</TableHead>
+                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">AGE</TableHead>
+                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">MEMBER</TableHead>
+                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">REGDATE</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      
-      {/* Pagination Footer */}
-      <div className="flex items-center justify-between p-3 border-t bg-card/50">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Rows per page:</span>
-          <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">
-            {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, mockTableDataState.length)} of {mockTableDataState.length}
-          </span>
-          <div className="flex items-center gap-1">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8"
-              disabled={currentPage >= totalPages}
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((row) => (
+                <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
+                  <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
+                  <TableCell 
+                    className="py-2 text-xs font-semibold text-foreground pl-4 cursor-pointer hover:bg-primary/5"
+                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'company_name', value: row.company_name })}
+                  >
+                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'company_name' ? (
+                      <Input 
+                        value={inlineEditCell.value}
+                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                        onBlur={handleInlineCellSave}
+                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                        className="h-6 text-xs py-0 px-1"
+                        autoFocus
+                      />
+                    ) : row.company_name}
+                  </TableCell>
+                  <TableCell 
+                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
+                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'age', value: row.age })}
+                  >
+                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'age' ? (
+                      <Input 
+                        type="number"
+                        value={inlineEditCell.value}
+                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                        onBlur={handleInlineCellSave}
+                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                        className="h-6 text-xs py-0 px-1 w-20"
+                        autoFocus
+                      />
+                    ) : row.age}
+                  </TableCell>
+                  <TableCell 
+                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
+                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'member', value: row.member })}
+                  >
+                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'member' ? (
+                      <Input 
+                        type="number"
+                        value={inlineEditCell.value}
+                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                        onBlur={handleInlineCellSave}
+                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                        className="h-6 text-xs py-0 px-1 w-24"
+                        autoFocus
+                      />
+                    ) : row.member.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="py-2 text-xs text-muted-foreground tabular-nums pl-4">{row.regdate}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {/* Pagination - directly below table */}
+          <div className="flex items-center justify-between p-3 border-t bg-card/50">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Rows per page:</span>
+              <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
+                <SelectTrigger className="h-8 w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, mockTableDataState.length)} of {mockTableDataState.length}
+              </span>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  disabled={currentPage >= totalPages}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
