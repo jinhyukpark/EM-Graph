@@ -205,216 +205,6 @@ export default function DatabaseManager() {
     });
   };
 
-  const TableDetailView = ({ tableName }: { tableName: string }) => (
-    <div className="flex flex-col h-full bg-background animate-in fade-in slide-in-from-right-4 duration-300">
-      <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setSelectedTable(null)}
-            className="hover:bg-accent"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
-            <span className="text-sm text-muted-foreground">{mockTableDataState.length} rows generated</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Dialog open={isAddRowOpen} onOpenChange={setIsAddRowOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
-                <Plus className="h-4 w-4" />
-                Add New Row
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add New Row</DialogTitle>
-                <DialogDescription>
-                  Enter values for the new record.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="idx">IDX (Auto-generated)</Label>
-                  <Input 
-                    id="idx" 
-                    value={Math.max(...mockTableDataState.map(r => r.idx)) + 1}
-                    disabled
-                    className="bg-muted text-muted-foreground"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="company_name">COMPANY_NAME</Label>
-                  <Input 
-                    id="company_name" 
-                    value={newRowData.company_name}
-                    onChange={(e) => setNewRowData({...newRowData, company_name: e.target.value})}
-                    placeholder="e.g. Acme Corp"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="age">AGE</Label>
-                  <Input 
-                    id="age" 
-                    type="number"
-                    value={newRowData.age}
-                    onChange={(e) => setNewRowData({...newRowData, age: e.target.value})}
-                    placeholder="0"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="member">MEMBER</Label>
-                  <Input 
-                    id="member" 
-                    type="number"
-                    value={newRowData.member}
-                    onChange={(e) => setNewRowData({...newRowData, member: e.target.value})}
-                    placeholder="0"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="regdate">REGDATE (Auto-generated)</Label>
-                  <Input 
-                    id="regdate" 
-                    value={new Date().toISOString().replace('T', ' ').substring(0, 19)}
-                    disabled
-                    className="bg-muted text-muted-foreground"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>Cancel</Button>
-                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>Add Row</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
-            <Save className="h-4 w-4" />
-            Save to Table
-          </Button>
-        </div>
-      </div>
-      <div className="flex-1 overflow-auto">
-        <div>
-          <Table>
-            <TableHeader className="bg-secondary/20 sticky top-0 z-10">
-              <TableRow>
-                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider w-16 pl-4">IDX</TableHead>
-                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">COMPANY_NAME</TableHead>
-                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">AGE</TableHead>
-                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">MEMBER</TableHead>
-                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">REGDATE</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedData.map((row) => (
-                <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
-                  <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
-                  <TableCell 
-                    className="py-2 text-xs font-semibold text-foreground pl-4 cursor-pointer hover:bg-primary/5"
-                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'company_name', value: row.company_name })}
-                  >
-                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'company_name' ? (
-                      <Input 
-                        value={inlineEditCell.value}
-                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                        onBlur={handleInlineCellSave}
-                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                        className="h-6 text-xs py-0 px-1"
-                        autoFocus
-                      />
-                    ) : row.company_name}
-                  </TableCell>
-                  <TableCell 
-                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
-                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'age', value: row.age })}
-                  >
-                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'age' ? (
-                      <Input 
-                        type="number"
-                        value={inlineEditCell.value}
-                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                        onBlur={handleInlineCellSave}
-                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                        className="h-6 text-xs py-0 px-1 w-20"
-                        autoFocus
-                      />
-                    ) : row.age}
-                  </TableCell>
-                  <TableCell 
-                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
-                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'member', value: row.member })}
-                  >
-                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'member' ? (
-                      <Input 
-                        type="number"
-                        value={inlineEditCell.value}
-                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
-                        onBlur={handleInlineCellSave}
-                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
-                        className="h-6 text-xs py-0 px-1 w-24"
-                        autoFocus
-                      />
-                    ) : row.member.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="py-2 text-xs text-muted-foreground tabular-nums pl-4">{row.regdate}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          
-          {/* Pagination - directly below table */}
-          <div className="flex items-center justify-between p-3 border-t bg-card/50">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Rows per page:</span>
-              <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
-                <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, mockTableDataState.length)} of {mockTableDataState.length}
-              </span>
-              <div className="flex items-center gap-1">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-8 w-8"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  className="h-8 w-8"
-                  disabled={currentPage >= totalPages}
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   const activeTab = tabs.find(t => t.id === activeTabId);
 
   const toggleCategory = (categoryName: string) => {
@@ -1398,7 +1188,214 @@ export default function DatabaseManager() {
               ) : activeTab.type === 'table' ? (
                 <div className="flex flex-col h-full bg-background">
                   {selectedTable ? (
-                    <TableDetailView tableName={selectedTable} />
+                    <div className="flex flex-col h-full bg-background">
+                      <div className="flex items-center justify-between p-4 border-b">
+                        <div className="flex items-center gap-4">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => setSelectedTable(null)}
+                            className="hover:bg-accent"
+                          >
+                            <ArrowLeft className="h-5 w-5" />
+                          </Button>
+                          <div className="flex items-center gap-2">
+                            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
+                            <span className="text-sm text-muted-foreground">{mockTableDataState.length} rows generated</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Dialog open={isAddRowOpen} onOpenChange={setIsAddRowOpen}>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
+                                <Plus className="h-4 w-4" />
+                                Add New Row
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                              <DialogHeader>
+                                <DialogTitle>Add New Row</DialogTitle>
+                                <DialogDescription>
+                                  Enter values for the new record.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid gap-4 py-4">
+                                <div className="grid gap-2">
+                                  <Label htmlFor="idx">IDX (Auto-generated)</Label>
+                                  <Input 
+                                    id="idx" 
+                                    value={Math.max(...mockTableDataState.map(r => r.idx)) + 1}
+                                    disabled
+                                    className="bg-muted text-muted-foreground"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="company_name">COMPANY_NAME</Label>
+                                  <Input 
+                                    id="company_name" 
+                                    value={newRowData.company_name}
+                                    onChange={(e) => setNewRowData({...newRowData, company_name: e.target.value})}
+                                    placeholder="e.g. Acme Corp"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="age">AGE</Label>
+                                  <Input 
+                                    id="age" 
+                                    type="number"
+                                    value={newRowData.age}
+                                    onChange={(e) => setNewRowData({...newRowData, age: e.target.value})}
+                                    placeholder="0"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="member">MEMBER</Label>
+                                  <Input 
+                                    id="member" 
+                                    type="number"
+                                    value={newRowData.member}
+                                    onChange={(e) => setNewRowData({...newRowData, member: e.target.value})}
+                                    placeholder="0"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="regdate">REGDATE (Auto-generated)</Label>
+                                  <Input 
+                                    id="regdate" 
+                                    value={new Date().toISOString().replace('T', ' ').substring(0, 19)}
+                                    disabled
+                                    className="bg-muted text-muted-foreground"
+                                  />
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>Cancel</Button>
+                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>Add Row</Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
+                            <Save className="h-4 w-4" />
+                            Save to Table
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-auto">
+                        <div>
+                          <Table>
+                            <TableHeader className="bg-secondary/20 sticky top-0 z-10">
+                              <TableRow>
+                                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider w-16 pl-4">IDX</TableHead>
+                                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">COMPANY_NAME</TableHead>
+                                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">AGE</TableHead>
+                                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">MEMBER</TableHead>
+                                <TableHead className="h-8 text-xs font-semibold uppercase tracking-wider pl-4">REGDATE</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {paginatedData.map((row) => (
+                                <TableRow key={row.idx} className="hover:bg-indigo-50/10 border-b border-border/50">
+                                  <TableCell className="py-2 text-xs font-mono text-muted-foreground/50 pl-4">{row.idx}</TableCell>
+                                  <TableCell 
+                                    className="py-2 text-xs font-semibold text-foreground pl-4 cursor-pointer hover:bg-primary/5"
+                                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'company_name', value: row.company_name })}
+                                  >
+                                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'company_name' ? (
+                                      <input 
+                                        type="text"
+                                        value={inlineEditCell.value}
+                                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                                        onBlur={handleInlineCellSave}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                                        className="h-6 text-xs py-0 px-1 border rounded w-full bg-background"
+                                        autoFocus
+                                      />
+                                    ) : row.company_name}
+                                  </TableCell>
+                                  <TableCell 
+                                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
+                                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'age', value: row.age })}
+                                  >
+                                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'age' ? (
+                                      <input 
+                                        type="number"
+                                        value={inlineEditCell.value}
+                                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                                        onBlur={handleInlineCellSave}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                                        className="h-6 text-xs py-0 px-1 w-20 border rounded bg-background"
+                                        autoFocus
+                                      />
+                                    ) : row.age}
+                                  </TableCell>
+                                  <TableCell 
+                                    className="py-2 text-xs text-foreground/80 pl-4 cursor-pointer hover:bg-primary/5"
+                                    onDoubleClick={() => setInlineEditCell({ rowIdx: row.idx, field: 'member', value: row.member })}
+                                  >
+                                    {inlineEditCell?.rowIdx === row.idx && inlineEditCell?.field === 'member' ? (
+                                      <input 
+                                        type="number"
+                                        value={inlineEditCell.value}
+                                        onChange={(e) => setInlineEditCell({ ...inlineEditCell, value: e.target.value })}
+                                        onBlur={handleInlineCellSave}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleInlineCellSave()}
+                                        className="h-6 text-xs py-0 px-1 w-24 border rounded bg-background"
+                                        autoFocus
+                                      />
+                                    ) : row.member.toLocaleString()}
+                                  </TableCell>
+                                  <TableCell className="py-2 text-xs text-muted-foreground tabular-nums pl-4">{row.regdate}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          
+                          {/* Pagination - directly below table */}
+                          <div className="flex items-center justify-between p-3 border-t bg-card/50">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span>Rows per page:</span>
+                              <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
+                                <SelectTrigger className="h-8 w-[70px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="5">5</SelectItem>
+                                  <SelectItem value="10">10</SelectItem>
+                                  <SelectItem value="20">20</SelectItem>
+                                  <SelectItem value="50">50</SelectItem>
+                                  <SelectItem value="100">100</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="text-sm text-muted-foreground">
+                                {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, mockTableDataState.length)} of {mockTableDataState.length}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <Button 
+                                  variant="outline" 
+                                  size="icon" 
+                                  className="h-8 w-8"
+                                  disabled={currentPage === 1}
+                                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="icon" 
+                                  className="h-8 w-8"
+                                  disabled={currentPage >= totalPages}
+                                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                >
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <div className="flex-1 overflow-auto p-6">
                       <div className="space-y-8">
