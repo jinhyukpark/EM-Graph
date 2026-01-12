@@ -69,14 +69,38 @@ const SIDEBAR_ITEMS = [
   }
 ];
 
-const MOCK_TABLE_DATA = [
-  { idx: 1, company_name: "illunex", age: 8, member: 40, regdate: "2025-09-27 16:16:12" },
-  { idx: 2, company_name: "samsung", age: 50, member: 40000, regdate: "2025-09-27 16:16:52" },
-  { idx: 3, company_name: "lg_electronics", age: 45, member: 35000, regdate: "2025-09-28 09:30:00" },
-  { idx: 4, company_name: "sk_hynix", age: 38, member: 28000, regdate: "2025-09-28 10:15:22" },
-  { idx: 5, company_name: "naver", age: 22, member: 5000, regdate: "2025-09-29 14:20:11" },
-  { idx: 6, company_name: "kakao", age: 15, member: 4200, regdate: "2025-09-29 15:45:33" },
+const COMPANY_NAMES = [
+  "illunex", "samsung", "lg_electronics", "sk_hynix", "naver", "kakao", "hyundai", "kia", "posco", "coupang",
+  "woowa_brothers", "krafton", "nc_soft", "netmarble", "smilegate", "nexon", "pearl_abyss", "com2us", "devsisters", "shift_up",
+  "toss", "viva_republica", "dunamu", "upbit", "bithumb", "coinone", "korbit", "gopax", "hana_bank", "shinhan_bank",
+  "kb_bank", "woori_bank", "nh_bank", "ibk", "kakao_bank", "k_bank", "samsung_sds", "lg_cns", "sk_c_c", "lotte_data",
+  "hanwha_systems", "doosan_digital", "posco_ict", "cj_olivenetworks", "shinsegae_isc", "gs_retail", "lotte_shopping", "emart", "homeplus", "costco_korea",
+  "starbucks_korea", "mcdonald_korea", "burger_king_kr", "subway_korea", "dominos_korea", "pizza_hut_kr", "bbq_chicken", "kyochon", "bhc_chicken", "nene_chicken",
+  "cj_enm", "jtbc", "mbc", "kbs", "sbs", "tvn", "yg_entertainment", "sm_entertainment", "jyp_entertainment", "hybe",
+  "big_hit", "kakao_m", "melon", "genie_music", "flo_music", "bugs_music", "vibe_music", "naver_webtoon", "kakao_webtoon", "lezhin_comics",
+  "tving", "wavve", "watcha", "seezn", "coupang_play", "netflix_korea", "disney_plus_kr", "amazon_korea", "eleven_street", "wemakeprice",
+  "tmon", "interpark", "yes24", "kyobo_book", "aladin_book", "millie_library", "ridi_books", "kakao_page", "naver_series", "munpia",
+  "carrot_market", "bungae_jangter", "joongna_market", "hello_market", "samsung_card", "hyundai_card", "kb_card", "shinhan_card", "lotte_card", "bc_card",
+  "hana_card", "woori_card", "nh_card", "kakao_pay", "naver_pay", "toss_pay", "payco", "samsung_pay", "lg_pay", "zee_pay",
+  "skplanet", "kt_corporation", "lg_uplus", "sk_telecom", "sk_broadband", "kt_skylife", "lg_hellovision", "cable_tv", "iptv_korea", "olleh_tv",
+  "u_plus_tv", "btv", "seezn_cable", "kt_cloud", "naver_cloud", "kakao_i_cloud", "samsung_cloud", "lg_cloud", "aws_korea", "azure_korea",
+  "google_cloud_kr", "oracle_korea", "ibm_korea", "sap_korea", "salesforce_kr", "slack_korea", "zoom_korea", "ms_teams_kr", "webex_korea", "notion_korea"
 ];
+
+const generateMockData = () => {
+  const data = [];
+  for (let i = 1; i <= 150; i++) {
+    const company = COMPANY_NAMES[(i - 1) % COMPANY_NAMES.length];
+    const age = Math.floor(Math.random() * 60) + 1;
+    const member = Math.floor(Math.random() * 50000) + 10;
+    const date = new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
+    const regdate = date.toISOString().replace('T', ' ').substring(0, 19);
+    data.push({ idx: i, company_name: company, age, member, regdate });
+  }
+  return data;
+};
+
+const MOCK_TABLE_DATA = generateMockData();
 
 const MOCK_QUERY_DATA = [
   { id: 1, type: "Theft", location: "Downtown", time: "2024-03-10 14:30", severity: 4, status: "Open" },
@@ -134,7 +158,7 @@ export default function DatabaseManager() {
 
   // Pagination state for table view
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   // Inline editing state
   const [inlineEditCell, setInlineEditCell] = useState<{rowIdx: number; field: string; value: string | number} | null>(null);
