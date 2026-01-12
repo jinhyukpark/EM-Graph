@@ -91,9 +91,14 @@ const generateMockData = () => {
   const data = [];
   for (let i = 1; i <= 150; i++) {
     const company = COMPANY_NAMES[(i - 1) % COMPANY_NAMES.length];
-    const age = Math.floor(Math.random() * 60) + 1;
-    const member = Math.floor(Math.random() * 50000) + 10;
-    const date = new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
+    const age = ((i * 7) % 60) + 1;
+    const member = ((i * 317) % 50000) + 10;
+    const month = (i % 12);
+    const day = (i % 28) + 1;
+    const hour = (i % 24);
+    const minute = ((i * 3) % 60);
+    const second = ((i * 7) % 60);
+    const date = new Date(2025, month, day, hour, minute, second);
     const regdate = date.toISOString().replace('T', ' ').substring(0, 19);
     data.push({ idx: i, company_name: company, age, member, regdate });
   }
