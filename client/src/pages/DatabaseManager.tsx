@@ -107,13 +107,28 @@ const generateMockData = () => {
 
 const MOCK_TABLE_DATA = generateMockData();
 
-const MOCK_QUERY_DATA = [
-  { id: 1, type: "Theft", location: "Downtown", time: "2024-03-10 14:30", severity: 4, status: "Open" },
-  { id: 2, type: "Assault", location: "Sector 4", time: "2024-03-11 02:15", severity: 8, status: "Investigating" },
-  { id: 3, type: "Vandalism", location: "North Park", time: "2024-03-11 09:45", severity: 2, status: "Closed" },
-  { id: 4, type: "Burglary", location: "West End", time: "2024-03-12 11:20", severity: 6, status: "Open" },
-  { id: 5, type: "Theft", location: "Mall District", time: "2024-03-12 16:10", severity: 3, status: "Open" },
-];
+const CRIME_TYPES = ["Theft", "Assault", "Vandalism", "Burglary", "Fraud", "Robbery", "Arson", "Trespassing", "Harassment", "Shoplifting"];
+const LOCATIONS = ["Downtown", "Sector 4", "North Park", "West End", "Mall District", "Central Station", "Harbor Area", "Industrial Zone", "Residential Block A", "Commercial District", "University Area", "Airport Terminal", "Train Station", "Sports Complex", "City Hall"];
+const STATUSES = ["Open", "Investigating", "Closed", "Pending", "Resolved"];
+
+const generateQueryData = () => {
+  const data = [];
+  for (let i = 1; i <= 100; i++) {
+    const type = CRIME_TYPES[(i - 1) % CRIME_TYPES.length];
+    const location = LOCATIONS[(i * 3) % LOCATIONS.length];
+    const status = STATUSES[(i * 2) % STATUSES.length];
+    const severity = ((i * 7) % 10) + 1;
+    const month = ((i - 1) % 12) + 1;
+    const day = ((i * 2) % 28) + 1;
+    const hour = (i % 24);
+    const minute = ((i * 5) % 60);
+    const time = `2024-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    data.push({ id: i, type, location, time, severity, status });
+  }
+  return data;
+};
+
+const MOCK_QUERY_DATA = generateQueryData();
 
 interface Tab {
   id: string;
@@ -165,11 +180,18 @@ export default function DatabaseManager() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
 
+  // Pagination state for query results
+  const [queryCurrentPage, setQueryCurrentPage] = useState(1);
+  const [queryRowsPerPage, setQueryRowsPerPage] = useState(20);
+
   // Inline editing state
   const [inlineEditCell, setInlineEditCell] = useState<{rowIdx: number; field: string; value: string | number} | null>(null);
 
   const totalPages = Math.ceil(mockTableDataState.length / rowsPerPage);
   const paginatedData = mockTableDataState.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  const queryTotalPages = Math.ceil(queryData.length / queryRowsPerPage);
+  const paginatedQueryData = queryData.slice((queryCurrentPage - 1) * queryRowsPerPage, queryCurrentPage * queryRowsPerPage);
 
   const handleInlineCellSave = () => {
     if (!inlineEditCell) return;
@@ -1826,42 +1848,88 @@ export default function DatabaseManager() {
                               <div className="text-xs text-muted-foreground">{queryData.length} rows found</div>
                             </div>
                             <div className="flex-1 overflow-auto">
-                              <Table>
-                                <TableHeader className="bg-secondary/20 sticky top-0">
-                                  <TableRow>
-                                    <TableHead className="w-[60px]">ID</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Location</TableHead>
-                                    <TableHead>Time</TableHead>
-                                    <TableHead>Severity</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="w-[50px]"></TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {queryData.map((row) => (
-                                    <TableRow key={row.id} className="hover:bg-secondary/30">
-                                      <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
-                                      <TableCell className="font-medium">{row.type}</TableCell>
-                                      <TableCell>{row.location}</TableCell>
-                                      <TableCell className="text-muted-foreground text-xs">{row.time}</TableCell>
-                                      <TableCell>
-                                        <Badge variant={row.severity > 5 ? "destructive" : "secondary"} className="text-[10px]">
-                                          Level {row.severity}
-                                        </Badge>
-                                      </TableCell>
-                                      <TableCell>
-                                         <Badge variant="outline" className="text-[10px]">{row.status}</Badge>
-                                      </TableCell>
-                                      <TableCell>
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
-                                          <Trash2 className="w-3 h-3" />
-                                        </Button>
-                                      </TableCell>
+                              <div>
+                                <Table>
+                                  <TableHeader className="bg-secondary/20 sticky top-0">
+                                    <TableRow>
+                                      <TableHead className="w-[60px]">ID</TableHead>
+                                      <TableHead>Type</TableHead>
+                                      <TableHead>Location</TableHead>
+                                      <TableHead>Time</TableHead>
+                                      <TableHead>Severity</TableHead>
+                                      <TableHead>Status</TableHead>
+                                      <TableHead className="w-[50px]"></TableHead>
                                     </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {paginatedQueryData.map((row) => (
+                                      <TableRow key={row.id} className="hover:bg-secondary/30">
+                                        <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
+                                        <TableCell className="font-medium">{row.type}</TableCell>
+                                        <TableCell>{row.location}</TableCell>
+                                        <TableCell className="text-muted-foreground text-xs">{row.time}</TableCell>
+                                        <TableCell>
+                                          <Badge variant={row.severity > 5 ? "destructive" : "secondary"} className="text-[10px]">
+                                            Level {row.severity}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                           <Badge variant="outline" className="text-[10px]">{row.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
+                                            <Trash2 className="w-3 h-3" />
+                                          </Button>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                                
+                                {/* Query Results Pagination */}
+                                <div className="flex items-center justify-between p-3 border-t bg-card/50">
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <span>Rows per page:</span>
+                                    <Select value={queryRowsPerPage.toString()} onValueChange={(v) => { setQueryRowsPerPage(Number(v)); setQueryCurrentPage(1); }}>
+                                      <SelectTrigger className="h-8 w-[70px]">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="5">5</SelectItem>
+                                        <SelectItem value="10">10</SelectItem>
+                                        <SelectItem value="20">20</SelectItem>
+                                        <SelectItem value="50">50</SelectItem>
+                                        <SelectItem value="100">100</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="flex items-center gap-4">
+                                    <span className="text-sm text-muted-foreground">
+                                      {((queryCurrentPage - 1) * queryRowsPerPage) + 1} - {Math.min(queryCurrentPage * queryRowsPerPage, queryData.length)} of {queryData.length}
+                                    </span>
+                                    <div className="flex items-center gap-1">
+                                      <Button 
+                                        variant="outline" 
+                                        size="icon" 
+                                        className="h-8 w-8"
+                                        disabled={queryCurrentPage === 1}
+                                        onClick={() => setQueryCurrentPage(p => Math.max(1, p - 1))}
+                                      >
+                                        <ChevronLeft className="h-4 w-4" />
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="icon" 
+                                        className="h-8 w-8"
+                                        disabled={queryCurrentPage >= queryTotalPages}
+                                        onClick={() => setQueryCurrentPage(p => Math.min(queryTotalPages, p + 1))}
+                                      >
+                                        <ChevronRight className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </ResizablePanel>
