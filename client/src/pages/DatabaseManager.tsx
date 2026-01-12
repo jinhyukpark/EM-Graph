@@ -130,6 +130,8 @@ export default function DatabaseManager() {
     member: ""
   });
 
+  const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
+
   const handleAddRow = () => {
     const newIdx = Math.max(...mockTableDataState.map(r => r.idx)) + 1;
     const now = new Date();
