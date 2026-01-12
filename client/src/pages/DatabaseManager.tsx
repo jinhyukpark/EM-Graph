@@ -1403,6 +1403,29 @@ export default function DatabaseManager() {
                                 >
                                   <ChevronLeft className="h-4 w-4" />
                                 </Button>
+                                {(() => {
+                                  const pages = [];
+                                  const maxVisiblePages = 5;
+                                  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                                  if (endPage - startPage + 1 < maxVisiblePages) {
+                                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                  }
+                                  for (let i = startPage; i <= endPage; i++) {
+                                    pages.push(
+                                      <Button
+                                        key={i}
+                                        variant={currentPage === i ? "default" : "outline"}
+                                        size="icon"
+                                        className="h-8 w-8 text-xs"
+                                        onClick={() => setCurrentPage(i)}
+                                      >
+                                        {i}
+                                      </Button>
+                                    );
+                                  }
+                                  return pages;
+                                })()}
                                 <Button 
                                   variant="outline" 
                                   size="icon" 
@@ -1917,6 +1940,29 @@ export default function DatabaseManager() {
                                       >
                                         <ChevronLeft className="h-4 w-4" />
                                       </Button>
+                                      {(() => {
+                                        const pages = [];
+                                        const maxVisiblePages = 5;
+                                        let startPage = Math.max(1, queryCurrentPage - Math.floor(maxVisiblePages / 2));
+                                        let endPage = Math.min(queryTotalPages, startPage + maxVisiblePages - 1);
+                                        if (endPage - startPage + 1 < maxVisiblePages) {
+                                          startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                        }
+                                        for (let i = startPage; i <= endPage; i++) {
+                                          pages.push(
+                                            <Button
+                                              key={i}
+                                              variant={queryCurrentPage === i ? "default" : "outline"}
+                                              size="icon"
+                                              className="h-8 w-8 text-xs"
+                                              onClick={() => setQueryCurrentPage(i)}
+                                            >
+                                              {i}
+                                            </Button>
+                                          );
+                                        }
+                                        return pages;
+                                      })()}
                                       <Button 
                                         variant="outline" 
                                         size="icon" 
