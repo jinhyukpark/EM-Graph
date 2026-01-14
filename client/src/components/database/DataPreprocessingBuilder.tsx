@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Database, Filter, ArrowRightLeft, Merge, FileInput, Save, Play, Trash2, Plus, ArrowRight, Table as TableIcon, GitMerge, ListFilter, Layers, X, Spline, Activity, Type, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Minus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -129,14 +129,6 @@ const OperationNode = ({ data, id }: any) => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                  <Label className="text-[9px] text-muted-foreground uppercase">On Keys</Label>
-                 <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-4 w-4 hover:bg-indigo-50 text-indigo-600"
-                    onClick={addKeyPair}
-                 >
-                    <Plus className="w-3 h-3" />
-                 </Button>
               </div>
               
               <div className="space-y-1.5">
@@ -151,10 +143,15 @@ const OperationNode = ({ data, id }: any) => {
                         <SelectValue placeholder={sources[0]?.label ? `${sources[0].label} Key` : "Source 1 Key"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="id" className="text-xs">ID</SelectItem>
-                        <SelectItem value="company_name" className="text-xs">COMPANY_NAME</SelectItem>
-                        <SelectItem value="type" className="text-xs">TYPE</SelectItem>
-                        <SelectItem value="suspect_id" className="text-xs">SUSPECT_ID</SelectItem>
+                        <SelectGroup>
+                          <SelectLabel className="text-[10px] font-bold text-muted-foreground px-2 py-1.5 bg-secondary/20">
+                            {sources[0]?.label || "Source Table 1"}
+                          </SelectLabel>
+                          <SelectItem value="id" className="text-xs">ID</SelectItem>
+                          <SelectItem value="company_name" className="text-xs">COMPANY_NAME</SelectItem>
+                          <SelectItem value="type" className="text-xs">TYPE</SelectItem>
+                          <SelectItem value="suspect_id" className="text-xs">SUSPECT_ID</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                     
@@ -169,22 +166,16 @@ const OperationNode = ({ data, id }: any) => {
                         <SelectValue placeholder={sources[1]?.label ? `${sources[1].label} Key` : "Source 2 Key"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="id" className="text-xs">ID</SelectItem>
-                        <SelectItem value="ref_id" className="text-xs">REF_ID</SelectItem>
-                        <SelectItem value="user_id" className="text-xs">USER_ID</SelectItem>
+                        <SelectGroup>
+                          <SelectLabel className="text-[10px] font-bold text-muted-foreground px-2 py-1.5 bg-secondary/20">
+                            {sources[1]?.label || "Source Table 2"}
+                          </SelectLabel>
+                          <SelectItem value="id" className="text-xs">ID</SelectItem>
+                          <SelectItem value="ref_id" className="text-xs">REF_ID</SelectItem>
+                          <SelectItem value="user_id" className="text-xs">USER_ID</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
-                    
-                    {joinKeys.length > 1 && (
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeKeyPair(keyPair.id)}
-                        >
-                            <Minus className="w-3 h-3" />
-                        </Button>
-                    )}
                   </div>
                 ))}
               </div>
