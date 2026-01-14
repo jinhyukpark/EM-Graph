@@ -98,17 +98,30 @@ const OperationNode = ({ data }: any) => {
               </Select>
             </div>
             <div className="space-y-1">
-              <Label className="text-[9px] text-muted-foreground uppercase">On Key</Label>
-              <Select defaultValue="id">
-                <SelectTrigger className="h-7 text-[10px] bg-background">
-                  <SelectValue placeholder="Select key" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="id" className="text-xs">ID = ID</SelectItem>
-                  <SelectItem value="suspect_id" className="text-xs">Suspect ID = ID</SelectItem>
-                  <SelectItem value="location_id" className="text-xs">Location ID = ID</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label className="text-[9px] text-muted-foreground uppercase">On Keys</Label>
+              <div className="flex items-center gap-1">
+                <Select defaultValue="id">
+                  <SelectTrigger className="h-7 text-[10px] bg-background flex-1">
+                    <SelectValue placeholder="Left Key" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="id" className="text-xs">ID</SelectItem>
+                    <SelectItem value="company_name" className="text-xs">COMPANY_NAME</SelectItem>
+                    <SelectItem value="type" className="text-xs">TYPE</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-muted-foreground">=</span>
+                <Select defaultValue="id">
+                  <SelectTrigger className="h-7 text-[10px] bg-background flex-1">
+                    <SelectValue placeholder="Right Key" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="id" className="text-xs">ID</SelectItem>
+                    <SelectItem value="ref_id" className="text-xs">REF_ID</SelectItem>
+                    <SelectItem value="user_id" className="text-xs">USER_ID</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </>
         )}
