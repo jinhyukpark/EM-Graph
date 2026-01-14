@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Database, Filter, ArrowRightLeft, Merge, FileInput, Save, Play, Trash2, Plus, ArrowRight, Table as TableIcon, GitMerge, ListFilter, Layers, X, Spline, Activity, Type, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Database, Filter, ArrowRightLeft, Merge, FileInput, Save, Play, Trash2, Plus, ArrowRight, Table as TableIcon, GitMerge, ListFilter, Layers, X, Spline, Activity, Type, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Minus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -69,9 +69,37 @@ const SourceNode = ({ data }: any) => (
   </div>
 );
 
-const OperationNode = ({ data }: any) => {
+const OperationNode = ({ data, id }: any) => {
+  const { setNodes } = useReactFlow();
+  
+  // Ensure we have valid data defaults
+  const sources = data.sources || [];
+  const joinKeys = data.joinKeys || [{ id: 'default', leftKey: 'id', rightKey: 'id' }];
+  
+  const updateJoinKeys = (newKeys: any[]) => {
+    setNodes((nds) => nds.map((n) => {
+      if (n.id === id) {
+        return { ...n, data: { ...n.data, joinKeys: newKeys } };
+      }
+      return n;
+    }));
+  };
+
+  const addKeyPair = () => {
+    updateJoinKeys([...joinKeys, { id: Date.now().toString(), leftKey: 'id', rightKey: 'id' }]);
+  };
+
+  const removeKeyPair = (keyId: string) => {
+    if (joinKeys.length <= 1) return; 
+    updateJoinKeys(joinKeys.filter((k: any) => k.id !== keyId));
+  };
+
+  const updateKey = (keyId: string, field: 'leftKey' | 'rightKey', value: string) => {
+    updateJoinKeys(joinKeys.map((k: any) => k.id === keyId ? { ...k, [field]: value } : k));
+  };
+
   return (
-    <div className="bg-card border-2 border-indigo-500/20 rounded-lg shadow-sm min-w-[200px] overflow-hidden">
+    <div className="bg-card border-2 border-indigo-500/20 rounded-lg shadow-sm min-w-[240px] overflow-hidden">
       <Handle type="target" position={Position.Left} className="!bg-indigo-500" />
       <Handle type="source" position={Position.Right} className="!bg-indigo-500" />
       
@@ -97,31 +125,72 @@ const OperationNode = ({ data }: any) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[9px] text-muted-foreground uppercase">On Keys</Label>
-              <div className="flex items-center gap-1">
-                <Select defaultValue="id">
-                  <SelectTrigger className="h-7 text-[10px] bg-background flex-1">
-                    <SelectValue placeholder="Left Key" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="id" className="text-xs">ID</SelectItem>
-                    <SelectItem value="company_name" className="text-xs">COMPANY_NAME</SelectItem>
-                    <SelectItem value="type" className="text-xs">TYPE</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-xs text-muted-foreground">=</span>
-                <Select defaultValue="id">
-                  <SelectTrigger className="h-7 text-[10px] bg-background flex-1">
-                    <SelectValue placeholder="Right Key" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="id" className="text-xs">ID</SelectItem>
-                    <SelectItem value="ref_id" className="text-xs">REF_ID</SelectItem>
-                    <SelectItem value="user_id" className="text-xs">USER_ID</SelectItem>
-                  </SelectContent>
-                </Select>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                 <Label className="text-[9px] text-muted-foreground uppercase">On Keys</Label>
+                 <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-4 w-4 hover:bg-indigo-50 text-indigo-600"
+                    onClick={addKeyPair}
+                 >
+                    <Plus className="w-3 h-3" />
+                 </Button>
               </div>
+              
+              <div className="space-y-1.5">
+                {joinKeys.map((keyPair: any, index: number) => (
+                  <div key={keyPair.id} className="flex items-center gap-1 group">
+                    <Select 
+                        value={keyPair.leftKey} 
+                        onValueChange={(v) => updateKey(keyPair.id, 'leftKey', v)}
+                        disabled={sources.length < 1}
+                    >
+                      <SelectTrigger className="h-7 text-[10px] bg-background flex-1 min-w-0">
+                        <SelectValue placeholder={sources[0]?.label ? `${sources[0].label} Key` : "Source 1 Key"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="id" className="text-xs">ID</SelectItem>
+                        <SelectItem value="company_name" className="text-xs">COMPANY_NAME</SelectItem>
+                        <SelectItem value="type" className="text-xs">TYPE</SelectItem>
+                        <SelectItem value="suspect_id" className="text-xs">SUSPECT_ID</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <span className="text-[10px] text-muted-foreground">=</span>
+                    
+                    <Select 
+                        value={keyPair.rightKey} 
+                        onValueChange={(v) => updateKey(keyPair.id, 'rightKey', v)}
+                        disabled={sources.length < 2}
+                    >
+                      <SelectTrigger className="h-7 text-[10px] bg-background flex-1 min-w-0">
+                        <SelectValue placeholder={sources[1]?.label ? `${sources[1].label} Key` : "Source 2 Key"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="id" className="text-xs">ID</SelectItem>
+                        <SelectItem value="ref_id" className="text-xs">REF_ID</SelectItem>
+                        <SelectItem value="user_id" className="text-xs">USER_ID</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {joinKeys.length > 1 && (
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeKeyPair(keyPair.id)}
+                        >
+                            <Minus className="w-3 h-3" />
+                        </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {sources.length === 0 && (
+                <p className="text-[9px] text-amber-500 mt-1">Connect source tables to configure keys.</p>
+              )}
             </div>
           </>
         )}
@@ -284,6 +353,34 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
       window.removeEventListener("mouseup", stopResizing);
     };
   }, [resize, stopResizing]);
+
+  // Update operation nodes with connected sources
+  useEffect(() => {
+    setNodes((nds) => nds.map((node) => {
+        if (node.type === 'operation' && node.data.subType === 'join') {
+            const connectedEdges = edges.filter((e) => e.target === node.id);
+            // Sort edges by source handle or just order to keep consistent left/right
+            // For now, we trust the order or just map them.
+            // But we need to distinguish left vs right if we want to be strict.
+            // React Flow handles usually don't dictate "left" or "right" input slot unless we use multiple handles.
+            // The current OperationNode has one target handle 'target'.
+            // So multiple edges connect to the same handle.
+            
+            const sources = connectedEdges.map((e) => {
+                const sourceNode = nds.find((n) => n.id === e.source);
+                return sourceNode ? { id: sourceNode.id, label: sourceNode.data.label } : null;
+            }).filter(Boolean);
+
+            const currentSourcesJson = JSON.stringify(node.data.sources);
+            const newSourcesJson = JSON.stringify(sources);
+
+            if (currentSourcesJson !== newSourcesJson) {
+                return { ...node, data: { ...node.data, sources } };
+            }
+        }
+        return node;
+    }));
+  }, [edges, setNodes]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({ 
