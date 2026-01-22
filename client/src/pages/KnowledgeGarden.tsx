@@ -91,15 +91,15 @@ class GraphErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
 
 // --- Mock Data ---
 
-import stockPrison from '@assets/stock_images/modern_prison_buildi_9bacaffd.jpg';
-import stockDetective from '@assets/stock_images/police_detective_inv_e00135e9.jpg';
-import stockCriminal from '@assets/stock_images/criminal_mugshot_or__e3300888.jpg';
-import stockVictim from '@assets/stock_images/victim_of_crime_port_a8ed2300.jpg';
-import stockCase from '@assets/stock_images/legal_case_file_docu_d34f6df4.jpg';
-import stockVictimB from '@assets/stock_images/portrait_of_a_young__70369a95.jpg';
-import stockCompany from '@assets/stock_images/modern_corporate_off_11c42306.jpg';
-import stockPhone from '@assets/stock_images/old_burner_mobile_ph_af367193.jpg';
-import stockMoney from '@assets/stock_images/stacks_of_money_in_b_5f30198e.jpg';
+const stockPrison = "/assets/generated_images/subtle_dark_data_network_background.png";
+const stockDetective = "/assets/generated_images/police_detectives_in_high-tech_room.png";
+const stockCriminal = "/assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png";
+const stockVictim = "/assets/generated_images/scientist_with_test_tube.png";
+const stockCase = "/assets/generated_images/abstract_database_ontology_illustration.png";
+const stockVictimB = "/assets/generated_images/abstract_collaboration_network_illustration.png";
+const stockCompany = "/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png";
+const stockPhone = "/assets/generated_images/data_import_and_mapping_ui.png";
+const stockMoney = "/assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png";
 
 const STATUS_OPTIONS = [
   { id: 'draft', label: 'Draft', color: 'bg-slate-500' },

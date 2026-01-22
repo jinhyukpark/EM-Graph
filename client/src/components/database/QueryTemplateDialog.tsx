@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { TABLE_OPTIONS, TABLE_COLUMNS, DATABASE_TABLES, OPERATOR_OPTIONS } from "@/constants";
+import { generateId } from "@/lib/arrayUtils";
 
 interface QueryTemplateDialogProps {
   onSelectQuery: (query: string, description?: string) => void;
@@ -26,45 +28,10 @@ interface Condition {
   disabled?: boolean;
 }
 
-// Mock Data for Recommendations
-const TABLES = [
-  { value: "crime_incidents_2024", label: "crime_incidents_2024" },
-  { value: "suspect_profiles", label: "suspect_profiles" },
-  { value: "location_hotspots", label: "location_hotspots" },
-  { value: "supply_chain_nodes", label: "supply_chain_nodes" },
-];
-
-const FIELDS = {
-  "crime_incidents_2024": [
-    { value: "id", label: "id (integer)" },
-    { value: "type", label: "type (varchar)" },
-    { value: "location", label: "location (varchar)" },
-    { value: "time", label: "time (timestamp)" },
-    { value: "severity", label: "severity (integer)" },
-    { value: "status", label: "status (varchar)" },
-  ],
-  "suspect_profiles": [
-    { value: "id", label: "id" },
-    { value: "name", label: "name" },
-    { value: "age", label: "age" },
-    { value: "alias", label: "alias" },
-  ],
-  "location_hotspots": [
-      { value: "id", label: "id" },
-      { value: "name", label: "name" },
-      { value: "risk", label: "risk" },
-  ],
-  "supply_chain_nodes": [
-      { value: "id", label: "id" },
-      { value: "name", label: "name" },
-      { value: "type", label: "type" },
-  ]
-};
-
 export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDialogProps) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<View>("selection");
-  const [selectedTable, setSelectedTable] = useState("crime_incidents_2024");
+  const [selectedTable, setSelectedTable] = useState<string>(DATABASE_TABLES.CRIME_INCIDENTS);
   const [conditions, setConditions] = useState<Condition[]>([
     { id: "1", field: "", value: "", operator: "" }
   ]);
@@ -73,7 +40,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
   const reset = () => {
     setView("selection");
     setConditions([{ id: "1", field: "", value: "", operator: "" }]);
-    setSelectedTable("crime_incidents_2024");
+    setSelectedTable(DATABASE_TABLES.CRIME_INCIDENTS);
   };
 
   const handleClose = () => {
@@ -82,7 +49,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
   };
 
   const addCondition = () => {
-    setConditions([...conditions, { id: Date.now().toString(), field: "", value: "", operator: "" }]);
+    setConditions([...conditions, { id: generateId(), field: "", value: "", operator: "" }]);
   };
 
   const removeCondition = (id: string) => {
@@ -90,7 +57,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
       setConditions(conditions.filter(c => c.id !== id));
     } else {
         // If it's the last one, just clear it
-        setConditions([{ id: Date.now().toString(), field: "", value: "", operator: "" }]);
+        setConditions([{ id: generateId(), field: "", value: "", operator: "" }]);
     }
   };
 
@@ -160,7 +127,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
       }
   };
 
-  const currentFields = FIELDS[selectedTable as keyof typeof FIELDS] || [];
+  const currentFields = TABLE_COLUMNS[selectedTable as keyof typeof TABLE_COLUMNS] || [];
 
   return (
     <Dialog open={open} onOpenChange={(val) => {
@@ -272,7 +239,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
                        <Popover open={openTableSelect} onOpenChange={setOpenTableSelect}>
                           <PopoverTrigger asChild>
                              <button className="font-medium border-b-2 border-foreground pb-1 outline-none hover:text-primary hover:border-primary transition-colors flex items-center gap-1">
-                               {selectedTable ? TABLES.find(t => t.value === selectedTable)?.label : "Table"}
+                               {selectedTable ? TABLE_OPTIONS.find(t => t.value === selectedTable)?.label : "Table"}
                                <ChevronsUpDown className="w-3 h-3 text-muted-foreground" />
                              </button>
                           </PopoverTrigger>
@@ -282,7 +249,7 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
                               <CommandList>
                                 <CommandEmpty>No table found.</CommandEmpty>
                                 <CommandGroup>
-                                  {TABLES.map((table) => (
+                                  {TABLE_OPTIONS.map((table) => (
                                     <CommandItem
                                       key={table.value}
                                       value={table.value}
@@ -378,10 +345,11 @@ export function QueryTemplateDialog({ onSelectQuery, trigger }: QueryTemplateDia
                                           <SelectValue placeholder="등호" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                          <SelectItem value="=">=</SelectItem>
-                                          <SelectItem value=">">&gt;</SelectItem>
-                                          <SelectItem value="<">&lt;</SelectItem>
-                                          <SelectItem value="LIKE">LIKE</SelectItem>
+                                          {OPERATOR_OPTIONS.slice(0, 4).map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                              {option.label}
+                                            </SelectItem>
+                                          ))}
                                         </SelectContent>
                                       </Select>
                                    </div>

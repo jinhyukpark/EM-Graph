@@ -26,8 +26,8 @@ import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import heroBanner from "@assets/generated_images/modern_abstract_hero_banner_for_marketing.png";
-import userAvatar from "@assets/generated_images/user_avatar_professional_headshot.png";
+const heroBanner = "/assets/generated_images/abstract_network_background.png";
+const userAvatar = "/assets/generated_images/ai_suggesting_connections_ui.png";
 
 // Mock Data
 const INITIAL_RESOURCES = [
@@ -227,7 +227,8 @@ export default function ResourcesManager() {
         ext: ext,
         size: (file.size / 1024 < 1024) ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
         date: new Date().toISOString().split('T')[0],
-        folder: selectedCategory === 'all' ? (activeCategory === 'all' ? 'Uploads' : categories.find(c => c.id === activeCategory)?.label || 'Uploads') : categories.find(c => c.id === selectedCategory)?.label || 'Uploads'
+        folder: selectedCategory === 'all' ? (activeCategory === 'all' ? 'Uploads' : categories.find(c => c.id === activeCategory)?.label || 'Uploads') : categories.find(c => c.id === selectedCategory)?.label || 'Uploads',
+        url: null
       };
     });
 

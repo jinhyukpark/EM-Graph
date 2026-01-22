@@ -26,13 +26,13 @@ import ERDGraphView from "@/components/graph/ERDGraphView";
 import ERDTablePanel from "@/components/graph/ERDTablePanel";
 
 // Import stock images
-import victimBImg from '@assets/stock_images/portrait_of_a_young__1114e5ec.jpg';
-import thugAImg from '@assets/stock_images/portrait_of_a_young__7ceb0422.jpg';
-import lawyerHanImg from '@assets/stock_images/portrait_of_a_male_l_cbb92d94.jpg';
-import enforcerImg from '@assets/stock_images/portrait_of_a_male_e_fa4e764a.jpg';
-import laundererImg from '@assets/stock_images/portrait_of_a_male_m_7b9dd078.jpg';
-import warehouseImg from '@assets/stock_images/abandoned_warehouse__5ca79054.jpg';
-import companyLogoImg from '@assets/stock_images/modern_tech_company__bbd857a2.jpg';
+const victimBImg = "/assets/generated_images/abstract_collaboration_network_illustration.png";
+const thugAImg = "/assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png";
+const lawyerHanImg = "/assets/generated_images/abstract_ai_brain_network_illustration.png";
+const enforcerImg = "/assets/generated_images/digital_network_graph_connecting_suspects_and_evidence.png";
+const laundererImg = "/assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png";
+const warehouseImg = "/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png";
+const companyLogoImg = "/assets/generated_images/abstract_database_ontology_illustration.png";
 
 import { cn } from "@/lib/utils";
 

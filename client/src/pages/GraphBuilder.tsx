@@ -1,13 +1,13 @@
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, X, Plus, GripVertical, Trash2, Settings, Circle, Info } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Circle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { TableSelect } from "@/components/common";
+import { COLUMN_OPTIONS, FIELD_OPTIONS, SIZE_METRIC_OPTIONS, COLOR_METRIC_OPTIONS } from "@/constants";
+import { generateId, removeItemById } from "@/lib/arrayUtils";
 
 interface Link {
   id: string;
@@ -37,17 +37,17 @@ export default function GraphBuilder() {
   ]);
 
   const addLink = () => {
-    setLinks([...links, { 
-      id: Date.now().toString(), 
-      sourceTable: "", 
-      sourceColumn: "", 
-      targetTable: "", 
-      targetColumn: "" 
+    setLinks([...links, {
+      id: generateId(),
+      sourceTable: "",
+      sourceColumn: "",
+      targetTable: "",
+      targetColumn: ""
     }]);
   };
 
   const removeLink = (id: string) => {
-    setLinks(links.filter(l => l.id !== id));
+    setLinks(removeItemById(links, id));
   };
 
   return (
@@ -80,21 +80,13 @@ export default function GraphBuilder() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid gap-6">
-                  {nodes.map((node, index) => (
+                  {nodes.map((node) => (
                     <div key={node.id} className="grid grid-cols-12 gap-4 items-end border p-4 rounded-lg bg-card/50">
                       <div className="col-span-3 space-y-2">
                         <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
-                        <Select defaultValue={node.table}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Table" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                            <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <TableSelect defaultValue={node.table} />
                       </div>
-                      
+
                       <div className="col-span-8 grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label className="text-xs font-medium text-muted-foreground">Label Field</Label>
@@ -103,9 +95,11 @@ export default function GraphBuilder() {
                               <SelectValue placeholder="Select Field" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="type">type</SelectItem>
-                              <SelectItem value="name">name</SelectItem>
-                              <SelectItem value="id">id</SelectItem>
+                              {FIELD_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -116,9 +110,11 @@ export default function GraphBuilder() {
                               <SelectValue placeholder="Select Metric" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="severity">severity</SelectItem>
-                              <SelectItem value="age">age</SelectItem>
-                              <SelectItem value="none">None (Fixed)</SelectItem>
+                              {SIZE_METRIC_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -129,9 +125,11 @@ export default function GraphBuilder() {
                               <SelectValue placeholder="Select Metric" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="severity">severity</SelectItem>
-                              <SelectItem value="status">status</SelectItem>
-                              <SelectItem value="age">age</SelectItem>
+                              {COLOR_METRIC_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -148,7 +146,7 @@ export default function GraphBuilder() {
               </CardContent>
             </Card>
 
-            {/* Link Definitions Section - Matching the Screenshot */}
+            {/* Link Definitions Section */}
             <Card className="border-border shadow-sm overflow-hidden">
                <div className="p-4 border-b border-border bg-white flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -159,31 +157,28 @@ export default function GraphBuilder() {
                     <Plus className="w-4 h-4" /> Add Link
                   </Button>
                </div>
-               
+
                <div className="p-6 space-y-3 bg-secondary/5 min-h-[200px]">
-                 {links.map((link, index) => (
+                 {links.map((link) => (
                    <div key={link.id} className="flex items-center p-4 rounded-lg border border-border bg-white shadow-sm">
                       <div className="mr-4 text-muted-foreground/30">
                          <GripVertical className="w-4 h-4" />
                       </div>
-                      
+
                       <div className="flex-1 flex items-center gap-4">
                          {/* Source Group */}
                          <div className="flex-1">
                             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Source</div>
                             <div className="flex gap-2">
-                               <Select defaultValue={link.sourceTable}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                                   <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                                 </SelectContent>
-                               </Select>
+                               <TableSelect defaultValue={link.sourceTable} />
                                <Select defaultValue={link.sourceColumn}>
                                  <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
                                  <SelectContent>
-                                   <SelectItem value="id">id</SelectItem>
-                                   <SelectItem value="suspect_id">suspect_id</SelectItem>
+                                   {COLUMN_OPTIONS.map((option) => (
+                                     <SelectItem key={option.value} value={option.value}>
+                                       {option.label}
+                                     </SelectItem>
+                                   ))}
                                  </SelectContent>
                                </Select>
                             </div>
@@ -197,18 +192,15 @@ export default function GraphBuilder() {
                          <div className="flex-1">
                             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Target</div>
                             <div className="flex gap-2">
-                               <Select defaultValue={link.targetTable}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                                   <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                                 </SelectContent>
-                               </Select>
+                               <TableSelect defaultValue={link.targetTable} />
                                <Select defaultValue={link.targetColumn}>
                                  <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
                                  <SelectContent>
-                                   <SelectItem value="id">id</SelectItem>
-                                   <SelectItem value="suspect_id">suspect_id</SelectItem>
+                                   {COLUMN_OPTIONS.map((option) => (
+                                     <SelectItem key={option.value} value={option.value}>
+                                       {option.label}
+                                     </SelectItem>
+                                   ))}
                                  </SelectContent>
                                </Select>
                             </div>

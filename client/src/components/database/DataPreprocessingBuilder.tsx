@@ -14,28 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Mock Data for Preview
-const PREVIEW_DATA: Record<string, any[]> = {
-  'crime_incidents_2024': Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    type: ["Theft", "Assault", "Vandalism", "Burglary"][i % 4],
-    location: ["Downtown", "Sector 4", "North Park", "West End"][i % 4],
-    time: `2024-03-${10 + (i % 20)}`,
-    severity: (i % 10) + 1
-  })),
-  'suspect_profiles': Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    name: `Suspect ${i + 1}`,
-    age: 20 + (i % 30),
-    history: ["Major Theft", "Minor Theft", "Assault", "None"][i % 4]
-  })),
-  'default': Array.from({ length: 50 }, (_, i) => ({
-    col1: `Value ${i * 3 + 1}`,
-    col2: `Value ${i * 3 + 2}`,
-    col3: `Value ${i * 3 + 3}`
-  }))
-};
+import { TableSelect } from "@/components/common";
+import { PREVIEW_DATA } from "@/lib/mockData";
+import { JOIN_TYPE_OPTIONS } from "@/constants";
+import { generateId } from "@/lib/arrayUtils";
 
 // ... Node Components (SourceNode, OperationNode, DestinationNode) ...
 // Interactive Node Components
@@ -49,17 +31,7 @@ const SourceNode = ({ data }: any) => (
     <div className="p-2 space-y-2">
       <div className="space-y-1">
         <Label className="text-[9px] text-muted-foreground uppercase">Select Table</Label>
-        <Select defaultValue={data.label}>
-          <SelectTrigger className="h-7 text-[10px] bg-background">
-            <SelectValue placeholder="Select table" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="crime_incidents_2024" className="text-xs">crime_incidents_2024</SelectItem>
-            <SelectItem value="suspect_profiles" className="text-xs">suspect_profiles</SelectItem>
-            <SelectItem value="location_hotspots" className="text-xs">location_hotspots</SelectItem>
-            <SelectItem value="supply_chain_nodes" className="text-xs">supply_chain_nodes</SelectItem>
-          </SelectContent>
-        </Select>
+        <TableSelect defaultValue={data.label} size="sm" placeholder="Select table" />
       </div>
       <div className="flex items-center justify-between text-[10px] text-muted-foreground bg-secondary/20 p-1 rounded">
         <span>Rows:</span>
@@ -86,7 +58,7 @@ const OperationNode = ({ data, id }: any) => {
   };
 
   const addKeyPair = () => {
-    updateJoinKeys([...joinKeys, { id: Date.now().toString(), leftKey: 'id', rightKey: 'id' }]);
+    updateJoinKeys([...joinKeys, { id: generateId(), leftKey: 'id', rightKey: 'id' }]);
   };
 
   const removeKeyPair = (keyId: string) => {
@@ -118,10 +90,11 @@ const OperationNode = ({ data, id }: any) => {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="inner" className="text-xs">Inner Join</SelectItem>
-                  <SelectItem value="left" className="text-xs">Left Join</SelectItem>
-                  <SelectItem value="right" className="text-xs">Right Join</SelectItem>
-                  <SelectItem value="full" className="text-xs">Full Outer Join</SelectItem>
+                  {JOIN_TYPE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value} className="text-xs">
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
