@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight, Database, Table as TableIcon } from "lucide-react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight, Database, Table as TableIcon, Target } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -342,8 +342,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               </div>
 
               <div className="p-4">
-                 <Button className="w-full gap-2" variant="secondary">
-                    <Search className="w-4 h-4" /> 노드 찾기
+                 <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md" variant="default">
+                    <Target className="w-4 h-4" /> Locate Node
                  </Button>
               </div>
            </div>
