@@ -47,6 +47,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, Mail, UserPlus, Shield, Edit2, Eye } from "lucide-react";
 
@@ -312,6 +313,13 @@ function GraphTimeline() {
   const [selectedField, setSelectedField] = useState("event_count");
   const [dateRange, setDateRange] = useState({ start: "2024-01-01", end: "2024-06-30" });
   
+  // Filter State
+  const [filterRange, setFilterRange] = useState([0, 100]);
+  const [isFilterEnabled, setIsFilterEnabled] = useState(true);
+
+  const filteredCount = timelineData.filter(d => !isFilterEnabled || (d.value >= filterRange[0] && d.value <= filterRange[1])).length;
+  const filteredPercent = Math.round((filteredCount / timelineData.length) * 100);
+  
   return (
     <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
       {/* Header / Filter Bar */}
@@ -344,16 +352,51 @@ function GraphTimeline() {
         </div>
 
         <div className="flex items-center gap-6">
-           <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-             <Checkbox defaultChecked className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" />
-             <div className="flex items-center gap-1.5">
-               <span className="w-2 h-2 rounded-full bg-green-500" />
-               <span className="font-medium text-foreground">&lt; 100</span>
-             </div>
+           <div className="flex items-center gap-2">
+             <Checkbox 
+                checked={isFilterEnabled}
+                onCheckedChange={(c) => setIsFilterEnabled(!!c)}
+                className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" 
+             />
+             
+             <Popover>
+                <PopoverTrigger asChild>
+                    <div className="flex items-center gap-1.5 cursor-pointer hover:bg-secondary/50 px-2 py-0.5 rounded transition-colors">
+                       <span className={`w-2 h-2 rounded-full ${isFilterEnabled ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                       <span className="font-medium text-foreground">
+                          {filterRange[0] === 0 ? `< ${filterRange[1]}` : `${filterRange[0]} - ${filterRange[1]}`}
+                       </span>
+                    </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-60 p-4" align="end">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h4 className="font-medium leading-none text-sm">Value Filter</h4>
+                            <span className="text-xs text-muted-foreground">
+                                {filterRange[0]} - {filterRange[1]}
+                            </span>
+                        </div>
+                        <Slider
+                            defaultValue={[0, 100]}
+                            value={filterRange}
+                            min={0}
+                            max={100}
+                            step={1}
+                            onValueChange={setFilterRange}
+                            className="w-full"
+                        />
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>0</span>
+                            <span>100</span>
+                        </div>
+                    </div>
+                </PopoverContent>
+             </Popover>
            </div>
+           
            <div className="flex gap-6 text-muted-foreground font-mono">
-             <span>90</span>
-             <span>5%</span>
+             <span title="Matching Items">{filteredCount}</span>
+             <span title="Percentage">{filteredPercent}%</span>
            </div>
         </div>
       </div>
@@ -361,10 +404,13 @@ function GraphTimeline() {
       {/* Timeline Chart Area */}
       <div className="h-32 w-full px-4 pt-6 pb-2 relative group/chart">
         <div className="h-full w-full flex items-end gap-[3px] px-8">
-          {timelineData.map((d, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
+          {timelineData.map((d, i) => {
+            const isDimmed = isFilterEnabled && (d.value < filterRange[0] || d.value > filterRange[1]);
+            
+            return (
+            <div key={i} className={`flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer ${isDimmed ? 'opacity-20 grayscale' : ''}`}>
               {/* Event Marker (Red Circle) */}
-              {d.hasEvent && (
+              {d.hasEvent && !isDimmed && (
                 <div className="absolute -top-3 w-2.5 h-2.5 rounded-full border-[1.5px] border-red-500 bg-background z-10 group-hover:bg-red-500 transition-colors" />
               )}
               
@@ -373,18 +419,22 @@ function GraphTimeline() {
                 className={cn(
                   "w-full rounded-t-sm transition-all duration-200 min-h-[4px]",
                   d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300/60 group-hover:bg-slate-400/80",
-                  d.isHigh && "bg-slate-500 group-hover:bg-slate-600"
+                  d.isHigh && "bg-slate-500 group-hover:bg-slate-600",
+                  isDimmed && "bg-slate-200"
                 )}
                 style={{ height: `${d.value}%` }}
               />
               
               {/* Tooltip */}
+              {!isDimmed && (
               <div className="absolute bottom-full mb-3 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap border border-border z-30 animate-in fade-in slide-in-from-bottom-1 duration-200">
                 <div className="font-semibold">{format(d.date, 'MMM d, yyyy')}</div>
                 <div className="text-muted-foreground">{d.value} events recorded</div>
               </div>
+              )}
             </div>
-          ))}
+            );
+          })}
         </div>
         
         {/* Month Labels */}
