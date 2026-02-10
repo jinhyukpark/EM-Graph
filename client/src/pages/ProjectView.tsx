@@ -1091,46 +1091,6 @@ export default function ProjectView() {
           {/* AI Insight Card - Added */}
           {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
           
-          {/* Top Right Controls - Shortest Path & Node Reduction */}
-          <div className="absolute top-4 right-40 z-10 flex gap-2 pointer-events-auto">
-             <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                   <TooltipTrigger asChild>
-                       <Button 
-                        variant={isShortestPathMode ? "default" : "secondary"} 
-                        size="icon" 
-                        className={`h-10 w-10 rounded-full shadow-lg border border-border/50 backdrop-blur-md transition-all ${isShortestPathMode ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-card/80 hover:bg-card'}`}
-                        onClick={() => {
-                            setIsShortestPathMode(!isShortestPathMode);
-                            if (isShortestPathMode) {
-                                // Turning off
-                                setShortestPathData({ start: null, end: null });
-                            }
-                        }}
-                       >
-                          <Route className="w-5 h-5" />
-                       </Button>
-                   </TooltipTrigger>
-                   <TooltipContent>
-                      <p>Shortest Path Analysis</p>
-                   </TooltipContent>
-                </Tooltip>
-             </TooltipProvider>
-
-             <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                   <TooltipTrigger asChild>
-                       <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full shadow-lg border border-border/50 bg-card/80 backdrop-blur-md hover:bg-card">
-                          <Scissors className="w-5 h-5" />
-                       </Button>
-                   </TooltipTrigger>
-                   <TooltipContent>
-                      <p>Toggle High Degree Nodes</p>
-                   </TooltipContent>
-                </Tooltip>
-             </TooltipProvider>
-          </div>
-
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
             <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
@@ -1233,7 +1193,18 @@ export default function ProjectView() {
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Refresh Layout</span>
                     </Button>
 
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                    <Button 
+                        variant={isShortestPathMode ? "secondary" : "ghost"} 
+                        size="icon" 
+                        className={`w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden ${isShortestPathMode ? 'bg-primary/10 text-primary' : ''}`}
+                        onClick={() => {
+                            setIsShortestPathMode(!isShortestPathMode);
+                            if (isShortestPathMode) {
+                                // Turning off
+                                setShortestPathData({ start: null, end: null });
+                            }
+                        }}
+                    >
                        <Waypoints className="w-5 h-5 shrink-0" />
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Shortest Path</span>
                     </Button>
