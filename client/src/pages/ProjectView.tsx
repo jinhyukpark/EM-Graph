@@ -738,47 +738,47 @@ const ShortestPathPanel = ({
        </div>
 
        {/* Selection Area */}
-       <div className="p-5 space-y-5">
-          <div className="relative pl-2 space-y-0">
-             {/* Connecting Line */}
-             <div className="absolute left-[19px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-blue-500/50 via-border to-indigo-500/50 -z-10" />
+       <div className="p-5 space-y-4">
+          <div className="flex items-center gap-2 relative">
+             {/* Connecting Line (Horizontal) */}
+             <div className="absolute left-6 right-6 top-1/2 h-0.5 bg-gradient-to-r from-blue-500/50 via-border to-indigo-500/50 -z-10 -translate-y-1/2" />
 
              {/* Start Node */}
-             <div className="group relative">
-                <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-2 ring-background z-10 shrink-0">
+             <div className="group relative flex-1">
+                <div className="flex flex-col items-center gap-2 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50 text-center">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-4 ring-background z-10 shrink-0">
                        A
                     </div>
-                    <div className="flex-1 min-w-0">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Source Node</p>
-                       <div className={`text-sm font-medium truncate ${startNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                          {startNode ? startNode.data.label : 'Select source node...'}
+                    <div className="w-full min-w-0">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Source</p>
+                       <div className={`text-xs font-medium truncate w-full ${startNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
+                          {startNode ? startNode.data.label : 'Select...'}
                        </div>
                     </div>
-                    {!startNode && <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />}
+                    {!startNode && <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-blue-500/30 animate-ping -z-10" />}
                 </div>
              </div>
 
              {/* Arrow Indicator */}
-             <div className="pl-[10px] py-1">
-                <div className="bg-background border border-border p-1 rounded-full w-fit">
+             <div className="z-10">
+                <div className="bg-background border border-border p-1.5 rounded-full shadow-sm">
                     <ArrowRight className="w-3 h-3 text-muted-foreground" />
                 </div>
              </div>
 
              {/* End Node */}
-             <div className="group relative">
-                <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-2 ring-background z-10 shrink-0">
+             <div className="group relative flex-1">
+                <div className="flex flex-col items-center gap-2 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50 text-center">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-4 ring-background z-10 shrink-0">
                        B
                     </div>
-                    <div className="flex-1 min-w-0">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Target Node</p>
-                       <div className={`text-sm font-medium truncate ${endNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                          {endNode ? endNode.data.label : 'Select target node...'}
+                    <div className="w-full min-w-0">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Target</p>
+                       <div className={`text-xs font-medium truncate w-full ${endNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
+                          {endNode ? endNode.data.label : 'Select...'}
                        </div>
                     </div>
-                    {startNode && !endNode && <div className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />}
+                    {startNode && !endNode && <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-indigo-500/30 animate-ping -z-10" />}
                 </div>
              </div>
           </div>
