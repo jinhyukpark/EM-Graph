@@ -782,16 +782,16 @@ const ShortestPathPanel = ({
                  {/* Source Info */}
                  <div className="flex-1 text-center flex flex-col items-center">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Source</span>
-                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${startNode ? 'text-foreground bg-blue-500/5' : 'text-muted-foreground italic'}`}>
-                       {startNode ? startNode.data.label : 'Select Node'}
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${startNode ? 'text-foreground bg-blue-500/5' : 'text-transparent bg-transparent h-7'}`}>
+                       {startNode ? startNode.data.label : '-'}
                     </div>
                  </div>
 
                  {/* Target Info */}
                  <div className="flex-1 text-center flex flex-col items-center">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Target</span>
-                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${endNode ? 'text-foreground bg-indigo-500/5' : 'text-muted-foreground italic'}`}>
-                       {endNode ? endNode.data.label : 'Select Node'}
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${endNode ? 'text-foreground bg-indigo-500/5' : 'text-transparent bg-transparent h-7'}`}>
+                       {endNode ? endNode.data.label : '-'}
                     </div>
                  </div>
              </div>
