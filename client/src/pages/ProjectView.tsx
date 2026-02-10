@@ -13,13 +13,22 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors, RotateCcw } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors, RotateCcw, FileJson, FileSpreadsheet, Database, Network as NetworkIcon } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import CenterEdge from "@/components/graph/CenterEdge";
 import ERDGraphView from "@/components/graph/ERDGraphView";
@@ -1318,10 +1327,34 @@ export default function ProjectView() {
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Filters</span>
                     </Button>
 
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <Download className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden">
+                           <Download className="w-5 h-5 shrink-0" />
+                           <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="right" align="end" className="w-48 ml-2">
+                        <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <Database className="w-4 h-4 text-blue-500" />
+                          <span>Ontology</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <NetworkIcon className="w-4 h-4 text-indigo-500" />
+                          <span>Graph</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <FileJson className="w-4 h-4 text-orange-500" />
+                          <span>JSON</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <FileSpreadsheet className="w-4 h-4 text-green-500" />
+                          <span>Excel</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                  </div>
               </div>
             </motion.div>
