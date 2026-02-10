@@ -875,14 +875,45 @@ const ShortestPathPanel = ({
 // Remove Layer Panel Component
 const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
   const [layers, setLayers] = React.useState([
-    { id: 1, name: "Holding Structures", color: "bg-blue-600" },
-    { id: 2, name: "Key Subsidiaries", color: "bg-indigo-600" },
-    { id: 3, name: "Financial Affiliates", color: "bg-blue-400" },
-    { id: 4, name: "Value Up Programs", color: "bg-sky-300" }
+    { 
+        id: 1, 
+        name: "Holding Structures", 
+        level: "Level 1", 
+        color: "bg-blue-600",
+        nodes: ["Holdings Inc", "Group Corp", "Parent Co"]
+    },
+    { 
+        id: 2, 
+        name: "Key Subsidiaries", 
+        level: "Level 2", 
+        color: "bg-indigo-600", 
+        nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"]
+    },
+    { 
+        id: 3, 
+        name: "Financial Affiliates", 
+        level: "Level 3", 
+        color: "bg-blue-400", 
+        nodes: ["Finance Co", "Investment Inc", "Bank Unit"]
+    },
+    { 
+        id: 4, 
+        name: "Value Up Programs", 
+        level: "Level 4", 
+        color: "bg-sky-300", 
+        nodes: ["Program A", "Initiative B"]
+    }
   ]);
   
-  const removeLayer = (id: number) => {
+  const [expandedLayer, setExpandedLayer] = React.useState<number | null>(null);
+  
+  const removeLayer = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
     setLayers(layers.filter(l => l.id !== id));
+  };
+  
+  const toggleExpand = (id: number) => {
+    setExpandedLayer(expandedLayer === id ? null : id);
   };
 
   return (
@@ -897,10 +928,10 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
           </div>
           <div className="flex items-center gap-1">
              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground" onClick={() => setLayers([
-                { id: 1, name: "Holding Structures", color: "bg-blue-600" },
-                { id: 2, name: "Key Subsidiaries", color: "bg-indigo-600" },
-                { id: 3, name: "Financial Affiliates", color: "bg-blue-400" },
-                { id: 4, name: "Value Up Programs", color: "bg-sky-300" }
+                { id: 1, name: "Holding Structures", level: "Level 1", color: "bg-blue-600", nodes: ["Holdings Inc", "Group Corp", "Parent Co"] },
+                { id: 2, name: "Key Subsidiaries", level: "Level 2", color: "bg-indigo-600", nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"] },
+                { id: 3, name: "Financial Affiliates", level: "Level 3", color: "bg-blue-400", nodes: ["Finance Co", "Investment Inc", "Bank Unit"] },
+                { id: 4, name: "Value Up Programs", level: "Level 4", color: "bg-sky-300", nodes: ["Program A", "Initiative B"] }
              ])}>
                 <RotateCcw className="w-3.5 h-3.5" />
              </Button>
@@ -910,16 +941,39 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
           </div>
        </div>
 
-       <div className="p-4 space-y-3">
+       <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
           {layers.map((layer) => (
-             <div key={layer.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors group shadow-sm">
-                <div className="flex items-center gap-3">
-                   <div className={`w-1.5 h-8 rounded-full ${layer.color}`} />
-                   <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
+             <div 
+                key={layer.id} 
+                className={`rounded-lg border border-border bg-card/50 hover:bg-card transition-all duration-300 group shadow-sm cursor-pointer overflow-hidden ${expandedLayer === layer.id ? 'ring-1 ring-primary/20 bg-card' : ''}`}
+                onClick={() => toggleExpand(layer.id)}
+             >
+                <div className="flex items-center justify-between p-3">
+                    <div className="flex items-center gap-3">
+                       <div className={`w-1.5 h-8 rounded-full ${layer.color} shrink-0`} />
+                       <div className="flex flex-col">
+                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{layer.level}</span>
+                           <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${expandedLayer === layer.id ? 'rotate-90' : ''}`} />
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-50 group-hover:opacity-100 transition-opacity" onClick={(e) => removeLayer(layer.id, e)}>
+                           <X className="w-3.5 h-3.5" />
+                        </Button>
+                    </div>
                 </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-50 group-hover:opacity-100 transition-opacity" onClick={() => removeLayer(layer.id)}>
-                   <X className="w-3.5 h-3.5" />
-                </Button>
+                
+                {/* Expanded Content - Node Tags */}
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedLayer === layer.id ? 'max-h-40 opacity-100 border-t border-border/50' : 'max-h-0 opacity-0'}`}>
+                    <div className="p-3 bg-secondary/10 flex flex-wrap gap-1.5">
+                        {layer.nodes.map((node, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-[10px] font-normal bg-background border-border/50 hover:bg-secondary">
+                                {node}
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
              </div>
           ))}
           {layers.length === 0 && (
