@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
@@ -860,6 +860,35 @@ export default function ProjectView() {
           {/* AI Insight Card - Added */}
           {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
           
+          {/* Top Right Controls - Shortest Path & Node Reduction */}
+          <div className="absolute top-4 right-32 z-10 flex gap-2 pointer-events-auto">
+             <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                   <TooltipTrigger asChild>
+                       <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full shadow-lg border border-border/50 bg-card/80 backdrop-blur-md hover:bg-card">
+                          <Route className="w-5 h-5" />
+                       </Button>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                      <p>Shortest Path Analysis</p>
+                   </TooltipContent>
+                </Tooltip>
+             </TooltipProvider>
+
+             <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                   <TooltipTrigger asChild>
+                       <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full shadow-lg border border-border/50 bg-card/80 backdrop-blur-md hover:bg-card">
+                          <Scissors className="w-5 h-5" />
+                       </Button>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                      <p>Toggle High Degree Nodes</p>
+                   </TooltipContent>
+                </Tooltip>
+             </TooltipProvider>
+          </div>
+
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
             <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
