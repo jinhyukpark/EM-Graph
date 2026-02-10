@@ -738,8 +738,8 @@ const ShortestPathPanel = ({
        </div>
 
        {/* Selection Area */}
-       <div className="p-5 space-y-4">
-          <div className="flex flex-col gap-4">
+       <div className="p-5 space-y-2">
+          <div className="flex flex-col gap-1">
              {/* Node Circles & Connector */}
              <div className="flex items-center justify-between px-4 relative">
                  {/* Connecting Line (Horizontal) - Positioned behind circles */}
