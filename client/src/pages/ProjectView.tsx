@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
@@ -927,8 +927,8 @@ export default function ProjectView() {
                  {/* Tools List */}
                  <div className="flex flex-col p-2 gap-1">
                     <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <MousePointer2 className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Mode</span>
+                       <BoxSelect className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Nodes</span>
                     </Button>
                     
                     <div className="h-px bg-border/50 my-1 mx-2" />
