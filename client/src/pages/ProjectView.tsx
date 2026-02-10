@@ -714,73 +714,125 @@ const ShortestPathPanel = ({
   }, [startNode, endNode, allNodes]);
 
   return (
-    <div className="absolute top-20 right-4 w-80 bg-card border border-border shadow-xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-200 pointer-events-auto">
-       {/* Header */}
-       <div className="p-4 border-b border-border flex items-center justify-between bg-muted/30">
-          <div className="flex items-center gap-2">
-             <span className="font-semibold text-sm">최단 경로 검색</span>
-             <div className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
-                ON <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+    <div className="absolute top-20 right-4 w-80 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-300 pointer-events-auto">
+       {/* Header - Professional Look */}
+       <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-muted/20">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                <Route className="w-4 h-4" />
+             </div>
+             <div className="flex flex-col">
+                <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase">Graph Analysis</span>
+                <span className="font-semibold text-sm tracking-tight text-foreground">SHORTEST PATH</span>
              </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-muted" onClick={onClose}>
-             <X className="w-3.5 h-3.5" />
-          </Button>
+          <div className="flex items-center gap-2">
+             <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1.5 border border-emerald-500/20">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                ACTIVE
+             </div>
+             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors ml-1" onClick={onClose}>
+                <X className="w-3.5 h-3.5" />
+             </Button>
+          </div>
        </div>
 
        {/* Selection Area */}
-       <div className="p-4 space-y-4">
-          <div className="relative pl-4 space-y-6">
-             {/* Vertical Line */}
-             <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-border -z-10 border-l border-dashed border-muted-foreground/30" />
+       <div className="p-5 space-y-5">
+          <div className="relative pl-2 space-y-0">
+             {/* Connecting Line */}
+             <div className="absolute left-[19px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-blue-500/50 via-border to-indigo-500/50 -z-10" />
 
              {/* Start Node */}
-             <div className="flex items-center gap-3">
-                <div className="w-10 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center border border-blue-200 dark:border-blue-800 z-10 shadow-sm">
-                   출발
+             <div className="group relative">
+                <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-2 ring-background z-10 shrink-0">
+                       A
+                    </div>
+                    <div className="flex-1 min-w-0">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Source Node</p>
+                       <div className={`text-sm font-medium truncate ${startNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
+                          {startNode ? startNode.data.label : 'Select source node...'}
+                       </div>
+                    </div>
+                    {!startNode && <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />}
                 </div>
-                <div className={`flex-1 text-sm font-medium truncate ${startNode ? 'text-foreground' : 'text-muted-foreground'}`}>
-                   {startNode ? startNode.data.label : '노드를 선택하세요'}
+             </div>
+
+             {/* Arrow Indicator */}
+             <div className="pl-[10px] py-1">
+                <div className="bg-background border border-border p-1 rounded-full w-fit">
+                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
                 </div>
              </div>
 
              {/* End Node */}
-             <div className="flex items-center gap-3">
-                <div className="w-10 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-200 dark:border-indigo-800 z-10 shadow-sm">
-                   도착
-                </div>
-                <div className={`flex-1 text-sm font-medium truncate ${endNode ? 'text-foreground' : 'text-muted-foreground'}`}>
-                   {endNode ? endNode.data.label : '노드를 선택하세요'}
+             <div className="group relative">
+                <div className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-2 ring-background z-10 shrink-0">
+                       B
+                    </div>
+                    <div className="flex-1 min-w-0">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Target Node</p>
+                       <div className={`text-sm font-medium truncate ${endNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
+                          {endNode ? endNode.data.label : 'Select target node...'}
+                       </div>
+                    </div>
+                    {startNode && !endNode && <div className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />}
                 </div>
              </div>
           </div>
 
           <Button 
             variant="outline" 
-            className="w-full border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400 text-muted-foreground gap-2 h-9 text-xs" 
+            size="sm"
+            className="w-full border-dashed border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground text-xs font-medium h-8" 
             onClick={onReset}
+            disabled={!startNode && !endNode}
           >
-             <RotateCcw className="w-3.5 h-3.5" />
-             초기화
+             <RotateCcw className="w-3.5 h-3.5 mr-2" />
+             Reset Selection
           </Button>
        </div>
 
        {/* Result Area */}
        {startNode && endNode && (
-          <div className="border-t border-border p-4 bg-muted/10">
-             <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                최단 경로
-             </h4>
-             <p className="text-xs text-muted-foreground mb-3">최소 {path.length - 2 > 0 ? path.length - 2 : 0} 노드 경유</p>
+          <div className="border-t border-border/50 bg-muted/5 p-5 animate-in slide-in-from-bottom-2 duration-300">
+             <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                   <Sparkles className="w-3 h-3 text-amber-500" />
+                   Analysis Result
+                </h4>
+                <Badge variant="outline" className="text-[10px] h-5 bg-background font-mono font-medium">
+                   {path.length - 1} HOP{path.length - 1 !== 1 ? 'S' : ''}
+                </Badge>
+             </div>
              
-             <div className="flex items-center flex-wrap gap-2">
+             <div className="flex flex-col gap-2 relative">
+                {/* Visual Path Connector Line */}
+                <div className="absolute left-[14px] top-3 bottom-3 w-0.5 bg-border -z-10" />
+                
                 {path.map((node, i) => (
-                   <React.Fragment key={node.id}>
-                      {i > 0 && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
-                      <div className="px-2.5 py-1.5 bg-background border border-border rounded-md text-xs font-medium shadow-sm hover:border-primary/50 transition-colors cursor-default">
+                   <div key={node.id} className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${i * 100}ms` }}>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border shrink-0 z-10 transition-all duration-300
+                         ${i === 0 
+                            ? 'bg-blue-500 border-blue-600 text-white shadow-blue-500/20 shadow-lg' 
+                            : i === path.length - 1 
+                               ? 'bg-indigo-500 border-indigo-600 text-white shadow-indigo-500/20 shadow-lg' 
+                               : 'bg-background border-border text-muted-foreground'
+                         }`}
+                      >
+                         {i + 1}
+                      </div>
+                      <div className={`px-3 py-1.5 rounded-md text-xs font-medium border shadow-sm w-full truncate transition-all duration-200
+                         ${i === 0 || i === path.length - 1 
+                            ? 'bg-background border-border text-foreground' 
+                            : 'bg-muted/30 border-transparent text-muted-foreground'
+                         }`}
+                      >
                          {node.data.label}
                       </div>
-                   </React.Fragment>
+                   </div>
                 ))}
              </div>
           </div>
