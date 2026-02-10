@@ -308,6 +308,9 @@ function GraphTimeline() {
   }));
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedField, setSelectedField] = useState("event_count");
+  const [dateRange, setDateRange] = useState({ start: "2024-01-01", end: "2024-06-30" });
   
   return (
     <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
@@ -373,9 +376,25 @@ function GraphTimeline() {
 
       {/* Control Bar */}
       <div className="h-12 border-t border-border bg-card flex items-center justify-between px-6">
-         <div className="flex items-center gap-2">
-             <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
-             <span className="text-[11px] text-foreground font-bold">Jan 1, 2024 - Jun 30, 2024</span>
+         <div className="flex items-center gap-4">
+             <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 gap-2 text-xs font-normal text-muted-foreground hover:text-foreground px-2"
+                onClick={() => setShowSettings(true)}
+             >
+                <Settings className="w-3.5 h-3.5" />
+                <span>Settings</span>
+             </Button>
+
+             <div className="h-4 w-[1px] bg-border" />
+
+             <div className="flex items-center gap-2">
+                 <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
+                 <span className="text-[11px] text-foreground font-bold">
+                    {format(new Date(dateRange.start), 'MMM d, yyyy')} - {format(new Date(dateRange.end), 'MMM d, yyyy')}
+                 </span>
+             </div>
          </div>
 
          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-4">
@@ -416,6 +435,59 @@ function GraphTimeline() {
              </Button>
          </div>
       </div>
+
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Timeline Settings</DialogTitle>
+            <DialogDescription>
+              Configure the data source and time range for the timeline visualization.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Metric Field (Bar Chart Value)</Label>
+              <Select value={selectedField} onValueChange={setSelectedField}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select metric" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="event_count">Event Frequency</SelectItem>
+                  <SelectItem value="amount">Transaction Amount</SelectItem>
+                  <SelectItem value="risk_score">Risk Score</SelectItem>
+                  <SelectItem value="connections">Connection Activity</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">Select which data field determines the height of the bars.</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Time Period</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Start Date</span>
+                  <Input 
+                    type="date" 
+                    value={dateRange.start} 
+                    onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">End Date</span>
+                  <Input 
+                    type="date" 
+                    value={dateRange.end} 
+                    onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowSettings(false)}>Apply Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
