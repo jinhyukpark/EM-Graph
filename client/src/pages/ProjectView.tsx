@@ -316,9 +316,33 @@ function GraphTimeline() {
     <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
       {/* Header / Filter Bar */}
       <div className="h-9 border-b border-border/50 bg-secondary/10 flex items-center justify-between px-4 text-xs">
-        <div className="flex items-center gap-2 text-muted-foreground">
-           <Maximize2 className="w-3.5 h-3.5 cursor-pointer hover:text-foreground transition-colors" />
+        <div className="flex items-center gap-4">
+           <div className="flex items-center gap-2 text-muted-foreground">
+              <Maximize2 className="w-3.5 h-3.5 cursor-pointer hover:text-foreground transition-colors" />
+           </div>
+           
+           <div className="h-4 w-[1px] bg-border" />
+
+           <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 gap-2 text-xs font-normal text-muted-foreground hover:text-foreground px-2"
+              onClick={() => setShowSettings(true)}
+           >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Settings</span>
+           </Button>
+
+           <div className="h-4 w-[1px] bg-border" />
+
+           <div className="flex items-center gap-2">
+               <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
+               <span className="text-[11px] text-foreground font-bold">
+                  {format(new Date(dateRange.start), 'MMM d, yyyy')} - {format(new Date(dateRange.end), 'MMM d, yyyy')}
+               </span>
+           </div>
         </div>
+
         <div className="flex items-center gap-6">
            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
              <Checkbox defaultChecked className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" />
@@ -377,24 +401,7 @@ function GraphTimeline() {
       {/* Control Bar */}
       <div className="h-12 border-t border-border bg-card flex items-center justify-between px-6">
          <div className="flex items-center gap-4">
-             <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 gap-2 text-xs font-normal text-muted-foreground hover:text-foreground px-2"
-                onClick={() => setShowSettings(true)}
-             >
-                <Settings className="w-3.5 h-3.5" />
-                <span>Settings</span>
-             </Button>
-
-             <div className="h-4 w-[1px] bg-border" />
-
-             <div className="flex items-center gap-2">
-                 <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
-                 <span className="text-[11px] text-foreground font-bold">
-                    {format(new Date(dateRange.start), 'MMM d, yyyy')} - {format(new Date(dateRange.end), 'MMM d, yyyy')}
-                 </span>
-             </div>
+             {/* Empty left side since settings moved to top */}
          </div>
 
          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-4">
