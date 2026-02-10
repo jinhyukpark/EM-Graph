@@ -880,28 +880,32 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
         name: "Holding Structures", 
         level: "Level 1", 
         color: "bg-blue-600",
-        nodes: ["Holdings Inc", "Group Corp", "Parent Co"]
+        nodes: ["Holdings Inc", "Group Corp", "Parent Co"],
+        edgeCount: 15
     },
     { 
         id: 2, 
         name: "Key Subsidiaries", 
         level: "Level 2", 
         color: "bg-indigo-600", 
-        nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"]
+        nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"],
+        edgeCount: 24
     },
     { 
         id: 3, 
         name: "Financial Affiliates", 
         level: "Level 3", 
         color: "bg-blue-400", 
-        nodes: ["Finance Co", "Investment Inc", "Bank Unit"]
+        nodes: ["Finance Co", "Investment Inc", "Bank Unit"],
+        edgeCount: 8
     },
     { 
         id: 4, 
         name: "Value Up Programs", 
         level: "Level 4", 
         color: "bg-sky-300", 
-        nodes: ["Program A", "Initiative B"]
+        nodes: ["Program A", "Initiative B"],
+        edgeCount: 4
     }
   ]);
   
@@ -928,10 +932,10 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
           </div>
           <div className="flex items-center gap-1">
              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground" onClick={() => setLayers([
-                { id: 1, name: "Holding Structures", level: "Level 1", color: "bg-blue-600", nodes: ["Holdings Inc", "Group Corp", "Parent Co"] },
-                { id: 2, name: "Key Subsidiaries", level: "Level 2", color: "bg-indigo-600", nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"] },
-                { id: 3, name: "Financial Affiliates", level: "Level 3", color: "bg-blue-400", nodes: ["Finance Co", "Investment Inc", "Bank Unit"] },
-                { id: 4, name: "Value Up Programs", level: "Level 4", color: "bg-sky-300", nodes: ["Program A", "Initiative B"] }
+                { id: 1, name: "Holding Structures", level: "Level 1", color: "bg-blue-600", nodes: ["Holdings Inc", "Group Corp", "Parent Co"], edgeCount: 15 },
+                { id: 2, name: "Key Subsidiaries", level: "Level 2", color: "bg-indigo-600", nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"], edgeCount: 24 },
+                { id: 3, name: "Financial Affiliates", level: "Level 3", color: "bg-blue-400", nodes: ["Finance Co", "Investment Inc", "Bank Unit"], edgeCount: 8 },
+                { id: 4, name: "Value Up Programs", level: "Level 4", color: "bg-sky-300", nodes: ["Program A", "Initiative B"], edgeCount: 4 }
              ])}>
                 <RotateCcw className="w-3.5 h-3.5" />
              </Button>
@@ -952,7 +956,11 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
                     <div className="flex items-center gap-3">
                        <div className={`w-1.5 h-8 rounded-full ${layer.color} shrink-0`} />
                        <div className="flex flex-col">
-                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{layer.level}</span>
+                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                             <span>NODES: {layer.nodes.length}</span>
+                             <span className="text-border">|</span>
+                             <span>EDGES: {layer.edgeCount}</span>
+                           </span>
                            <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
                        </div>
                     </div>
