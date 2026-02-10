@@ -863,6 +863,67 @@ const ShortestPathPanel = ({
   );
 };
 
+// Remove Layer Panel Component
+const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
+  const [layers, setLayers] = React.useState([
+    { id: 1, name: "Holding Structures", color: "bg-blue-600" },
+    { id: 2, name: "Key Subsidiaries", color: "bg-indigo-600" },
+    { id: 3, name: "Financial Affiliates", color: "bg-blue-400" },
+    { id: 4, name: "Value Up Programs", color: "bg-sky-300" }
+  ]);
+  
+  const removeLayer = (id: number) => {
+    setLayers(layers.filter(l => l.id !== id));
+  };
+
+  return (
+    <div className="absolute top-20 right-4 w-80 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-300 pointer-events-auto">
+       <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-muted/20">
+          <div className="flex items-center gap-3">
+             <h3 className="font-bold text-sm">Hub Nodes</h3>
+             <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 border-primary/20 text-primary hover:text-primary hover:bg-primary/10 font-medium">
+                <Layers className="w-3.5 h-3.5" />
+                Hide
+             </Button>
+          </div>
+          <div className="flex items-center gap-1">
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground" onClick={() => setLayers([
+                { id: 1, name: "Holding Structures", color: "bg-blue-600" },
+                { id: 2, name: "Key Subsidiaries", color: "bg-indigo-600" },
+                { id: 3, name: "Financial Affiliates", color: "bg-blue-400" },
+                { id: 4, name: "Value Up Programs", color: "bg-sky-300" }
+             ])}>
+                <RotateCcw className="w-3.5 h-3.5" />
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground" onClick={onClose}>
+                <X className="w-4 h-4" />
+             </Button>
+          </div>
+       </div>
+
+       <div className="p-4 space-y-3">
+          {layers.map((layer) => (
+             <div key={layer.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50 hover:bg-card transition-colors group shadow-sm">
+                <div className="flex items-center gap-3">
+                   <div className={`w-1.5 h-8 rounded-full ${layer.color}`} />
+                   <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
+                </div>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-50 group-hover:opacity-100 transition-opacity" onClick={() => removeLayer(layer.id)}>
+                   <X className="w-3.5 h-3.5" />
+                </Button>
+             </div>
+          ))}
+          {layers.length === 0 && (
+             <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
+                <Layers className="w-8 h-8 opacity-20" />
+                <span className="text-xs">All layers hidden</span>
+             </div>
+          )}
+       </div>
+    </div>
+  );
+};
+
 export default function ProjectView() {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
@@ -877,6 +938,9 @@ export default function ProjectView() {
   const [isShortestPathMode, setIsShortestPathMode] = useState(false);
   const [isShortestPathActive, setIsShortestPathActive] = useState(true);
   const [shortestPathData, setShortestPathData] = useState<{ start: any | null, end: any | null }>({ start: null, end: null });
+
+  // Remove Layer State
+  const [isRemoveLayerMode, setIsRemoveLayerMode] = useState(false);
   
   // New state for View Mode (Graph vs ERD)
   const [viewMode, setViewMode] = useState<'graph' | 'erd'>('graph');
@@ -1157,6 +1221,11 @@ export default function ProjectView() {
               />
           )}
 
+          {/* Remove Layer Panel */}
+          {isRemoveLayerMode && (
+             <RemoveLayerPanel onClose={() => setIsRemoveLayerMode(false)} />
+          )}
+
           {/* Graph Visualization */}
           <ReactFlow
             nodes={nodes}
@@ -1213,11 +1282,28 @@ export default function ProjectView() {
                             if (isShortestPathMode) {
                                 // Turning off
                                 setShortestPathData({ start: null, end: null });
+                            } else {
+                                setIsRemoveLayerMode(false);
                             }
                         }}
                     >
                        <Waypoints className="w-5 h-5 shrink-0" />
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Shortest Path</span>
+                    </Button>
+
+                    <Button 
+                        variant={isRemoveLayerMode ? "secondary" : "ghost"} 
+                        size="icon" 
+                        className={`w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden ${isRemoveLayerMode ? 'bg-primary/10 text-primary' : ''}`}
+                        onClick={() => {
+                            setIsRemoveLayerMode(!isRemoveLayerMode);
+                            if (!isRemoveLayerMode) {
+                                setIsShortestPathMode(false);
+                            }
+                        }}
+                    >
+                       <Layers className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Remove Layer</span>
                     </Button>
 
                     <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
