@@ -698,11 +698,13 @@ const ShortestPathPanel = ({
   endNode: any, 
   onReset: () => void, 
   onClose: () => void,
-  allNodes: any[]
+  allNodes: any[],
+  isActive: boolean,
+  onToggleActive: (active: boolean) => void
 }) => {
   // Mock path finding
   const path = useMemo(() => {
-    if (!startNode || !endNode) return [];
+    if (!isActive || !startNode || !endNode) return [];
     // Find a random intermediate node different from start and end if possible
     const intermediate = allNodes.find(n => n.id !== startNode.id && n.id !== endNode.id && Math.random() > 0.5);
     // If no intermediate found or just for variety, sometimes direct path, sometimes via 1 node.
@@ -711,7 +713,7 @@ const ShortestPathPanel = ({
         return [startNode, intermediate, endNode];
     }
     return [startNode, endNode];
-  }, [startNode, endNode, allNodes]);
+  }, [startNode, endNode, allNodes, isActive]);
 
   return (
     <div className="absolute top-20 right-4 w-80 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-300 pointer-events-auto">
@@ -726,19 +728,25 @@ const ShortestPathPanel = ({
                 <span className="font-semibold text-sm tracking-tight text-foreground">SHORTEST PATH</span>
              </div>
           </div>
-          <div className="flex items-center gap-2">
-             <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1.5 border border-emerald-500/20">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                ACTIVE
+          <div className="flex items-center gap-3">
+             <div className="flex items-center gap-2">
+                <Label htmlFor="sp-active" className="text-[10px] font-bold text-muted-foreground uppercase cursor-pointer">Active</Label>
+                <Switch 
+                  id="sp-active" 
+                  checked={isActive} 
+                  onCheckedChange={onToggleActive} 
+                  className="scale-75 data-[state=checked]:bg-emerald-500" 
+                />
              </div>
-             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors ml-1" onClick={onClose}>
+             <div className="w-px h-4 bg-border mx-1" />
+             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors" onClick={onClose}>
                 <X className="w-3.5 h-3.5" />
              </Button>
           </div>
        </div>
 
        {/* Selection Area */}
-       <div className="p-5 space-y-2">
+       <div className={`p-5 space-y-2 transition-opacity duration-300 ${!isActive ? 'opacity-50 pointer-events-none' : ''}`}>
           <div className="flex flex-col gap-1">
              {/* Node Circles & Connector */}
              <div className="flex items-center justify-between px-4 relative">
@@ -867,6 +875,7 @@ export default function ProjectView() {
   
   // Shortest Path State
   const [isShortestPathMode, setIsShortestPathMode] = useState(false);
+  const [isShortestPathActive, setIsShortestPathActive] = useState(true);
   const [shortestPathData, setShortestPathData] = useState<{ start: any | null, end: any | null }>({ start: null, end: null });
   
   // New state for View Mode (Graph vs ERD)
@@ -940,7 +949,7 @@ export default function ProjectView() {
   };
 
   const onNodeClick = (_: any, node: any) => {
-    if (isShortestPathMode) {
+    if (isShortestPathMode && isShortestPathActive) {
       if (!shortestPathData.start) {
         setShortestPathData(prev => ({ ...prev, start: node }));
       } else if (!shortestPathData.end && node.id !== shortestPathData.start.id) {
@@ -1143,6 +1152,8 @@ export default function ProjectView() {
                       setShortestPathData({ start: null, end: null });
                   }}
                   allNodes={nodes}
+                  isActive={isShortestPathActive}
+                  onToggleActive={setIsShortestPathActive}
               />
           )}
 
