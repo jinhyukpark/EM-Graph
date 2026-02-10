@@ -911,7 +911,7 @@ export default function ProjectView() {
           {graphSettings.showAiBriefing && <GraphInsightCard onClose={() => setGraphSettings(prev => ({ ...prev, showAiBriefing: false }))} />}
           
           {/* Top Right Controls - Shortest Path & Node Reduction */}
-          <div className="absolute top-4 right-32 z-10 flex gap-2 pointer-events-auto">
+          <div className="absolute top-4 right-48 z-10 flex gap-2 pointer-events-auto">
              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                    <TooltipTrigger asChild>
