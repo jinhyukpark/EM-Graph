@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors, RotateCcw } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
@@ -686,6 +686,109 @@ const DEFAULT_LEGEND_ITEMS: LegendItem[] = [
 import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
 import CompareDialog from "@/components/graph/CompareDialog";
 
+// Shortest Path Panel Component
+const ShortestPathPanel = ({ 
+  startNode, 
+  endNode, 
+  onReset, 
+  onClose,
+  allNodes
+}: { 
+  startNode: any, 
+  endNode: any, 
+  onReset: () => void, 
+  onClose: () => void,
+  allNodes: any[]
+}) => {
+  // Mock path finding
+  const path = useMemo(() => {
+    if (!startNode || !endNode) return [];
+    // Find a random intermediate node different from start and end if possible
+    const intermediate = allNodes.find(n => n.id !== startNode.id && n.id !== endNode.id && Math.random() > 0.5);
+    // If no intermediate found or just for variety, sometimes direct path, sometimes via 1 node.
+    // For this mockup, let's always try to find one if we have enough nodes.
+    if (intermediate) {
+        return [startNode, intermediate, endNode];
+    }
+    return [startNode, endNode];
+  }, [startNode, endNode, allNodes]);
+
+  return (
+    <div className="absolute top-20 right-4 w-80 bg-card border border-border shadow-xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-200 pointer-events-auto">
+       {/* Header */}
+       <div className="p-4 border-b border-border flex items-center justify-between bg-muted/30">
+          <div className="flex items-center gap-2">
+             <span className="font-semibold text-sm">최단 경로 검색</span>
+             <div className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                ON <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+             </div>
+          </div>
+          <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-muted" onClick={onClose}>
+             <X className="w-3.5 h-3.5" />
+          </Button>
+       </div>
+
+       {/* Selection Area */}
+       <div className="p-4 space-y-4">
+          <div className="relative pl-4 space-y-6">
+             {/* Vertical Line */}
+             <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-border -z-10 border-l border-dashed border-muted-foreground/30" />
+
+             {/* Start Node */}
+             <div className="flex items-center gap-3">
+                <div className="w-10 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center border border-blue-200 dark:border-blue-800 z-10 shadow-sm">
+                   출발
+                </div>
+                <div className={`flex-1 text-sm font-medium truncate ${startNode ? 'text-foreground' : 'text-muted-foreground'}`}>
+                   {startNode ? startNode.data.label : '노드를 선택하세요'}
+                </div>
+             </div>
+
+             {/* End Node */}
+             <div className="flex items-center gap-3">
+                <div className="w-10 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-200 dark:border-indigo-800 z-10 shadow-sm">
+                   도착
+                </div>
+                <div className={`flex-1 text-sm font-medium truncate ${endNode ? 'text-foreground' : 'text-muted-foreground'}`}>
+                   {endNode ? endNode.data.label : '노드를 선택하세요'}
+                </div>
+             </div>
+          </div>
+
+          <Button 
+            variant="outline" 
+            className="w-full border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400 text-muted-foreground gap-2 h-9 text-xs" 
+            onClick={onReset}
+          >
+             <RotateCcw className="w-3.5 h-3.5" />
+             초기화
+          </Button>
+       </div>
+
+       {/* Result Area */}
+       {startNode && endNode && (
+          <div className="border-t border-border p-4 bg-muted/10">
+             <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                최단 경로
+             </h4>
+             <p className="text-xs text-muted-foreground mb-3">최소 {path.length - 2 > 0 ? path.length - 2 : 0} 노드 경유</p>
+             
+             <div className="flex items-center flex-wrap gap-2">
+                {path.map((node, i) => (
+                   <React.Fragment key={node.id}>
+                      {i > 0 && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
+                      <div className="px-2.5 py-1.5 bg-background border border-border rounded-md text-xs font-medium shadow-sm hover:border-primary/50 transition-colors cursor-default">
+                         {node.data.label}
+                      </div>
+                   </React.Fragment>
+                ))}
+             </div>
+          </div>
+       )}
+    </div>
+  );
+};
+
 export default function ProjectView() {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
@@ -695,6 +798,10 @@ export default function ProjectView() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("list");
+  
+  // Shortest Path State
+  const [isShortestPathMode, setIsShortestPathMode] = useState(false);
+  const [shortestPathData, setShortestPathData] = useState<{ start: any | null, end: any | null }>({ start: null, end: null });
   
   // New state for View Mode (Graph vs ERD)
   const [viewMode, setViewMode] = useState<'graph' | 'erd'>('graph');
@@ -767,6 +874,14 @@ export default function ProjectView() {
   };
 
   const onNodeClick = (_: any, node: any) => {
+    if (isShortestPathMode) {
+      if (!shortestPathData.start) {
+        setShortestPathData(prev => ({ ...prev, start: node }));
+      } else if (!shortestPathData.end && node.id !== shortestPathData.start.id) {
+        setShortestPathData(prev => ({ ...prev, end: node }));
+      }
+      return;
+    }
     setSelectedNode(node);
   };
 
@@ -915,7 +1030,18 @@ export default function ProjectView() {
              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                    <TooltipTrigger asChild>
-                       <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full shadow-lg border border-border/50 bg-card/80 backdrop-blur-md hover:bg-card">
+                       <Button 
+                        variant={isShortestPathMode ? "default" : "secondary"} 
+                        size="icon" 
+                        className={`h-10 w-10 rounded-full shadow-lg border border-border/50 backdrop-blur-md transition-all ${isShortestPathMode ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-card/80 hover:bg-card'}`}
+                        onClick={() => {
+                            setIsShortestPathMode(!isShortestPathMode);
+                            if (isShortestPathMode) {
+                                // Turning off
+                                setShortestPathData({ start: null, end: null });
+                            }
+                        }}
+                       >
                           <Route className="w-5 h-5" />
                        </Button>
                    </TooltipTrigger>
@@ -976,6 +1102,20 @@ export default function ProjectView() {
             onOpenChange={setCompareOpen} 
             nodes={nodes} 
           />
+
+          {/* Shortest Path Panel */}
+          {isShortestPathMode && (
+              <ShortestPathPanel 
+                  startNode={shortestPathData.start}
+                  endNode={shortestPathData.end}
+                  onReset={() => setShortestPathData({ start: null, end: null })}
+                  onClose={() => {
+                      setIsShortestPathMode(false);
+                      setShortestPathData({ start: null, end: null });
+                  }}
+                  allNodes={nodes}
+              />
+          )}
 
           {/* Graph Visualization */}
           <ReactFlow
