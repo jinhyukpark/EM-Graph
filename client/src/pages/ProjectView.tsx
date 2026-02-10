@@ -1158,8 +1158,11 @@ export default function ProjectView() {
             </Button>
           </div>
           
-          {/* Participants - Top Right */}
-          <div className="absolute top-4 right-4 z-10 pointer-events-auto">
+          {/* Participants - Moved to Bottom Left above Timeline */}
+          <div className={cn(
+            "absolute left-4 z-10 pointer-events-auto transition-all duration-300",
+             graphSettings.showTimeline ? "bottom-[240px]" : "bottom-4"
+          )}>
              <ParticipantsDisplay />
           </div>
 
