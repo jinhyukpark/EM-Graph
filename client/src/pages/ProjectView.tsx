@@ -739,47 +739,61 @@ const ShortestPathPanel = ({
 
        {/* Selection Area */}
        <div className="p-5 space-y-4">
-          <div className="flex items-center gap-2 relative">
-             {/* Connecting Line (Horizontal) */}
-             <div className="absolute left-6 right-6 top-1/2 h-0.5 bg-gradient-to-r from-blue-500/50 via-border to-indigo-500/50 -z-10 -translate-y-1/2" />
+          <div className="flex flex-col gap-4">
+             {/* Node Circles & Connector */}
+             <div className="flex items-center justify-between px-4 relative">
+                 {/* Connecting Line (Horizontal) - Positioned behind circles */}
+                 <div className="absolute left-8 right-8 top-1/2 h-0.5 bg-gradient-to-r from-blue-500/30 via-border to-indigo-500/30 -z-10 -translate-y-1/2" />
+                 
+                 {/* Arrow in middle */}
+                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 bg-background rounded-full p-1 border border-border shadow-sm">
+                    <ArrowRight className="w-3 h-3 text-muted-foreground/70" />
+                 </div>
 
-             {/* Start Node */}
-             <div className="group relative flex-1">
-                <div className="flex flex-col items-center gap-2 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50 text-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-4 ring-background z-10 shrink-0">
+                 {/* Start Node Circle */}
+                 <div className="relative z-10">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ring-4 ring-background transition-all duration-300
+                       ${startNode 
+                          ? 'bg-blue-600 text-white shadow-blue-500/20 scale-110' 
+                          : 'bg-muted border-2 border-dashed border-muted-foreground/30 text-muted-foreground'
+                       }`}
+                    >
                        A
                     </div>
-                    <div className="w-full min-w-0">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Source</p>
-                       <div className={`text-xs font-medium truncate w-full ${startNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                          {startNode ? startNode.data.label : 'Select...'}
-                       </div>
-                    </div>
-                    {!startNode && <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-blue-500/30 animate-ping -z-10" />}
-                </div>
-             </div>
+                    {!startNode && <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping -z-10" />}
+                 </div>
 
-             {/* Arrow Indicator */}
-             <div className="z-10">
-                <div className="bg-background border border-border p-1.5 rounded-full shadow-sm">
-                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
-                </div>
-             </div>
-
-             {/* End Node */}
-             <div className="group relative flex-1">
-                <div className="flex flex-col items-center gap-2 p-2 rounded-lg transition-colors hover:bg-muted/50 border border-transparent hover:border-border/50 text-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-md ring-4 ring-background z-10 shrink-0">
+                 {/* End Node Circle */}
+                 <div className="relative z-10">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ring-4 ring-background transition-all duration-300
+                       ${endNode 
+                          ? 'bg-indigo-600 text-white shadow-indigo-500/20 scale-110' 
+                          : 'bg-muted border-2 border-dashed border-muted-foreground/30 text-muted-foreground'
+                       }`}
+                    >
                        B
                     </div>
-                    <div className="w-full min-w-0">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Target</p>
-                       <div className={`text-xs font-medium truncate w-full ${endNode ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                          {endNode ? endNode.data.label : 'Select...'}
-                       </div>
+                    {startNode && !endNode && <div className="absolute inset-0 rounded-full bg-indigo-500/20 animate-ping -z-10" />}
+                 </div>
+             </div>
+
+             {/* Labels & Node Names */}
+             <div className="flex justify-between items-start gap-4">
+                 {/* Source Info */}
+                 <div className="flex-1 text-center flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Source</span>
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${startNode ? 'text-foreground bg-blue-500/5' : 'text-muted-foreground italic'}`}>
+                       {startNode ? startNode.data.label : 'Select Node'}
                     </div>
-                    {startNode && !endNode && <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-indigo-500/30 animate-ping -z-10" />}
-                </div>
+                 </div>
+
+                 {/* Target Info */}
+                 <div className="flex-1 text-center flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Target</span>
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${endNode ? 'text-foreground bg-indigo-500/5' : 'text-muted-foreground italic'}`}>
+                       {endNode ? endNode.data.label : 'Select Node'}
+                    </div>
+                 </div>
              </div>
           </div>
 
