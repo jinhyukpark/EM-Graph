@@ -343,7 +343,7 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
 
               <div className="p-4">
                  <Button className="w-full gap-2" variant="secondary">
-                    <Filter className="w-4 h-4" /> Filter by this Node
+                    <Search className="w-4 h-4" /> 노드 찾기
                  </Button>
               </div>
            </div>
