@@ -119,7 +119,7 @@ function InviteTeamDialog() {
             Invite to Team
           </DialogTitle>
           <DialogDescription>
-            Invite new members to collaborate on this project.
+            Invite new members to collaborate on <span className="font-medium text-foreground">EM-Graph Analysis</span>.
           </DialogDescription>
         </DialogHeader>
 
