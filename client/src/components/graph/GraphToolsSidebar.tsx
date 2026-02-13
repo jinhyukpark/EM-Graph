@@ -82,9 +82,6 @@ const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any
         <DropdownMenuItem className="text-xs" onClick={onEditControl}>
           <Edit className="w-3.5 h-3.5 mr-2" /> Edit Control
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-xs">
-          <Layers className="w-3.5 h-3.5 mr-2" /> Edit Layout
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-xs text-destructive focus:text-destructive" onClick={onHide}>
           <EyeOff className="w-3.5 h-3.5 mr-2" /> Hide Section
