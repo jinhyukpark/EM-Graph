@@ -233,6 +233,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   // Notes/Memos State
   const [notesSearch, setNotesSearch] = useState('');
   const [notesFilterAuthor, setNotesFilterAuthor] = useState<string>('all');
+  
+  // New state for adding notes
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [newNoteContent, setNewNoteContent] = useState('');
+  const [newNoteTags, setNewNoteTags] = useState('');
+  
+  // New state for adding comments
+  const [activeCommentNoteId, setActiveCommentNoteId] = useState<string | null>(null);
+  const [newCommentContent, setNewCommentContent] = useState('');
+
   const [notes, setNotes] = useState([
     { 
       id: '1', 
@@ -261,6 +271,48 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
       tags: ['update']
     }
   ]);
+
+  const handleAddNote = () => {
+    if (!newNoteContent.trim()) return;
+    
+    const newNote = {
+      id: Date.now().toString(),
+      author: { name: 'Current User', avatar: 'https://i.pravatar.cc/150?u=me' }, // Mock current user
+      content: newNoteContent,
+      timestamp: 'Just now',
+      comments: [],
+      tags: newNoteTags.split(',').map(t => t.trim()).filter(Boolean)
+    };
+    
+    setNotes([newNote, ...notes]);
+    setNewNoteContent('');
+    setNewNoteTags('');
+    setIsAddingNote(false);
+  };
+
+  const handleAddComment = (noteId: string) => {
+    if (!newCommentContent.trim()) return;
+
+    setNotes(notes.map(note => {
+      if (note.id === noteId) {
+        return {
+          ...note,
+          comments: [
+            ...note.comments,
+            { 
+              id: Date.now().toString(), 
+              author: { name: 'Current User', avatar: 'https://i.pravatar.cc/150?u=me' }, 
+              content: newCommentContent 
+            }
+          ]
+        };
+      }
+      return note;
+    }));
+    
+    setNewCommentContent('');
+    setActiveCommentNoteId(null);
+  };
 
   const filteredNotes = notes.filter(note => {
     const matchesSearch = note.content.toLowerCase().includes(notesSearch.toLowerCase()) || 
@@ -1500,6 +1552,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 </div>
 
                 {/* Search & Filter */}
+                {!isAddingNote && (
                 <div className="space-y-3 mb-4">
                   <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -1527,10 +1580,36 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     </Select>
                   </div>
                 </div>
+                )}
+
+                {/* Add Note Form */}
+                {isAddingNote && (
+                    <div className="bg-card border border-primary/50 rounded-lg p-3 shadow-sm mb-4 animate-in slide-in-from-bottom-2">
+                        <div className="space-y-3">
+                            <textarea 
+                                className="w-full min-h-[80px] p-2 text-xs bg-secondary/20 rounded border border-border resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+                                placeholder="Write your note here..."
+                                value={newNoteContent}
+                                onChange={(e) => setNewNoteContent(e.target.value)}
+                                autoFocus
+                            />
+                            <Input 
+                                placeholder="Tags (comma separated)..." 
+                                className="h-8 text-xs bg-secondary/20"
+                                value={newNoteTags}
+                                onChange={(e) => setNewNoteTags(e.target.value)}
+                            />
+                            <div className="flex justify-end gap-2">
+                                <Button size="sm" variant="ghost" onClick={() => setIsAddingNote(false)}>Cancel</Button>
+                                <Button size="sm" onClick={handleAddNote}>Save Note</Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Notes List */}
                 <div className="space-y-3">
-                  {filteredNotes.length === 0 ? (
+                  {filteredNotes.length === 0 && !isAddingNote ? (
                     <div className="text-center py-8 text-muted-foreground">
                       <MessageSquareText className="w-8 h-8 mx-auto mb-2 opacity-20" />
                       <p className="text-xs">No notes found matching your criteria.</p>
@@ -1571,14 +1650,17 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         )}
                         
                         <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                          <button className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors">
+                          <button 
+                            className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                            onClick={() => setActiveCommentNoteId(activeCommentNoteId === note.id ? null : note.id)}
+                          >
                             <MessageCircle className="w-3 h-3" />
                             <span>{note.comments.length > 0 ? `${note.comments.length} Comments` : 'Add Comment'}</span>
                           </button>
                         </div>
                         
-                        {/* Mock Comments View (Simplified) */}
-                        {note.comments.length > 0 && (
+                        {/* Comments View */}
+                        {(note.comments.length > 0 || activeCommentNoteId === note.id) && (
                            <div className="mt-2 pl-3 border-l-2 border-border/30 space-y-2">
                              {note.comments.map(comment => (
                                <div key={comment.id} className="text-[10px]">
@@ -1588,6 +1670,25 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                  <p className="text-muted-foreground">{comment.content}</p>
                                </div>
                              ))}
+
+                             {/* Add Comment Input */}
+                             {activeCommentNoteId === note.id && (
+                                <div className="pt-2 animate-in fade-in">
+                                    <textarea 
+                                        className="w-full min-h-[60px] p-2 text-xs bg-secondary/20 rounded border border-border resize-none focus:outline-none focus:ring-1 focus:ring-primary mb-2"
+                                        placeholder="Write a comment..."
+                                        value={newCommentContent}
+                                        onChange={(e) => setNewCommentContent(e.target.value)}
+                                        autoFocus
+                                    />
+                                    <div className="flex justify-end gap-2">
+                                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setActiveCommentNoteId(null)}>
+                                            <X className="w-3 h-3" />
+                                        </Button>
+                                        <Button size="sm" className="h-6 text-[10px]" onClick={() => handleAddComment(note.id)}>Post</Button>
+                                    </div>
+                                </div>
+                             )}
                            </div>
                         )}
                       </div>
@@ -1595,10 +1696,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                   )}
                 </div>
                 
-                <Button className="w-full gap-2 mt-4" size="sm">
+                {!isAddingNote && (
+                <Button className="w-full gap-2 mt-4" size="sm" onClick={() => setIsAddingNote(true)}>
                   <PlusCircle className="w-4 h-4" />
                   Add New Note
                 </Button>
+                )}
               </div>
             )}
 
