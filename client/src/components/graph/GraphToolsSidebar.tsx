@@ -47,8 +47,13 @@ import {
   User,
   Clock,
   MessageCircle,
-  Hash
+  Hash,
+  Calendar as CalendarIcon
 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -235,6 +240,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   // Notes/Memos State
   const [notesSearch, setNotesSearch] = useState('');
   const [notesFilterAuthor, setNotesFilterAuthor] = useState<string>('all');
+  const [date, setDate] = useState<DateRange | undefined>();
   
   // New state for adding notes
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -1578,10 +1584,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                   </div>
                   <div className="flex gap-2">
                     <Select value={notesFilterAuthor} onValueChange={setNotesFilterAuthor}>
-                      <SelectTrigger className="h-8 text-xs w-full bg-secondary/20">
+                      <SelectTrigger className="h-8 text-xs w-full bg-secondary/20 flex-1">
                         <div className="flex items-center gap-2">
                            <User className="w-3 h-3" />
-                           <span>{notesFilterAuthor === 'all' ? 'All Authors' : notesFilterAuthor}</span>
+                           <span className="truncate">{notesFilterAuthor === 'all' ? 'All Authors' : notesFilterAuthor}</span>
                         </div>
                       </SelectTrigger>
                       <SelectContent>
@@ -1591,6 +1597,46 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         ))}
                       </SelectContent>
                     </Select>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          size="sm"
+                          className={cn(
+                            "h-8 text-xs justify-start text-left font-normal bg-secondary/20 border-border flex-1 px-2",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-3 w-3 shrink-0" />
+                          <span className="truncate">
+                            {date?.from ? (
+                              date.to ? (
+                                <>
+                                  {format(date.from, "LLL dd, y")} -{" "}
+                                  {format(date.to, "LLL dd, y")}
+                                </>
+                              ) : (
+                                format(date.from, "LLL dd, y")
+                              )
+                            ) : (
+                              "Pick a date"
+                            )}
+                          </span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="end">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={date?.from}
+                          selected={date}
+                          onSelect={setDate}
+                          numberOfMonths={1}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
                 )}
