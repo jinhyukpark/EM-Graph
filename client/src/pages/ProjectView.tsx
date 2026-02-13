@@ -58,7 +58,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Mail, UserPlus, Shield, Edit2, Eye } from "lucide-react";
+import { Check, Mail, UserPlus, Shield, Edit2, Eye, UserMinus } from "lucide-react";
 
 // Participants Component
 function ParticipantsDisplay() {
@@ -99,11 +99,19 @@ function InviteTeamDialog() {
   const [inviteMethod, setInviteMethod] = useState<"email" | "workspace">("email");
 
   // Mock current project members (for "Current Team" tab)
-  const currentMembers = [
+  const [currentMembers, setCurrentMembers] = useState([
     { id: 1, name: "John Doe", email: "john@example.com", role: "Owner", initial: "JD", color: "bg-blue-500" },
     { id: 2, name: "Sarah Smith", email: "sarah@example.com", role: "Editor", initial: "SS", color: "bg-green-500" },
     { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Viewer", initial: "MJ", color: "bg-purple-500" },
-  ];
+  ]);
+
+  const handleRoleChange = (id: number, newRole: string) => {
+    setCurrentMembers(currentMembers.map(m => m.id === id ? { ...m, role: newRole } : m));
+  };
+
+  const handleRemoveMember = (id: number) => {
+    setCurrentMembers(currentMembers.filter(m => m.id !== id));
+  };
 
   // Mock workspace users (for "Invite -> Add from Workspace")
   const workspaceMembers = [
@@ -151,8 +159,34 @@ function InviteTeamDialog() {
                                         <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
                                     </div>
                                  </div>
-                                 <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-secondary rounded">
-                                    {member.role}
+                                 <div className="flex items-center gap-2">
+                                     <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-secondary rounded">
+                                        {member.role}
+                                     </div>
+                                     <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                                                <MoreHorizontal className="w-4 h-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Manage Access</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Admin")}>
+                                                <Shield className="w-3.5 h-3.5 mr-2 text-red-500" /> Make Admin
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Editor")}>
+                                                <Edit2 className="w-3.5 h-3.5 mr-2 text-blue-500" /> Make Editor
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Viewer")}>
+                                                <Eye className="w-3.5 h-3.5 mr-2 text-green-500" /> Make Viewer
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleRemoveMember(member.id)}>
+                                                <UserMinus className="w-3.5 h-3.5 mr-2" /> Remove from Team
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                     </DropdownMenu>
                                  </div>
                             </div>
                         ))}
