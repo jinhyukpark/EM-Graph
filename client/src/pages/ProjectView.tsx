@@ -96,9 +96,17 @@ function InviteTeamDialog() {
   const [emails, setEmails] = useState("");
   const [role, setRole] = useState("viewer");
   const [open, setOpen] = useState(false);
+  const [inviteMethod, setInviteMethod] = useState<"email" | "workspace">("email");
 
-  // Mock users for "Select from team"
-  const teamMembers = [
+  // Mock current project members (for "Current Team" tab)
+  const currentMembers = [
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Owner", initial: "JD", color: "bg-blue-500" },
+    { id: 2, name: "Sarah Smith", email: "sarah@example.com", role: "Editor", initial: "SS", color: "bg-green-500" },
+    { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Viewer", initial: "MJ", color: "bg-purple-500" },
+  ];
+
+  // Mock workspace users (for "Invite -> Add from Workspace")
+  const workspaceMembers = [
     { id: 1, name: "Alice Kim", email: "alice@example.com", avatar: null, initial: "AK" },
     { id: 2, name: "Bob Lee", email: "bob@example.com", avatar: null, initial: "BL" },
     { id: 3, name: "Charlie Park", email: "charlie@example.com", avatar: null, initial: "CP" },
@@ -123,88 +131,121 @@ function InviteTeamDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="team" className="w-full mt-2">
+        <Tabs defaultValue="current" className="w-full mt-2">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="team">Existing Team</TabsTrigger>
-                <TabsTrigger value="email">Invite by Email</TabsTrigger>
+                <TabsTrigger value="current">Current Team</TabsTrigger>
+                <TabsTrigger value="invite">Invite</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="team" className="space-y-4 focus-visible:outline-none">
+            <TabsContent value="current" className="space-y-4 focus-visible:outline-none">
                 <div className="space-y-2">
                     <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto bg-card">
-                        {teamMembers.map(member => (
-                            <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
+                        {currentMembers.map(member => (
+                            <div key={member.id} className="flex items-center justify-between p-3">
                                  <div className="flex items-center gap-3">
                                     <Avatar className="h-8 w-8 border border-border">
-                                        <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
+                                        <AvatarFallback className={cn("text-xs text-white", member.color)}>{member.initial}</AvatarFallback>
                                     </Avatar>
                                     <div>
                                         <div className="text-sm font-medium leading-none">{member.name}</div>
                                         <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
                                     </div>
                                  </div>
-                                 <Button size="sm" variant="outline" className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-primary-foreground">
-                                    Add
-                                 </Button>
+                                 <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-secondary rounded">
+                                    {member.role}
+                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </TabsContent>
 
-            <TabsContent value="email" className="space-y-4 focus-visible:outline-none">
-                <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
-                    <Textarea 
-                        placeholder="Enter email addresses, separated by commas..." 
-                        value={emails}
-                        onChange={(e) => setEmails(e.target.value)}
-                        className="min-h-[120px] resize-none"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
+            <TabsContent value="invite" className="space-y-4 focus-visible:outline-none">
+                <div className="flex justify-center mb-4">
+                    <div className="inline-flex items-center p-1 bg-secondary/50 rounded-lg">
+                        <button 
+                            onClick={() => setInviteMethod("email")}
+                            className={cn(
+                                "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                                inviteMethod === "email" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Invite by Email
+                        </button>
+                        <button 
+                            onClick={() => setInviteMethod("workspace")}
+                            className={cn(
+                                "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                                inviteMethod === "workspace" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Add from Workspace
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
-                    <div className="flex flex-col space-y-1">
-                        <span className="text-sm font-medium leading-none">Access Role</span>
-                        <span className="text-xs text-muted-foreground">Set default permissions for new members</span>
+                {inviteMethod === "email" ? (
+                    <div className="space-y-4 animate-in fade-in duration-200">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
+                            <Textarea 
+                                placeholder="Enter email addresses, separated by commas..." 
+                                value={emails}
+                                onChange={(e) => setEmails(e.target.value)}
+                                className="min-h-[100px] resize-none"
+                            />
+                            <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
+                        </div>
+
+                        <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
+                            <div className="flex flex-col space-y-1">
+                                <span className="text-sm font-medium leading-none">Access Role</span>
+                                <span className="text-xs text-muted-foreground">Set default permissions</span>
+                            </div>
+                            <Select value={role} onValueChange={setRole}>
+                                <SelectTrigger className="w-[120px] h-8 text-xs bg-background">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="editor">Editor</SelectItem>
+                                    <SelectItem value="viewer">Viewer</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        
+                        <Button type="submit" onClick={() => {
+                            setOpen(false);
+                            setEmails("");
+                        }} className="gap-2 w-full">
+                            <Mail className="w-4 h-4" />
+                            Send Invitations
+                        </Button>
                     </div>
-                    <Select value={role} onValueChange={setRole}>
-                        <SelectTrigger className="w-[140px] h-8 text-xs bg-background">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="admin">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-3.5 h-3.5 text-red-500" />
-                                    <span>Admin</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="editor">
-                                 <div className="flex items-center gap-2">
-                                    <Edit2 className="w-3.5 h-3.5 text-blue-500" />
-                                    <span>Editor</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="viewer">
-                                 <div className="flex items-center gap-2">
-                                    <Eye className="w-3.5 h-3.5 text-green-500" />
-                                    <span>Viewer</span>
-                                </div>
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                
-                <div className="pt-2">
-                    <Button type="submit" onClick={() => {
-                        setOpen(false);
-                        setEmails("");
-                    }} className="gap-2 w-full">
-                        <Mail className="w-4 h-4" />
-                        Send Invitations
-                    </Button>
-                </div>
+                ) : (
+                    <div className="space-y-4 animate-in fade-in duration-200">
+                        <div className="space-y-2">
+                            <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto bg-card">
+                                {workspaceMembers.map(member => (
+                                    <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
+                                         <div className="flex items-center gap-3">
+                                            <Avatar className="h-8 w-8 border border-border">
+                                                <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <div className="text-sm font-medium leading-none">{member.name}</div>
+                                                <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
+                                            </div>
+                                         </div>
+                                         <Button size="sm" variant="outline" className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-primary-foreground">
+                                            Add
+                                         </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </TabsContent>
         </Tabs>
       </DialogContent>
