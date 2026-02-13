@@ -1384,7 +1384,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         {config.fields.map((field) => (
                                             <div key={field.id} className="space-y-2">
                                                 <div className="flex items-end gap-2">
-                                                    <div className="flex-[2] grid gap-1.5">
+                                                    <div className="flex-1 grid gap-1.5">
                                                         <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
                                                         <Input 
                                                             value={field.alias}
