@@ -1339,10 +1339,6 @@ export default function ProjectView() {
                     
                     <div className="h-px bg-border/50 my-1 mx-2" />
                     
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <RefreshCw className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Refresh Layout</span>
-                    </Button>
 
                     <Button 
                         variant={isShortestPathMode ? "secondary" : "ghost"} 
