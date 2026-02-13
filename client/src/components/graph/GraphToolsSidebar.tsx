@@ -471,6 +471,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     }));
   };
 
+  const updateFieldType = (typeKey: string, newType: string) => {
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        type: newType
+      }
+    }));
+  };
+
   const addField = (typeKey: string, field: string) => {
     if (!field) return;
     setNodeSizingConfig(prev => ({
@@ -1302,7 +1312,14 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 <div key={key} className="space-y-3">
                                     <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                        <Label className="text-sm font-medium">{config.type} Fields</Label>
+                                        <div className="flex-1">
+                                           <Input 
+                                               value={config.type}
+                                               onChange={(e) => updateFieldType(key, e.target.value)}
+                                               className="h-7 text-sm font-medium border-transparent hover:border-border focus:border-border px-1 -ml-1 w-auto inline-block min-w-[120px]"
+                                           />
+                                           <span className="text-sm font-medium ml-1">Fields</span>
+                                        </div>
                                     </div>
                                     <div className="grid gap-3 pl-4">
                                         {config.fields.map((field) => (
