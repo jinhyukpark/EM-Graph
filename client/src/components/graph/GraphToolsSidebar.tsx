@@ -112,6 +112,14 @@ const ViewModeCard = ({ icon, label, description, active, onClick, topRight }: {
   </div>
 );
 
+export interface Snapshot {
+    id: string;
+    title: string;
+    date: string;
+    description: string;
+    thumbnail: string;
+}
+
 export interface GraphSettings {
   nodeSelectionMode: 'single' | 'multi';
   nodeWeight: number;
@@ -132,6 +140,9 @@ interface GraphToolsSidebarProps {
   onSettingsChange?: (settings: GraphSettings) => void;
   nodes?: any[];
   edges?: any[];
+  snapshots?: Snapshot[];
+  onDeleteSnapshot?: (id: string) => void;
+  onOpenCreateSnapshot?: () => void;
 }
 
 // New component for dismissible info box
@@ -159,7 +170,7 @@ const InfoBox = ({ title, description, icon: Icon }: { title: string, descriptio
   );
 };
 
-export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange, nodes = [], edges = [] }: GraphToolsSidebarProps) {
+export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange, nodes = [], edges = [], snapshots = [], onDeleteSnapshot, onOpenCreateSnapshot }: GraphToolsSidebarProps) {
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | "snapshots" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
   const [isResizing, setIsResizing] = useState(false);
@@ -233,31 +244,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     { id: 'centrality', label: 'Centrality', description: 'Measures node importance via links', icon: Share2, enabled: true },
     { id: 'closeness', label: 'Closeness', description: 'Measures average distance to others', icon: CircleDot, enabled: false },
     { id: 'betweenness', label: 'Betweenness', description: 'Measures bridge role in shortest paths', icon: Waypoints, enabled: true },
-  ]);
-
-  // Snapshots State
-  const [snapshots, setSnapshots] = useState([
-    {
-        id: '1',
-        title: 'Initial Investigation',
-        date: '2024-02-10 14:30',
-        description: 'Baseline network structure before adding new evidence.',
-        thumbnail: 'bg-blue-100' // Placeholder class
-    },
-    {
-        id: '2',
-        title: 'Suspect Cluster Analysis',
-        date: '2024-02-12 09:15',
-        description: 'Focused view on the primary suspect group and their immediate connections.',
-        thumbnail: 'bg-indigo-100'
-    },
-    {
-        id: '3',
-        title: 'Financial Flow Path',
-        date: '2024-02-13 11:45',
-        description: 'Highlighted path showing money laundering route through shell companies.',
-        thumbnail: 'bg-emerald-100'
-    }
   ]);
 
   // Notes/Memos State
@@ -1847,7 +1833,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                 <Button size="icon" variant="ghost" className="h-6 w-6 text-muted-foreground hover:text-foreground">
                                                     <Edit className="w-3 h-3" />
                                                 </Button>
-                                                <Button size="icon" variant="ghost" className="h-6 w-6 text-muted-foreground hover:text-destructive">
+                                                <Button 
+                                                    size="icon" 
+                                                    variant="ghost" 
+                                                    className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onDeleteSnapshot?.(snapshot.id);
+                                                    }}
+                                                >
                                                     <Trash2 className="w-3 h-3" />
                                                 </Button>
                                             </div>
@@ -1870,7 +1864,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         ))}
                     </div>
 
-                    <Button className="w-full gap-2 mt-4" variant="outline">
+                    <Button className="w-full gap-2 mt-4" variant="outline" onClick={onOpenCreateSnapshot}>
                         <PlusCircle className="w-4 h-4" />
                         Create New Snapshot
                     </Button>

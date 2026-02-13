@@ -867,7 +867,70 @@ const DEFAULT_LEGEND_ITEMS: LegendItem[] = [
   { id: "6", label: "Evidence", color: "bg-slate-500", alias: "Evidence" },
 ];
 
-import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
+import GraphToolsSidebar, { type GraphSettings, type Snapshot } from "@/components/graph/GraphToolsSidebar";
+import { Camera } from "lucide-react";
+
+const INITIAL_SNAPSHOTS: Snapshot[] = [
+    {
+        id: '1',
+        title: 'Initial Investigation',
+        date: '2024-02-10 14:30',
+        description: 'Baseline network structure before adding new evidence.',
+        thumbnail: 'bg-blue-100'
+    },
+    {
+        id: '2',
+        title: 'Suspect Cluster Analysis',
+        date: '2024-02-12 09:15',
+        description: 'Focused view on the primary suspect group and their immediate connections.',
+        thumbnail: 'bg-indigo-100'
+    },
+    {
+        id: '3',
+        title: 'Financial Flow Path',
+        date: '2024-02-13 11:45',
+        description: 'Highlighted path showing money laundering route through shell companies.',
+        thumbnail: 'bg-emerald-100'
+    }
+];
+
+function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenChange: (open: boolean) => void, onSave: (title: string, description: string) => void }) {
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+
+    const handleSave = () => {
+        onSave(title, description);
+        setTitle("");
+        setDescription("");
+        onOpenChange(false);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Save Snapshot</DialogTitle>
+                    <DialogDescription>
+                        Save the current graph state as a snapshot.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Title</Label>
+                        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Snapshot Name" />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description..." />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSave}>Save Snapshot</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
 import CompareDialog from "@/components/graph/CompareDialog";
 
 // Shortest Path Panel Component
@@ -876,7 +939,9 @@ const ShortestPathPanel = ({
   endNode, 
   onReset, 
   onClose,
-  allNodes
+  allNodes,
+  isActive,
+  onToggleActive
 }: { 
   startNode: any, 
   endNode: any, 
@@ -1171,7 +1236,35 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default function ProjectView() {
+  const { toast } = useToast();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
+  
+  // Snapshot State
+  const [snapshots, setSnapshots] = useState<Snapshot[]>(INITIAL_SNAPSHOTS);
+  const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
+
+  const handleCreateSnapshot = (title: string, description: string) => {
+    const newSnapshot: Snapshot = {
+      id: Date.now().toString(),
+      title,
+      date: format(new Date(), "yyyy-MM-dd HH:mm"),
+      description,
+      thumbnail: 'bg-primary/10' // Mock thumbnail
+    };
+    setSnapshots([newSnapshot, ...snapshots]);
+    toast({
+      title: "Snapshot Saved",
+      description: "Network state has been saved successfully.",
+    });
+  };
+
+  const handleDeleteSnapshot = (id: string) => {
+    setSnapshots(snapshots.filter(s => s.id !== id));
+    toast({
+      title: "Snapshot Deleted",
+      description: "The snapshot has been removed.",
+    });
+  };
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -1480,6 +1573,28 @@ export default function ProjectView() {
              <RemoveLayerPanel onClose={() => setIsRemoveLayerMode(false)} />
           )}
 
+          {/* Floating Action Buttons */}
+          <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
+              <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                           <Button variant="outline" size="icon" className="h-8 w-8 bg-background/95 backdrop-blur shadow-sm border-border hover:bg-muted" onClick={() => window.location.reload()}>
+                              <RefreshCw className="w-4 h-4 text-muted-foreground" />
+                           </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">Refresh Network</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                       <TooltipTrigger asChild>
+                           <Button variant="outline" size="icon" className="h-8 w-8 bg-background/95 backdrop-blur shadow-sm border-border hover:bg-muted" onClick={() => setIsSnapshotDialogOpen(true)}>
+                              <Camera className="w-4 h-4 text-muted-foreground" />
+                           </Button>
+                       </TooltipTrigger>
+                       <TooltipContent side="right">Save Snapshot</TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
+
           {/* Graph Visualization */}
           <ReactFlow
             nodes={nodes}
@@ -1699,6 +1814,9 @@ export default function ProjectView() {
                   onSettingsChange={setGraphSettings}
                   nodes={nodes}
                   edges={edges}
+                  snapshots={snapshots}
+                  onDeleteSnapshot={handleDeleteSnapshot}
+                  onOpenCreateSnapshot={() => setIsSnapshotDialogOpen(true)}
                 />
             </div>
         </div>
@@ -2034,6 +2152,11 @@ export default function ProjectView() {
             </div>
           </SheetContent>
         </Sheet>
+        <SnapshotDialog 
+          open={isSnapshotDialogOpen} 
+          onOpenChange={setIsSnapshotDialogOpen} 
+          onSave={handleCreateSnapshot} 
+        />
         <LegendConfigDialog 
            open={isLegendConfigOpen} 
            onOpenChange={setIsLegendConfigOpen}
