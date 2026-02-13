@@ -1238,6 +1238,14 @@ export default function ProjectView() {
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
             <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
+              <Button 
+                 variant="ghost" 
+                 size="icon" 
+                 className="h-6 w-6 -ml-1 mr-2 text-muted-foreground hover:text-foreground" 
+                 onClick={() => {}}
+              >
+                  <RefreshCw className="w-3.5 h-3.5" />
+              </Button>
               <span className="font-medium text-foreground mr-3">
                 <span className="text-muted-foreground font-normal mr-1">Project:</span>
                 Graph View
