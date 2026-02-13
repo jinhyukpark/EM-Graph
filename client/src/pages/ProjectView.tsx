@@ -97,6 +97,7 @@ function InviteTeamDialog() {
   const [role, setRole] = useState("viewer");
   const [open, setOpen] = useState(false);
   const [inviteMethod, setInviteMethod] = useState<"email" | "workspace">("email");
+  const [workspaceSearch, setWorkspaceSearch] = useState("");
 
   // Mock current project members (for "Current Team" tab)
   const [currentMembers, setCurrentMembers] = useState([
@@ -119,7 +120,16 @@ function InviteTeamDialog() {
     { id: 2, name: "Bob Lee", email: "bob@example.com", avatar: null, initial: "BL" },
     { id: 3, name: "Charlie Park", email: "charlie@example.com", avatar: null, initial: "CP" },
     { id: 4, name: "David Choi", email: "david@example.com", avatar: null, initial: "DC" },
+    { id: 5, name: "Eva Green", email: "eva@example.com", avatar: null, initial: "EG" },
+    { id: 6, name: "Frank White", email: "frank@example.com", avatar: null, initial: "FW" },
+    { id: 7, name: "Grace Lee", email: "grace@example.com", avatar: null, initial: "GL" },
+    { id: 8, name: "Henry Ford", email: "henry@example.com", avatar: null, initial: "HF" },
   ];
+
+  const filteredWorkspaceMembers = workspaceMembers.filter(member => 
+    member.name.toLowerCase().includes(workspaceSearch.toLowerCase()) || 
+    member.email.toLowerCase().includes(workspaceSearch.toLowerCase())
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -128,7 +138,7 @@ function InviteTeamDialog() {
             <Plus className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-primary" />
@@ -258,9 +268,19 @@ function InviteTeamDialog() {
                     </div>
                 ) : (
                     <div className="space-y-4 animate-in fade-in duration-200">
+                         <div className="relative">
+                            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                            <Input 
+                                placeholder="Search workspace members..." 
+                                className="h-9 pl-8 text-xs bg-secondary/20"
+                                value={workspaceSearch}
+                                onChange={(e) => setWorkspaceSearch(e.target.value)}
+                            />
+                        </div>
                         <div className="space-y-2">
-                            <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto bg-card">
-                                {workspaceMembers.map(member => (
+                            <div className="border rounded-md divide-y h-[300px] overflow-y-auto bg-card">
+                                {filteredWorkspaceMembers.length > 0 ? (
+                                    filteredWorkspaceMembers.map(member => (
                                     <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
                                          <div className="flex items-center gap-3">
                                             <Avatar className="h-8 w-8 border border-border">
@@ -275,7 +295,13 @@ function InviteTeamDialog() {
                                             Add
                                          </Button>
                                     </div>
-                                ))}
+                                ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                                        <Search className="w-8 h-8 mb-2 opacity-20" />
+                                        <p className="text-xs">No members found</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
