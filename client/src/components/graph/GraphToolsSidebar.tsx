@@ -127,6 +127,8 @@ interface GraphToolsSidebarProps {
   stats?: { nodes: number, edges: number, types: number, density: string };
   settings?: GraphSettings;
   onSettingsChange?: (settings: GraphSettings) => void;
+  nodes?: any[];
+  edges?: any[];
 }
 
 // New component for dismissible info box
@@ -154,8 +156,8 @@ const InfoBox = ({ title, description, icon: Icon }: { title: string, descriptio
   );
 };
 
-export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange }: GraphToolsSidebarProps) {
-  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | null>(null);
+export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange, nodes = [], edges = [] }: GraphToolsSidebarProps) {
+  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
   const [isResizing, setIsResizing] = useState(false);
   const [showLayoutDescription, setShowLayoutDescription] = useState(true);
@@ -1734,41 +1736,116 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             )}
 
             {/* Report Tab */}
-            {activeTab === "report" && (
-              <div className="space-y-3">
-                <SectionHeader icon={BarChart3} title="Statistics" />
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-secondary/30 p-2 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground">Nodes</div>
-                    <div className="text-lg font-mono font-bold">{stats?.nodes ?? 0}</div>
+            {activeTab === "report" && (() => {
+               // Calculations
+               const nodeDegree = new Map<string, number>();
+               nodes.forEach(n => nodeDegree.set(n.id, 0));
+               edges.forEach(e => {
+                   nodeDegree.set(e.source, (nodeDegree.get(e.source) || 0) + 1);
+                   nodeDegree.set(e.target, (nodeDegree.get(e.target) || 0) + 1);
+               });
+               
+               const sortedByDegree = [...nodes].sort((a, b) => (nodeDegree.get(b.id) || 0) - (nodeDegree.get(a.id) || 0));
+               const topConnected = sortedByDegree.slice(0, 5);
+               
+               // Mocking "Largest" as "Highest Value" based on type-specific field
+               const getNodeValue = (n: any) => {
+                   // Try to find numeric fields in data
+                   const values = Object.values(n.data).filter(v => typeof v === 'number') as number[];
+                   return values.length > 0 ? Math.max(...values) : 0;
+               };
+               const sortedByValue = [...nodes].sort((a, b) => getNodeValue(b) - getNodeValue(a));
+               const topLargest = sortedByValue.slice(0, 5);
+
+               const isolatesCount = nodes.filter(n => (nodeDegree.get(n.id) || 0) === 0).length;
+
+               return (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <SectionHeader icon={BarChart3} title="Network Statistics" />
+                
+                {/* Key Metrics Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-card border border-border/50 p-3 rounded-lg">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Nodes</div>
+                    <div className="text-2xl font-bold font-mono text-primary">{stats?.nodes ?? 0}</div>
                   </div>
-                  <div className="bg-secondary/30 p-2 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground">Edges</div>
-                    <div className="text-lg font-mono font-bold">{stats?.edges ?? 0}</div>
+                  <div className="bg-card border border-border/50 p-3 rounded-lg">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Edges</div>
+                    <div className="text-2xl font-bold font-mono text-primary">{stats?.edges ?? 0}</div>
                   </div>
-                  <div className="bg-secondary/30 p-2 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground">Node Types</div>
-                    <div className="text-lg font-mono font-bold">{stats?.types ?? 0}</div>
+                  <div className="bg-card border border-border/50 p-3 rounded-lg">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Node Types</div>
+                    <div className="text-2xl font-bold font-mono text-foreground">{stats?.types ?? 0}</div>
                   </div>
-                  <div className="bg-secondary/30 p-2 rounded border border-border/50">
-                    <div className="text-[10px] text-muted-foreground">Density</div>
-                    <div className="text-lg font-mono font-bold">{stats?.density ?? "0.00"}</div>
+                  <div className="bg-card border border-border/50 p-3 rounded-lg">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">Density</div>
+                    <div className="text-2xl font-bold font-mono text-foreground">{stats?.density ?? "0.00"}</div>
                   </div>
                 </div>
 
-                <Separator className="my-4" />
+                <Separator />
 
-                <div className="mb-4">
+                {/* Top Connected Nodes */}
+                <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                        <Share2 className="w-3.5 h-3.5" /> Top 5 Connected Nodes
+                    </h4>
+                    <div className="space-y-2">
+                        {topConnected.map((node, i) => (
+                            <div key={node.id} className="flex items-center justify-between p-2 rounded bg-secondary/20 border border-border/30">
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                    <span className="text-[10px] font-mono w-4 h-4 flex items-center justify-center bg-primary/10 rounded-full text-primary shrink-0">{i+1}</span>
+                                    <div className="truncate text-xs font-medium">{node.data.label}</div>
+                                </div>
+                                <div className="text-xs font-mono font-bold bg-secondary px-1.5 rounded">{nodeDegree.get(node.id)}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Top Largest Nodes */}
+                <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                        <Maximize2 className="w-3.5 h-3.5" /> Top 5 Largest Nodes
+                    </h4>
+                    <div className="space-y-2">
+                        {topLargest.map((node, i) => (
+                            <div key={node.id} className="flex items-center justify-between p-2 rounded bg-secondary/20 border border-border/30">
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                    <span className="text-[10px] font-mono w-4 h-4 flex items-center justify-center bg-emerald-500/10 rounded-full text-emerald-600 shrink-0">{i+1}</span>
+                                    <div className="truncate text-xs font-medium">{node.data.label}</div>
+                                </div>
+                                <div className="text-xs font-mono font-bold text-muted-foreground">{getNodeValue(node)}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Other Metrics */}
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3">
+                    <h4 className="text-xs font-bold text-amber-600 mb-2 flex items-center gap-2">
+                        <Info className="w-3.5 h-3.5" /> Network Health
+                    </h4>
+                    <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Isolated Nodes (Isolates)</span>
+                        <span className="font-mono font-bold">{isolatesCount}</span>
+                    </div>
+                </div>
+
+                <div className="pt-2">
                     <SectionHeader icon={FileText} title="Export Report" />
+                    <div className="grid grid-cols-2 gap-2">
+                        <Button className="w-full" size="sm" variant="outline">
+                            <FileText className="w-3.5 h-3.5 mr-2" /> PDF Report
+                        </Button>
+                        <Button className="w-full" size="sm" variant="outline">
+                            <LayoutGridIcon className="w-3.5 h-3.5 mr-2" /> CSV Data
+                        </Button>
+                    </div>
                 </div>
-                <Button className="w-full" size="sm" variant="outline">
-                    Download PDF Report
-                </Button>
-                <Button className="w-full mt-2" size="sm" variant="outline">
-                    Export CSV Data
-                </Button>
               </div>
-            )}
+               );
+            })()}
 
           </div>
         </ScrollArea>

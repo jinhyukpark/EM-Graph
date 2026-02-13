@@ -1522,6 +1522,8 @@ export default function ProjectView() {
                   }}
                   settings={graphSettings}
                   onSettingsChange={setGraphSettings}
+                  nodes={nodes}
+                  edges={edges}
                 />
             </div>
         </div>
