@@ -1370,38 +1370,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             {Object.entries(nodeSizingConfig).map(([key, config], index, arr) => (
                                 <div key={key} className="space-y-3">
                                     <div className="flex items-start gap-3">
-                                        {/* Color Dot (with popover for color selection) */}
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="icon" 
-                                                    className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mt-9"
-                                                    style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }}
-                                                >
-                                                    <div className={cn("w-full h-full rounded-full", config.color.startsWith('bg-') && config.color)} />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-48 p-2">
-                                                <div className="grid grid-cols-4 gap-1">
-                                                    {['bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 
-                                                      'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
-                                                      'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
-                                                      'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500',
-                                                      'bg-rose-500', 'bg-slate-500', 'bg-gray-500', 'bg-zinc-500'].map((color) => (
-                                                        <div 
-                                                            key={color}
-                                                            className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform", color)}
-                                                            onClick={() => updateCategoryColor(key, color)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </PopoverContent>
-                                        </Popover>
-
                                         <div className="flex-1 space-y-3">
                                             <div className="flex items-center gap-2">
-                                                <div className="flex-1">
+                                                <div className="flex-[1.5]">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Sizing Field</Label>
                                                     <FieldCombobox 
                                                             value={config.type} 
@@ -1410,7 +1381,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                             className="h-8 w-full"
                                                         />
                                                 </div>
-                                                <div className="flex-1">
+                                                <div className="flex-[2]">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Category Alias</Label>
                                                     <Input 
                                                         value={config.alias || ""}
@@ -1425,7 +1396,37 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                 {config.fields.map((field) => (
                                                     <div key={field.id} className="space-y-2">
                                                         <div className="flex items-end gap-2">
-                                                            <div className="flex-1 grid gap-1.5">
+                                                            
+                                                            {/* Color Dot moved here */}
+                                                            <Popover>
+                                                                <PopoverTrigger asChild>
+                                                                    <Button 
+                                                                        variant="ghost" 
+                                                                        size="icon" 
+                                                                        className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mb-2"
+                                                                        style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }}
+                                                                    >
+                                                                        <div className={cn("w-full h-full rounded-full", config.color.startsWith('bg-') && config.color)} />
+                                                                    </Button>
+                                                                </PopoverTrigger>
+                                                                <PopoverContent className="w-48 p-2">
+                                                                    <div className="grid grid-cols-4 gap-1">
+                                                                        {['bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 
+                                                                          'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
+                                                                          'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
+                                                                          'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500',
+                                                                          'bg-rose-500', 'bg-slate-500', 'bg-gray-500', 'bg-zinc-500'].map((color) => (
+                                                                            <div 
+                                                                                key={color}
+                                                                                className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform", color)}
+                                                                                onClick={() => updateCategoryColor(key, color)}
+                                                                            />
+                                                                        ))}
+                                                                    </div>
+                                                                </PopoverContent>
+                                                            </Popover>
+
+                                                            <div className="flex-[1.5] grid gap-1.5">
                                                                 <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
                                                                 <Input 
                                                                     value={field.alias}
@@ -1433,7 +1434,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                     className="h-8 text-xs"
                                                                 />
                                                             </div>
-                                                            <div className="flex items-center gap-2 flex-1">
+                                                            <div className="flex items-center gap-2 flex-[2]">
                                                                 <div className="grid gap-1.5 flex-1">
                                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider whitespace-nowrap">Value Range</Label>
                                                                     <div className="flex items-center gap-2">
@@ -1467,7 +1468,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                     </div>
                                                 ))}
                                                 
-                                                <div className="flex items-end gap-2">
+                                                <div className="flex items-end gap-2 pl-7">
                                                     <div className="flex-1">
                                                         <Button 
                                                             variant="ghost" 
