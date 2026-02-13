@@ -298,41 +298,40 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   });
 
   // Node Sizing Configuration State
-  const [nodeSizingConfig, setNodeSizingConfig] = useState<Record<string, { type: string, color: string, fields: { id: string, field: string, alias: string, min?: number, max?: number }[], availableFields: string[] }>>({
+  const [nodeSizingConfig, setNodeSizingConfig] = useState<Record<string, { type: string, alias?: string, color: string, fields: { id: string, field: string, alias: string, min?: number, max?: number }[], availableFields: string[] }>>({
     criminal: {
-      type: "Criminal",
+      type: "risk_score",
+      alias: "Criminal Risk",
       color: "bg-red-500",
       fields: [
-        { id: "1", field: "risk_score", alias: "Risk Score", min: 0, max: 100 },
-        { id: "2", field: "crimes_count", alias: "Crimes Committed", min: 0, max: 50 },
-        { id: "3", field: "sentence_years", alias: "Sentence Years", min: 0, max: 200 }
+        { id: "1", field: "risk_score", alias: "Risk Score", min: 0, max: 100 }
       ],
       availableFields: ["risk_score", "crimes_count", "sentence_years", "age", "weight", "height"]
     },
     detective: {
-      type: "Detective",
+      type: "cases_solved",
+      alias: "Performance",
       color: "bg-blue-500",
       fields: [
-        { id: "1", field: "cases_solved", alias: "Cases Solved", min: 0, max: 500 },
-        { id: "2", field: "years_active", alias: "Years Active", min: 0, max: 40 }
+        { id: "1", field: "cases_solved", alias: "Cases Solved", min: 0, max: 500 }
       ],
       availableFields: ["cases_solved", "years_active", "rank_level", "commendations"]
     },
     prison: {
-      type: "Prison / Location",
+      type: "capacity",
+      alias: "Facility Size",
       color: "bg-emerald-500",
       fields: [
-        { id: "1", field: "capacity", alias: "Inmate Capacity", min: 100, max: 5000 },
-        { id: "2", field: "staff_count", alias: "Staff Count", min: 10, max: 1000 }
+        { id: "1", field: "capacity", alias: "Inmate Capacity", min: 100, max: 5000 }
       ],
       availableFields: ["capacity", "security_level", "staff_count", "budget"]
     },
     victim: {
-      type: "Victim",
+      type: "damage_amount",
+      alias: "Damage",
       color: "bg-amber-500",
       fields: [
-        { id: "1", field: "damage_amount", alias: "Financial Damage", min: 0, max: 1000000 },
-        { id: "2", field: "impact_score", alias: "Impact Score", min: 0, max: 10 }
+        { id: "1", field: "damage_amount", alias: "Financial Damage", min: 0, max: 1000000 }
       ],
       availableFields: ["damage_amount", "impact_score", "recovery_time", "age"]
     }
@@ -467,10 +466,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     setNodeSizingConfig(prev => ({
       ...prev,
       [newId]: {
-        type: "New Category",
+        type: "custom_field_1", // Default field
+        alias: "New Sizing Rule",
         color: "bg-gray-500",
         fields: [],
-        availableFields: ["custom_field_1", "custom_field_2"]
+        availableFields: ["custom_field_1", "custom_field_2", "risk_score", "crimes_count"]
       }
     }));
   };
@@ -478,6 +478,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const removeCategory = (key: string) => {
     const { [key]: removed, ...rest } = nodeSizingConfig;
     setNodeSizingConfig(rest);
+  };
+
+  const updateCategoryAlias = (typeKey: string, newAlias: string) => {
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        alias: newAlias
+      }
+    }));
   };
 
   const updateFieldAlias = (typeKey: string, fieldId: string, newAlias: string) => {
@@ -1342,17 +1352,29 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${config.color}`} />
                                         <div className="flex-1 flex items-center gap-2">
-                                           <Input 
-                                               value={config.type}
-                                               onChange={(e) => updateFieldType(key, e.target.value)}
-                                               className="h-7 text-sm font-medium border-transparent hover:border-border focus:border-border px-1 -ml-1 w-auto inline-block min-w-[120px]"
-                                           />
-                                           <div className="h-4 w-px bg-border" />
+                                           <div className="flex-1">
+                                               <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Sizing Field</Label>
+                                               <FieldCombobox 
+                                                    value={config.type} 
+                                                    onChange={(val) => updateFieldType(key, val)} 
+                                                    options={config.availableFields}
+                                                    className="h-8 w-full"
+                                                />
+                                           </div>
+                                           <div className="flex-1">
+                                               <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Category Alias</Label>
+                                               <Input 
+                                                   value={config.alias || ""}
+                                                   placeholder="Alias..."
+                                                   onChange={(e) => updateCategoryAlias(key, e.target.value)}
+                                                   className="h-8 text-xs font-medium"
+                                               />
+                                           </div>
                                         </div>
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="h-8 w-8 mt-4 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                                             onClick={() => removeCategory(key)}
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
@@ -1362,22 +1384,35 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         {config.fields.map((field) => (
                                             <div key={field.id} className="space-y-2">
                                                 <div className="flex items-end gap-2">
-                                                    <div className="flex-1 grid gap-1.5">
-                                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
-                                                        <FieldCombobox 
-                                                            value={field.field} 
-                                                            onChange={(val) => updateField(key, field.id, val)} 
-                                                            options={[field.field, ...config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))]}
-                                                            className="h-8"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-[1.5] grid gap-1.5">
+                                                    <div className="flex-[2] grid gap-1.5">
                                                         <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
                                                         <Input 
                                                             value={field.alias}
                                                             onChange={(e) => updateFieldAlias(key, field.id, e.target.value)}
                                                             className="h-8 text-xs"
                                                         />
+                                                    </div>
+                                                    <div className="flex items-center gap-2 flex-1">
+                                                        <div className="grid gap-1.5 flex-1">
+                                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider whitespace-nowrap">Value Range</Label>
+                                                            <div className="flex items-center gap-2">
+                                                                <Input 
+                                                                    type="number"
+                                                                    placeholder="Min"
+                                                                    value={field.min ?? ''}
+                                                                    onChange={(e) => updateFieldRange(key, field.id, 'min', e.target.value)}
+                                                                    className="h-8 w-full text-xs"
+                                                                />
+                                                                <span className="text-muted-foreground text-xs">-</span>
+                                                                <Input 
+                                                                    type="number"
+                                                                    placeholder="Max"
+                                                                    value={field.max ?? ''}
+                                                                    onChange={(e) => updateFieldRange(key, field.id, 'max', e.target.value)}
+                                                                    className="h-8 w-full text-xs"
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <Button 
                                                         variant="ghost" 
@@ -1388,38 +1423,20 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                         <Trash2 className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </div>
-                                                <div className="flex items-center gap-2 pl-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider whitespace-nowrap">Value Range:</Label>
-                                                        <Input 
-                                                            type="number"
-                                                            placeholder="Min"
-                                                            value={field.min ?? ''}
-                                                            onChange={(e) => updateFieldRange(key, field.id, 'min', e.target.value)}
-                                                            className="h-6 w-16 text-xs"
-                                                        />
-                                                        <span className="text-muted-foreground text-xs">-</span>
-                                                        <Input 
-                                                            type="number"
-                                                            placeholder="Max"
-                                                            value={field.max ?? ''}
-                                                            onChange={(e) => updateFieldRange(key, field.id, 'max', e.target.value)}
-                                                            className="h-6 w-16 text-xs"
-                                                        />
-                                                    </div>
-                                                </div>
                                             </div>
                                         ))}
                                         
                                         <div className="flex items-end gap-2">
                                             <div className="flex-1">
-                                                <FieldCombobox 
-                                                    onChange={(val) => addField(key, val)} 
-                                                    options={config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))}
-                                                    variant="add"
-                                                    placeholder="Add Field..."
-                                                    className="h-9 w-full"
-                                                />
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    className="h-8 w-full text-xs border border-dashed text-muted-foreground hover:text-primary"
+                                                    onClick={() => addField(key, "new_range")}
+                                                >
+                                                    <PlusCircle className="w-3.5 h-3.5 mr-2" />
+                                                    Add Range / Legend Item
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
