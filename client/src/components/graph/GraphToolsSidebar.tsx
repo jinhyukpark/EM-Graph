@@ -236,6 +236,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   
   // New state for adding notes
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [newNoteContent, setNewNoteContent] = useState('');
   const [newNoteTags, setNewNoteTags] = useState('');
   
@@ -276,18 +277,28 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     if (!newNoteContent.trim()) return;
     
     const newNote = {
-      id: Date.now().toString(),
+      id: editingNoteId || Date.now().toString(),
       author: { name: 'Current User', avatar: 'https://i.pravatar.cc/150?u=me' }, // Mock current user
       content: newNoteContent,
-      timestamp: 'Just now',
-      comments: [],
+      timestamp: editingNoteId ? 'Edited just now' : 'Just now',
+      comments: editingNoteId ? (notes.find(n => n.id === editingNoteId)?.comments || []) : [],
       tags: newNoteTags.split(',').map(t => t.trim()).filter(Boolean)
     };
     
-    setNotes([newNote, ...notes]);
+    if (editingNoteId) {
+      setNotes(notes.map(n => n.id === editingNoteId ? newNote : n));
+    } else {
+      setNotes([newNote, ...notes]);
+    }
+    
     setNewNoteContent('');
     setNewNoteTags('');
     setIsAddingNote(false);
+    setEditingNoteId(null);
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    setNotes(notes.filter(n => n.id !== noteId));
   };
 
   const handleAddComment = (noteId: string) => {
@@ -1629,9 +1640,26 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                               </span>
                             </div>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                            <MoreHorizontal className="w-3.5 h-3.5" />
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                                <MoreHorizontal className="w-3.5 h-3.5" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => {
+                                setNewNoteContent(note.content);
+                                setNewNoteTags(note.tags.join(', '));
+                                setEditingNoteId(note.id);
+                                setIsAddingNote(true);
+                              }}>
+                                <Edit className="w-3.5 h-3.5 mr-2" /> Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteNote(note.id)}>
+                                <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                         
                         <p className="text-xs text-foreground/90 leading-relaxed mb-3">
