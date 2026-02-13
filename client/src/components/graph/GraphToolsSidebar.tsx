@@ -375,6 +375,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     }));
   };
 
+  const updateField = (typeKey: string, fieldId: string, newField: string) => {
+    setNodeSizingConfig(prev => ({
+      ...prev,
+      [typeKey]: {
+        ...prev[typeKey],
+        fields: prev[typeKey].fields.map(f => f.id === fieldId ? { ...f, field: newField } : f)
+      }
+    }));
+  };
+
   const addField = (typeKey: string, field: string) => {
     if (!field) return;
     setNodeSizingConfig(prev => ({
@@ -1213,9 +1223,17 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                             <div key={field.id} className="flex items-end gap-2">
                                                 <div className="flex-1 grid gap-1.5">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
-                                                    <div className="h-8 px-3 py-2 text-xs border rounded-md bg-muted/50 text-muted-foreground flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
-                                                        {field.field}
-                                                    </div>
+                                                    <Select value={field.field} onValueChange={(val) => updateField(key, field.id, val)}>
+                                                        <SelectTrigger className="h-8 text-xs bg-muted/50 border">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {/* Current value + Available fields */}
+                                                            {[field.field, ...config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))].map(f => (
+                                                                <SelectItem key={f} value={f}>{f}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
                                                 <div className="flex-[1.5] grid gap-1.5">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
