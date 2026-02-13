@@ -49,10 +49,13 @@ import {
   MessageCircle,
   Hash,
   Calendar as CalendarIcon,
-  Camera
+  Camera,
+  Check,
+  ChevronsUpDown
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import {
@@ -91,6 +94,103 @@ const SectionHeader = ({ icon: Icon, title, onHide, onEditControl }: { icon: any
     </DropdownMenu>
   </div>
 );
+
+const FieldCombobox = ({ 
+  value, 
+  options, 
+  onChange, 
+  placeholder = "Select field...",
+  className,
+  variant = "default"
+}: { 
+  value?: string, 
+  options: string[], 
+  onChange: (value: string) => void,
+  placeholder?: string,
+  className?: string,
+  variant?: "default" | "add"
+}) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn(
+            "justify-between text-xs font-normal",
+            variant === "add" 
+              ? "bg-secondary/20 border-dashed text-muted-foreground hover:text-foreground hover:bg-secondary/40" 
+              : "bg-muted/50 border hover:bg-muted/80",
+            className
+          )}
+        >
+          {variant === "add" ? (
+             <div className="flex items-center gap-2">
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>{placeholder}</span>
+             </div>
+          ) : (
+             value && value !== "none" ? value : placeholder
+          )}
+          {variant !== "add" && <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search field..." className="h-8 text-xs" />
+          <CommandList>
+            <CommandEmpty>No field found.</CommandEmpty>
+            <CommandGroup>
+              {variant !== "add" && (
+                  <CommandItem
+                     value="none"
+                     onSelect={() => {
+                       onChange("none");
+                       setOpen(false);
+                     }}
+                     className="text-xs"
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-3 w-3",
+                        value === "none" ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    None (Fixed Size)
+                  </CommandItem>
+              )}
+              {options.map((option) => (
+                <CommandItem
+                  key={option}
+                  value={option}
+                  onSelect={(currentValue) => {
+                    // CommandItem value is normalized to lowercase by default in some versions, 
+                    // but we want the original option string if possible, or we rely on the value being the key.
+                    // To be safe with case sensitivity if options are mixed case:
+                    onChange(option); 
+                    setOpen(false);
+                  }}
+                  className="text-xs"
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-3 w-3",
+                      value === option ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const ViewModeCard = ({ icon, label, description, active, onClick, topRight }: { icon: any, label: string, description: string, active: boolean, onClick?: () => void, topRight?: React.ReactNode }) => (
   <div 
@@ -1209,17 +1309,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                             <div key={field.id} className="flex items-end gap-2">
                                                 <div className="flex-1 grid gap-1.5">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
-                                                    <Select value={field.field} onValueChange={(val) => updateField(key, field.id, val)}>
-                                                        <SelectTrigger className="h-8 text-xs bg-muted/50 border">
-                                                            <SelectValue />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {/* Current value + Available fields */}
-                                                            {[field.field, ...config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))].map(f => (
-                                                                <SelectItem key={f} value={f}>{f}</SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <FieldCombobox 
+                                                        value={field.field} 
+                                                        onChange={(val) => updateField(key, field.id, val)} 
+                                                        options={[field.field, ...config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))]}
+                                                        className="h-8"
+                                                    />
                                                 </div>
                                                 <div className="flex-[1.5] grid gap-1.5">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
@@ -1242,22 +1337,13 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         
                                         <div className="flex items-end gap-2">
                                             <div className="flex-1">
-                                                <Select onValueChange={(val) => addField(key, val)}>
-                                                    <SelectTrigger className="h-9 w-full text-xs bg-secondary/20 border-dashed text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors">
-                                                        <div className="flex items-center gap-2">
-                                                            <PlusCircle className="w-3.5 h-3.5" />
-                                                            <span>Add Field...</span>
-                                                        </div>
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {config.availableFields
-                                                            .filter(f => !config.fields.some(existing => existing.field === f))
-                                                            .map(f => (
-                                                                <SelectItem key={f} value={f}>{f}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
+                                                <FieldCombobox 
+                                                    onChange={(val) => addField(key, val)} 
+                                                    options={config.availableFields.filter(f => !config.fields.some(existing => existing.field === f))}
+                                                    variant="add"
+                                                    placeholder="Add Field..."
+                                                    className="h-9 w-full"
+                                                />
                                             </div>
                                         </div>
                                     </div>
