@@ -1870,18 +1870,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <span className="font-mono font-bold">{isolatesCount}</span>
                     </div>
                 </div>
-
-                <div className="pt-2">
-                    <SectionHeader icon={FileText} title="Export Report" />
-                    <div className="grid grid-cols-2 gap-2">
-                        <Button className="w-full" size="sm" variant="outline">
-                            <FileText className="w-3.5 h-3.5 mr-2" /> PDF Report
-                        </Button>
-                        <Button className="w-full" size="sm" variant="outline">
-                            <LayoutGridIcon className="w-3.5 h-3.5 mr-2" /> CSV Data
-                        </Button>
-                    </div>
-                </div>
               </div>
                );
             })()}
