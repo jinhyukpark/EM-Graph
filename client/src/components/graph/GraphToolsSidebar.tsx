@@ -1455,15 +1455,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                         />
                                                                     </div>
                                                                 </div>
+                                                                <Button 
+                                                                    variant="ghost" 
+                                                                    size="icon" 
+                                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                                                                    onClick={() => removeField(key, field.id)}
+                                                                >
+                                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                                </Button>
                                                             </div>
-                                                            <Button 
-                                                                variant="ghost" 
-                                                                size="icon" 
-                                                                className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
-                                                                onClick={() => removeField(key, field.id)}
-                                                            >
-                                                                <Trash2 className="w-3.5 h-3.5" />
-                                                            </Button>
                                                         </div>
                                                     </div>
                                                 ))}
