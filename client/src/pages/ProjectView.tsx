@@ -58,7 +58,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Mail, UserPlus, Shield, Edit2, Eye, UserMinus } from "lucide-react";
+import { Check, Mail, UserPlus, Shield, Edit2, Eye, UserMinus, MoreHorizontal } from "lucide-react";
 
 // Participants Component
 function ParticipantsDisplay() {
