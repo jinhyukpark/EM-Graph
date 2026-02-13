@@ -41,7 +41,13 @@ import {
   ArrowUp,
   ArrowLeft,
   Waypoints,
-  EyeOff
+  EyeOff,
+  MessageSquareText,
+  Search,
+  User,
+  Clock,
+  MessageCircle,
+  Hash
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -224,6 +230,47 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     { id: 'betweenness', label: 'Betweenness', description: 'Measures bridge role in shortest paths', icon: Waypoints, enabled: true },
   ]);
 
+  // Notes/Memos State
+  const [notesSearch, setNotesSearch] = useState('');
+  const [notesFilterAuthor, setNotesFilterAuthor] = useState<string>('all');
+  const [notes, setNotes] = useState([
+    { 
+      id: '1', 
+      author: { name: 'Sarah Chen', avatar: 'https://i.pravatar.cc/150?u=sarah' },
+      content: 'Investigate the connection between the offshore accounts and the shell company "Oceanic Holdings". The transaction dates align perfectly.',
+      timestamp: '2 hours ago',
+      comments: [
+        { id: 'c1', author: { name: 'Mike Ross', avatar: 'https://i.pravatar.cc/150?u=mike' }, content: 'Good catch. I will pull the bank records.' }
+      ],
+      tags: ['investigation', 'finance']
+    },
+    { 
+      id: '2', 
+      author: { name: 'David Kim', avatar: 'https://i.pravatar.cc/150?u=david' },
+      content: 'The suspect node #42 seems to have unusually high betweenness centrality. Might be a key broker in the network.',
+      timestamp: 'Yesterday',
+      comments: [],
+      tags: ['analysis', 'network']
+    },
+    { 
+      id: '3', 
+      author: { name: 'Sarah Chen', avatar: 'https://i.pravatar.cc/150?u=sarah' },
+      content: 'Updated the risk scores for the primary targets based on the new intelligence report.',
+      timestamp: '2 days ago',
+      comments: [],
+      tags: ['update']
+    }
+  ]);
+
+  const filteredNotes = notes.filter(note => {
+    const matchesSearch = note.content.toLowerCase().includes(notesSearch.toLowerCase()) || 
+                          note.tags.some(tag => tag.toLowerCase().includes(notesSearch.toLowerCase()));
+    const matchesAuthor = notesFilterAuthor === 'all' || note.author.name === notesFilterAuthor;
+    return matchesSearch && matchesAuthor;
+  });
+
+  const uniqueAuthors = Array.from(new Set(notes.map(n => n.author.name)));
+
   const updateFieldAlias = (typeKey: string, fieldId: string, newAlias: string) => {
     setNodeSizingConfig(prev => ({
       ...prev,
@@ -307,7 +354,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     };
   }, [isResizing]);
 
-  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai") => {
+  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes") => {
     if (activeTab === tab) {
       setActiveTab(null);
     } else {
@@ -344,6 +391,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "sizing" && <><CircleDot className="w-4 h-4" /> Node Sizing</>}
             {activeTab === "filters" && <><Filter className="w-4 h-4" /> Graph Filters</>}
             {activeTab === "report" && <><FileText className="w-4 h-4" /> Analysis Report</>}
+            {activeTab === "notes" && <><MessageSquareText className="w-4 h-4" /> Project Notes</>}
           </h3>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setActiveTab(null)}>
             <X className="w-4 h-4" />
@@ -1441,6 +1489,119 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
               </div>
             )}
 
+            {/* Notes Tab */}
+            {activeTab === "notes" && (
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div className="flex items-center justify-between mb-2">
+                  <SectionHeader icon={MessageSquareText} title="Project Notes" />
+                  <span className="text-xs font-medium px-2 py-0.5 bg-primary/10 text-primary rounded-full">
+                    {notes.length}
+                  </span>
+                </div>
+
+                {/* Search & Filter */}
+                <div className="space-y-3 mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input 
+                      placeholder="Search notes or tags..." 
+                      className="h-9 pl-8 text-xs bg-secondary/20"
+                      value={notesSearch}
+                      onChange={(e) => setNotesSearch(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={notesFilterAuthor} onValueChange={setNotesFilterAuthor}>
+                      <SelectTrigger className="h-8 text-xs w-full bg-secondary/20">
+                        <div className="flex items-center gap-2">
+                           <User className="w-3 h-3" />
+                           <span>{notesFilterAuthor === 'all' ? 'All Authors' : notesFilterAuthor}</span>
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Authors</SelectItem>
+                        {uniqueAuthors.map(author => (
+                          <SelectItem key={author} value={author}>{author}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Notes List */}
+                <div className="space-y-3">
+                  {filteredNotes.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <MessageSquareText className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                      <p className="text-xs">No notes found matching your criteria.</p>
+                    </div>
+                  ) : (
+                    filteredNotes.map(note => (
+                      <div key={note.id} className="group bg-card border border-border/50 rounded-lg p-3 hover:shadow-md hover:border-border transition-all duration-200">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full overflow-hidden bg-secondary">
+                              <img src={note.author.avatar} alt={note.author.name} className="h-full w-full object-cover" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-xs font-semibold">{note.author.name}</span>
+                              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <Clock className="w-2.5 h-2.5" /> {note.timestamp}
+                              </span>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                            <MoreHorizontal className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                        
+                        <p className="text-xs text-foreground/90 leading-relaxed mb-3">
+                          {note.content}
+                        </p>
+                        
+                        {note.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {note.tags.map(tag => (
+                              <span key={tag} className="flex items-center text-[10px] bg-secondary/50 text-secondary-foreground px-1.5 py-0.5 rounded-sm">
+                                <Hash className="w-2.5 h-2.5 mr-0.5 opacity-50" />
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                          <button className="flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-primary transition-colors">
+                            <MessageCircle className="w-3 h-3" />
+                            <span>{note.comments.length > 0 ? `${note.comments.length} Comments` : 'Add Comment'}</span>
+                          </button>
+                        </div>
+                        
+                        {/* Mock Comments View (Simplified) */}
+                        {note.comments.length > 0 && (
+                           <div className="mt-2 pl-3 border-l-2 border-border/30 space-y-2">
+                             {note.comments.map(comment => (
+                               <div key={comment.id} className="text-[10px]">
+                                 <div className="flex items-center gap-1.5 mb-0.5">
+                                   <span className="font-semibold">{comment.author.name}</span>
+                                 </div>
+                                 <p className="text-muted-foreground">{comment.content}</p>
+                               </div>
+                             ))}
+                           </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+                
+                <Button className="w-full gap-2 mt-4" size="sm">
+                  <PlusCircle className="w-4 h-4" />
+                  Add New Note
+                </Button>
+              </div>
+            )}
+
             {/* Report Tab */}
             {activeTab === "report" && (
               <div className="space-y-3">
@@ -1516,6 +1677,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
           label="Report" 
           isActive={activeTab === "report"} 
           onClick={() => toggleTab("report")} 
+        />
+        <NavIcon 
+          icon={<MessageSquareText className="w-5 h-5" />} 
+          label="Notes" 
+          isActive={activeTab === "notes"} 
+          onClick={() => toggleTab("notes")} 
         />
         
         <div className="flex-1" />
