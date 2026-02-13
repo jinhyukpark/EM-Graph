@@ -1369,129 +1369,129 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                             {Object.entries(nodeSizingConfig).map(([key, config], index, arr) => (
                                 <div key={key} className="space-y-3">
-                                    <div className="flex items-start gap-3">
-                                        <div className="flex-1 space-y-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex-[1.5]">
-                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Sizing Field</Label>
-                                                    <FieldCombobox 
-                                                            value={config.type} 
-                                                            onChange={(val) => updateFieldType(key, val)} 
-                                                            options={config.availableFields}
-                                                            className="h-8 w-full"
-                                                        />
-                                                </div>
-                                                <div className="flex-[2]">
-                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Category Alias</Label>
-                                                    <Input 
-                                                        value={config.alias || ""}
-                                                        placeholder="Alias..."
-                                                        onChange={(e) => updateCategoryAlias(key, e.target.value)}
-                                                        className="h-8 text-xs font-medium"
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-2">
+                                            {/* Spacer to align with color dot below */}
+                                            <div className="w-4 h-4 mb-2 shrink-0" />
+                                            
+                                            <div className="flex-[1.5]">
+                                                <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Sizing Field</Label>
+                                                <FieldCombobox 
+                                                        value={config.type} 
+                                                        onChange={(val) => updateFieldType(key, val)} 
+                                                        options={config.availableFields}
+                                                        className="h-8 w-full"
                                                     />
-                                                </div>
                                             </div>
-
-                                            <div className="grid gap-3">
-                                                {config.fields.map((field) => (
-                                                    <div key={field.id} className="space-y-2">
-                                                        <div className="flex items-end gap-2">
-                                                            
-                                                            {/* Color Dot moved here */}
-                                                            <Popover>
-                                                                <PopoverTrigger asChild>
-                                                                    <Button 
-                                                                        variant="ghost" 
-                                                                        size="icon" 
-                                                                        className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mb-2"
-                                                                        style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }}
-                                                                    >
-                                                                        <div className={cn("w-full h-full rounded-full", config.color.startsWith('bg-') && config.color)} />
-                                                                    </Button>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent className="w-48 p-2">
-                                                                    <div className="grid grid-cols-4 gap-1">
-                                                                        {['bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 
-                                                                          'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
-                                                                          'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
-                                                                          'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500',
-                                                                          'bg-rose-500', 'bg-slate-500', 'bg-gray-500', 'bg-zinc-500'].map((color) => (
-                                                                            <div 
-                                                                                key={color}
-                                                                                className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform", color)}
-                                                                                onClick={() => updateCategoryColor(key, color)}
-                                                                            />
-                                                                        ))}
-                                                                    </div>
-                                                                </PopoverContent>
-                                                            </Popover>
-
-                                                            <div className="flex-[1.5] grid gap-1.5">
-                                                                <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
-                                                                <Input 
-                                                                    value={field.alias}
-                                                                    onChange={(e) => updateFieldAlias(key, field.id, e.target.value)}
-                                                                    className="h-8 text-xs"
-                                                                />
-                                                            </div>
-                                                            <div className="flex items-center gap-2 flex-[2]">
-                                                                <div className="grid gap-1.5 flex-1">
-                                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider whitespace-nowrap">Value Range</Label>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Input 
-                                                                            type="number"
-                                                                            placeholder="Min"
-                                                                            value={field.min ?? ''}
-                                                                            onChange={(e) => updateFieldRange(key, field.id, 'min', e.target.value)}
-                                                                            className="h-8 w-full text-xs"
-                                                                        />
-                                                                        <span className="text-muted-foreground text-xs">-</span>
-                                                                        <Input 
-                                                                            type="number"
-                                                                            placeholder="Max"
-                                                                            value={field.max ?? ''}
-                                                                            onChange={(e) => updateFieldRange(key, field.id, 'max', e.target.value)}
-                                                                            className="h-8 w-full text-xs"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <Button 
-                                                                    variant="ghost" 
-                                                                    size="icon" 
-                                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
-                                                                    onClick={() => removeField(key, field.id)}
-                                                                >
-                                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                                
-                                                <div className="flex items-end gap-2 pl-7">
-                                                    <div className="flex-1">
-                                                        <Button 
-                                                            variant="ghost" 
-                                                            size="sm" 
-                                                            className="h-8 w-full text-xs border border-dashed text-muted-foreground hover:text-primary"
-                                                            onClick={() => addField(key, "new_range")}
-                                                        >
-                                                            <PlusCircle className="w-3.5 h-3.5 mr-2" />
-                                                            Add Range / Legend Item
-                                                        </Button>
-                                                    </div>
-                                                </div>
+                                            <div className="flex-[2] relative">
+                                                <Label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">Category Alias</Label>
+                                                <Input 
+                                                    value={config.alias || ""}
+                                                    placeholder="Alias..."
+                                                    onChange={(e) => updateCategoryAlias(key, e.target.value)}
+                                                    className="h-8 text-xs font-medium pr-7"
+                                                />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="absolute right-0 bottom-0 h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    onClick={() => removeCategory(key)}
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </Button>
                                             </div>
                                         </div>
 
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 mt-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                            onClick={() => removeCategory(key)}
-                                        >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </Button>
+                                        <div className="grid gap-3">
+                                            {config.fields.map((field) => (
+                                                <div key={field.id} className="space-y-2">
+                                                    <div className="flex items-end gap-2">
+                                                        
+                                                        {/* Color Dot moved here */}
+                                                        <Popover>
+                                                            <PopoverTrigger asChild>
+                                                                <Button 
+                                                                    variant="ghost" 
+                                                                    size="icon" 
+                                                                    className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mb-2"
+                                                                    style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }}
+                                                                >
+                                                                    <div className={cn("w-full h-full rounded-full", config.color.startsWith('bg-') && config.color)} />
+                                                                </Button>
+                                                            </PopoverTrigger>
+                                                            <PopoverContent className="w-48 p-2">
+                                                                <div className="grid grid-cols-4 gap-1">
+                                                                    {['bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 
+                                                                      'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
+                                                                      'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
+                                                                      'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500',
+                                                                      'bg-rose-500', 'bg-slate-500', 'bg-gray-500', 'bg-zinc-500'].map((color) => (
+                                                                        <div 
+                                                                            key={color}
+                                                                            className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform", color)}
+                                                                            onClick={() => updateCategoryColor(key, color)}
+                                                                        />
+                                                                    ))}
+                                                                </div>
+                                                            </PopoverContent>
+                                                        </Popover>
+
+                                                        <div className="flex-[1.5] grid gap-1.5">
+                                                            <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Display Alias</Label>
+                                                            <Input 
+                                                                value={field.alias}
+                                                                onChange={(e) => updateFieldAlias(key, field.id, e.target.value)}
+                                                                className="h-8 text-xs"
+                                                            />
+                                                        </div>
+                                                        <div className="flex items-center gap-2 flex-[2] relative">
+                                                            <div className="grid gap-1.5 flex-1">
+                                                                <Label className="text-[10px] text-muted-foreground uppercase tracking-wider whitespace-nowrap">Value Range</Label>
+                                                                <div className="flex items-center gap-2">
+                                                                    <Input 
+                                                                        type="number"
+                                                                        placeholder="Min"
+                                                                        value={field.min ?? ''}
+                                                                        onChange={(e) => updateFieldRange(key, field.id, 'min', e.target.value)}
+                                                                        className="h-8 w-full text-xs"
+                                                                    />
+                                                                    <span className="text-muted-foreground text-xs">-</span>
+                                                                    <Input 
+                                                                        type="number"
+                                                                        placeholder="Max"
+                                                                        value={field.max ?? ''}
+                                                                        onChange={(e) => updateFieldRange(key, field.id, 'max', e.target.value)}
+                                                                        className="h-8 w-full text-xs pr-7"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="icon" 
+                                                                className="absolute right-0 bottom-0 h-8 w-8 text-muted-foreground hover:text-destructive shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                onClick={() => removeField(key, field.id)}
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            
+                                            <div className="flex items-end gap-2 pl-6">
+                                                <div className="flex-1">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="h-8 w-full text-xs border border-dashed text-muted-foreground hover:text-primary"
+                                                        onClick={() => addField(key, "new_range")}
+                                                    >
+                                                        <PlusCircle className="w-3.5 h-3.5 mr-2" />
+                                                        Add Range / Legend Item
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     {index < arr.length - 1 && <Separator className="mt-2" />}
                                 </div>
