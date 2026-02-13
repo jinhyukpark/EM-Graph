@@ -1725,13 +1725,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     ))
                   )}
                 </div>
-                
-                {!isAddingNote && (
-                <Button className="w-full gap-2 mt-4" size="sm" onClick={() => setIsAddingNote(true)}>
-                  <PlusCircle className="w-4 h-4" />
-                  Add New Note
-                </Button>
-                )}
               </div>
             )}
 
@@ -1849,6 +1842,17 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
           </div>
         </ScrollArea>
+
+        {/* Fixed Footer for Notes Tab */}
+        {activeTab === "notes" && !isAddingNote && (
+            <div className="p-4 border-t border-border bg-card sticky bottom-0 z-10">
+                <Button className="w-full gap-2 shadow-sm" size="sm" onClick={() => setIsAddingNote(true)}>
+                    <PlusCircle className="w-4 h-4" />
+                    Add New Note
+                </Button>
+            </div>
+        )}
+
         </>
         )}
       </div>
