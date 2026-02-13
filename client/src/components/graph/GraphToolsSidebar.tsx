@@ -216,6 +216,14 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     }
   });
 
+  // Graph Theory Configuration State
+  const [graphTheoryConfig, setGraphTheoryConfig] = useState([
+    { id: 'degree', label: 'Degree', description: 'Measures direct connections', icon: Network, enabled: true },
+    { id: 'centrality', label: 'Centrality', description: 'Measures node importance via links', icon: Share2, enabled: true },
+    { id: 'closeness', label: 'Closeness', description: 'Measures average distance to others', icon: CircleDot, enabled: false },
+    { id: 'betweenness', label: 'Betweenness', description: 'Measures bridge role in shortest paths', icon: Waypoints, enabled: true },
+  ]);
+
   const updateFieldAlias = (typeKey: string, fieldId: string, newAlias: string) => {
     setNodeSizingConfig(prev => ({
       ...prev,
@@ -1111,6 +1119,50 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             ))}
                         </div>
                     </div>
+                ) : editingSection === 'graphTheory' ? (
+                    <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                        <div className="flex items-center justify-between border-b border-border pb-4">
+                            <h4 className="text-sm font-semibold flex items-center gap-2">
+                                <Edit className="w-4 h-4 text-primary" />
+                                Edit Graph Theory Control
+                            </h4>
+                            <div className="flex gap-2">
+                                <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <Info className="w-4 h-4 text-primary" />
+                                    <h4 className="text-sm font-semibold text-foreground">Select Metrics</h4>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                  Select the graph theoretical metrics you want to make available in the sidebar.
+                                </p>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                                {graphTheoryConfig.map((metric) => (
+                                    <ViewModeCard 
+                                        key={metric.id}
+                                        icon={<metric.icon className="w-5 h-5" />}
+                                        label={metric.label}
+                                        description={metric.description}
+                                        active={metric.enabled}
+                                        onClick={() => setGraphTheoryConfig(prev => prev.map(p => p.id === metric.id ? {...p, enabled: !p.enabled} : p))}
+                                        topRight={
+                                            <Checkbox 
+                                                checked={metric.enabled}
+                                                onCheckedChange={(c) => setGraphTheoryConfig(prev => prev.map(p => p.id === metric.id ? {...p, enabled: !!c} : p))}
+                                            />
+                                        }
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                   <div className="space-y-6 animate-in fade-in duration-200">
                     <SectionHeader 
@@ -1157,7 +1209,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                     {/* Global Sizing Settings */}
                     <div className="space-y-4">
-                        <SectionHeader icon={Network} title="Graph Theory" />
+                        <SectionHeader 
+                            icon={Network} 
+                            title="Graph Theory" 
+                            onEditControl={() => setEditingSection('graphTheory')}
+                        />
                         <InfoBox 
                             title="Graph Theory" 
                             description="Apply graph theoretical metrics to visualize node importance and centrality."
@@ -1167,51 +1223,35 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-3">
                             <Label className="text-xs font-medium">Graph Analysis Model</Label>
                             <div className="space-y-2">
-                                {/* Degree Centrality - Selected */}
-                                <div className="flex items-start gap-3 p-2.5 rounded-md border border-primary/50 bg-primary/5 cursor-pointer transition-colors">
-                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-primary">
-                                        <div className="flex h-full w-full items-center justify-center">
-                                            <div className="h-2 w-2 rounded-full bg-primary" />
-                                        </div>
+                                {graphTheoryConfig.filter(m => m.enabled).map((metric, i) => (
+                                <div key={metric.id} className={cn(
+                                    "flex items-start gap-3 p-2.5 rounded-md border cursor-pointer transition-colors",
+                                    i === 0 ? "border-primary/50 bg-primary/5" : "bg-card hover:bg-accent/5"
+                                )}>
+                                    <div className={cn(
+                                        "mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border",
+                                        i === 0 ? "border-primary" : "border-muted-foreground/30"
+                                    )}>
+                                        {i === 0 && (
+                                            <div className="flex h-full w-full items-center justify-center">
+                                                <div className="h-2 w-2 rounded-full bg-primary" />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2 font-medium text-sm text-foreground">
-                                            <Network className="w-3.5 h-3.5 text-primary" />
-                                            <span>Degree Centrality</span>
+                                        <div className={cn(
+                                            "flex items-center gap-2 font-medium text-sm",
+                                            i === 0 ? "text-foreground" : "text-muted-foreground"
+                                        )}>
+                                            <metric.icon className={cn("w-3.5 h-3.5", i === 0 && "text-primary")} />
+                                            <span>{metric.label}</span>
                                         </div>
                                         <span className="text-[10px] text-muted-foreground">
-                                            Measures direct connections
+                                            {metric.description}
                                         </span>
                                     </div>
                                 </div>
-
-                                {/* PageRank */}
-                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
-                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
-                                            <Share2 className="w-3.5 h-3.5" />
-                                            <span>PageRank Score</span>
-                                        </div>
-                                        <span className="text-[10px] text-muted-foreground">
-                                            Measures node importance via links
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Betweenness */}
-                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
-                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
-                                            <Waypoints className="w-3.5 h-3.5" />
-                                            <span>Betweenness</span>
-                                        </div>
-                                        <span className="text-[10px] text-muted-foreground">
-                                            Measures bridge role in shortest paths
-                                        </span>
-                                    </div>
-                                </div>
+                                ))}
 
                                 {/* Manual Override */}
                                 <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
