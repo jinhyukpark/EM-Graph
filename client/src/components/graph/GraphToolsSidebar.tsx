@@ -48,7 +48,8 @@ import {
   Clock,
   MessageCircle,
   Hash,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Camera
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -159,7 +160,7 @@ const InfoBox = ({ title, description, icon: Icon }: { title: string, descriptio
 };
 
 export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange, nodes = [], edges = [] }: GraphToolsSidebarProps) {
-  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | null>(null);
+  const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | "snapshots" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
   const [isResizing, setIsResizing] = useState(false);
   const [showLayoutDescription, setShowLayoutDescription] = useState(true);
@@ -232,6 +233,31 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     { id: 'centrality', label: 'Centrality', description: 'Measures node importance via links', icon: Share2, enabled: true },
     { id: 'closeness', label: 'Closeness', description: 'Measures average distance to others', icon: CircleDot, enabled: false },
     { id: 'betweenness', label: 'Betweenness', description: 'Measures bridge role in shortest paths', icon: Waypoints, enabled: true },
+  ]);
+
+  // Snapshots State
+  const [snapshots, setSnapshots] = useState([
+    {
+        id: '1',
+        title: 'Initial Investigation',
+        date: '2024-02-10 14:30',
+        description: 'Baseline network structure before adding new evidence.',
+        thumbnail: 'bg-blue-100' // Placeholder class
+    },
+    {
+        id: '2',
+        title: 'Suspect Cluster Analysis',
+        date: '2024-02-12 09:15',
+        description: 'Focused view on the primary suspect group and their immediate connections.',
+        thumbnail: 'bg-indigo-100'
+    },
+    {
+        id: '3',
+        title: 'Financial Flow Path',
+        date: '2024-02-13 11:45',
+        description: 'Highlighted path showing money laundering route through shell companies.',
+        thumbnail: 'bg-emerald-100'
+    }
   ]);
 
   // Notes/Memos State
@@ -422,7 +448,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     };
   }, [isResizing]);
 
-  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes") => {
+  const toggleTab = (tab: "view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | "snapshots") => {
     if (activeTab === tab) {
       setActiveTab(null);
     } else {
@@ -460,6 +486,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "filters" && <><Filter className="w-4 h-4" /> Graph Filters</>}
             {activeTab === "report" && <><FileText className="w-4 h-4" /> Analysis Report</>}
             {activeTab === "notes" && <><MessageSquareText className="w-4 h-4" /> Project Notes</>}
+            {activeTab === "snapshots" && <><Camera className="w-4 h-4" /> Snapshots</>}
           </h3>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setActiveTab(null)}>
             <X className="w-4 h-4" />
@@ -1771,6 +1798,67 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
               </div>
             )}
 
+            {/* Snapshots Tab */}
+            {activeTab === "snapshots" && (
+                <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                    <SectionHeader icon={Camera} title="Saved Snapshots" />
+                    
+                    <div className="bg-primary/5 border border-primary/20 rounded-md p-3 mb-6">
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <Info className="w-4 h-4 text-primary" />
+                            <h4 className="text-sm font-semibold text-foreground">Graph Snapshots</h4>
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                            Save and restore different states of your graph visualization. Snapshots capture layout, filters, and styling settings.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        {snapshots.map((snapshot) => (
+                            <div key={snapshot.id} className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all shadow-sm hover:shadow-md cursor-pointer">
+                                <div className="flex">
+                                    {/* Thumbnail Placeholder */}
+                                    <div className={cn("w-24 h-auto bg-secondary flex items-center justify-center shrink-0", snapshot.thumbnail)}>
+                                        <Network className="w-8 h-8 text-muted-foreground/50" />
+                                    </div>
+                                    
+                                    <div className="flex-1 p-3">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <h4 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{snapshot.title}</h4>
+                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button size="icon" variant="ghost" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                                                    <Edit className="w-3 h-3" />
+                                                </Button>
+                                                <Button size="icon" variant="ghost" className="h-6 w-6 text-muted-foreground hover:text-destructive">
+                                                    <Trash2 className="w-3 h-3" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center text-[10px] text-muted-foreground mb-2">
+                                            <CalendarIcon className="w-3 h-3 mr-1" />
+                                            {snapshot.date}
+                                        </div>
+                                        
+                                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                                            {snapshot.description}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                {/* Restore Overlay */}
+                                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                            </div>
+                        ))}
+                    </div>
+
+                    <Button className="w-full gap-2 mt-4" variant="outline">
+                        <PlusCircle className="w-4 h-4" />
+                        Create New Snapshot
+                    </Button>
+                </div>
+            )}
+
             {/* Report Tab */}
             {activeTab === "report" && (() => {
                // Calculations
@@ -1920,6 +2008,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
           label="Report" 
           isActive={activeTab === "report"} 
           onClick={() => toggleTab("report")} 
+        />
+        <NavIcon 
+          icon={<Camera className="w-5 h-5" />} 
+          label="Snapshots" 
+          isActive={activeTab === "snapshots"} 
+          onClick={() => toggleTab("snapshots")} 
         />
         <NavIcon 
           icon={<MessageSquareText className="w-5 h-5" />} 
