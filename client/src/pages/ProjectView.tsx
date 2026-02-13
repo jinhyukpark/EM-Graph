@@ -1573,27 +1573,6 @@ export default function ProjectView() {
              <RemoveLayerPanel onClose={() => setIsRemoveLayerMode(false)} />
           )}
 
-          {/* Floating Action Buttons */}
-          <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
-              <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                           <Button variant="outline" size="icon" className="h-8 w-8 bg-background/95 backdrop-blur shadow-sm border-border hover:bg-muted" onClick={() => window.location.reload()}>
-                              <RefreshCw className="w-4 h-4 text-muted-foreground" />
-                           </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">Refresh Network</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                       <TooltipTrigger asChild>
-                           <Button variant="outline" size="icon" className="h-8 w-8 bg-background/95 backdrop-blur shadow-sm border-border hover:bg-muted" onClick={() => setIsSnapshotDialogOpen(true)}>
-                              <Camera className="w-4 h-4 text-muted-foreground" />
-                           </Button>
-                       </TooltipTrigger>
-                       <TooltipContent side="right">Save Snapshot</TooltipContent>
-                  </Tooltip>
-              </TooltipProvider>
-          </div>
 
           {/* Graph Visualization */}
           <ReactFlow
