@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   BarChart3, 
   Settings2, 
@@ -1559,103 +1560,95 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         onEditControl={() => setEditingSection('sizing')}
                     />
                     
-                    <div className="space-y-6">
-                    {/* Field-based Sizing Configuration */}
-                    <div>
-                        <InfoBox 
-                            title="Field-Based Sizing" 
-                            description="Configure specific sizing fields for each node type based on their attributes."
-                            icon={Info}
-                        />
+                    <Tabs defaultValue="field" className="w-full">
+                        <TabsList className="w-full grid grid-cols-2 mb-4">
+                            <TabsTrigger value="field">Field Sizing</TabsTrigger>
+                            <TabsTrigger value="theory">Graph Theory</TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="field" className="space-y-4">
+                            <InfoBox 
+                                title="Field-Based Sizing" 
+                                description="Configure specific sizing fields for each node type based on their attributes."
+                                icon={Info}
+                            />
 
-                        <div className="space-y-4">
-                            {Object.entries(nodeSizingConfig).map(([key, config]) => (
-                                <div key={key} className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                    <div className="space-y-2">
+                            <div className="space-y-2">
+                                {Object.entries(nodeSizingConfig).map(([key, config]) => (
+                                    <div key={key} className="space-y-1">
                                         {config.fields.length > 0 ? (
                                             config.fields.map(field => (
-                                                <div key={field.id} className="flex items-center gap-2">
-                                                    <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                                    <span className="text-sm font-medium">{field.alias}</span>
+                                                <div key={field.id} className="text-sm font-medium py-1 px-2 hover:bg-accent/5 rounded transition-colors cursor-default">
+                                                    {field.alias}
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="flex items-center gap-2">
-                                                <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                                <span className="text-sm font-medium text-muted-foreground">Fixed Size</span>
+                                            <div className="text-sm font-medium text-muted-foreground py-1 px-2">
+                                                Fixed Size
                                             </div>
                                         )}
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* Global Sizing Settings */}
-                    <div className="space-y-4">
-                        <SectionHeader 
-                            icon={Network} 
-                            title="Graph Theory" 
-                            onEditControl={() => setEditingSection('graphTheory')}
-                        />
-                        <InfoBox 
-                            title="Graph Theory" 
-                            description="Apply graph theoretical metrics to visualize node importance and centrality."
-                            icon={Info}
-                        />
-                        
-                        <div className="space-y-3">
-                            <Label className="text-xs font-medium">Graph Analysis Model</Label>
-                            <div className="space-y-2">
-                                {graphTheoryConfig.filter(m => m.enabled).map((metric, i) => (
-                                <div key={metric.id} className={cn(
-                                    "flex items-start gap-3 p-2.5 rounded-md border cursor-pointer transition-colors",
-                                    i === 0 ? "border-primary/50 bg-primary/5" : "bg-card hover:bg-accent/5"
-                                )}>
-                                    <div className={cn(
-                                        "mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border",
-                                        i === 0 ? "border-primary" : "border-muted-foreground/30"
-                                    )}>
-                                        {i === 0 && (
-                                            <div className="flex h-full w-full items-center justify-center">
-                                                <div className="h-2 w-2 rounded-full bg-primary" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <div className={cn(
-                                            "flex items-center gap-2 font-medium text-sm",
-                                            i === 0 ? "text-foreground" : "text-muted-foreground"
-                                        )}>
-                                            <metric.icon className={cn("w-3.5 h-3.5", i === 0 && "text-primary")} />
-                                            <span>{metric.label}</span>
-                                        </div>
-                                        <span className="text-[10px] text-muted-foreground">
-                                            {metric.description}
-                                        </span>
-                                    </div>
-                                </div>
                                 ))}
+                            </div>
+                        </TabsContent>
 
-                                {/* Manual Override */}
-                                <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
-                                    <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
-                                            <Edit className="w-3.5 h-3.5" />
-                                            <span>Manual Override</span>
+                        <TabsContent value="theory" className="space-y-4">
+                            <InfoBox 
+                                title="Graph Theory" 
+                                description="Apply graph theoretical metrics to visualize node importance and centrality."
+                                icon={Info}
+                            />
+                            
+                            <div className="space-y-3">
+                                <Label className="text-xs font-medium">Graph Analysis Model</Label>
+                                <div className="space-y-2">
+                                    {graphTheoryConfig.filter(m => m.enabled).map((metric, i) => (
+                                    <div key={metric.id} className={cn(
+                                        "flex items-start gap-3 p-2.5 rounded-md border cursor-pointer transition-colors",
+                                        i === 0 ? "border-primary/50 bg-primary/5" : "bg-card hover:bg-accent/5"
+                                    )}>
+                                        <div className={cn(
+                                            "mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border",
+                                            i === 0 ? "border-primary" : "border-muted-foreground/30"
+                                        )}>
+                                            {i === 0 && (
+                                                <div className="flex h-full w-full items-center justify-center">
+                                                    <div className="h-2 w-2 rounded-full bg-primary" />
+                                                </div>
+                                            )}
                                         </div>
-                                        <span className="text-[10px] text-muted-foreground">
-                                            Manually set node sizes
-                                        </span>
+                                        <div className="flex flex-col gap-1">
+                                            <div className={cn(
+                                                "flex items-center gap-2 font-medium text-sm",
+                                                i === 0 ? "text-foreground" : "text-muted-foreground"
+                                            )}>
+                                                <metric.icon className={cn("w-3.5 h-3.5", i === 0 && "text-primary")} />
+                                                <span>{metric.label}</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                {metric.description}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    ))}
+
+                                    {/* Manual Override */}
+                                    <div className="flex items-start gap-3 p-2.5 rounded-md border bg-card hover:bg-accent/5 cursor-pointer transition-colors">
+                                        <div className="mt-0.5 relative flex h-4 w-4 shrink-0 overflow-hidden rounded-full border border-muted-foreground/30" />
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2 font-medium text-sm text-muted-foreground">
+                                                <Edit className="w-3.5 h-3.5" />
+                                                <span>Manual Override</span>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                Manually set node sizes
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                  </div>
+                        </TabsContent>
+                    </Tabs>
                   </div>
                 )}
               </div>
