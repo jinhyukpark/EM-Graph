@@ -1571,22 +1571,18 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-4">
                             {Object.entries(nodeSizingConfig).map(([key, config]) => (
                                 <div key={key} className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className={`w-2 h-2 rounded-full ${config.color}`} />
-                                        <span className="text-sm font-medium">{config.type}</span>
-                                    </div>
-                                    <div className="pl-4 space-y-2">
+                                    <div className="space-y-2">
                                         {config.fields.length > 0 ? (
-                                            <div className="space-y-1">
-                                                {config.fields.map(field => (
-                                                    <div key={field.id} className={cn("text-xs font-medium", config.color.replace('bg-', 'text-'))}>
-                                                        {field.alias}
-                                                    </div>
-                                                ))}
-                                            </div>
+                                            config.fields.map(field => (
+                                                <div key={field.id} className="flex items-center gap-2">
+                                                    <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                                    <span className="text-sm font-medium">{field.alias}</span>
+                                                </div>
+                                            ))
                                         ) : (
-                                            <div className="text-xs text-muted-foreground italic">
-                                                Fixed Size (None)
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 rounded-full ${config.color}`} />
+                                                <span className="text-sm font-medium text-muted-foreground">Fixed Size</span>
                                             </div>
                                         )}
                                     </div>
