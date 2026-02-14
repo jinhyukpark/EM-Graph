@@ -1968,7 +1968,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 setNewNoteContent(note.content);
                                 setNewNoteTags(note.tags.join(', '));
                                 setEditingNoteId(note.id);
-                                setIsAddingNote(true);
+                                setIsAddingNote(false); // Don't open the top add form
                               }}>
                                 <Edit className="w-3.5 h-3.5 mr-2" /> Edit
                               </DropdownMenuItem>
@@ -1979,19 +1979,47 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                           </DropdownMenu>
                         </div>
                         
-                        <p className="text-xs text-foreground/90 leading-relaxed mb-3">
-                          {note.content}
-                        </p>
-                        
-                        {note.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {note.tags.map(tag => (
-                              <span key={tag} className="flex items-center text-[10px] bg-secondary/50 text-secondary-foreground px-1.5 py-0.5 rounded-sm">
-                                <Hash className="w-2.5 h-2.5 mr-0.5 opacity-50" />
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                        {editingNoteId === note.id ? (
+                            <div className="space-y-3 mb-2">
+                                <textarea 
+                                    className="w-full min-h-[80px] p-2 text-xs bg-secondary/20 rounded border border-border resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+                                    placeholder="Write your note here..."
+                                    value={newNoteContent}
+                                    onChange={(e) => setNewNoteContent(e.target.value)}
+                                    autoFocus
+                                />
+                                <Input 
+                                    placeholder="Tags (comma separated)..." 
+                                    className="h-8 text-xs bg-secondary/20"
+                                    value={newNoteTags}
+                                    onChange={(e) => setNewNoteTags(e.target.value)}
+                                />
+                                <div className="flex justify-end gap-2">
+                                    <Button size="sm" variant="ghost" onClick={() => {
+                                        setEditingNoteId(null);
+                                        setNewNoteContent('');
+                                        setNewNoteTags('');
+                                    }}>Cancel</Button>
+                                    <Button size="sm" onClick={handleAddNote}>Save Note</Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="text-xs text-foreground/90 leading-relaxed mb-3">
+                                  {note.content}
+                                </p>
+                                
+                                {note.tags.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mb-3">
+                                    {note.tags.map(tag => (
+                                      <span key={tag} className="flex items-center text-[10px] bg-secondary/50 text-secondary-foreground px-1.5 py-0.5 rounded-sm">
+                                        <Hash className="w-2.5 h-2.5 mr-0.5 opacity-50" />
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                            </>
                         )}
                         
                         <div className="flex items-center justify-between pt-2 border-t border-border/30">
