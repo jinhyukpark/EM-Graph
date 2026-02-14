@@ -351,6 +351,9 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   // Visibility State
   const [isNodeFiltersHidden, setIsNodeFiltersHidden] = useState(false);
   const [isPropertyFiltersHidden, setIsPropertyFiltersHidden] = useState(false);
+  
+  // Configuration State
+  const [activeConfigType, setActiveConfigType] = useState<string | null>(null);
 
   const toggleNodeFilter = (filterId: string) => {
     if (filterId === 'all') {
@@ -1708,6 +1711,132 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "filters" && (
               <div className="space-y-6">
                 
+                {activeConfigType ? (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-right-5 duration-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2" onClick={() => setActiveConfigType(null)}>
+                        <ArrowLeft className="w-4 h-4" />
+                      </Button>
+                      <SectionHeader icon={Settings2} title={`Configure ${activeConfigType} Properties`} />
+                    </div>
+
+                    <div className="bg-card border border-border rounded-lg p-4 space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Visible Fields</Label>
+                                <div className="grid grid-cols-1 gap-2">
+                                    <div className="flex items-center justify-between p-2 rounded border bg-secondary/10">
+                                        <div className="flex items-center gap-2">
+                                            <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+                                            <span className="text-sm font-medium">Risk Score</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Select defaultValue="range">
+                                                <SelectTrigger className="h-7 w-[100px] text-xs">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="range">Range</SelectItem>
+                                                    <SelectItem value="number">Number</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <Switch defaultChecked className="scale-75" />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-2 rounded border bg-secondary/10">
+                                        <div className="flex items-center gap-2">
+                                            <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+                                            <span className="text-sm font-medium">Age</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Select defaultValue="range">
+                                                <SelectTrigger className="h-7 w-[100px] text-xs">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="range">Range</SelectItem>
+                                                    <SelectItem value="number">Number</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <Switch defaultChecked className="scale-75" />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-2 rounded border bg-secondary/10">
+                                        <div className="flex items-center gap-2">
+                                            <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+                                            <span className="text-sm font-medium">Status</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Select defaultValue="multi">
+                                                <SelectTrigger className="h-7 w-[100px] text-xs">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="multi">Multi-select</SelectItem>
+                                                    <SelectItem value="single">Single Select</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <Switch defaultChecked className="scale-75" />
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-2 rounded border bg-secondary/10">
+                                        <div className="flex items-center gap-2">
+                                            <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+                                            <span className="text-sm font-medium">Gender</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Select defaultValue="multi">
+                                                <SelectTrigger className="h-7 w-[100px] text-xs">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="multi">Multi-select</SelectItem>
+                                                    <SelectItem value="single">Single Select</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <Switch defaultChecked className="scale-75" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-3">
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Range Settings</Label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Risk Score Range</Label>
+                                        <div className="flex items-center gap-2">
+                                            <Input className="h-8 text-xs" placeholder="Min" defaultValue="0" />
+                                            <span className="text-muted-foreground">-</span>
+                                            <Input className="h-8 text-xs" placeholder="Max" defaultValue="100" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Age Range</Label>
+                                        <div className="flex items-center gap-2">
+                                            <Input className="h-8 text-xs" placeholder="Min" defaultValue="18" />
+                                            <span className="text-muted-foreground">-</span>
+                                            <Input className="h-8 text-xs" placeholder="Max" defaultValue="80" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Add Field</Label>
+                                <Button variant="outline" size="sm" className="w-full border-dashed text-muted-foreground hover:text-primary hover:border-primary/50">
+                                    <PlusCircle className="w-4 h-4 mr-2" /> Add New Property Field
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
                 {/* Node Type Filters Section (Carousel) */}
                 <div className="space-y-3">
                     <SectionHeader 
@@ -1796,7 +1925,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         icon={Sliders} 
                         title="Property Filters" 
                         onHide={() => setIsPropertyFiltersHidden(!isPropertyFiltersHidden)}
-                        onEditControl={() => console.log("Edit Property Filters")}
+                        onEditControl={() => setActiveConfigType(selectedNodeFilters.includes('all') ? 'Global' : selectedNodeFilters[0])}
                     />
                     {!isPropertyFiltersHidden && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -2094,6 +2223,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     </div>
                     )}
                 </div>
+              </>
+            )}
               </div>
             )}
 
