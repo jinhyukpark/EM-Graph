@@ -345,7 +345,36 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     }
   });
 
-  // Graph Theory Configuration State
+  // Filter State
+  const [selectedNodeFilters, setSelectedNodeFilters] = useState<string[]>(['all']);
+
+  const toggleNodeFilter = (filterId: string) => {
+    if (filterId === 'all') {
+      setSelectedNodeFilters(['all']);
+      return;
+    }
+
+    // If 'all' was selected, deselect it and select the new one
+    let newFilters = selectedNodeFilters.includes('all') ? [] : [...selectedNodeFilters];
+    
+    if (newFilters.includes(filterId)) {
+        newFilters = newFilters.filter(id => id !== filterId);
+    } else {
+        newFilters.push(filterId);
+    }
+
+    // If nothing selected, go back to all (or keep at least one?) - let's default to all if empty
+    if (newFilters.length === 0) {
+        newFilters = ['all'];
+    }
+
+    setSelectedNodeFilters(newFilters);
+  };
+
+  const isFilterVisible = (filterId: string) => {
+    if (selectedNodeFilters.includes('all')) return true;
+    return selectedNodeFilters.includes(filterId);
+  };
   const [graphTheoryConfig, setGraphTheoryConfig] = useState([
     { id: 'degree', label: 'Degree', description: 'Measures direct connections', icon: Network, enabled: true },
     { id: 'centrality', label: 'Centrality', description: 'Measures node importance via links', icon: Share2, enabled: true },
@@ -1675,54 +1704,77 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
             {activeTab === "filters" && (
               <div className="space-y-6">
                 
-                {/* Node Type Filters Section */}
+                {/* Node Type Filters Section (Carousel) */}
                 <div className="space-y-3">
                     <SectionHeader icon={Filter} title="Node Type Filters" />
-                    <div className="space-y-4">
-                    {/* Criminal Filter */}
-                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                <span className="text-sm font-medium">Criminal</span>
-                            </div>
-                            <Switch defaultChecked className="scale-75" />
-                        </div>
-                    </div>
+                    
+                    <ScrollArea className="w-full pb-2">
+                        <div className="flex space-x-2">
+                            <button
+                                onClick={() => toggleNodeFilter('all')}
+                                className={cn(
+                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
+                                    selectedNodeFilters.includes('all') 
+                                        ? "bg-primary text-primary-foreground border-primary" 
+                                        : "bg-card hover:bg-accent hover:text-accent-foreground border-border"
+                                )}
+                            >
+                                <span className="whitespace-nowrap">All Types</span>
+                            </button>
+                            
+                            <button
+                                onClick={() => toggleNodeFilter('criminal')}
+                                className={cn(
+                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
+                                    selectedNodeFilters.includes('criminal') 
+                                        ? "bg-red-500 text-white border-red-500" 
+                                        : "bg-card hover:bg-red-500/10 hover:border-red-500/50 border-border"
+                                )}
+                            >
+                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('criminal') ? "bg-white" : "bg-red-500")} />
+                                <span className="whitespace-nowrap">Criminal</span>
+                            </button>
 
-                    {/* Detective Filter */}
-                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                <span className="text-sm font-medium">Detective</span>
-                            </div>
-                            <Switch defaultChecked className="scale-75" />
-                        </div>
-                    </div>
+                            <button
+                                onClick={() => toggleNodeFilter('detective')}
+                                className={cn(
+                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
+                                    selectedNodeFilters.includes('detective') 
+                                        ? "bg-blue-500 text-white border-blue-500" 
+                                        : "bg-card hover:bg-blue-500/10 hover:border-blue-500/50 border-border"
+                                )}
+                            >
+                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('detective') ? "bg-white" : "bg-blue-500")} />
+                                <span className="whitespace-nowrap">Detective</span>
+                            </button>
 
-                    {/* Prison Filter */}
-                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                                <span className="text-sm font-medium">Prison / Location</span>
-                            </div>
-                            <Switch defaultChecked className="scale-75" />
-                        </div>
-                    </div>
+                            <button
+                                onClick={() => toggleNodeFilter('prison')}
+                                className={cn(
+                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
+                                    selectedNodeFilters.includes('prison') 
+                                        ? "bg-emerald-500 text-white border-emerald-500" 
+                                        : "bg-card hover:bg-emerald-500/10 hover:border-emerald-500/50 border-border"
+                                )}
+                            >
+                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('prison') ? "bg-white" : "bg-emerald-500")} />
+                                <span className="whitespace-nowrap">Prison</span>
+                            </button>
 
-                    {/* Victim Filter */}
-                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-amber-500" />
-                                <span className="text-sm font-medium">Victim</span>
-                            </div>
-                            <Switch defaultChecked className="scale-75" />
+                            <button
+                                onClick={() => toggleNodeFilter('victim')}
+                                className={cn(
+                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
+                                    selectedNodeFilters.includes('victim') 
+                                        ? "bg-amber-500 text-white border-amber-500" 
+                                        : "bg-card hover:bg-amber-500/10 hover:border-amber-500/50 border-border"
+                                )}
+                            >
+                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('victim') ? "bg-white" : "bg-amber-500")} />
+                                <span className="whitespace-nowrap">Victim</span>
+                            </button>
                         </div>
-                    </div>
-                    </div>
+                    </ScrollArea>
                 </div>
 
                 <Separator />
@@ -1733,7 +1785,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <div className="space-y-4">
                         
                         {/* Criminal Properties */}
-                        <div className="space-y-2">
+                        {isFilterVisible('criminal') && (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Criminal Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
                                 <div className="space-y-4">
@@ -1809,9 +1862,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Detective Properties */}
-                        <div className="space-y-2">
+                        {isFilterVisible('detective') && (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Detective Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
                                 <div className="space-y-4">
@@ -1875,9 +1930,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         {/* Prison Properties */}
-                        <div className="space-y-2">
+                        {isFilterVisible('prison') && (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                              <Label className="text-xs font-semibold text-muted-foreground pl-1">Prison Properties</Label>
                              <div className="p-3 rounded-lg border bg-card/50">
                                 <div className="space-y-4">
@@ -1951,9 +2008,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </div>
                              </div>
                         </div>
+                        )}
 
                         {/* Victim Properties */}
-                        <div className="space-y-2">
+                        {isFilterVisible('victim') && (
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Victim Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
                                 <div className="space-y-4">
@@ -2013,6 +2072,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </div>
                             </div>
                         </div>
+                        )}
 
                     </div>
                 </div>
