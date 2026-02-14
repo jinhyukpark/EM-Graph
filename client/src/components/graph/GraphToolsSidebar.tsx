@@ -1736,19 +1736,74 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Criminal Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                        <span>Risk Score</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="space-y-1 flex-1">
-                                            <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                            <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                <div className="space-y-4">
+                                    {/* Risk Score */}
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                            <span>Risk Score</span>
                                         </div>
-                                        <span className="text-muted-foreground pt-4">-</span>
-                                        <div className="space-y-1 flex-1">
-                                            <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                            <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                            </div>
+                                            <span className="text-muted-foreground pt-4">-</span>
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Age Range */}
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                            <span>Age</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                <Input type="number" defaultValue="18" className="h-7 text-xs bg-background" />
+                                            </div>
+                                            <span className="text-muted-foreground pt-4">-</span>
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                <Input type="number" defaultValue="80" className="h-7 text-xs bg-background" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Status & Gender */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Status</div>
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="status-incarcerated" defaultChecked className="h-3.5 w-3.5" />
+                                                    <Label htmlFor="status-incarcerated" className="text-xs font-normal cursor-pointer">Incarcerated</Label>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="status-atlarge" defaultChecked className="h-3.5 w-3.5" />
+                                                    <Label htmlFor="status-atlarge" className="text-xs font-normal cursor-pointer">At Large</Label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Gender</div>
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="gender-m" defaultChecked className="h-3.5 w-3.5" />
+                                                    <Label htmlFor="gender-m" className="text-xs font-normal cursor-pointer">Male</Label>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox id="gender-f" defaultChecked className="h-3.5 w-3.5" />
+                                                    <Label htmlFor="gender-f" className="text-xs font-normal cursor-pointer">Female</Label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1759,20 +1814,62 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Detective Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-2">
-                                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
-                                    <div className="space-y-1.5">
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
-                                            <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
+                                <div className="space-y-4">
+                                    {/* Clearance Rate */}
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                            <span>Clearance Rate (%)</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox id="unit-cyber" defaultChecked className="h-3.5 w-3.5" />
-                                            <Label htmlFor="unit-cyber" className="text-xs font-normal cursor-pointer">Cyber Crimes</Label>
+                                        <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1" />
+                                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                                            <span>0%</span>
+                                            <span>100%</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox id="unit-narcotics" defaultChecked className="h-3.5 w-3.5" />
-                                            <Label htmlFor="unit-narcotics" className="text-xs font-normal cursor-pointer">Narcotics</Label>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Unit */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="unit-cyber" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="unit-cyber" className="text-xs font-normal cursor-pointer">Cyber Crimes</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="unit-narcotics" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="unit-narcotics" className="text-xs font-normal cursor-pointer">Narcotics</Label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Rank */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Rank</div>
+                                        <div className="grid grid-cols-2 gap-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="rank-det" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="rank-det" className="text-xs font-normal cursor-pointer">Detective</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="rank-sgt" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="rank-sgt" className="text-xs font-normal cursor-pointer">Sergeant</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="rank-lt" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="rank-lt" className="text-xs font-normal cursor-pointer">Lieutenant</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="rank-cpt" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="rank-cpt" className="text-xs font-normal cursor-pointer">Captain</Label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1783,19 +1880,72 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-2">
                              <Label className="text-xs font-semibold text-muted-foreground pl-1">Prison Properties</Label>
                              <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                        <span>Occupancy (%)</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="space-y-1 flex-1">
-                                            <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                            <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                <div className="space-y-4">
+                                    {/* Occupancy */}
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                            <span>Occupancy (%)</span>
                                         </div>
-                                        <span className="text-muted-foreground pt-4">-</span>
-                                        <div className="space-y-1 flex-1">
-                                            <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                            <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                            </div>
+                                            <span className="text-muted-foreground pt-4">-</span>
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+                                    
+                                    {/* Security Level */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Security Level</div>
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="sec-min" className="h-3.5 w-3.5" />
+                                                <Label htmlFor="sec-min" className="text-xs font-normal cursor-pointer">Minimum</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="sec-med" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="sec-med" className="text-xs font-normal cursor-pointer">Medium</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="sec-max" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="sec-max" className="text-xs font-normal cursor-pointer">Maximum</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="sec-super" className="h-3.5 w-3.5" />
+                                                <Label htmlFor="sec-super" className="text-xs font-normal cursor-pointer">Supermax</Label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Region */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Region</div>
+                                        <div className="grid grid-cols-2 gap-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="reg-north" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="reg-north" className="text-xs font-normal cursor-pointer">North</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="reg-south" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="reg-south" className="text-xs font-normal cursor-pointer">South</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="reg-east" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="reg-east" className="text-xs font-normal cursor-pointer">East</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="reg-west" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="reg-west" className="text-xs font-normal cursor-pointer">West</Label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1806,16 +1956,58 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Victim Properties</Label>
                             <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-2">
-                                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
-                                    <div className="space-y-1.5">
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
-                                            <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
+                                <div className="space-y-4">
+                                    {/* Type */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="vic-corporate" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="vic-corporate" className="text-xs font-normal cursor-pointer">Corporate</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="vic-govt" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="vic-govt" className="text-xs font-normal cursor-pointer">Government</Label>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox id="vic-corporate" defaultChecked className="h-3.5 w-3.5" />
-                                            <Label htmlFor="vic-corporate" className="text-xs font-normal cursor-pointer">Corporate</Label>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+
+                                    {/* Damage Amount */}
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                            <span>Financial Damage</span>
+                                        </div>
+                                        <Slider defaultValue={[10]} max={100} step={1} className="py-1" />
+                                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                                            <span>$0</span>
+                                            <span>$1M+</span>
+                                        </div>
+                                    </div>
+
+                                    <Separator className="bg-border/50" />
+                                    
+                                    {/* Compensation Status */}
+                                    <div className="space-y-2">
+                                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Compensation</div>
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="comp-pending" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="comp-pending" className="text-xs font-normal cursor-pointer">Pending</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="comp-paid" defaultChecked className="h-3.5 w-3.5" />
+                                                <Label htmlFor="comp-paid" className="text-xs font-normal cursor-pointer">Paid</Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Checkbox id="comp-denied" className="h-3.5 w-3.5" />
+                                                <Label htmlFor="comp-denied" className="text-xs font-normal cursor-pointer">Denied</Label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
