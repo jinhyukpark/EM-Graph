@@ -1670,33 +1670,23 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                           <Switch defaultChecked className="scale-75" />
                       </div>
                       
-                      <div className="pl-4 space-y-4 pt-1">
-                          {/* Range Filter */}
-                          <div className="space-y-2">
+                      <div className="pl-4 pt-1">
+                          {/* Range Filter (Input Form) */}
+                          <div className="space-y-3">
                               <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                                   <span>Risk Score</span>
-                                  <span>0 - 100</span>
                               </div>
-                              <Slider defaultValue={[0, 100]} max={100} step={1} className="py-1" />
-                          </div>
-
-                          {/* Checkbox Filter */}
-                          <div className="space-y-2">
-                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Status</div>
-                             <div className="space-y-1.5">
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="status-incarcerated" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="status-incarcerated" className="text-xs font-normal cursor-pointer">Incarcerated</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="status-atlarge" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="status-atlarge" className="text-xs font-normal cursor-pointer">At Large</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="status-suspect" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="status-suspect" className="text-xs font-normal cursor-pointer">Suspect</Label>
-                                 </div>
-                             </div>
+                              <div className="flex items-center gap-2">
+                                <div className="space-y-1 flex-1">
+                                    <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                    <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                </div>
+                                <span className="text-muted-foreground pt-4">-</span>
+                                <div className="space-y-1 flex-1">
+                                    <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                    <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
+                                </div>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -1711,16 +1701,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                           <Switch defaultChecked className="scale-75" />
                       </div>
                       
-                      <div className="pl-4 space-y-4 pt-1">
-                          {/* Range Filter */}
-                          <div className="space-y-2">
-                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                  <span>Clearance Rate</span>
-                                  <span>50% - 100%</span>
-                              </div>
-                              <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1" />
-                          </div>
-
+                      <div className="pl-4 pt-1">
                           {/* Checkbox Filter */}
                           <div className="space-y-2">
                              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
@@ -1752,29 +1733,23 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                           <Switch defaultChecked className="scale-75" />
                       </div>
                       
-                      <div className="pl-4 space-y-4 pt-1">
-                          {/* Range Filter */}
-                          <div className="space-y-2">
+                      <div className="pl-4 pt-1">
+                          {/* Range Filter (Input Form) */}
+                          <div className="space-y-3">
                               <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                  <span>Occupancy</span>
-                                  <span>0% - 100%</span>
+                                  <span>Occupancy (%)</span>
                               </div>
-                              <Slider defaultValue={[0, 90]} max={100} step={1} className="py-1" />
-                          </div>
-
-                          {/* Checkbox Filter */}
-                          <div className="space-y-2">
-                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Security Level</div>
-                             <div className="space-y-1.5">
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="sec-max" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="sec-max" className="text-xs font-normal cursor-pointer">Maximum</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="sec-med" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="sec-med" className="text-xs font-normal cursor-pointer">Medium</Label>
-                                 </div>
-                             </div>
+                              <div className="flex items-center gap-2">
+                                <div className="space-y-1 flex-1">
+                                    <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                    <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                </div>
+                                <span className="text-muted-foreground pt-4">-</span>
+                                <div className="space-y-1 flex-1">
+                                    <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                    <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
+                                </div>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -1789,16 +1764,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                           <Switch defaultChecked className="scale-75" />
                       </div>
                       
-                      <div className="pl-4 space-y-4 pt-1">
-                          {/* Range Filter */}
-                          <div className="space-y-2">
-                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                  <span>Damage Amount</span>
-                                  <span>$10k - $500k+</span>
-                              </div>
-                              <Slider defaultValue={[10]} max={100} step={1} className="py-1" />
-                          </div>
-
+                      <div className="pl-4 pt-1">
                            {/* Checkbox Filter */}
                           <div className="space-y-2">
                              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
