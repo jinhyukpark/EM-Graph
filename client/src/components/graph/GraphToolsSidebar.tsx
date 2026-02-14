@@ -1576,17 +1576,19 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         <span className="text-sm font-medium">{config.type}</span>
                                     </div>
                                     <div className="pl-4 space-y-2">
-                                        <Select defaultValue={config.fields[0]?.field || "none"}>
-                                            <SelectTrigger className="h-7 text-xs">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
+                                        {config.fields.length > 0 ? (
+                                            <div className="space-y-1">
                                                 {config.fields.map(field => (
-                                                    <SelectItem key={field.id} value={field.field}>{field.alias}</SelectItem>
+                                                    <div key={field.id} className="text-xs px-3 py-2 rounded-md bg-secondary/30 border border-border/50 text-foreground/90">
+                                                        {field.alias}
+                                                    </div>
                                                 ))}
-                                                <SelectItem value="none">None (Fixed Size)</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                            </div>
+                                        ) : (
+                                            <div className="text-xs text-muted-foreground italic px-3 py-2 rounded-md bg-secondary/10 border border-border/30">
+                                                Fixed Size (None)
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
