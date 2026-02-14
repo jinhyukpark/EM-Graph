@@ -347,6 +347,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
   // Filter State
   const [selectedNodeFilters, setSelectedNodeFilters] = useState<string[]>(['all']);
+  
+  // Visibility State
+  const [isNodeFiltersHidden, setIsNodeFiltersHidden] = useState(false);
+  const [isPropertyFiltersHidden, setIsPropertyFiltersHidden] = useState(false);
 
   const toggleNodeFilter = (filterId: string) => {
     if (filterId === 'all') {
@@ -1706,9 +1710,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 
                 {/* Node Type Filters Section (Carousel) */}
                 <div className="space-y-3">
-                    <SectionHeader icon={Filter} title="Node Type Filters" />
+                    <SectionHeader 
+                        icon={Filter} 
+                        title="Node Type Filters" 
+                        onHide={() => setIsNodeFiltersHidden(!isNodeFiltersHidden)}
+                        onEditControl={() => console.log("Edit Node Type Filters")}
+                    />
                     
-                    <ScrollArea className="w-full pb-2">
+                    {!isNodeFiltersHidden && (
+                    <ScrollArea className="w-full pb-2 animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="flex space-x-2">
                             <button
                                 onClick={() => toggleNodeFilter('all')}
@@ -1775,14 +1785,21 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             </button>
                         </div>
                     </ScrollArea>
+                    )}
                 </div>
 
                 <Separator />
 
                 {/* Property Filters Section */}
                 <div className="space-y-3">
-                    <SectionHeader icon={Sliders} title="Property Filters" />
-                    <div className="space-y-4">
+                    <SectionHeader 
+                        icon={Sliders} 
+                        title="Property Filters" 
+                        onHide={() => setIsPropertyFiltersHidden(!isPropertyFiltersHidden)}
+                        onEditControl={() => console.log("Edit Property Filters")}
+                    />
+                    {!isPropertyFiltersHidden && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                         
                         {/* Criminal Properties */}
                         {isFilterVisible('criminal') && (
@@ -2075,6 +2092,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         )}
 
                     </div>
+                    )}
                 </div>
               </div>
             )}
