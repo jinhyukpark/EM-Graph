@@ -1673,132 +1673,156 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
             {/* Filters Tab */}
             {activeTab === "filters" && (
-              <div className="space-y-4">
-                <SectionHeader icon={Filter} title="Node Type Filters" />
-                <div className="space-y-4">
+              <div className="space-y-6">
+                
+                {/* Node Type Filters Section */}
+                <div className="space-y-3">
+                    <SectionHeader icon={Filter} title="Node Type Filters" />
+                    <div className="space-y-4">
+                    {/* Criminal Filter */}
+                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500" />
+                                <span className="text-sm font-medium">Criminal</span>
+                            </div>
+                            <Switch defaultChecked className="scale-75" />
+                        </div>
+                    </div>
 
-                  {/* Criminal Filter */}
-                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                      <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-red-500" />
-                              <span className="text-sm font-medium">Criminal</span>
-                          </div>
-                          <Switch defaultChecked className="scale-75" />
-                      </div>
-                      
-                      <div className="pl-4 pt-1">
-                          {/* Range Filter (Input Form) */}
-                          <div className="space-y-3">
-                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                  <span>Risk Score</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="space-y-1 flex-1">
-                                    <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                    <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
-                                </div>
-                                <span className="text-muted-foreground pt-4">-</span>
-                                <div className="space-y-1 flex-1">
-                                    <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                    <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
-                                </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+                    {/* Detective Filter */}
+                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                <span className="text-sm font-medium">Detective</span>
+                            </div>
+                            <Switch defaultChecked className="scale-75" />
+                        </div>
+                    </div>
 
-                  {/* Detective Filter */}
-                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                      <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-blue-500" />
-                              <span className="text-sm font-medium">Detective</span>
-                          </div>
-                          <Switch defaultChecked className="scale-75" />
-                      </div>
-                      
-                      <div className="pl-4 pt-1">
-                          {/* Checkbox Filter */}
-                          <div className="space-y-2">
-                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
-                             <div className="space-y-1.5">
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="unit-cyber" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="unit-cyber" className="text-xs font-normal cursor-pointer">Cyber Crimes</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="unit-narcotics" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="unit-narcotics" className="text-xs font-normal cursor-pointer">Narcotics</Label>
-                                 </div>
+                    {/* Prison Filter */}
+                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                <span className="text-sm font-medium">Prison / Location</span>
+                            </div>
+                            <Switch defaultChecked className="scale-75" />
+                        </div>
+                    </div>
+
+                    {/* Victim Filter */}
+                    <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                <span className="text-sm font-medium">Victim</span>
+                            </div>
+                            <Switch defaultChecked className="scale-75" />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <Separator />
+
+                {/* Property Filters Section */}
+                <div className="space-y-3">
+                    <SectionHeader icon={Sliders} title="Property Filters" />
+                    <div className="space-y-4">
+                        
+                        {/* Criminal Properties */}
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-muted-foreground pl-1">Criminal Properties</Label>
+                            <div className="p-3 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                        <span>Risk Score</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="space-y-1 flex-1">
+                                            <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                            <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                        </div>
+                                        <span className="text-muted-foreground pt-4">-</span>
+                                        <div className="space-y-1 flex-1">
+                                            <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                            <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Detective Properties */}
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-muted-foreground pl-1">Detective Properties</Label>
+                            <div className="p-3 rounded-lg border bg-card/50">
+                                <div className="space-y-2">
+                                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
+                                            <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox id="unit-cyber" defaultChecked className="h-3.5 w-3.5" />
+                                            <Label htmlFor="unit-cyber" className="text-xs font-normal cursor-pointer">Cyber Crimes</Label>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox id="unit-narcotics" defaultChecked className="h-3.5 w-3.5" />
+                                            <Label htmlFor="unit-narcotics" className="text-xs font-normal cursor-pointer">Narcotics</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Prison Properties */}
+                        <div className="space-y-2">
+                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Prison Properties</Label>
+                             <div className="p-3 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                        <span>Occupancy (%)</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="space-y-1 flex-1">
+                                            <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                            <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                                        </div>
+                                        <span className="text-muted-foreground pt-4">-</span>
+                                        <div className="space-y-1 flex-1">
+                                            <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                            <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
+                                        </div>
+                                    </div>
+                                </div>
                              </div>
-                          </div>
-                      </div>
-                  </div>
+                        </div>
 
-                  {/* Prison Filter */}
-                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                      <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                              <span className="text-sm font-medium">Prison / Location</span>
-                          </div>
-                          <Switch defaultChecked className="scale-75" />
-                      </div>
-                      
-                      <div className="pl-4 pt-1">
-                          {/* Range Filter (Input Form) */}
-                          <div className="space-y-3">
-                              <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                  <span>Occupancy (%)</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="space-y-1 flex-1">
-                                    <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                    <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
+                        {/* Victim Properties */}
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold text-muted-foreground pl-1">Victim Properties</Label>
+                            <div className="p-3 rounded-lg border bg-card/50">
+                                <div className="space-y-2">
+                                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
+                                            <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox id="vic-corporate" defaultChecked className="h-3.5 w-3.5" />
+                                            <Label htmlFor="vic-corporate" className="text-xs font-normal cursor-pointer">Corporate</Label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <span className="text-muted-foreground pt-4">-</span>
-                                <div className="space-y-1 flex-1">
-                                    <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                    <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
-                                </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+                            </div>
+                        </div>
 
-                  {/* Victim Filter */}
-                  <div className="p-3 rounded-lg border bg-card/50 hover:bg-accent/5 transition-colors">
-                      <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-amber-500" />
-                              <span className="text-sm font-medium">Victim</span>
-                          </div>
-                          <Switch defaultChecked className="scale-75" />
-                      </div>
-                      
-                      <div className="pl-4 pt-1">
-                           {/* Checkbox Filter */}
-                          <div className="space-y-2">
-                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
-                             <div className="space-y-1.5">
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
-                                 </div>
-                                 <div className="flex items-center gap-2">
-                                     <Checkbox id="vic-corporate" defaultChecked className="h-3.5 w-3.5" />
-                                     <Label htmlFor="vic-corporate" className="text-xs font-normal cursor-pointer">Corporate</Label>
-                                 </div>
-                             </div>
-                          </div>
-                      </div>
-                  </div>
-
+                    </div>
                 </div>
               </div>
             )}
