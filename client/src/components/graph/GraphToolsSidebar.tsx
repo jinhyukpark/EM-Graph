@@ -300,13 +300,16 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
   // Node Sizing Configuration State
   const [sizingTab, setSizingTab] = useState("field");
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>("1"); // Default selected
   const [nodeSizingConfig, setNodeSizingConfig] = useState<Record<string, { type: string, alias?: string, color: string, fields: { id: string, field: string, alias: string, min?: number, max?: number }[], availableFields: string[] }>>({
     criminal: {
       type: "risk_score",
       alias: "Criminal Risk",
       color: "bg-red-500",
       fields: [
-        { id: "1", field: "risk_score", alias: "Risk Score", min: 0, max: 100 }
+        { id: "1", field: "risk_score", alias: "Risk Score", min: 0, max: 100 },
+        { id: "101", field: "crimes_count", alias: "Crime Count", min: 0, max: 50 },
+        { id: "102", field: "sentence_years", alias: "Sentence Duration", min: 0, max: 30 }
       ],
       availableFields: ["risk_score", "crimes_count", "sentence_years", "age", "weight", "height"]
     },
@@ -315,7 +318,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
       alias: "Performance",
       color: "bg-blue-500",
       fields: [
-        { id: "1", field: "cases_solved", alias: "Cases Solved", min: 0, max: 500 }
+        { id: "2", field: "cases_solved", alias: "Cases Solved", min: 0, max: 500 },
+        { id: "201", field: "years_active", alias: "Years Active", min: 0, max: 40 }
       ],
       availableFields: ["cases_solved", "years_active", "rank_level", "commendations"]
     },
@@ -324,7 +328,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
       alias: "Facility Size",
       color: "bg-emerald-500",
       fields: [
-        { id: "1", field: "capacity", alias: "Inmate Capacity", min: 100, max: 5000 }
+        { id: "3", field: "capacity", alias: "Inmate Capacity", min: 100, max: 5000 },
+        { id: "301", field: "staff_count", alias: "Staff Count", min: 50, max: 1000 }
       ],
       availableFields: ["capacity", "security_level", "staff_count", "budget"]
     },
@@ -333,7 +338,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
       alias: "Damage",
       color: "bg-amber-500",
       fields: [
-        { id: "1", field: "damage_amount", alias: "Financial Damage", min: 0, max: 1000000 }
+        { id: "4", field: "damage_amount", alias: "Financial Damage", min: 0, max: 1000000 },
+        { id: "401", field: "impact_score", alias: "Impact Score", min: 0, max: 10 }
       ],
       availableFields: ["damage_amount", "impact_score", "recovery_time", "age"]
     }
@@ -1579,8 +1585,18 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     <div key={key} className="space-y-1">
                                         {config.fields.length > 0 ? (
                                             config.fields.map(field => (
-                                                <div key={field.id} className="text-sm font-medium py-1 px-2 hover:bg-accent/5 rounded transition-colors cursor-default">
+                                                <div 
+                                                    key={field.id} 
+                                                    className={cn(
+                                                        "text-sm font-medium py-1.5 px-3 rounded-md transition-colors cursor-pointer flex items-center justify-between",
+                                                        selectedFieldId === field.id ? "bg-primary/10 text-primary" : "hover:bg-accent/5"
+                                                    )}
+                                                    onClick={() => setSelectedFieldId(field.id)}
+                                                >
                                                     {field.alias}
+                                                    {selectedFieldId === field.id && (
+                                                        <Check className="w-3.5 h-3.5" />
+                                                    )}
                                                 </div>
                                             ))
                                         ) : (
