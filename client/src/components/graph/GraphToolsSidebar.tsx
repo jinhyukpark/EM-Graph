@@ -299,6 +299,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   });
 
   // Node Sizing Configuration State
+  const [sizingTab, setSizingTab] = useState("field");
   const [nodeSizingConfig, setNodeSizingConfig] = useState<Record<string, { type: string, alias?: string, color: string, fields: { id: string, field: string, alias: string, min?: number, max?: number }[], availableFields: string[] }>>({
     criminal: {
       type: "risk_score",
@@ -1557,10 +1558,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                     <SectionHeader 
                         icon={Maximize2} 
                         title="Node Sizing" 
-                        onEditControl={() => setEditingSection('sizing')}
+                        onEditControl={() => setEditingSection(sizingTab === 'theory' ? 'graphTheory' : 'sizing')}
                     />
                     
-                    <Tabs defaultValue="field" className="w-full">
+                    <Tabs value={sizingTab} onValueChange={setSizingTab} className="w-full">
                         <TabsList className="w-full grid grid-cols-2 mb-4">
                             <TabsTrigger value="field">Field Sizing</TabsTrigger>
                             <TabsTrigger value="theory">Graph Theory</TabsTrigger>
