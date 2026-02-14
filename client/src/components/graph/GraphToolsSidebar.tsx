@@ -1579,13 +1579,13 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                         {config.fields.length > 0 ? (
                                             <div className="space-y-1">
                                                 {config.fields.map(field => (
-                                                    <div key={field.id} className="text-xs px-3 py-2 rounded-md bg-secondary/30 border border-border/50 text-foreground/90">
+                                                    <div key={field.id} className={cn("text-xs font-medium", config.color.replace('bg-', 'text-'))}>
                                                         {field.alias}
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="text-xs text-muted-foreground italic px-3 py-2 rounded-md bg-secondary/10 border border-border/30">
+                                            <div className="text-xs text-muted-foreground italic">
                                                 Fixed Size (None)
                                             </div>
                                         )}
