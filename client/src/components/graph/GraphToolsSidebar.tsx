@@ -1932,7 +1932,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         />
                     </div>
                     {!isPropertyFiltersHidden && (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 @container">
                         
                         {/* Criminal Properties */}
                         {isFilterVisible('criminal') && (
@@ -1981,7 +1981,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     <Separator className="bg-border/50" />
 
                                     {/* Status & Gender */}
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Status</div>
                                             <div className="space-y-1.5">
@@ -2037,7 +2037,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Unit */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Unit</div>
-                                        <div className="space-y-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="unit-homicide" defaultChecked className="h-3.5 w-3.5" />
                                                 <Label htmlFor="unit-homicide" className="text-xs font-normal cursor-pointer">Homicide</Label>
@@ -2058,7 +2058,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Rank */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Rank</div>
-                                        <div className="grid grid-cols-2 gap-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="rank-det" defaultChecked className="h-3.5 w-3.5" />
                                                 <Label htmlFor="rank-det" className="text-xs font-normal cursor-pointer">Detective</Label>
@@ -2111,7 +2111,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Security Level */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Security Level</div>
-                                        <div className="space-y-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="sec-min" className="h-3.5 w-3.5" />
                                                 <Label htmlFor="sec-min" className="text-xs font-normal cursor-pointer">Minimum</Label>
@@ -2136,7 +2136,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Region */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Region</div>
-                                        <div className="grid grid-cols-2 gap-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="reg-north" defaultChecked className="h-3.5 w-3.5" />
                                                 <Label htmlFor="reg-north" className="text-xs font-normal cursor-pointer">North</Label>
@@ -2169,7 +2169,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Type */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
-                                        <div className="space-y-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="vic-individual" defaultChecked className="h-3.5 w-3.5" />
                                                 <Label htmlFor="vic-individual" className="text-xs font-normal cursor-pointer">Individual</Label>
@@ -2204,7 +2204,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                     {/* Compensation Status */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Compensation</div>
-                                        <div className="space-y-1.5">
+                                        <div className="grid grid-cols-1 @[240px]:grid-cols-2 gap-1.5">
                                             <div className="flex items-center gap-2">
                                                 <Checkbox id="comp-pending" defaultChecked className="h-3.5 w-3.5" />
                                                 <Label htmlFor="comp-pending" className="text-xs font-normal cursor-pointer">Pending</Label>
