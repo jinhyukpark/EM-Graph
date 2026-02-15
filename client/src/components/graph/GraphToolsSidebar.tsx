@@ -354,6 +354,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   
   // Configuration State
   const [activeConfigType, setActiveConfigType] = useState<string | null>(null);
+  const [activeSizingCategory, setActiveSizingCategory] = useState<string>('criminal');
 
   const toggleNodeFilter = (filterId: string) => {
     if (filterId === 'all') {
@@ -1400,7 +1401,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <Info className="w-4 h-4 text-primary" />
@@ -1411,8 +1412,40 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 </p>
                             </div>
 
-                            {Object.entries(nodeSizingConfig).map(([key, config], index, arr) => (
-                                <div key={key} className="space-y-3">
+                            {/* Node Type Selection Carousel */}
+                            <ScrollArea className="w-full pb-2">
+                                <div className="flex space-x-2">
+                                    {Object.entries(nodeSizingConfig).map(([key, config]) => (
+                                        <button
+                                            key={key}
+                                            onClick={() => setActiveSizingCategory(key)}
+                                            className={cn(
+                                                "flex flex-col items-center gap-1.5 p-2 min-w-[80px] rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+                                                activeSizingCategory === key 
+                                                    ? "bg-primary/10 border-primary/50 text-primary ring-1 ring-primary/20" 
+                                                    : "bg-card border-border text-muted-foreground"
+                                            )}
+                                        >
+                                            <div className={cn("w-3 h-3 rounded-full shadow-sm", config.color.startsWith('bg-') && config.color)} style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }} />
+                                            <span className="text-[10px] font-medium capitalize truncate max-w-[70px]">{config.alias || key}</span>
+                                        </button>
+                                    ))}
+                                    <button
+                                        onClick={addCategory}
+                                        className="flex flex-col items-center justify-center gap-1.5 p-2 min-w-[80px] rounded-lg border border-dashed border-muted-foreground/30 cursor-pointer transition-all hover:bg-accent/50 hover:border-primary/50 hover:text-primary text-muted-foreground"
+                                    >
+                                        <PlusCircle className="w-4 h-4" />
+                                        <span className="text-[10px] font-medium">Add New</span>
+                                    </button>
+                                </div>
+                            </ScrollArea>
+
+                            <Separator />
+
+                            {Object.entries(nodeSizingConfig)
+                                .filter(([key]) => key === activeSizingCategory)
+                                .map(([key, config], index, arr) => (
+                                <div key={key} className="space-y-3 animate-in fade-in zoom-in-95 duration-200">
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-2">
                                             {/* Spacer to align with color dot below */}
@@ -1457,7 +1490,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                 <Button 
                                                                     variant="ghost" 
                                                                     size="icon" 
-                                                                    className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mb-2"
+                                                                    className="w-4 h-4 rounded-full p-0 shrink-0 hover:opacity-80 mb-2 shadow-sm ring-1 ring-border/20"
                                                                     style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }}
                                                                 >
                                                                     <div className={cn("w-full h-full rounded-full", config.color.startsWith('bg-') && config.color)} />
@@ -1472,7 +1505,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                       'bg-rose-500', 'bg-slate-500', 'bg-gray-500', 'bg-zinc-500'].map((color) => (
                                                                         <div 
                                                                             key={color}
-                                                                            className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform", color)}
+                                                                            className={cn("w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform shadow-sm", color)}
                                                                             onClick={() => updateCategoryColor(key, color)}
                                                                         />
                                                                     ))}
@@ -1537,18 +1570,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                             </div>
                                         </div>
                                     </div>
-                                    {index < arr.length - 1 && <Separator className="mt-2" />}
                                 </div>
                             ))}
-                            
-                            <Button 
-                                variant="outline" 
-                                className="w-full border-dashed text-muted-foreground hover:text-primary hover:border-primary"
-                                onClick={addCategory}
-                            >
-                                <PlusCircle className="w-4 h-4 mr-2" />
-                                Add New Category
-                            </Button>
                         </div>
                     </div>
                 ) : editingSection === 'graphTheory' ? (
