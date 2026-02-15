@@ -1838,7 +1838,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 ) : (
                   <>
                 {/* Node Type Filters Section (Carousel) */}
-                <div className="space-y-3">
+                <div className="space-y-3 max-w-full overflow-hidden">
                     <SectionHeader 
                         icon={Filter} 
                         title="Node Type Filters" 
