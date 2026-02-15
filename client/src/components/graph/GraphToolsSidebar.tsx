@@ -1838,8 +1838,8 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 ) : (
                   <>
                 {/* Node Type Filters Section (Carousel) */}
-                <div className="space-y-3 max-w-full relative">
-                    <div className="pr-1">
+                <div className="space-y-3 max-w-full relative overflow-hidden">
+                    <div className="pr-4">
                         <SectionHeader 
                             icon={Filter} 
                             title="Node Type Filters" 
@@ -1922,13 +1922,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 <Separator />
 
                 {/* Property Filters Section */}
-                <div className="space-y-3">
-                    <SectionHeader 
-                        icon={Sliders} 
-                        title="Property Filters" 
-                        onHide={() => setIsPropertyFiltersHidden(!isPropertyFiltersHidden)}
-                        onEditControl={() => setActiveConfigType(selectedNodeFilters.includes('all') ? 'Global' : selectedNodeFilters[0])}
-                    />
+                <div className="space-y-3 relative">
+                    <div className="pr-4">
+                        <SectionHeader 
+                            icon={Sliders} 
+                            title="Property Filters" 
+                            onHide={() => setIsPropertyFiltersHidden(!isPropertyFiltersHidden)}
+                            onEditControl={() => setActiveConfigType(selectedNodeFilters.includes('all') ? 'Global' : selectedNodeFilters[0])}
+                        />
+                    </div>
                     {!isPropertyFiltersHidden && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
                         
