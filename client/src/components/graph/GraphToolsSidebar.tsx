@@ -1838,13 +1838,15 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                 ) : (
                   <>
                 {/* Node Type Filters Section (Carousel) */}
-                <div className="space-y-3 max-w-full overflow-hidden">
-                    <SectionHeader 
-                        icon={Filter} 
-                        title="Node Type Filters" 
-                        onHide={() => setIsNodeFiltersHidden(!isNodeFiltersHidden)}
-                        onEditControl={() => console.log("Edit Node Type Filters")}
-                    />
+                <div className="space-y-3 max-w-full relative">
+                    <div className="pr-1">
+                        <SectionHeader 
+                            icon={Filter} 
+                            title="Node Type Filters" 
+                            onHide={() => setIsNodeFiltersHidden(!isNodeFiltersHidden)}
+                            onEditControl={() => console.log("Edit Node Type Filters")}
+                        />
+                    </div>
                     
                     {!isNodeFiltersHidden && (
                     <ScrollArea className="w-full pb-2 animate-in fade-in slide-in-from-top-2 duration-300">
