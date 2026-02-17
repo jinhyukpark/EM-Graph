@@ -2200,43 +2200,28 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             <div className="p-3 rounded-lg border bg-card/50">
                                 <div className="space-y-4">
                                     {/* Clearance Rate */}
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                                             <span>Clearance Rate (%)</span>
                                         </div>
                                         
-                                        <div className="relative pt-6 pb-2 px-1">
-                                            <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1 z-10 relative" />
-                                            
-                                            {/* Integrated Input Fields floating above/on the slider handles roughly */}
-                                            <div className="flex justify-between items-center -mt-8 mb-2">
-                                                <div className="relative group">
-                                                    <div className="absolute -bottom-8 left-0 opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-sm whitespace-nowrap z-20 pointer-events-none">
-                                                        Min Value
-                                                    </div>
-                                                    <div className="relative flex items-center bg-background border border-border rounded-md shadow-sm w-16 h-7 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
-                                                        <input 
-                                                            type="number" 
-                                                            defaultValue="50" 
-                                                            className="w-full h-full bg-transparent text-xs text-right pr-4 pl-1 outline-none appearance-none font-medium" 
-                                                        />
-                                                        <span className="absolute right-1.5 text-[10px] text-muted-foreground pointer-events-none">%</span>
-                                                    </div>
-                                                </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="relative w-14 shrink-0">
+                                                <Input 
+                                                    type="number" 
+                                                    defaultValue="50" 
+                                                    className="h-7 text-xs px-1 text-center bg-background focus:ring-1 focus:ring-primary" 
+                                                />
+                                            </div>
 
-                                                <div className="relative group">
-                                                    <div className="absolute -bottom-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-popover-foreground text-[10px] px-2 py-1 rounded shadow-sm whitespace-nowrap z-20 pointer-events-none">
-                                                        Max Value
-                                                    </div>
-                                                    <div className="relative flex items-center bg-background border border-border rounded-md shadow-sm w-16 h-7 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
-                                                        <input 
-                                                            type="number" 
-                                                            defaultValue="100" 
-                                                            className="w-full h-full bg-transparent text-xs text-right pr-4 pl-1 outline-none appearance-none font-medium" 
-                                                        />
-                                                        <span className="absolute right-1.5 text-[10px] text-muted-foreground pointer-events-none">%</span>
-                                                    </div>
-                                                </div>
+                                            <Slider defaultValue={[50, 100]} max={100} step={1} className="flex-1 py-1" />
+
+                                            <div className="relative w-14 shrink-0">
+                                                <Input 
+                                                    type="number" 
+                                                    defaultValue="100" 
+                                                    className="h-7 text-xs px-1 text-center bg-background focus:ring-1 focus:ring-primary" 
+                                                />
                                             </div>
                                         </div>
                                     </div>
