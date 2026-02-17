@@ -2201,29 +2201,30 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 <div className="space-y-4">
                                     {/* Clearance Rate */}
                                     <div className="space-y-3">
-                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                            <span>Clearance Rate (%)</span>
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                                                Clearance Rate (%)
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="relative w-12">
+                                                    <Input 
+                                                        type="number" 
+                                                        defaultValue="50" 
+                                                        className="h-6 text-[10px] px-1 text-center bg-background focus:ring-1 focus:ring-primary border-transparent hover:border-border focus:border-primary transition-colors" 
+                                                    />
+                                                </div>
+                                                <span className="text-[10px] text-muted-foreground">-</span>
+                                                <div className="relative w-12">
+                                                    <Input 
+                                                        type="number" 
+                                                        defaultValue="100" 
+                                                        className="h-6 text-[10px] px-1 text-center bg-background focus:ring-1 focus:ring-primary border-transparent hover:border-border focus:border-primary transition-colors" 
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                         
-                                        <div className="flex items-center gap-3">
-                                            <div className="relative w-14 shrink-0">
-                                                <Input 
-                                                    type="number" 
-                                                    defaultValue="50" 
-                                                    className="h-7 text-xs px-1 text-center bg-background focus:ring-1 focus:ring-primary" 
-                                                />
-                                            </div>
-
-                                            <Slider defaultValue={[50, 100]} max={100} step={1} className="flex-1 py-1" />
-
-                                            <div className="relative w-14 shrink-0">
-                                                <Input 
-                                                    type="number" 
-                                                    defaultValue="100" 
-                                                    className="h-7 text-xs px-1 text-center bg-background focus:ring-1 focus:ring-primary" 
-                                                />
-                                            </div>
-                                        </div>
+                                        <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1" />
                                     </div>
 
                                     <Separator className="bg-border/50" />
