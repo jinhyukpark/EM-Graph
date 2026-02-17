@@ -1858,6 +1858,162 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                         </div>
                     </div>
                   </div>
+                ) : editingSection === 'filters' ? (
+                    <div className="space-y-6 animate-in slide-in-from-right-5 duration-200">
+                        <div className="flex items-center justify-between border-b border-border pb-4">
+                            <h4 className="text-sm font-semibold flex items-center gap-2">
+                                <Edit className="w-4 h-4 text-primary" />
+                                Edit Graph Filters
+                            </h4>
+                            <div className="flex gap-2">
+                                <Button variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                                <Button size="sm" onClick={() => setEditingSection(null)}>Done</Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <Info className="w-4 h-4 text-primary" />
+                                    <h4 className="text-sm font-semibold text-foreground">Configure Filters</h4>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed pl-6">
+                                  Manage filter categories and their available properties.
+                                </p>
+                            </div>
+
+                            {/* Node Type Filters Configuration */}
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Node Type Filters</Label>
+                                    <Switch defaultChecked className="scale-75" />
+                                </div>
+                                <div className="p-3 rounded-lg border bg-card/50 space-y-3">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Section Title</Label>
+                                        <Input className="h-8 text-xs" defaultValue="Node Type Filters" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Available Types</Label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {['Criminal', 'Detective', 'Prison', 'Victim'].map((type) => (
+                                                <div key={type} className="flex items-center gap-2 p-2 rounded border bg-background/50">
+                                                    <Checkbox id={`edit-filter-${type}`} defaultChecked className="h-3.5 w-3.5" />
+                                                    <Label htmlFor={`edit-filter-${type}`} className="text-xs font-normal cursor-pointer">{type}</Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            {/* Property Filters Configuration */}
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Property Filters</Label>
+                                    <Switch defaultChecked className="scale-75" />
+                                </div>
+                                
+                                <div className="p-3 rounded-lg border bg-card/50 space-y-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs">Section Title</Label>
+                                        <Input className="h-8 text-xs" defaultValue="Property Filters" />
+                                    </div>
+
+                                    {/* Accordion-like structure for properties */}
+                                    <div className="space-y-3">
+                                        <Label className="text-xs font-medium text-muted-foreground">Category Properties</Label>
+                                        
+                                        {['Criminal', 'Detective', 'Prison', 'Victim'].map((category) => (
+                                            <div key={category} className="border rounded-md bg-background/50 overflow-hidden">
+                                                <div className="flex items-center justify-between p-2 bg-secondary/10 cursor-pointer hover:bg-secondary/20 transition-colors">
+                                                    <span className="text-xs font-medium">{category} Properties</span>
+                                                    <Edit className="w-3 h-3 text-muted-foreground" />
+                                                </div>
+                                                <div className="p-2 space-y-2 border-t">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[10px] text-muted-foreground">Enabled</span>
+                                                        <Switch defaultChecked className="scale-75" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                         {category === 'Criminal' && (
+                                                            <>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Risk Score</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Age</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Status</span>
+                                                                </div>
+                                                            </>
+                                                         )}
+                                                         {category === 'Detective' && (
+                                                            <>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Clearance Rate</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Unit</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Rank</span>
+                                                                </div>
+                                                            </>
+                                                         )}
+                                                         {category === 'Prison' && (
+                                                            <>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Occupancy</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Security Level</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Region</span>
+                                                                </div>
+                                                            </>
+                                                         )}
+                                                         {category === 'Victim' && (
+                                                            <>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Type</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Damage Amount</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
+                                                                    <Check className="w-3 h-3 text-primary" />
+                                                                    <span>Compensation</span>
+                                                                </div>
+                                                            </>
+                                                         )}
+                                                         <Button variant="ghost" size="sm" className="w-full h-6 text-[10px] text-muted-foreground hover:text-primary mt-1">
+                                                            <PlusCircle className="w-3 h-3 mr-1" /> Add Field
+                                                         </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                   <>
                 {/* Node Type Filters Section (Carousel) */}
@@ -1867,7 +2023,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             icon={Filter} 
                             title="Node Type Filters" 
                             onHide={() => setIsNodeFiltersHidden(!isNodeFiltersHidden)}
-                            onEditControl={() => console.log("Edit Node Type Filters")}
+                            onEditControl={() => setEditingSection('filters')}
                         />
                     </div>
                     
