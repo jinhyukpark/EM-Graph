@@ -2049,9 +2049,22 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                             <span>Clearance Rate (%)</span>
                                         </div>
                                         <Slider defaultValue={[50, 100]} max={100} step={1} className="py-1" />
-                                        <div className="flex justify-between text-[10px] text-muted-foreground">
-                                            <span>0%</span>
-                                            <span>100%</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                <div className="relative">
+                                                    <Input type="number" defaultValue="50" className="h-7 text-xs bg-background pr-6" />
+                                                    <span className="absolute right-2 top-1.5 text-[10px] text-muted-foreground">%</span>
+                                                </div>
+                                            </div>
+                                            <span className="text-muted-foreground pt-4">-</span>
+                                            <div className="space-y-1 flex-1">
+                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                <div className="relative">
+                                                    <Input type="number" defaultValue="100" className="h-7 text-xs bg-background pr-6" />
+                                                    <span className="absolute right-2 top-1.5 text-[10px] text-muted-foreground">%</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
