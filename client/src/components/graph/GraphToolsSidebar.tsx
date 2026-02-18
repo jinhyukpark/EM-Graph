@@ -495,19 +495,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     });
   };
 
-  const updateFilterRange = (category: string, filterId: string, type: 'min' | 'max', value: string) => {
-    setNodeFilterConfig(prev => {
-        const categoryConfig = prev[category];
-        const newFilters = categoryConfig.filters.map(f => {
-            if (f.id === filterId) {
-                return { ...f, [type]: Number(value) };
-            }
-            return f;
-        });
-        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
-    });
-  };
-
   const isFilterVisible = (filterId: string) => {
     if (selectedNodeFilters.includes('all')) return true;
     return selectedNodeFilters.includes(filterId);
@@ -2093,21 +2080,11 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                         <div className="flex items-center gap-2">
                                                             <div className="space-y-1 flex-1">
                                                                 <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                                                <Input 
-                                                                    type="number" 
-                                                                    value={filter.min ?? ''} 
-                                                                    onChange={(e) => updateFilterRange(key, filter.id, 'min', e.target.value)}
-                                                                    className="h-7 text-xs bg-background" 
-                                                                />
+                                                                <Input type="number" defaultValue={filter.min} className="h-7 text-xs bg-background" />
                                                             </div>
                                                             <div className="space-y-1 flex-1">
                                                                 <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                                                <Input 
-                                                                    type="number" 
-                                                                    value={filter.max ?? ''} 
-                                                                    onChange={(e) => updateFilterRange(key, filter.id, 'max', e.target.value)}
-                                                                    className="h-7 text-xs bg-background" 
-                                                                />
+                                                                <Input type="number" defaultValue={filter.max} className="h-7 text-xs bg-background" />
                                                             </div>
                                                         </div>
                                                     </div>
