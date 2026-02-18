@@ -495,6 +495,46 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     });
   };
 
+  const updateFilterRange = (category: string, filterId: string, type: 'min' | 'max', value: string) => {
+    const numValue = parseInt(value) || 0;
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId) {
+                return { ...f, [type]: numValue };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
+  const updateFilterLabel = (category: string, filterId: string, label: string) => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId) {
+                return { ...f, label };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
+  const updateFilterField = (category: string, filterId: string, field: string) => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId) {
+                return { ...f, field };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
   const isFilterVisible = (filterId: string) => {
     if (selectedNodeFilters.includes('all')) return true;
     return selectedNodeFilters.includes(filterId);
@@ -2046,13 +2086,21 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                                                 <div className="space-y-2">
                                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Property Name</Label>
-                                                    <Input className="h-8 text-xs font-medium" defaultValue={filter.label} />
+                                                    <Input 
+                                                        className="h-8 text-xs font-medium" 
+                                                        defaultValue={filter.label}
+                                                        onChange={(e) => updateFilterLabel(key, filter.id, e.target.value)}
+                                                    />
                                                 </div>
 
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <div className="space-y-1.5">
                                                         <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
-                                                        <Input className="h-8 text-xs" defaultValue={filter.field} />
+                                                        <Input 
+                                                            className="h-8 text-xs" 
+                                                            defaultValue={filter.field}
+                                                            onChange={(e) => updateFilterField(key, filter.id, e.target.value)}
+                                                        />
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Control Type</Label>
@@ -2080,11 +2128,21 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                         <div className="flex items-center gap-2">
                                                             <div className="space-y-1 flex-1">
                                                                 <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                                                <Input type="number" defaultValue={filter.min} className="h-7 text-xs bg-background" />
+                                                                <Input 
+                                                                    type="number" 
+                                                                    defaultValue={filter.min} 
+                                                                    className="h-7 text-xs bg-background" 
+                                                                    onChange={(e) => updateFilterRange(key, filter.id, 'min', e.target.value)}
+                                                                />
                                                             </div>
                                                             <div className="space-y-1 flex-1">
                                                                 <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                                                <Input type="number" defaultValue={filter.max} className="h-7 text-xs bg-background" />
+                                                                <Input 
+                                                                    type="number" 
+                                                                    defaultValue={filter.max} 
+                                                                    className="h-7 text-xs bg-background"
+                                                                    onChange={(e) => updateFilterRange(key, filter.id, 'max', e.target.value)}
+                                                                />
                                                             </div>
                                                         </div>
                                                     </div>
