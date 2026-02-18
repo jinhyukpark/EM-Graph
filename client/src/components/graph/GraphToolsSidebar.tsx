@@ -355,6 +355,60 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   // Configuration State
   const [activeConfigType, setActiveConfigType] = useState<string | null>(null);
   const [activeSizingCategory, setActiveSizingCategory] = useState<string>('criminal');
+  
+  // Filter Configuration State
+  const [activeFilterCategory, setActiveFilterCategory] = useState<string>('criminal');
+  const [nodeFilterConfig, setNodeFilterConfig] = useState<Record<string, { 
+    type: string, 
+    color: string, 
+    filters: { 
+      id: string, 
+      label: string, 
+      field: string, 
+      controlType: 'range' | 'input' | 'checkbox' | 'radio', 
+      options?: string[],
+      min?: number,
+      max?: number
+    }[] 
+  }>>({
+    criminal: {
+      type: "Criminal",
+      color: "bg-red-500",
+      filters: [
+        { id: "f1", label: "Risk Score", field: "risk_score", controlType: "range", min: 0, max: 100 },
+        { id: "f2", label: "Age", field: "age", controlType: "range", min: 18, max: 80 },
+        { id: "f3", label: "Status", field: "status", controlType: "checkbox", options: ["Incarcerated", "At Large"] },
+        { id: "f4", label: "Gender", field: "gender", controlType: "checkbox", options: ["Male", "Female"] }
+      ]
+    },
+    detective: {
+      type: "Detective",
+      color: "bg-blue-500",
+      filters: [
+        { id: "f5", label: "Clearance Rate", field: "clearance_rate", controlType: "range", min: 0, max: 100 },
+        { id: "f6", label: "Unit", field: "unit", controlType: "checkbox", options: ["Homicide", "Cyber Crimes", "Narcotics"] },
+        { id: "f7", label: "Rank", field: "rank", controlType: "checkbox", options: ["Detective", "Sergeant", "Lieutenant", "Captain"] }
+      ]
+    },
+    prison: {
+      type: "Prison",
+      color: "bg-emerald-500",
+      filters: [
+        { id: "f8", label: "Occupancy", field: "occupancy", controlType: "range", min: 0, max: 100 },
+        { id: "f9", label: "Security Level", field: "security_level", controlType: "checkbox", options: ["Minimum", "Medium", "Maximum"] },
+        { id: "f10", label: "Region", field: "region", controlType: "checkbox", options: ["North", "South", "East", "West"] }
+      ]
+    },
+    victim: {
+      type: "Victim",
+      color: "bg-amber-500",
+      filters: [
+        { id: "f11", label: "Type", field: "type", controlType: "checkbox", options: ["Individual", "Corporate"] },
+        { id: "f12", label: "Damage Amount", field: "damage_amount", controlType: "input", min: 0, max: 1000000 },
+        { id: "f13", label: "Compensation", field: "compensation", controlType: "radio", options: ["Pending", "Paid", "Denied"] }
+      ]
+    }
+  });
 
   const toggleNodeFilter = (filterId: string) => {
     if (filterId === 'all') {
@@ -1871,147 +1925,117 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
                                 <div className="flex items-center gap-2 mb-1.5">
                                     <Info className="w-4 h-4 text-primary" />
                                     <h4 className="text-sm font-semibold text-foreground">Configure Filters</h4>
                                 </div>
                                 <p className="text-xs text-muted-foreground leading-relaxed pl-6">
-                                  Manage filter categories and their available properties.
+                                  Manage filter categories and their available properties. Select a category to edit its filters.
                                 </p>
                             </div>
 
-                            {/* Node Type Filters Configuration */}
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Node Type Filters</Label>
-                                    <Switch defaultChecked className="scale-75" />
+                            {/* Node Type Selection Carousel */}
+                            <ScrollArea className="w-full pb-2">
+                                <div className="flex space-x-2">
+                                    {Object.entries(nodeFilterConfig).map(([key, config]) => (
+                                        <button
+                                            key={key}
+                                            onClick={() => setActiveFilterCategory(key)}
+                                            className={cn(
+                                                "flex flex-col items-center gap-1.5 p-2 min-w-[80px] rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+                                                activeFilterCategory === key 
+                                                    ? "bg-primary/10 border-primary/50 text-primary ring-1 ring-primary/20" 
+                                                    : "bg-card border-border text-muted-foreground"
+                                            )}
+                                        >
+                                            <div className={cn("w-3 h-3 rounded-full shadow-sm", config.color.startsWith('bg-') && config.color)} style={{ backgroundColor: config.color.startsWith('bg-') ? undefined : config.color }} />
+                                            <span className="text-[10px] font-medium capitalize truncate max-w-[70px]">{config.type}</span>
+                                        </button>
+                                    ))}
                                 </div>
-                                <div className="p-3 rounded-lg border bg-card/50 space-y-3">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs">Section Title</Label>
-                                        <Input className="h-8 text-xs" defaultValue="Node Type Filters" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs">Available Types</Label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {['Criminal', 'Detective', 'Prison', 'Victim'].map((type) => (
-                                                <div key={type} className="flex items-center gap-2 p-2 rounded border bg-background/50">
-                                                    <Checkbox id={`edit-filter-${type}`} defaultChecked className="h-3.5 w-3.5" />
-                                                    <Label htmlFor={`edit-filter-${type}`} className="text-xs font-normal cursor-pointer">{type}</Label>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            </ScrollArea>
 
                             <Separator />
 
                             {/* Property Filters Configuration */}
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Property Filters</Label>
-                                    <Switch defaultChecked className="scale-75" />
-                                </div>
-                                
-                                <div className="p-3 rounded-lg border bg-card/50 space-y-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs">Section Title</Label>
-                                        <Input className="h-8 text-xs" defaultValue="Property Filters" />
+                            {Object.entries(nodeFilterConfig)
+                                .filter(([key]) => key === activeFilterCategory)
+                                .map(([key, config]) => (
+                                <div key={key} className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Properties</Label>
+                                        <Button variant="ghost" size="sm" className="h-6 text-[10px] text-muted-foreground hover:text-primary">
+                                            <PlusCircle className="w-3 h-3 mr-1" /> Add Property
+                                        </Button>
                                     </div>
-
-                                    {/* Accordion-like structure for properties */}
+                                    
                                     <div className="space-y-3">
-                                        <Label className="text-xs font-medium text-muted-foreground">Category Properties</Label>
-                                        
-                                        {['Criminal', 'Detective', 'Prison', 'Victim'].map((category) => (
-                                            <div key={category} className="border rounded-md bg-background/50 overflow-hidden">
-                                                <div className="flex items-center justify-between p-2 bg-secondary/10 cursor-pointer hover:bg-secondary/20 transition-colors">
-                                                    <span className="text-xs font-medium">{category} Properties</span>
-                                                    <Edit className="w-3 h-3 text-muted-foreground" />
+                                        {config.filters.map((filter, index) => (
+                                            <div key={filter.id} className="p-3 rounded-lg border bg-card/50 space-y-3 relative group">
+                                                 <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="absolute right-2 top-2 h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </Button>
+
+                                                <div className="space-y-2">
+                                                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Property Name</Label>
+                                                    <Input className="h-8 text-xs font-medium" defaultValue={filter.label} />
                                                 </div>
-                                                <div className="p-2 space-y-2 border-t">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-[10px] text-muted-foreground">Enabled</span>
-                                                        <Switch defaultChecked className="scale-75" />
+
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Field</Label>
+                                                        <Input className="h-8 text-xs" defaultValue={filter.field} />
                                                     </div>
-                                                    <div className="space-y-1">
-                                                         {category === 'Criminal' && (
-                                                            <>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Risk Score</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Age</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Status</span>
-                                                                </div>
-                                                            </>
-                                                         )}
-                                                         {category === 'Detective' && (
-                                                            <>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Clearance Rate</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Unit</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Rank</span>
-                                                                </div>
-                                                            </>
-                                                         )}
-                                                         {category === 'Prison' && (
-                                                            <>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Occupancy</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Security Level</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Region</span>
-                                                                </div>
-                                                            </>
-                                                         )}
-                                                         {category === 'Victim' && (
-                                                            <>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Type</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Damage Amount</span>
-                                                                </div>
-                                                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-1.5 bg-muted/30 rounded">
-                                                                    <Check className="w-3 h-3 text-primary" />
-                                                                    <span>Compensation</span>
-                                                                </div>
-                                                            </>
-                                                         )}
-                                                         <Button variant="ghost" size="sm" className="w-full h-6 text-[10px] text-muted-foreground hover:text-primary mt-1">
-                                                            <PlusCircle className="w-3 h-3 mr-1" /> Add Field
-                                                         </Button>
+                                                    <div className="space-y-1.5">
+                                                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Control Type</Label>
+                                                        <Select defaultValue={filter.controlType}>
+                                                            <SelectTrigger className="h-8 text-xs w-full">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="range">Range Slider</SelectItem>
+                                                                <SelectItem value="input">Range Input</SelectItem>
+                                                                <SelectItem value="checkbox">Checkbox Group</SelectItem>
+                                                                <SelectItem value="radio">Radio Group</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
                                                     </div>
                                                 </div>
+
+                                                {/* Conditional Settings based on Control Type */}
+                                                {(filter.controlType === 'range' || filter.controlType === 'input') && (
+                                                    <div className="bg-secondary/10 p-2 rounded-md space-y-2">
+                                                        <Label className="text-[10px] text-muted-foreground font-medium">Range Settings</Label>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="space-y-1 flex-1">
+                                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                                <Input type="number" defaultValue={filter.min} className="h-7 text-xs bg-background" />
+                                                            </div>
+                                                            <div className="space-y-1 flex-1">
+                                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                                <Input type="number" defaultValue={filter.max} className="h-7 text-xs bg-background" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {(filter.controlType === 'checkbox' || filter.controlType === 'radio') && (
+                                                    <div className="bg-secondary/10 p-2 rounded-md space-y-2">
+                                                        <Label className="text-[10px] text-muted-foreground font-medium">Options (Comma separated)</Label>
+                                                        <Input className="h-7 text-xs bg-background" defaultValue={filter.options?.join(', ')} />
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 ) : (
