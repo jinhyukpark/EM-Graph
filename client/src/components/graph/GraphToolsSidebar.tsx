@@ -2257,6 +2257,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                             <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                                                                 <span>{filter.label}</span>
                                                             </div>
+                                                            <Slider defaultValue={[filter.min || 0, filter.max || 100]} max={filter.max || 100} min={filter.min || 0} step={1} className="py-1" />
                                                             <div className="flex items-center gap-2">
                                                                 <div className="space-y-1 flex-1">
                                                                     <Label className="text-[10px] text-muted-foreground">Min</Label>
@@ -2268,7 +2269,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                     <Input type="number" defaultValue={filter.max} className="h-7 text-xs bg-background" />
                                                                 </div>
                                                             </div>
-                                                            <Slider defaultValue={[filter.min || 0, filter.max || 100]} max={filter.max || 100} min={filter.min || 0} step={1} className="py-1" />
                                                         </div>
                                                     )}
 
@@ -2296,11 +2296,6 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                                         className="h-7 text-xs bg-background" 
                                                                     />
                                                                 </div>
-                                                            </div>
-                                                            <Slider defaultValue={[filter.min || 0]} max={filter.max || 100} min={filter.min || 0} step={1} className="py-1" />
-                                                            <div className="flex justify-between text-[10px] text-muted-foreground">
-                                                                <span>{filter.min}</span>
-                                                                <span>{filter.max}+</span>
                                                             </div>
                                                         </div>
                                                     )}
