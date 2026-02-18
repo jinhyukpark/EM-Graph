@@ -433,6 +433,68 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
     setSelectedNodeFilters(newFilters);
   };
 
+  const updateFilterControl = (category: string, filterId: string, controlType: 'range' | 'input' | 'checkbox' | 'radio') => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId) {
+                // When changing to checkbox/radio, ensure options exist
+                if ((controlType === 'checkbox' || controlType === 'radio') && !f.options) {
+                    return { ...f, controlType, options: ["Option 1", "Option 2"] };
+                }
+                // When changing to range/input, ensure min/max exist
+                if ((controlType === 'range' || controlType === 'input') && (f.min === undefined || f.max === undefined)) {
+                    return { ...f, controlType, min: 0, max: 100 };
+                }
+                return { ...f, controlType };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
+  const updateFilterOptions = (category: string, filterId: string, options: string[]) => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId) {
+                return { ...f, options };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
+  const addFilterOption = (category: string, filterId: string) => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId && f.options) {
+                return { ...f, options: [...f.options, `New Option`] };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
+  const removeFilterOption = (category: string, filterId: string, index: number) => {
+    setNodeFilterConfig(prev => {
+        const categoryConfig = prev[category];
+        const newFilters = categoryConfig.filters.map(f => {
+            if (f.id === filterId && f.options) {
+                const newOptions = [...f.options];
+                newOptions.splice(index, 1);
+                return { ...f, options: newOptions };
+            }
+            return f;
+        });
+        return { ...prev, [category]: { ...categoryConfig, filters: newFilters } };
+    });
+  };
+
   const isFilterVisible = (filterId: string) => {
     if (selectedNodeFilters.includes('all')) return true;
     return selectedNodeFilters.includes(filterId);
@@ -1994,7 +2056,10 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Control Type</Label>
-                                                        <Select defaultValue={filter.controlType}>
+                                                        <Select 
+                                                            defaultValue={filter.controlType}
+                                                            onValueChange={(val: any) => updateFilterControl(key, filter.id, val)}
+                                                        >
                                                             <SelectTrigger className="h-8 text-xs w-full">
                                                                 <SelectValue />
                                                             </SelectTrigger>
@@ -2027,8 +2092,47 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
                                                 {(filter.controlType === 'checkbox' || filter.controlType === 'radio') && (
                                                     <div className="bg-secondary/10 p-2 rounded-md space-y-2">
-                                                        <Label className="text-[10px] text-muted-foreground font-medium">Options (Comma separated)</Label>
-                                                        <Input className="h-7 text-xs bg-background" defaultValue={filter.options?.join(', ')} />
+                                                        <div className="flex items-center justify-between">
+                                                            <Label className="text-[10px] text-muted-foreground font-medium">Options</Label>
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="sm" 
+                                                                className="h-5 text-[10px] px-2 text-primary hover:text-primary/80"
+                                                                onClick={() => addFilterOption(key, filter.id)}
+                                                            >
+                                                                <PlusCircle className="w-3 h-3 mr-1" /> Add
+                                                            </Button>
+                                                        </div>
+                                                        <div className="space-y-1.5">
+                                                            {filter.options?.map((option, idx) => (
+                                                                <div key={idx} className="flex items-center gap-2">
+                                                                    <div className="w-4 flex justify-center">
+                                                                        {filter.controlType === 'checkbox' ? (
+                                                                            <div className="w-3 h-3 border rounded-sm" />
+                                                                        ) : (
+                                                                            <div className="w-3 h-3 border rounded-full" />
+                                                                        )}
+                                                                    </div>
+                                                                    <Input 
+                                                                        className="h-7 text-xs bg-background flex-1" 
+                                                                        value={option}
+                                                                        onChange={(e) => {
+                                                                            const newOptions = [...(filter.options || [])];
+                                                                            newOptions[idx] = e.target.value;
+                                                                            updateFilterOptions(key, filter.id, newOptions);
+                                                                        }}
+                                                                    />
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                                                        onClick={() => removeFilterOption(key, filter.id, idx)}
+                                                                    >
+                                                                        <X className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 )}
                                             </div>
