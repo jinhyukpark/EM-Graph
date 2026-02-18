@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useRoute } from "wouter";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
@@ -1236,6 +1237,8 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default function ProjectView() {
+  const [, params] = useRoute("/project/:id/view");
+  const projectId = params?.id;
   const { toast } = useToast();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   
@@ -1783,6 +1786,7 @@ export default function ProjectView() {
             <div className="w-14 h-full overflow-visible">
                 <GraphToolsSidebar 
                   className="w-full h-full border-none bg-transparent"
+                  projectId={projectId}
                   stats={{
                     nodes: nodes.length,
                     edges: edges.length,

@@ -1,4 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { formatDistanceToNow } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -236,6 +239,7 @@ export interface GraphSettings {
 
 interface GraphToolsSidebarProps {
   className?: string;
+  projectId?: string;
   stats?: { nodes: number, edges: number, types: number, density: string };
   settings?: GraphSettings;
   onSettingsChange?: (settings: GraphSettings) => void;
@@ -271,7 +275,7 @@ const InfoBox = ({ title, description, icon: Icon }: { title: string, descriptio
   );
 };
 
-export default function GraphToolsSidebar({ className, stats, settings, onSettingsChange, nodes = [], edges = [], snapshots = [], onDeleteSnapshot, onOpenCreateSnapshot }: GraphToolsSidebarProps) {
+export default function GraphToolsSidebar({ className, projectId, stats, settings, onSettingsChange, nodes = [], edges = [], snapshots = [], onDeleteSnapshot, onOpenCreateSnapshot }: GraphToolsSidebarProps) {
   const [activeTab, setActiveTab] = useState<"view" | "settings" | "sizing" | "filters" | "report" | "ai" | "notes" | "snapshots" | null>(null);
   const [panelWidth, setPanelWidth] = useState(384); // Default 96 (384px)
   const [isResizing, setIsResizing] = useState(false);
@@ -551,61 +555,83 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   const [notesFilterAuthor, setNotesFilterAuthor] = useState<string>('all');
   const [date, setDate] = useState<DateRange | undefined>();
   
-  // New state for adding notes
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [newNoteContent, setNewNoteContent] = useState('');
   const [newNoteTags, setNewNoteTags] = useState('');
   
-  // New state for adding comments
   const [activeCommentNoteId, setActiveCommentNoteId] = useState<string | null>(null);
   const [newCommentContent, setNewCommentContent] = useState('');
 
-  const [notes, setNotes] = useState([
-    { 
-      id: '1', 
-      author: { name: 'Sarah Chen', avatar: 'https://i.pravatar.cc/150?u=sarah' },
-      content: 'Investigate the connection between the offshore accounts and the shell company "Oceanic Holdings". The transaction dates align perfectly.',
-      timestamp: '2 hours ago',
-      comments: [
-        { id: 'c1', author: { name: 'Mike Ross', avatar: 'https://i.pravatar.cc/150?u=mike' }, content: 'Good catch. I will pull the bank records.' }
-      ],
-      tags: ['investigation', 'finance']
+  const notesQueryKey = projectId ? [`/api/projects/${projectId}/notes`] : null;
+
+  const { data: apiNotes = [] } = useQuery<any[]>({
+    queryKey: notesQueryKey || ["notes-disabled"],
+    enabled: !!projectId,
+  });
+
+  const [noteCommentsCache, setNoteCommentsCache] = useState<Record<string, any[]>>({});
+
+  const notes = apiNotes.map((n: any) => ({
+    id: n.id,
+    author: { name: n.authorName, avatar: n.authorAvatar || 'https://i.pravatar.cc/150?u=' + n.authorName },
+    content: n.content,
+    timestamp: n.createdAt ? formatDistanceToNow(new Date(n.createdAt), { addSuffix: true }) : 'Just now',
+    comments: noteCommentsCache[n.id] || [],
+    tags: n.tags || []
+  }));
+
+  const createNoteMutation = useMutation({
+    mutationFn: async (data: { content: string; tags: string[]; authorName: string; authorAvatar?: string }) => {
+      const res = await apiRequest("POST", `/api/projects/${projectId}/notes`, data);
+      return res.json();
     },
-    { 
-      id: '2', 
-      author: { name: 'David Kim', avatar: 'https://i.pravatar.cc/150?u=david' },
-      content: 'The suspect node #42 seems to have unusually high betweenness centrality. Might be a key broker in the network.',
-      timestamp: 'Yesterday',
-      comments: [],
-      tags: ['analysis', 'network']
-    },
-    { 
-      id: '3', 
-      author: { name: 'Sarah Chen', avatar: 'https://i.pravatar.cc/150?u=sarah' },
-      content: 'Updated the risk scores for the primary targets based on the new intelligence report.',
-      timestamp: '2 days ago',
-      comments: [],
-      tags: ['update']
+    onSuccess: () => {
+      if (notesQueryKey) queryClient.invalidateQueries({ queryKey: notesQueryKey });
     }
-  ]);
+  });
+
+  const updateNoteMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: { content: string; tags: string[] } }) => {
+      const res = await apiRequest("PATCH", `/api/notes/${id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      if (notesQueryKey) queryClient.invalidateQueries({ queryKey: notesQueryKey });
+    }
+  });
+
+  const deleteNoteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/notes/${id}`);
+    },
+    onSuccess: () => {
+      if (notesQueryKey) queryClient.invalidateQueries({ queryKey: notesQueryKey });
+    }
+  });
+
+  const createCommentMutation = useMutation({
+    mutationFn: async ({ noteId, data }: { noteId: string; data: { content: string; authorName: string; authorAvatar?: string } }) => {
+      const res = await apiRequest("POST", `/api/notes/${noteId}/comments`, data);
+      return res.json();
+    },
+    onSuccess: (_data, vars) => {
+      queryClient.invalidateQueries({ queryKey: [`/api/notes/${vars.noteId}/comments`] });
+      if (notesQueryKey) queryClient.invalidateQueries({ queryKey: notesQueryKey });
+    }
+  });
 
   const handleAddNote = () => {
     if (!newNoteContent.trim()) return;
     
-    const newNote = {
-      id: editingNoteId || Date.now().toString(),
-      author: { name: 'Current User', avatar: 'https://i.pravatar.cc/150?u=me' }, // Mock current user
-      content: newNoteContent,
-      timestamp: editingNoteId ? 'Edited just now' : 'Just now',
-      comments: editingNoteId ? (notes.find(n => n.id === editingNoteId)?.comments || []) : [],
-      tags: newNoteTags.split(',').map(t => t.trim()).filter(Boolean)
-    };
+    const tags = newNoteTags.split(',').map(t => t.trim()).filter(Boolean);
     
-    if (editingNoteId) {
-      setNotes(notes.map(n => n.id === editingNoteId ? newNote : n));
-    } else {
-      setNotes([newNote, ...notes]);
+    if (projectId) {
+      if (editingNoteId) {
+        updateNoteMutation.mutate({ id: editingNoteId, data: { content: newNoteContent, tags } });
+      } else {
+        createNoteMutation.mutate({ content: newNoteContent, tags, authorName: 'Current User', authorAvatar: 'https://i.pravatar.cc/150?u=me' });
+      }
     }
     
     setNewNoteContent('');
@@ -615,28 +641,20 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
   };
 
   const handleDeleteNote = (noteId: string) => {
-    setNotes(notes.filter(n => n.id !== noteId));
+    if (projectId) {
+      deleteNoteMutation.mutate(noteId);
+    }
   };
 
   const handleAddComment = (noteId: string) => {
     if (!newCommentContent.trim()) return;
-
-    setNotes(notes.map(note => {
-      if (note.id === noteId) {
-        return {
-          ...note,
-          comments: [
-            ...note.comments,
-            { 
-              id: Date.now().toString(), 
-              author: { name: 'Current User', avatar: 'https://i.pravatar.cc/150?u=me' }, 
-              content: newCommentContent 
-            }
-          ]
-        };
-      }
-      return note;
-    }));
+    
+    if (projectId) {
+      createCommentMutation.mutate({
+        noteId,
+        data: { content: newCommentContent, authorName: 'Current User', authorAvatar: 'https://i.pravatar.cc/150?u=me' }
+      });
+    }
     
     setNewCommentContent('');
     setActiveCommentNoteId(null);
@@ -644,12 +662,12 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
 
   const filteredNotes = notes.filter(note => {
     const matchesSearch = note.content.toLowerCase().includes(notesSearch.toLowerCase()) || 
-                          note.tags.some(tag => tag.toLowerCase().includes(notesSearch.toLowerCase()));
+                          note.tags.some((tag: string) => tag.toLowerCase().includes(notesSearch.toLowerCase()));
     const matchesAuthor = notesFilterAuthor === 'all' || note.author.name === notesFilterAuthor;
     return matchesSearch && matchesAuthor;
   });
 
-  const uniqueAuthors = Array.from(new Set(notes.map(n => n.author.name)));
+  const uniqueAuthors = Array.from(new Set(notes.map((n: any) => n.author.name)));
 
   const updateFieldRange = (typeKey: string, fieldId: string, rangeType: 'min' | 'max', value: string) => {
     const numValue = value === '' ? undefined : Number(value);
@@ -2795,7 +2813,7 @@ export default function GraphToolsSidebar({ className, stats, settings, onSettin
                                 
                                 {note.tags.length > 0 && (
                                   <div className="flex flex-wrap gap-1 mb-3">
-                                    {note.tags.map(tag => (
+                                    {note.tags.map((tag: string) => (
                                       <span key={tag} className="flex items-center text-[10px] bg-secondary/50 text-secondary-foreground px-1.5 py-0.5 rounded-sm">
                                         <Hash className="w-2.5 h-2.5 mr-0.5 opacity-50" />
                                         {tag}
