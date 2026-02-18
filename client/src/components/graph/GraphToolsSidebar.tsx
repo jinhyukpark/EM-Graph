@@ -572,12 +572,29 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
 
   const [noteCommentsCache, setNoteCommentsCache] = useState<Record<string, any[]>>({});
 
+  useEffect(() => {
+    if (!apiNotes.length) return;
+    apiNotes.forEach(async (n: any) => {
+      try {
+        const res = await fetch(`/api/notes/${n.id}/comments`);
+        if (res.ok) {
+          const comments = await res.json();
+          setNoteCommentsCache(prev => ({ ...prev, [n.id]: comments }));
+        }
+      } catch {}
+    });
+  }, [apiNotes]);
+
   const notes = apiNotes.map((n: any) => ({
     id: n.id,
     author: { name: n.authorName, avatar: n.authorAvatar || 'https://i.pravatar.cc/150?u=' + n.authorName },
     content: n.content,
     timestamp: n.createdAt ? formatDistanceToNow(new Date(n.createdAt), { addSuffix: true }) : 'Just now',
-    comments: noteCommentsCache[n.id] || [],
+    comments: (noteCommentsCache[n.id] || []).map((c: any) => ({
+      id: c.id,
+      author: { name: c.authorName, avatar: c.authorAvatar || 'https://i.pravatar.cc/150?u=' + c.authorName },
+      content: c.content
+    })),
     tags: n.tags || []
   }));
 
@@ -615,8 +632,14 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
       const res = await apiRequest("POST", `/api/notes/${noteId}/comments`, data);
       return res.json();
     },
-    onSuccess: (_data, vars) => {
-      queryClient.invalidateQueries({ queryKey: [`/api/notes/${vars.noteId}/comments`] });
+    onSuccess: async (_data, vars) => {
+      try {
+        const res = await fetch(`/api/notes/${vars.noteId}/comments`);
+        if (res.ok) {
+          const comments = await res.json();
+          setNoteCommentsCache(prev => ({ ...prev, [vars.noteId]: comments }));
+        }
+      } catch {}
       if (notesQueryKey) queryClient.invalidateQueries({ queryKey: notesQueryKey });
     }
   });
