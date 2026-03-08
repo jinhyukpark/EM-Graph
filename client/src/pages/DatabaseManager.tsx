@@ -187,6 +187,7 @@ export default function DatabaseManager() {
   const [createTableFileName, setCreateTableFileName] = useState("");
   const [createTableName, setCreateTableName] = useState("");
   const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
+  const [createTableDestination, setCreateTableDestination] = useState<'Original' | 'Custom'>('Original');
   const [isParsingFile, setIsParsingFile] = useState(false);
 
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
@@ -284,7 +285,7 @@ export default function DatabaseManager() {
           return {
             ...cat,
             subcategories: cat.subcategories?.map(sub => {
-              if (sub.name === 'Original') {
+              if (sub.name === createTableDestination) {
                 return {
                   ...sub,
                   items: [...sub.items, { id: newId, name: createTableName.trim(), icon: TableIcon, type: "table" as const }]
@@ -303,9 +304,10 @@ export default function DatabaseManager() {
     setCreateTableFileName("");
     setCreateTableName("");
     setCreateTableFields([]);
+    setCreateTableDestination('Original');
     toast({
       title: "Table Created",
-      description: `'${createTableName.trim()}' has been added to Original tables.`,
+      description: `'${createTableName.trim()}' has been added to ${createTableDestination} tables.`,
     });
   };
 
@@ -2632,6 +2634,19 @@ export default function DatabaseManager() {
               </div>
 
               <div className="space-y-2">
+                <Label>Destination</Label>
+                <select
+                  value={createTableDestination}
+                  onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  data-testid="select-create-table-destination"
+                >
+                  <option value="Original">Original</option>
+                  <option value="Custom">Custom</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Fields</Label>
                 {isParsingFile ? (
                   <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
@@ -2699,7 +2714,7 @@ export default function DatabaseManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">Destination</span>
-                  <Badge variant="secondary" className="text-[10px]">Original (Source)</Badge>
+                  <Badge variant="secondary" className="text-[10px]">{createTableDestination}</Badge>
                 </div>
               </div>
               <div className="text-xs text-muted-foreground">
