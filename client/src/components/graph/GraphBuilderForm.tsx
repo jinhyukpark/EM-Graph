@@ -72,67 +72,39 @@ function CircleNode({ data }: { data: { label: string; field: string; color: { b
   );
 }
 
-function MassCircleNode({ data }: { data: { label: string; field: string; color: { bg: string; border: string; text: string }; count: number } }) {
+function RadialNode({ data }: { data: { label: string; size: number; bg: string; border: string; text: string; isHub: boolean } }) {
+  const s = data.size;
   return (
-    <div className="relative flex items-center justify-center text-center">
+    <div
+      style={{
+        width: s,
+        height: s,
+        borderRadius: "50%",
+        background: data.bg,
+        border: `${data.isHub ? 3 : 2}px solid ${data.border}`,
+        boxShadow: data.isHub ? `0 4px 16px ${data.border}40` : `0 1px 4px ${data.border}20`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-0 !h-0" />
       <Handle type="target" position={Position.Left} className="!bg-transparent !border-0 !w-0 !h-0" />
       <Handle type="source" position={Position.Right} className="!bg-transparent !border-0 !w-0 !h-0" />
-      <div
-        className="absolute"
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          background: data.color.bg,
-          border: `2px solid ${data.color.border}`,
-          opacity: 0.3,
-          top: -6,
-          left: 8,
-        }}
-      />
-      <div
-        className="absolute"
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          background: data.color.bg,
-          border: `2px solid ${data.color.border}`,
-          opacity: 0.5,
-          top: -3,
-          left: 4,
-        }}
-      />
-      <div
-        style={{
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          background: data.color.bg,
-          border: `3px solid ${data.color.border}`,
-          boxShadow: `0 4px 12px ${data.color.border}30`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        <div className="px-2">
-          <div className="text-[9px] font-bold leading-tight" style={{ color: data.color.text }}>
+      {data.label && (
+        <div className="text-center px-1" style={{ color: data.text }}>
+          <div style={{ fontSize: data.isHub ? 9 : 6, fontWeight: data.isHub ? 700 : 600, lineHeight: 1.2 }}>
             {data.label}
           </div>
-          <div className="text-[8px] mt-0.5 font-semibold" style={{ color: data.color.border }}>
-            ~{data.count}+ nodes
-          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 const previewNodeTypes = { circle: CircleNode };
-const massNodeTypes = { mass: MassCircleNode };
+const radialNodeTypes = { radial: RadialNode };
 
 function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id: string) => void }) {
   const dragControls = useDragControls();
@@ -359,41 +331,111 @@ export default function GraphBuilderForm() {
         type: "default",
       }));
 
-    const mNodes: FlowNode[] = uniqueTables.map((table, i) => {
-      const nodeConfig = validNodes.find(n => n.table === table);
-      const color = nodeColors[table] || defaultColor;
-      return {
-        id: `mass-${tableToNodeId.get(table)!}`,
-        type: "mass",
-        position: {
-          x: startX + i * spacing,
-          y: centerY,
-        },
-        data: {
-          label: table,
-          field: nodeConfig?.labelField || "",
-          color,
-          count: 1000 + Math.floor(Math.random() * 500),
-        },
+    const seededRandom = (seed: number) => {
+      let s = seed;
+      return () => {
+        s = (s * 16807 + 0) % 2147483647;
+        return s / 2147483647;
       };
+    };
+    const rand = seededRandom(42);
+
+    const allColors = Object.values(nodeColors);
+    const radialCenterX = 400;
+    const radialCenterY = 300;
+    const mNodes: FlowNode[] = [];
+    const mEdges: FlowEdge[] = [];
+
+    uniqueTables.forEach((table, tableIdx) => {
+      const color = nodeColors[table] || defaultColor;
+      const hubId = `hub-${tableIdx}`;
+      const hubAngle = (2 * Math.PI * tableIdx) / Math.max(uniqueTables.length, 1) - Math.PI / 2;
+      const hubDist = uniqueTables.length === 1 ? 0 : 180;
+      const hubX = radialCenterX + hubDist * Math.cos(hubAngle);
+      const hubY = radialCenterY + hubDist * Math.sin(hubAngle);
+
+      mNodes.push({
+        id: hubId,
+        type: "radial",
+        position: { x: hubX - 30, y: hubY - 30 },
+        data: { label: table, size: 60, bg: color.bg, border: color.border, text: color.text, isHub: true },
+      });
+
+      const satelliteCount = 15 + Math.floor(rand() * 10);
+      for (let j = 0; j < satelliteCount; j++) {
+        const satId = `sat-${tableIdx}-${j}`;
+        const ring = j < 8 ? 1 : 2;
+        const ringRadius = ring === 1 ? 80 + rand() * 40 : 140 + rand() * 60;
+        const angle = (2 * Math.PI * j) / satelliteCount + rand() * 0.4 - 0.2;
+        const satSize = 12 + Math.floor(rand() * 20);
+        const satColorIdx = Math.floor(rand() * allColors.length);
+        const satColor = rand() > 0.5 ? allColors[satColorIdx] : color;
+
+        mNodes.push({
+          id: satId,
+          type: "radial",
+          position: {
+            x: hubX + ringRadius * Math.cos(angle) - satSize / 2,
+            y: hubY + ringRadius * Math.sin(angle) - satSize / 2,
+          },
+          data: { label: "", size: satSize, bg: satColor.bg, border: satColor.border, text: satColor.text, isHub: false },
+        });
+
+        mEdges.push({
+          id: `radial-edge-${tableIdx}-${j}`,
+          source: hubId,
+          target: satId,
+          style: { stroke: `${color.border}50`, strokeWidth: 1 },
+          type: "default",
+        });
+
+        if (rand() > 0.7 && j > 0) {
+          const connectTo = Math.floor(rand() * j);
+          mEdges.push({
+            id: `cross-${tableIdx}-${j}-${connectTo}`,
+            source: satId,
+            target: `sat-${tableIdx}-${connectTo}`,
+            style: { stroke: "#CBD5E140", strokeWidth: 0.8 },
+            type: "default",
+          });
+        }
+      }
     });
 
-    const mEdges: FlowEdge[] = links
+    links
       .filter(l => l.sourceTable && l.targetTable && tableToNodeId.has(l.sourceTable) && tableToNodeId.has(l.targetTable))
-      .map((l) => ({
-        id: `mass-edge-${l.id}`,
-        source: `mass-${tableToNodeId.get(l.sourceTable)!}`,
-        target: `mass-${tableToNodeId.get(l.targetTable)!}`,
-        label: `${l.sourceColumn} → ${l.targetColumn}`,
-        labelStyle: { fontSize: 10, fill: "#64748B", fontWeight: 500 },
-        labelBgStyle: { fill: "#FFFFFF", fillOpacity: 0.95 },
-        labelBgPadding: [8, 4] as [number, number],
-        labelBgBorderRadius: 6,
-        style: { stroke: "#334155", strokeWidth: 2.5, strokeDasharray: "6 3" },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#334155", width: 18, height: 18 },
-        type: "default",
-        animated: true,
-      }));
+      .forEach((l, idx) => {
+        const srcIdx = uniqueTables.indexOf(l.sourceTable);
+        const tgtIdx = uniqueTables.indexOf(l.targetTable);
+        if (srcIdx >= 0 && tgtIdx >= 0) {
+          mEdges.push({
+            id: `hub-link-${idx}`,
+            source: `hub-${srcIdx}`,
+            target: `hub-${tgtIdx}`,
+            label: `${l.sourceColumn} → ${l.targetColumn}`,
+            labelStyle: { fontSize: 9, fill: "#475569", fontWeight: 600 },
+            labelBgStyle: { fill: "#FFFFFF", fillOpacity: 0.9 },
+            labelBgPadding: [6, 3] as [number, number],
+            labelBgBorderRadius: 4,
+            style: { stroke: "#334155", strokeWidth: 2.5 },
+            markerEnd: { type: MarkerType.ArrowClosed, color: "#334155", width: 16, height: 16 },
+            type: "default",
+            animated: true,
+          });
+
+          for (let c = 0; c < 4; c++) {
+            const fromSat = Math.floor(rand() * 15);
+            const toSat = Math.floor(rand() * 15);
+            mEdges.push({
+              id: `cross-hub-${idx}-${c}`,
+              source: `sat-${srcIdx}-${fromSat}`,
+              target: `sat-${tgtIdx}-${toSat}`,
+              style: { stroke: "#94A3B840", strokeWidth: 0.8 },
+              type: "default",
+            });
+          }
+        }
+      });
 
     return { flowNodes: fNodes, flowEdges: fEdges, massNodes: mNodes, massEdges: mEdges };
   }, [nodes, links]);
@@ -481,7 +523,7 @@ export default function GraphBuilderForm() {
               </TabsList>
             </Tabs>
           </div>
-          <div className="h-[280px] bg-white" data-testid="graph-preview">
+          <div className={`bg-white ${previewTab === "mass" ? "h-[400px]" : "h-[280px]"}`} data-testid="graph-preview">
             {previewTab === "default" ? (
               <ReactFlow
                 key="default-preview"
@@ -506,17 +548,17 @@ export default function GraphBuilderForm() {
                 key="mass-preview"
                 nodes={massNodes}
                 edges={massEdges}
-                nodeTypes={massNodeTypes}
+                nodeTypes={radialNodeTypes}
                 fitView
-                fitViewOptions={{ padding: 0.5 }}
+                fitViewOptions={{ padding: 0.3 }}
                 proOptions={{ hideAttribution: true }}
                 nodesDraggable={true}
                 nodesConnectable={false}
                 elementsSelectable={false}
                 panOnDrag={true}
                 zoomOnScroll={true}
-                minZoom={0.3}
-                maxZoom={2}
+                minZoom={0.2}
+                maxZoom={3}
               >
                 <Background color="#F1F5F9" gap={16} size={1} />
               </ReactFlow>
