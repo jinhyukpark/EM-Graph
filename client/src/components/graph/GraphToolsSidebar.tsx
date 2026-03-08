@@ -2283,13 +2283,12 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
 
                 {/* Property Filters Section */}
                 <div className="space-y-3 relative">
-                    <div className="pr-4">
-                        <SectionHeader 
-                            icon={Sliders} 
-                            title="Property Filters" 
-                            onHide={() => setIsPropertyFiltersHidden(!isPropertyFiltersHidden)}
-                            onEditControl={() => setActiveConfigType(selectedNodeFilters.includes('all') ? 'Global' : selectedNodeFilters[0])}
-                        />
+                    <div>
+                        <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                                <Sliders className="w-4 h-4 text-primary" /> Property Filters
+                            </h4>
+                        </div>
                     </div>
                     {!isPropertyFiltersHidden && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 @container">
