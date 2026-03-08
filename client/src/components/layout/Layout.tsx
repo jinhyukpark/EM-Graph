@@ -206,7 +206,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         ref={sidebarRef}
         className={cn(
           "border-r border-border bg-card/50 backdrop-blur-xl flex-col hidden md:flex sticky top-0 h-screen group relative",
-          isCollapsed ? "w-16 transition-all duration-300" : isResizing ? "transition-none" : "transition-all duration-300"
+          isCollapsed && isProjectView ? "w-10 transition-all duration-300" : isCollapsed ? "w-16 transition-all duration-300" : isResizing ? "transition-none" : "transition-all duration-300"
         )}
         style={{ width: isCollapsed ? undefined : sidebarWidth }}
       >
@@ -219,6 +219,18 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         )}
 
         {/* Workspace Switcher / Logo Area */}
+        {isCollapsed && isProjectView ? (
+          <div className="flex flex-col items-center py-2 gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              onClick={() => setIsCollapsed(false)}
+            >
+              <ArrowLeft className="w-4 h-4 rotate-180" />
+            </Button>
+          </div>
+        ) : (
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-4 justify-between")}>
           {!isCollapsed && !isProjectView && (
             <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -252,9 +264,10 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
              {isCollapsed ? <Menu className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </Button>
         </div>
+        )}
 
         {/* Navigation */}
-        <nav className="flex-1 p-0 overflow-hidden flex flex-col">
+        <nav className={cn("flex-1 p-0 overflow-hidden flex flex-col", isCollapsed && isProjectView && "hidden")}>
           
           {(!isCollapsed || (!isCollapsed && !isProjectView)) && !isProjectView && (
             <div className={cn("px-3 pt-6 pb-2", isCollapsed && "px-0 text-center")}>
