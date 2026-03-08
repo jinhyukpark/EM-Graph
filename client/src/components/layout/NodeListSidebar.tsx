@@ -159,7 +159,7 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
       </Carousel>
 
       <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
-        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 border-none bg-black/95 shadow-2xl flex flex-col outline-none">
+        <DialogContent className="max-w-[60vw] w-auto h-auto max-h-[70vh] p-0 border-none bg-black/95 shadow-2xl flex flex-col outline-none">
           {/* Header Controls */}
           <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
             <Button 
@@ -177,7 +177,7 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
             <img 
               src={images[fullscreenIndex]} 
               alt={`${name} - Fullscreen`} 
-              className="max-w-full max-h-[75vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300"
+              className="max-w-full max-h-[55vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300"
             />
 
             {/* Navigation Arrows (Large) */}
