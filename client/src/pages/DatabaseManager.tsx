@@ -160,6 +160,8 @@ export default function DatabaseManager() {
   const [queryResultMessage, setQueryResultMessage] = useState<string>("");
   const [hasTextSelection, setHasTextSelection] = useState(false);
   const [selectedText, setSelectedText] = useState("");
+  const [editingQueryResultCell, setEditingQueryResultCell] = useState<{rowId: number, field: string} | null>(null);
+  const [editingQueryResultValue, setEditingQueryResultValue] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -677,6 +679,33 @@ export default function DatabaseManager() {
       title: "Query Saved",
       description: `Query '${newQueryName}' has been saved to your project.`,
     });
+  };
+
+  const handleQueryResultCellEdit = (rowId: number, field: string) => {
+    const row = queryData.find(r => r.id === rowId);
+    if (!row) return;
+    setEditingQueryResultCell({ rowId, field });
+    setEditingQueryResultValue(String((row as any)[field]));
+  };
+
+  const handleQueryResultCellSave = () => {
+    if (!editingQueryResultCell) return;
+    const { rowId, field } = editingQueryResultCell;
+    setQueryData(prev => prev.map(r => {
+      if (r.id === rowId) {
+        const updated = { ...r };
+        if (field === 'severity' || field === 'id') {
+          (updated as any)[field] = Number(editingQueryResultValue) || (updated as any)[field];
+        } else {
+          (updated as any)[field] = editingQueryResultValue;
+        }
+        return updated;
+      }
+      return r;
+    }));
+    setEditingQueryResultCell(null);
+    setEditingQueryResultValue("");
+    toast({ title: "Field Updated", description: `Row ${rowId}: '${field}' has been updated.`, duration: 2000 });
   };
 
   const handleRunQuery = (sql: string) => {
@@ -2244,25 +2273,47 @@ export default function DatabaseManager() {
                                       <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Time</TableHead>
                                       <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Severity</TableHead>
                                       <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Status</TableHead>
-                                      <TableHead className="w-[50px] text-indigo-700 dark:text-indigo-300"></TableHead>
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
-                                    {paginatedQueryData.map((row) => (
-                                      <TableRow key={row.id} className="hover:bg-secondary/30">
-                                        <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
-                                        <TableCell className="font-medium">{row.type}</TableCell>
-                                        <TableCell>{row.location}</TableCell>
-                                        <TableCell className="text-muted-foreground text-xs">{row.time}</TableCell>
-                                        <TableCell className="text-sm">{row.severity}</TableCell>
-                                        <TableCell className="text-sm">{row.status}</TableCell>
-                                        <TableCell>
-                                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
-                                            <Trash2 className="w-3 h-3" />
-                                          </Button>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
+                                    {paginatedQueryData.map((row) => {
+                                      const renderCell = (field: string, value: any, className?: string) => {
+                                        const isEditing = editingQueryResultCell?.rowId === row.id && editingQueryResultCell?.field === field;
+                                        if (isEditing) {
+                                          return (
+                                            <TableCell className="p-0">
+                                              <input
+                                                autoFocus
+                                                value={editingQueryResultValue}
+                                                onChange={(e) => setEditingQueryResultValue(e.target.value)}
+                                                onKeyDown={(e) => { if (e.key === 'Enter') handleQueryResultCellSave(); if (e.key === 'Escape') setEditingQueryResultCell(null); }}
+                                                onBlur={handleQueryResultCellSave}
+                                                className="w-full h-full px-4 py-2 text-sm bg-indigo-50 dark:bg-indigo-950/30 border-2 border-indigo-400 outline-none"
+                                                data-testid={`input-edit-${field}-${row.id}`}
+                                              />
+                                            </TableCell>
+                                          );
+                                        }
+                                        return (
+                                          <TableCell
+                                            className={`cursor-default select-none ${className || ''}`}
+                                            onDoubleClick={() => handleQueryResultCellEdit(row.id, field)}
+                                          >
+                                            {value}
+                                          </TableCell>
+                                        );
+                                      };
+                                      return (
+                                        <TableRow key={row.id} className="hover:bg-secondary/30">
+                                          <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
+                                          {renderCell('type', row.type, 'font-medium')}
+                                          {renderCell('location', row.location)}
+                                          {renderCell('time', row.time, 'text-muted-foreground text-xs')}
+                                          {renderCell('severity', row.severity, 'text-sm')}
+                                          {renderCell('status', row.status, 'text-sm')}
+                                        </TableRow>
+                                      );
+                                    })}
                                   </TableBody>
                                 </Table>
                                 
