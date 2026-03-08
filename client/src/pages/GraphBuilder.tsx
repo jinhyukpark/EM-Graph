@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Reorder, useDragControls } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Database, Network, ArrowRight, X, Plus, GripVertical, Trash2, Settings, Circle, Info } from "lucide-react";
@@ -26,6 +27,140 @@ interface NodeConfig {
   icon: string;
 }
 
+function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id: string) => void }) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={node}
+      dragListener={false}
+      dragControls={dragControls}
+      className="grid grid-cols-12 gap-4 items-end border p-4 rounded-lg bg-card/50"
+      whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div className="col-span-1 flex items-center justify-center pb-1">
+        <div
+          className="text-muted-foreground/40 cursor-grab active:cursor-grabbing hover:text-muted-foreground/70 transition-colors"
+          onPointerDown={(e) => dragControls.start(e)}
+          data-testid={`drag-handle-node-${node.id}`}
+        >
+          <GripVertical className="w-4 h-4" />
+        </div>
+      </div>
+      <div className="col-span-3 space-y-2">
+        <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
+        <Select defaultValue={node.table}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Table" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+            <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="col-span-7">
+        <div className="space-y-2">
+          <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
+          <Select defaultValue={node.labelField}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Field" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="type">type</SelectItem>
+              <SelectItem value="name">name</SelectItem>
+              <SelectItem value="id">id</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="col-span-1 flex justify-end">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => onRemove(node.id)}>
+          <Trash2 className="w-4 h-4" />
+        </Button>
+      </div>
+    </Reorder.Item>
+  );
+}
+
+function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: string) => void }) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={link}
+      dragListener={false}
+      dragControls={dragControls}
+      className="flex items-center p-4 rounded-lg border border-border bg-white shadow-sm"
+      whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div
+        className="mr-4 text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
+        onPointerDown={(e) => dragControls.start(e)}
+        data-testid={`drag-handle-link-${link.id}`}
+      >
+        <GripVertical className="w-4 h-4" />
+      </div>
+      
+      <div className="flex-1 flex items-center gap-4">
+        <div className="flex-1">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Source</div>
+          <div className="flex gap-2">
+            <Select defaultValue={link.sourceTable}>
+              <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue={link.sourceColumn}>
+              <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">id</SelectItem>
+                <SelectItem value="suspect_id">suspect_id</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="pt-5 text-muted-foreground">
+          <ArrowRight className="w-4 h-4" />
+        </div>
+
+        <div className="flex-1">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Target</div>
+          <div className="flex gap-2">
+            <Select defaultValue={link.targetTable}>
+              <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue={link.targetColumn}>
+              <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">id</SelectItem>
+                <SelectItem value="suspect_id">suspect_id</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      <div className="ml-4 pt-5">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
+          <Trash2 className="w-4 h-4" />
+        </Button>
+      </div>
+    </Reorder.Item>
+  );
+}
+
 export default function GraphBuilder() {
   const [links, setLinks] = useState<Link[]>([
     { id: "1", sourceTable: "crime_incidents_2024", sourceColumn: "suspect_id", targetTable: "suspect_profiles", targetColumn: "id" }
@@ -50,6 +185,21 @@ export default function GraphBuilder() {
     setLinks(links.filter(l => l.id !== id));
   };
 
+  const addNode = () => {
+    setNodes([...nodes, { 
+      id: Date.now().toString(), 
+      table: "", 
+      labelField: "", 
+      sizeField: "", 
+      colorField: "", 
+      icon: "Circle" 
+    }]);
+  };
+
+  const removeNode = (id: string) => {
+    setNodes(nodes.filter(n => n.id !== id));
+  };
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
@@ -65,7 +215,6 @@ export default function GraphBuilder() {
           </div>
 
           <div className="space-y-6">
-            {/* Node Definitions Section */}
             <Card className="border-border shadow-sm">
               <CardHeader className="pb-3 border-b border-border/50 bg-secondary/5">
                 <div className="flex items-center justify-between">
@@ -73,56 +222,20 @@ export default function GraphBuilder() {
                     <Circle className="w-4 h-4 text-muted-foreground" />
                     <CardTitle className="text-base font-semibold">Node Configuration</CardTitle>
                   </div>
-                  <Button size="sm" variant="outline" className="h-8 gap-1">
+                  <Button size="sm" variant="outline" className="h-8 gap-1" onClick={addNode}>
                     <Plus className="w-3 h-3" /> Add Node
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid gap-6">
-                  {nodes.map((node, index) => (
-                    <div key={node.id} className="grid grid-cols-12 gap-4 items-end border p-4 rounded-lg bg-card/50">
-                      <div className="col-span-3 space-y-2">
-                        <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
-                        <Select defaultValue={node.table}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Table" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                            <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="col-span-8">
-                        <div className="space-y-2">
-                          <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
-                          <Select defaultValue={node.labelField}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Field" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="type">type</SelectItem>
-                              <SelectItem value="name">name</SelectItem>
-                              <SelectItem value="id">id</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      <div className="col-span-1 flex justify-end">
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
+                <Reorder.Group axis="y" values={nodes} onReorder={setNodes} className="grid gap-6">
+                  {nodes.map((node) => (
+                    <DraggableNodeItem key={node.id} node={node} onRemove={removeNode} />
                   ))}
-                </div>
+                </Reorder.Group>
               </CardContent>
             </Card>
 
-            {/* Link Definitions Section - Matching the Screenshot */}
             <Card className="border-border shadow-sm overflow-hidden">
                <div className="p-4 border-b border-border bg-white flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
@@ -134,68 +247,12 @@ export default function GraphBuilder() {
                   </Button>
                </div>
                
-               <div className="p-6 space-y-3 bg-secondary/5 min-h-[200px]">
-                 {links.map((link, index) => (
-                   <div key={link.id} className="flex items-center p-4 rounded-lg border border-border bg-white shadow-sm">
-                      <div className="mr-4 text-muted-foreground/30">
-                         <GripVertical className="w-4 h-4" />
-                      </div>
-                      
-                      <div className="flex-1 flex items-center gap-4">
-                         {/* Source Group */}
-                         <div className="flex-1">
-                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Source</div>
-                            <div className="flex gap-2">
-                               <Select defaultValue={link.sourceTable}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                                   <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                                 </SelectContent>
-                               </Select>
-                               <Select defaultValue={link.sourceColumn}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="id">id</SelectItem>
-                                   <SelectItem value="suspect_id">suspect_id</SelectItem>
-                                 </SelectContent>
-                               </Select>
-                            </div>
-                         </div>
-
-                         <div className="pt-5 text-muted-foreground">
-                            <ArrowRight className="w-4 h-4" />
-                         </div>
-
-                         {/* Target Group */}
-                         <div className="flex-1">
-                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">Target</div>
-                            <div className="flex gap-2">
-                               <Select defaultValue={link.targetTable}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                                   <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                                 </SelectContent>
-                               </Select>
-                               <Select defaultValue={link.targetColumn}>
-                                 <SelectTrigger className="bg-background"><SelectValue placeholder="Column" /></SelectTrigger>
-                                 <SelectContent>
-                                   <SelectItem value="id">id</SelectItem>
-                                   <SelectItem value="suspect_id">suspect_id</SelectItem>
-                                 </SelectContent>
-                               </Select>
-                            </div>
-                         </div>
-                      </div>
-
-                      <div className="ml-4 pt-5">
-                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => removeLink(link.id)}>
-                           <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                   </div>
-                 ))}
+               <div className="p-6 bg-secondary/5 min-h-[200px]">
+                 <Reorder.Group axis="y" values={links} onReorder={setLinks} className="space-y-3">
+                   {links.map((link) => (
+                     <DraggableLinkItem key={link.id} link={link} onRemove={removeLink} />
+                   ))}
+                 </Reorder.Group>
 
                  {links.length === 0 && (
                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-background/50">
