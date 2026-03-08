@@ -271,18 +271,10 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
     
     return (
       <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
-        <div className="border-b border-border relative">
-          <div className="w-full bg-muted overflow-hidden relative group/carousel">
+        <div className="border-b border-border">
+          <div className="w-full bg-muted overflow-hidden relative group/carousel -mt-px">
              <NodeImageCarousel images={displayImages} name={displayName} />
           </div>
-          <Button 
-            variant="secondary" 
-            size="icon" 
-            className="absolute top-2 left-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-background z-10" 
-            onClick={() => onNodeSelect?.(null as any)}
-          >
-            <X className="w-4 h-4" />
-          </Button>
         </div>
 
         <ScrollArea className="flex-1 p-0">
@@ -290,6 +282,9 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               {/* Properties Section */}
               <div className="px-4 py-3 border-b border-border/50">
                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
+                   <Button variant="ghost" size="icon" className="h-6 w-6 -ml-1" onClick={() => onNodeSelect?.(null as any)}>
+                     <ArrowLeft className="w-3.5 h-3.5" />
+                   </Button>
                    <Settings className="w-3.5 h-3.5" /> Properties
                  </h4>
                  <div className="grid gap-2 text-sm bg-card rounded-md border p-3">
