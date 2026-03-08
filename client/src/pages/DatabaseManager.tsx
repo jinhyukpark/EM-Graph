@@ -150,11 +150,17 @@ export default function DatabaseManager() {
   ]);
   const [activeTabId, setActiveTabId] = useState('t1');
   const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string, isConverting?: boolean}[]>([
-    { id: '1', sql: "crime_incidents_2024 테이블에서 severity가 5보다 큰 데이터를 조회해줘", title: "자연어 쿼리 예시", type: 'custom' }
+    { id: '1', sql: "Query all crime incidents with severity greater than 5", title: "SELECT Query", type: 'custom' },
+    { id: '2', sql: "Add a new robbery incident in Downtown area with severity 8", title: "INSERT Query", type: 'custom' },
+    { id: '3', sql: "Update all open cases in West End to investigating status", title: "UPDATE Query", type: 'custom' },
+    { id: '4', sql: "Delete all resolved cases older than 2024-06-01", title: "DELETE Query", type: 'custom' }
   ]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
+  const [executedQuerySql, setExecutedQuerySql] = useState<string>("");
+  const [queryResultType, setQueryResultType] = useState<'select' | 'insert' | 'update' | 'delete'>('select');
+  const [queryResultMessage, setQueryResultMessage] = useState<string>("");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -392,17 +398,36 @@ export default function DatabaseManager() {
       const input = block.sql.trim().toLowerCase();
       let generatedSql = "";
 
-      if (input.includes("severity") && input.includes("5")) {
+      if ((input.includes("severity") && input.includes("5")) || (input.includes("greater") && input.includes("5"))) {
         generatedSql = "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
-      } else if (input.includes("전체") || input.includes("all") || input.includes("모든")) {
-        const table = input.includes("suspect") ? "suspect_profiles" : "crime_incidents_2024";
-        generatedSql = `SELECT * FROM ${table}\nLIMIT 100;`;
+      } else if (input.includes("add") || input.includes("insert") || input.includes("new") || input.includes("create") || input.includes("추가") || input.includes("생성")) {
+        const type = input.includes("robbery") ? "Robbery" : input.includes("theft") ? "Theft" : input.includes("assault") ? "Assault" : "Fraud";
+        const location = input.includes("downtown") ? "Downtown" : input.includes("west end") ? "West End" : input.includes("harbor") ? "Harbor Area" : "Central Station";
+        const severity = input.match(/severity\s*(\d+)/)?.[1] || "5";
+        generatedSql = `INSERT INTO crime_incidents_2024 (type, location, time, severity, status)\nVALUES ('${type}', '${location}', NOW(), ${severity}, 'Open')\nRETURNING *;`;
+      } else if (input.includes("update") || input.includes("set") || input.includes("change") || input.includes("수정") || input.includes("변경")) {
+        const newStatus = input.includes("investigating") ? "Investigating" : input.includes("closed") ? "Closed" : input.includes("resolved") ? "Resolved" : "Pending";
+        const oldStatus = input.includes("open") ? "Open" : input.includes("pending") ? "Pending" : null;
+        const location = input.includes("west end") ? "West End" : input.includes("downtown") ? "Downtown" : null;
+        let whereClause = "WHERE 1=1";
+        if (oldStatus) whereClause = `WHERE status = '${oldStatus}'`;
+        if (location) whereClause += `\n  AND location = '${location}'`;
+        generatedSql = `UPDATE crime_incidents_2024\nSET status = '${newStatus}', updated_at = NOW()\n${whereClause};`;
+      } else if (input.includes("delete") || input.includes("remove") || input.includes("drop") || input.includes("삭제") || input.includes("제거")) {
+        const status = input.includes("resolved") ? "Resolved" : input.includes("closed") ? "Closed" : null;
+        const dateMatch = input.match(/(\d{4}-\d{2}-\d{2})/);
+        let whereClause = "WHERE 1=1";
+        if (status) whereClause = `WHERE status = '${status}'`;
+        if (dateMatch) whereClause += `\n  AND time < '${dateMatch[1]}'`;
+        generatedSql = `DELETE FROM crime_incidents_2024\n${whereClause};`;
       } else if (input.includes("count") || input.includes("개수") || input.includes("건수")) {
         generatedSql = "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
       } else if (input.includes("join") || input.includes("연결") || input.includes("결합")) {
         generatedSql = "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
       } else if (input.includes("location") || input.includes("위치") || input.includes("지역")) {
         generatedSql = "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
+      } else if (input.includes("all") || input.includes("전체") || input.includes("모든")) {
+        generatedSql = "SELECT * FROM crime_incidents_2024\nORDER BY id ASC\nLIMIT 100;";
       } else {
         generatedSql = `-- Generated from: "${block.sql}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
       }
@@ -562,11 +587,74 @@ export default function DatabaseManager() {
 
   const handleRunQuery = (sql: string) => {
     setIsExecuting(true);
+    const sqlUpper = sql.trim().toUpperCase();
+    const actualSql = sql.trim();
+
     setTimeout(() => {
+      setExecutedQuerySql(actualSql);
+
+      if (sqlUpper.startsWith("INSERT")) {
+        setQueryResultType('insert');
+        const typeMatch = actualSql.match(/VALUES\s*\(\s*'([^']+)'/i);
+        const locMatch = actualSql.match(/VALUES\s*\([^,]+,\s*'([^']+)'/i);
+        const newRow = {
+          id: 101,
+          type: typeMatch?.[1] || "Unknown",
+          location: locMatch?.[1] || "Unknown",
+          time: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          severity: 8,
+          status: "Open"
+        };
+        setQueryData([newRow]);
+        setQueryResultMessage("1 row inserted successfully.");
+      } else if (sqlUpper.startsWith("UPDATE")) {
+        setQueryResultType('update');
+        const statusMatch = actualSql.match(/SET\s+status\s*=\s*'([^']+)'/i);
+        const whereStatusMatch = actualSql.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+        const whereLocMatch = actualSql.match(/location\s*=\s*'([^']+)'/i);
+        const newStatus = statusMatch?.[1] || "Updated";
+        let affected = MOCK_QUERY_DATA.filter(r => {
+          let match = true;
+          if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+          if (whereLocMatch) match = match && r.location === whereLocMatch[1];
+          return match;
+        });
+        const updatedRows = affected.map(r => ({ ...r, status: newStatus }));
+        setQueryData(updatedRows.length > 0 ? updatedRows : [{ id: 0, type: "-", location: "-", time: "-", severity: 0, status: newStatus }]);
+        setQueryResultMessage(`${updatedRows.length} row(s) updated. Status changed to '${newStatus}'.`);
+      } else if (sqlUpper.startsWith("DELETE")) {
+        setQueryResultType('delete');
+        const whereStatusMatch = actualSql.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+        const dateMatch = actualSql.match(/time\s*<\s*'([^']+)'/i);
+        let affected = MOCK_QUERY_DATA.filter(r => {
+          let match = true;
+          if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+          if (dateMatch) match = match && r.time < dateMatch[1];
+          return match;
+        });
+        setQueryData(affected);
+        setQueryResultMessage(`${affected.length} row(s) deleted successfully.`);
+      } else {
+        setQueryResultType('select');
+        if (sqlUpper.includes("SEVERITY > 5")) {
+          const filtered = MOCK_QUERY_DATA.filter(r => r.severity > 5);
+          setQueryData(filtered);
+          setQueryResultMessage("");
+        } else if (sqlUpper.includes("GROUP BY")) {
+          setQueryData(MOCK_QUERY_DATA);
+          setQueryResultMessage("");
+        } else {
+          setQueryData(MOCK_QUERY_DATA);
+          setQueryResultMessage("");
+        }
+      }
+
+      setQueryCurrentPage(1);
       setIsExecuting(false);
+      const resultType = sqlUpper.startsWith("INSERT") ? "INSERT" : sqlUpper.startsWith("UPDATE") ? "UPDATE" : sqlUpper.startsWith("DELETE") ? "DELETE" : "SELECT";
       toast({
         title: "Query Executed Successfully",
-        description: `Fetched ${queryData.length} rows in 45ms`,
+        description: `${resultType} completed in 45ms`,
       });
     }, 800);
   };
@@ -1890,7 +1978,7 @@ export default function DatabaseManager() {
                                            </div>
                                         </div>
                                         <div className="h-3 w-px bg-border mr-1" />
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" onClick={() => handleRunQuery(block.sql)}>
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" onClick={() => handleRunQuery(block.generatedSql || block.sql)}>
                                           <Play className="w-3 h-3" /> 
                                         </Button>
                                         <div className="w-px h-3 bg-border mx-1" />
@@ -1965,9 +2053,25 @@ export default function DatabaseManager() {
                         {/* Results Table */}
                         <ResizablePanel defaultSize={70} minSize={10}>
                           <div className="h-full flex flex-col bg-background overflow-hidden">
-                            <div className="px-4 py-2 border-b border-border bg-secondary/10 flex justify-between items-center">
-                              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Query Results</div>
-                              <div className="text-xs text-muted-foreground">{queryData.length} rows found</div>
+                            <div className="px-4 py-2 border-b border-border bg-secondary/10 flex flex-col gap-1">
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Query Results</div>
+                                  {queryResultType !== 'select' && queryResultMessage && (
+                                    <Badge variant={queryResultType === 'insert' ? 'default' : queryResultType === 'update' ? 'secondary' : 'destructive'} className="text-[10px]">
+                                      {queryResultType.toUpperCase()}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {queryResultMessage || `${queryData.length} rows found`}
+                                </div>
+                              </div>
+                              {executedQuerySql && (
+                                <div className="rounded border border-border/50 bg-muted/30 px-2.5 py-1.5 font-mono text-[11px] text-muted-foreground whitespace-pre-wrap leading-relaxed" data-testid="text-executed-query">
+                                  {executedQuerySql}
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 overflow-auto">
                               <div>
