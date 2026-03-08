@@ -2331,22 +2331,22 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                         {isFilterVisible('criminal') && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Criminal Properties</Label>
-                            <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-4">
+                            <div className="p-2.5 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
                                     {/* Risk Score */}
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                            <span>Risk Score</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                                <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
-                                            </div>
-                                            <span className="text-muted-foreground pt-4">-</span>
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                                <Input type="number" defaultValue="100" className="h-7 text-xs bg-background" />
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Risk Score</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Min</span>
+                                                    <Input type="number" defaultValue="0" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
+                                                <span className="text-muted-foreground text-xs">-</span>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Max</span>
+                                                    <Input type="number" defaultValue="100" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2354,19 +2354,19 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                     <Separator className="bg-border/50" />
 
                                     {/* Age Range */}
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                            <span>Age</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                                <Input type="number" defaultValue="18" className="h-7 text-xs bg-background" />
-                                            </div>
-                                            <span className="text-muted-foreground pt-4">-</span>
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                                <Input type="number" defaultValue="80" className="h-7 text-xs bg-background" />
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Age</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Min</span>
+                                                    <Input type="number" defaultValue="18" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
+                                                <span className="text-muted-foreground text-xs">-</span>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Max</span>
+                                                    <Input type="number" defaultValue="80" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2411,8 +2411,8 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                         {isFilterVisible('detective') && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Detective Properties</Label>
-                            <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-4">
+                            <div className="p-2.5 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
                                     {/* Clearance Rate */}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
@@ -2495,22 +2495,22 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                         {isFilterVisible('prison') && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                              <Label className="text-xs font-semibold text-muted-foreground pl-1">Prison Properties</Label>
-                             <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-4">
+                             <div className="p-2.5 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
                                     {/* Occupancy */}
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                                            <span>Occupancy (%)</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
-                                                <Input type="number" defaultValue="0" className="h-7 text-xs bg-background" />
-                                            </div>
-                                            <span className="text-muted-foreground pt-4">-</span>
-                                            <div className="space-y-1 flex-1">
-                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
-                                                <Input type="number" defaultValue="90" className="h-7 text-xs bg-background" />
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Occupancy (%)</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Min</span>
+                                                    <Input type="number" defaultValue="0" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
+                                                <span className="text-muted-foreground text-xs">-</span>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-[9px] text-muted-foreground">Max</span>
+                                                    <Input type="number" defaultValue="90" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2573,8 +2573,8 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                         {isFilterVisible('victim') && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                             <Label className="text-xs font-semibold text-muted-foreground pl-1">Victim Properties</Label>
-                            <div className="p-3 rounded-lg border bg-card/50">
-                                <div className="space-y-4">
+                            <div className="p-2.5 rounded-lg border bg-card/50">
+                                <div className="space-y-3">
                                     {/* Type */}
                                     <div className="space-y-2">
                                         <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5">Type</div>
