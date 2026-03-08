@@ -2623,27 +2623,28 @@ export default function DatabaseManager() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label>Table Name</Label>
-                <Input
-                  value={createTableName}
-                  onChange={(e) => setCreateTableName(e.target.value)}
-                  placeholder="Enter table name..."
-                  data-testid="input-create-table-name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Destination</Label>
-                <select
-                  value={createTableDestination}
-                  onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  data-testid="select-create-table-destination"
-                >
-                  <option value="Original">Original</option>
-                  <option value="Custom">Custom</option>
-                </select>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>Table Name</Label>
+                  <Input
+                    value={createTableName}
+                    onChange={(e) => setCreateTableName(e.target.value)}
+                    placeholder="Enter table name..."
+                    data-testid="input-create-table-name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Destination</Label>
+                  <select
+                    value={createTableDestination}
+                    onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    data-testid="select-create-table-destination"
+                  >
+                    <option value="Original">Original</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                </div>
               </div>
 
               <div className="space-y-2">
