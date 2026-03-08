@@ -356,17 +356,18 @@ export default function DatabaseManager() {
   };
 
   const handleTemplateQuery = (generatedQuery: string, description?: string) => {
-    const newBlock = {
-      id: Date.now().toString(),
-      sql: generatedQuery,
-      title: description || "Template Query",
-      description: description,
-      type: 'template' as const
-    };
-    setQueryBlocks([...queryBlocks, newBlock]);
+    setQueryBlocks(prev => {
+      if (prev.length === 0) {
+        return [{ id: '1', sql: generatedQuery, title: "Query Editor", type: 'custom' as const }];
+      }
+      const first = prev[0];
+      const currentSql = first.sql.trimEnd();
+      const newSql = currentSql ? `${currentSql}\n${generatedQuery}` : generatedQuery;
+      return [{ ...first, sql: newSql, generatedSql: undefined }];
+    });
     toast({
       title: "Template Applied",
-      description: "New query block has been added to the editor.",
+      description: "Query has been inserted into the editor.",
     });
   };
 
