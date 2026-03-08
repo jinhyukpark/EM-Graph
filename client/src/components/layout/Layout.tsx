@@ -41,6 +41,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
   const [pendingOrg, setPendingOrg] = useState<typeof MOCK_ORGS[0] | null>(null);
   
@@ -243,12 +244,14 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
 
           {!isCollapsed && isProjectView && (
              <div className="flex items-center gap-2 flex-1 overflow-hidden">
-                <Link href="/projects" className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
-                  )}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0 h-8 w-8 -ml-2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowLeaveConfirm(true)}
+                >
                     <ArrowLeft className="w-4 h-4" />
-                </Link>
+                </Button>
                 <span className="text-base font-bold tracking-tight truncate flex-1" title="City Crime Analysis 2024">
                   City Crime Analysis 2024
                 </span>
@@ -537,6 +540,23 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
            {children}
         </main>
       </div>
+
+      <AlertDialog open={showLeaveConfirm} onOpenChange={setShowLeaveConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leave Workspace</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to leave this workspace? Any unsaved changes may be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setShowLeaveConfirm(false); setLocation("/projects"); }}>
+              Leave
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
