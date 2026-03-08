@@ -2195,24 +2195,25 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
 
                                                 {/* Conditional Settings based on Control Type */}
                                                 {(filter.controlType === 'range' || filter.controlType === 'input') && (
-                                                    <div className="bg-secondary/10 p-2 rounded-md space-y-2">
-                                                        <Label className="text-[10px] text-muted-foreground font-medium">Range Settings</Label>
+                                                    <div className="bg-secondary/10 p-2 rounded-md">
                                                         <div className="flex items-center gap-2">
-                                                            <div className="space-y-1 flex-1">
-                                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                            <Label className="text-[10px] text-muted-foreground font-medium shrink-0">Range</Label>
+                                                            <div className="flex items-center gap-1">
+                                                                <span className="text-[9px] text-muted-foreground">Min</span>
                                                                 <Input 
                                                                     type="number" 
                                                                     defaultValue={filter.min} 
-                                                                    className="h-7 text-xs bg-background" 
+                                                                    className="h-6 w-16 text-xs bg-background px-1.5" 
                                                                     onChange={(e) => updateFilterRange(key, filter.id, 'min', e.target.value)}
                                                                 />
                                                             </div>
-                                                            <div className="space-y-1 flex-1">
-                                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                            <span className="text-muted-foreground text-xs">-</span>
+                                                            <div className="flex items-center gap-1">
+                                                                <span className="text-[9px] text-muted-foreground">Max</span>
                                                                 <Input 
                                                                     type="number" 
                                                                     defaultValue={filter.max} 
-                                                                    className="h-7 text-xs bg-background"
+                                                                    className="h-6 w-16 text-xs bg-background px-1.5"
                                                                     onChange={(e) => updateFilterRange(key, filter.id, 'max', e.target.value)}
                                                                 />
                                                             </div>
