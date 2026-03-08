@@ -138,19 +138,6 @@ function DraggableItem({ item, onUpdate, onRemove }: { item: LegendItem, onUpdat
         </Button>
       </div>
 
-      {/* Range Slider Preview */}
-      {isRange && (
-        <div className="mt-2 px-8">
-          <Slider 
-            value={[item.min ?? 0, item.max ?? 100]}
-            min={0}
-            max={Math.max(item.max ?? 100, 100)}
-            step={1}
-            onValueChange={([min, max]) => onUpdate(item.id, { min, max, label: `${min}~${max}` })}
-            className="py-1"
-          />
-        </div>
-      )}
     </Reorder.Item>
   );
 }
