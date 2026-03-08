@@ -437,7 +437,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               <NavItem href="/dashboard" icon={LayoutGrid} label="Dashboard" />
               <NavItem href="/database" icon={Database} label="Database" />
               <NavItem href="/resources" icon={Library} label="Resources" />
-              <NavItem href="/projects" icon={FolderOpen} label="Projects" />
+              <NavItem href="/projects" icon={FolderOpen} label="Graph Analysis" />
             </div>
           )}
           
