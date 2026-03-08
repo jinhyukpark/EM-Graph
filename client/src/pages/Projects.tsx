@@ -45,7 +45,7 @@ export default function Projects() {
           <Link href="/create">
             <Button size="lg" className="gap-2 shadow-lg shadow-primary/20 hidden md:flex" data-testid="button-new-project">
               <Plus className="w-5 h-5" />
-              New Project
+              New Graph
             </Button>
           </Link>
         </div>
