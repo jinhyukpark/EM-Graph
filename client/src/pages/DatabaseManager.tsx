@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -149,7 +149,7 @@ export default function DatabaseManager() {
     { id: 't1', type: 'table', title: 'crime_incidents_2024' }
   ]);
   const [activeTabId, setActiveTabId] = useState('t1');
-  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string}[]>([
+  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string, isConverting?: boolean}[]>([
     { id: '1', sql: "crime_incidents_2024 테이블에서 severity가 5보다 큰 데이터를 조회해줘", title: "자연어 쿼리 예시", type: 'custom' }
   ]);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -386,30 +386,33 @@ export default function DatabaseManager() {
     const block = queryBlocks.find(b => b.id === id);
     if (!block || !block.sql.trim()) return;
 
-    const input = block.sql.trim().toLowerCase();
-    let generatedSql = "";
+    setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, isConverting: true, generatedSql: undefined } : b));
 
-    if (input.includes("severity") && input.includes("5")) {
-      generatedSql = "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
-    } else if (input.includes("전체") || input.includes("all") || input.includes("모든")) {
-      const table = input.includes("suspect") ? "suspect_profiles" : "crime_incidents_2024";
-      generatedSql = `SELECT * FROM ${table}\nLIMIT 100;`;
-    } else if (input.includes("count") || input.includes("개수") || input.includes("건수")) {
-      generatedSql = "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
-    } else if (input.includes("join") || input.includes("연결") || input.includes("결합")) {
-      generatedSql = "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
-    } else if (input.includes("location") || input.includes("위치") || input.includes("지역")) {
-      generatedSql = "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
-    } else {
-      generatedSql = `-- Generated from: "${block.sql}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
-    }
+    setTimeout(() => {
+      const input = block.sql.trim().toLowerCase();
+      let generatedSql = "";
 
-    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, generatedSql } : b));
-    toast({ title: "Query Converted", description: "Natural language has been converted to SQL.", duration: 2000 });
+      if (input.includes("severity") && input.includes("5")) {
+        generatedSql = "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
+      } else if (input.includes("전체") || input.includes("all") || input.includes("모든")) {
+        const table = input.includes("suspect") ? "suspect_profiles" : "crime_incidents_2024";
+        generatedSql = `SELECT * FROM ${table}\nLIMIT 100;`;
+      } else if (input.includes("count") || input.includes("개수") || input.includes("건수")) {
+        generatedSql = "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
+      } else if (input.includes("join") || input.includes("연결") || input.includes("결합")) {
+        generatedSql = "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
+      } else if (input.includes("location") || input.includes("위치") || input.includes("지역")) {
+        generatedSql = "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
+      } else {
+        generatedSql = `-- Generated from: "${block.sql}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
+      }
+
+      setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, generatedSql, isConverting: false } : b));
+    }, 800);
   };
 
   const updateGeneratedSql = (id: string, newSql: string) => {
-    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, generatedSql: newSql } : b));
+    setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, generatedSql: newSql } : b));
   };
 
   const [sidebarItems, setSidebarItems] = useState(SIDEBAR_ITEMS);
@@ -1902,46 +1905,46 @@ export default function DatabaseManager() {
                                          onChange={(e) => updateQueryBlock(block.id, e.target.value)}
                                          className="w-full p-3 bg-transparent text-sm resize-none focus:outline-none text-foreground/80 min-h-[60px]"
                                          spellCheck={false}
-                                         placeholder="원하는 데이터를 자연어로 설명해주세요..."
+                                         placeholder="Describe the data you want in natural language..."
                                          data-testid={`textarea-query-${block.id}`}
                                        />
+                                       {block.isConverting && (
+                                         <div className="flex items-center gap-2 px-3 pb-2 text-xs text-muted-foreground">
+                                           <Loader2 className="w-3 h-3 animate-spin text-indigo-500" />
+                                           <span>Converting to SQL...</span>
+                                         </div>
+                                       )}
+                                       {block.generatedSql && !block.isConverting && (
+                                         <div className="mx-3 mb-2 rounded-md border border-indigo-200/60 bg-indigo-50/20 overflow-hidden">
+                                           <div className="px-2 py-1 bg-indigo-100/30 border-b border-indigo-200/40">
+                                             <span className="text-[10px] font-medium text-indigo-500 uppercase tracking-wider">SQL</span>
+                                           </div>
+                                           <textarea
+                                             value={block.generatedSql}
+                                             onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
+                                             className="w-full p-2 bg-transparent font-mono text-xs resize-none focus:outline-none text-indigo-900/80 min-h-[60px]"
+                                             spellCheck={false}
+                                             data-testid={`textarea-generated-sql-${block.id}`}
+                                           />
+                                         </div>
+                                       )}
                                        <div className="flex justify-end px-3 pb-2">
                                          <Button
                                            size="sm"
                                            className="h-7 text-xs gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white"
                                            onClick={() => convertNaturalLanguageToSql(block.id)}
-                                           disabled={!block.sql.trim()}
+                                           disabled={!block.sql.trim() || block.isConverting}
                                            data-testid={`button-convert-${block.id}`}
                                          >
-                                           <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
+                                           {block.isConverting ? (
+                                             <Loader2 className="w-3 h-3 animate-spin" />
+                                           ) : (
+                                             <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
+                                           )}
                                            Convert to SQL
                                          </Button>
                                        </div>
                                     </div>
-                                    {block.generatedSql && (
-                                      <div className="border-t border-indigo-200/60 bg-indigo-50/30">
-                                        <div className="flex items-center justify-between px-3 py-1.5 bg-indigo-100/40">
-                                          <span className="text-[10px] font-semibold text-indigo-600 uppercase tracking-wider">Generated SQL</span>
-                                          <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 px-2 gap-1"
-                                            onClick={() => handleRunQuery(block.generatedSql!)}
-                                            data-testid={`button-run-generated-${block.id}`}
-                                          >
-                                            <Play className="w-3 h-3" />
-                                            Run
-                                          </Button>
-                                        </div>
-                                        <textarea
-                                          value={block.generatedSql}
-                                          onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
-                                          className="w-full p-3 bg-transparent font-mono text-sm resize-none focus:outline-none text-indigo-900/80 min-h-[80px]"
-                                          spellCheck={false}
-                                          data-testid={`textarea-generated-sql-${block.id}`}
-                                        />
-                                      </div>
-                                    )}
                                   </div>
                                 ))}
                                 <Button 
