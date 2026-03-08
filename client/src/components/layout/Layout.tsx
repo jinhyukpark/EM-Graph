@@ -303,12 +303,12 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           )}
           
-          {isProjectView && !isCollapsed && (
+          {isProjectView && !isCollapsed && !sidebar && (
             <div className="h-px bg-border/50 w-full mb-2" />
           )}
 
           {isProjectView && (
-            <div className={cn("pt-0 pb-2 shrink-0", isCollapsed ? "px-2 text-center" : "px-4")}>
+            <div className={cn("shrink-0", sidebar ? "p-0" : "pt-0 pb-2", isCollapsed ? "px-2 text-center" : sidebar ? "px-0" : "px-4")}>
               {isCollapsed && (
                  <Link href="/projects" className={cn(
                      buttonVariants({ variant: "ghost", size: "sm" }),
