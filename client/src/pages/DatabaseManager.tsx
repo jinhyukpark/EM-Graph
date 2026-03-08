@@ -158,6 +158,7 @@ export default function DatabaseManager() {
   const [executedQuerySql, setExecutedQuerySql] = useState<string>("");
   const [queryResultType, setQueryResultType] = useState<'select' | 'insert' | 'update' | 'delete'>('select');
   const [queryResultMessage, setQueryResultMessage] = useState<string>("");
+  const [hasTextSelection, setHasTextSelection] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -1962,80 +1963,102 @@ export default function DatabaseManager() {
                       <ResizablePanelGroup direction="vertical" className="flex-1 flex flex-col overflow-hidden">
                         {/* SQL Editor Area */}
                         <ResizablePanel defaultSize={30} minSize={10}>
-                          <div className="h-full border-b border-border bg-card/20 flex flex-col">
-                            <ScrollArea className="flex-1 bg-secondary/5">
-                              <div className="p-4 space-y-4">
-                                {queryBlocks.map((block) => (
-                                  <div key={block.id} className="group relative border border-border rounded-lg bg-card shadow-sm hover:border-primary/30 transition-all overflow-hidden mb-3">
-                                    <div className="flex items-center justify-between px-3 py-2 bg-background">
-                                      <div className="flex-1 flex items-center gap-2">
-                                        <span className="text-sm font-medium text-foreground leading-none">
-                                           {block.title || "Query"}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground mr-3">
-                                           <span>업데이트됨 1개월 전</span>
-                                           <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center">
-                                             <User className="w-3.5 h-3.5 text-indigo-600" />
-                                           </div>
-                                        </div>
-                                        <div className="h-3 w-px bg-border mr-1" />
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" onClick={() => handleRunQuery(block.generatedSql || block.sql)}>
-                                          <Play className="w-3 h-3" /> 
-                                        </Button>
-                                      </div>
+                          <div className="h-full flex flex-col bg-[#1e1e2e] overflow-hidden">
+                            {queryBlocks.map((block) => {
+                              const lines = block.sql.split('\n');
+                              const generatedLines = block.generatedSql ? block.generatedSql.split('\n') : [];
+                              return (
+                                <div key={block.id} className="flex-1 flex flex-col overflow-hidden">
+                                  <div className="flex items-center justify-between px-3 py-1.5 bg-[#181825] border-b border-[#313244]">
+                                    <div className="flex items-center gap-2">
+                                      <FileCode className="w-3.5 h-3.5 text-indigo-400" />
+                                      <span className="text-xs font-medium text-[#cdd6f4]">Query Editor</span>
                                     </div>
-                                    <div className="border-t border-border/50 bg-muted/20">
-                                       <textarea 
-                                         value={block.sql}
-                                         onChange={(e) => updateQueryBlock(block.id, e.target.value)}
-                                         className="w-full p-3 bg-transparent text-sm resize-none focus:outline-none text-foreground/80 min-h-[60px]"
-                                         spellCheck={false}
-                                         placeholder="Describe the data you want in natural language..."
-                                         data-testid={`textarea-query-${block.id}`}
-                                       />
-                                       {block.isConverting && (
-                                         <div className="flex items-center gap-2 px-3 pb-2 text-xs text-muted-foreground">
-                                           <Loader2 className="w-3 h-3 animate-spin text-indigo-500" />
-                                           <span>Converting to SQL...</span>
-                                         </div>
-                                       )}
-                                       {block.generatedSql && !block.isConverting && (
-                                         <div className="mx-3 mb-2 rounded-md border border-indigo-200/60 bg-indigo-50/20 overflow-hidden">
-                                           <div className="px-2 py-1 bg-indigo-100/30 border-b border-indigo-200/40">
-                                             <span className="text-[10px] font-medium text-indigo-500 uppercase tracking-wider">SQL</span>
-                                           </div>
-                                           <textarea
-                                             value={block.generatedSql}
-                                             onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
-                                             className="w-full p-2 bg-transparent font-mono text-xs resize-none focus:outline-none text-indigo-900/80 min-h-[60px]"
-                                             spellCheck={false}
-                                             data-testid={`textarea-generated-sql-${block.id}`}
-                                           />
-                                         </div>
-                                       )}
-                                       <div className="flex justify-end px-3 pb-2">
-                                         <Button
-                                           size="sm"
-                                           className="h-7 text-xs gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white"
-                                           onClick={() => convertNaturalLanguageToSql(block.id)}
-                                           disabled={!block.sql.trim() || block.isConverting}
-                                           data-testid={`button-convert-${block.id}`}
-                                         >
-                                           {block.isConverting ? (
-                                             <Loader2 className="w-3 h-3 animate-spin" />
-                                           ) : (
-                                             <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
-                                           )}
-                                           Convert to SQL
-                                         </Button>
-                                       </div>
+                                    <div className="flex items-center gap-1">
+                                      {block.isConverting && (
+                                        <div className="flex items-center gap-1.5 mr-2">
+                                          <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                                          <span className="text-[10px] text-[#a6adc8]">Converting...</span>
+                                        </div>
+                                      )}
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className={`h-6 text-[10px] gap-1 px-2 transition-all ${hasTextSelection ? 'text-indigo-300 hover:text-indigo-200 hover:bg-indigo-500/20' : 'text-[#585b70] cursor-not-allowed'}`}
+                                        onClick={() => convertNaturalLanguageToSql(block.id)}
+                                        disabled={!hasTextSelection || block.isConverting}
+                                        data-testid={`button-convert-${block.id}`}
+                                      >
+                                        {block.isConverting ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
+                                        )}
+                                        Convert to SQL
+                                      </Button>
+                                      <div className="w-px h-3 bg-[#313244] mx-0.5" />
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6 text-green-400 hover:text-green-300 hover:bg-green-500/20"
+                                        onClick={() => handleRunQuery(block.generatedSql || block.sql)}
+                                        data-testid={`button-run-query-${block.id}`}
+                                      >
+                                        <Play className="w-3 h-3" />
+                                      </Button>
                                     </div>
                                   </div>
-                                ))}
-                              </div>
-                            </ScrollArea>
+                                  <ScrollArea className="flex-1">
+                                    <div className="flex min-h-full">
+                                      <div className="flex flex-col py-2 px-0 bg-[#181825] border-r border-[#313244] select-none shrink-0 min-w-[36px]">
+                                        {lines.map((_, i) => (
+                                          <div key={`nl-${i}`} className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-[#585b70] font-mono">{i + 1}</div>
+                                        ))}
+                                        {block.generatedSql && !block.isConverting && (
+                                          <>
+                                            <div className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-[#313244] font-mono">---</div>
+                                            {generatedLines.map((_, i) => (
+                                              <div key={`sql-${i}`} className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-indigo-500/60 font-mono">{lines.length + i + 1}</div>
+                                            ))}
+                                          </>
+                                        )}
+                                      </div>
+                                      <div className="flex-1 flex flex-col">
+                                        <textarea
+                                          value={block.sql}
+                                          onChange={(e) => updateQueryBlock(block.id, e.target.value)}
+                                          onSelect={(e) => {
+                                            const target = e.target as HTMLTextAreaElement;
+                                            setHasTextSelection(target.selectionStart !== target.selectionEnd);
+                                          }}
+                                          onMouseUp={(e) => {
+                                            const target = e.target as HTMLTextAreaElement;
+                                            setTimeout(() => setHasTextSelection(target.selectionStart !== target.selectionEnd), 0);
+                                          }}
+                                          className="w-full py-2 px-3 bg-transparent font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-[#cdd6f4] min-h-0"
+                                          style={{ height: `${lines.length * 20 + 16}px` }}
+                                          spellCheck={false}
+                                          placeholder="Enter natural language queries, one per line..."
+                                          data-testid={`textarea-query-${block.id}`}
+                                        />
+                                        {block.generatedSql && !block.isConverting && (
+                                          <div className="border-t border-dashed border-indigo-500/30">
+                                            <textarea
+                                              value={block.generatedSql}
+                                              onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
+                                              className="w-full py-2 px-3 bg-indigo-950/20 font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-indigo-300 min-h-0"
+                                              style={{ height: `${generatedLines.length * 20 + 16}px` }}
+                                              spellCheck={false}
+                                              data-testid={`textarea-generated-sql-${block.id}`}
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </ScrollArea>
+                                </div>
+                              );
+                            })}
                           </div>
                         </ResizablePanel>
 
