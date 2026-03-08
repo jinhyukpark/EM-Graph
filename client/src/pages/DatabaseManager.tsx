@@ -175,6 +175,20 @@ export default function DatabaseManager() {
   });
 
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
+  const [isCreateGraphDialogOpen, setIsCreateGraphDialogOpen] = useState(false);
+  const [newGraphName, setNewGraphName] = useState("");
+  const [newGraphAuthor, setNewGraphAuthor] = useState("");
+
+  const handleCreateGraph = () => {
+    if (!newGraphName.trim()) return;
+    const id = `graph-builder-${Date.now()}`;
+    setTabs([...tabs, { id, type: 'graph', title: newGraphName.trim() }]);
+    setActiveTabId(id);
+    setIsGraphBuilderOpen(true);
+    setIsCreateGraphDialogOpen(false);
+    setNewGraphName("");
+    setNewGraphAuthor("");
+  };
 
   // Pagination state for table view
   const [currentPage, setCurrentPage] = useState(1);
@@ -1038,12 +1052,8 @@ export default function DatabaseManager() {
                                         <Button 
                                           size="sm" 
                                           className="bg-primary hover:bg-primary/90 text-white gap-2"
-                                          onClick={() => {
-                                            const id = `graph-builder-${Date.now()}`;
-                                            setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
-                                            setActiveTabId(id);
-                                            setIsGraphBuilderOpen(true);
-                                          }}
+                                          onClick={() => setIsCreateGraphDialogOpen(true)}
+                                          data-testid="button-create-new-graph"
                                         >
                                           <Plus className="w-4 h-4" />
                                           Create New Graph
@@ -1095,12 +1105,8 @@ export default function DatabaseManager() {
                                   ))}
                             <Card 
                               className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
-                              onClick={() => {
-                                const id = `graph-builder-${Date.now()}`;
-                                setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
-                                setActiveTabId(id);
-                                setIsGraphBuilderOpen(true);
-                              }}
+                              onClick={() => setIsCreateGraphDialogOpen(true)}
+                              data-testid="card-new-graph"
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
@@ -2058,6 +2064,55 @@ export default function DatabaseManager() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={isCreateGraphDialogOpen} onOpenChange={setIsCreateGraphDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle>Create New Graph</DialogTitle>
+            <DialogDescription>
+              Set up a new graph to visualize relationships in your data.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="graph-name">Graph Name</Label>
+              <Input
+                id="graph-name"
+                placeholder="e.g. Crime Network 2024"
+                value={newGraphName}
+                onChange={(e) => setNewGraphName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleCreateGraph();
+                }}
+                autoFocus
+                data-testid="input-graph-name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="graph-author">Author</Label>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4" />
+                </div>
+                <Input
+                  id="graph-author"
+                  placeholder="Your name"
+                  value={newGraphAuthor}
+                  onChange={(e) => setNewGraphAuthor(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleCreateGraph();
+                  }}
+                  data-testid="input-graph-author"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateGraph} disabled={!newGraphName.trim()} data-testid="button-confirm-create-graph">Create Graph</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </Layout>
   );
 }
