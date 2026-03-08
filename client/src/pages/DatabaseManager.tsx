@@ -2235,16 +2235,16 @@ export default function DatabaseManager() {
                               </div>
                               ) : null}
                               <div>
-                                <Table>
-                                  <TableHeader className="bg-secondary/20 sticky top-0">
-                                    <TableRow>
-                                      <TableHead className="w-[60px]">ID</TableHead>
-                                      <TableHead>Type</TableHead>
-                                      <TableHead>Location</TableHead>
-                                      <TableHead>Time</TableHead>
-                                      <TableHead>Severity</TableHead>
-                                      <TableHead>Status</TableHead>
-                                      <TableHead className="w-[50px]"></TableHead>
+                                <Table className="border-collapse [&_th]:border [&_th]:border-border [&_td]:border [&_td]:border-border">
+                                  <TableHeader className="sticky top-0">
+                                    <TableRow className="bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
+                                      <TableHead className="w-[60px] text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">ID</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Type</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Location</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Time</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Severity</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Status</TableHead>
+                                      <TableHead className="w-[50px] text-indigo-700 dark:text-indigo-300"></TableHead>
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
