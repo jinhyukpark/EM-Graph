@@ -182,11 +182,12 @@ export default function DatabaseManager() {
   });
 
   const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
-  const [createTableStep, setCreateTableStep] = useState<'source' | 'preview' | 'confirm'>('source');
+  const [createTableStep, setCreateTableStep] = useState<'source' | 'upload' | 'preview' | 'confirm'>('source');
   const [createTableFileType, setCreateTableFileType] = useState<'csv' | 'excel' | 'json' | null>(null);
   const [createTableFileName, setCreateTableFileName] = useState("");
   const [createTableName, setCreateTableName] = useState("");
   const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
+  const [isParsingFile, setIsParsingFile] = useState(false);
 
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
   const [isCreateGraphDialogOpen, setIsCreateGraphDialogOpen] = useState(false);
@@ -248,16 +249,30 @@ export default function DatabaseManager() {
 
   const handleFileTypeSelect = (fileType: 'csv' | 'excel' | 'json') => {
     setCreateTableFileType(fileType);
+    setCreateTableFileName("");
+    setCreateTableName("");
+    setCreateTableFields([]);
+    setCreateTableStep('upload');
+  };
+
+  const handleFileUpload = () => {
+    if (!createTableFileType) return;
     const mockNames: Record<string, string> = {
       csv: "incident_reports_2024.csv",
       excel: "employee_records.xlsx",
       json: "graph_nodes_export.json",
     };
-    setCreateTableFileName(mockNames[fileType]);
-    const baseName = mockNames[fileType].replace(/\.\w+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
+    const fileName = mockNames[createTableFileType];
+    setCreateTableFileName(fileName);
+    const baseName = fileName.replace(/\.\w+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
     setCreateTableName(baseName);
-    setCreateTableFields(MOCK_FILE_FIELDS[fileType].map(f => ({ ...f })));
+    setIsParsingFile(true);
     setCreateTableStep('preview');
+
+    setTimeout(() => {
+      setCreateTableFields(MOCK_FILE_FIELDS[createTableFileType].map(f => ({ ...f })));
+      setIsParsingFile(false);
+    }, 1500);
   };
 
   const handleCreateTableConfirm = () => {
@@ -2507,16 +2522,18 @@ export default function DatabaseManager() {
           setCreateTableFields([]);
         }
       }}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[780px]">
           <DialogHeader>
             <DialogTitle>
               {createTableStep === 'source' && 'Create New Table'}
+              {createTableStep === 'upload' && `Upload ${createTableFileType === 'csv' ? 'CSV' : createTableFileType === 'excel' ? 'Excel' : 'JSON'} File`}
               {createTableStep === 'preview' && 'Field Configuration'}
               {createTableStep === 'confirm' && 'Confirm Table Creation'}
             </DialogTitle>
             <DialogDescription>
               {createTableStep === 'source' && 'Select a file format to import data from.'}
-              {createTableStep === 'preview' && `Review detected fields from "${createTableFileName}". You can set aliases for each field.`}
+              {createTableStep === 'upload' && `Upload your ${createTableFileType === 'csv' ? '.csv' : createTableFileType === 'excel' ? '.xlsx / .xls' : '.json'} file to detect fields and create a table.`}
+              {createTableStep === 'preview' && (createTableFileName ? `Review detected fields from "${createTableFileName}". You can set aliases for each field.` : 'Parsing file...')}
               {createTableStep === 'confirm' && `Table "${createTableName}" will be created in Original tables.`}
             </DialogDescription>
           </DialogHeader>
@@ -2565,6 +2582,28 @@ export default function DatabaseManager() {
             </div>
           )}
 
+          {createTableStep === 'upload' && (
+            <div className="py-4">
+              <div
+                className="border-2 border-dashed border-border rounded-lg p-10 flex flex-col items-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-secondary/10 transition-all"
+                onClick={handleFileUpload}
+                data-testid="dropzone-upload"
+              >
+                <div className="w-16 h-16 rounded-full bg-secondary/30 flex items-center justify-center">
+                  <Upload className="w-7 h-7 text-muted-foreground" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">Click to upload or drag and drop</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {createTableFileType === 'csv' && 'Supports .csv files up to 50MB'}
+                    {createTableFileType === 'excel' && 'Supports .xlsx and .xls files up to 50MB'}
+                    {createTableFileType === 'json' && 'Supports .json files up to 50MB'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {createTableStep === 'preview' && (
             <div className="space-y-4 py-2">
               <div className="flex items-center gap-2 p-2.5 rounded-md bg-secondary/30 border border-border">
@@ -2572,7 +2611,14 @@ export default function DatabaseManager() {
                 {createTableFileType === 'excel' && <FileSpreadsheet className="w-4 h-4 text-blue-600" />}
                 {createTableFileType === 'json' && <FileJson className="w-4 h-4 text-amber-600" />}
                 <span className="text-sm font-medium">{createTableFileName}</span>
-                <Badge variant="secondary" className="text-[10px] ml-auto">{createTableFields.length} fields detected</Badge>
+                {isParsingFile ? (
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground">Detecting fields...</span>
+                  </div>
+                ) : (
+                  <Badge variant="secondary" className="text-[10px] ml-auto">{createTableFields.length} fields detected</Badge>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -2587,9 +2633,15 @@ export default function DatabaseManager() {
 
               <div className="space-y-2">
                 <Label>Fields</Label>
-                <div className="rounded-md border border-border overflow-hidden">
+                {isParsingFile ? (
+                  <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    <span className="text-sm text-muted-foreground">Parsing file and detecting fields...</span>
+                  </div>
+                ) : (
+                <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
                   <Table>
-                    <TableHeader>
+                    <TableHeader className="sticky top-0 z-10">
                       <TableRow className="bg-secondary/20">
                         <TableHead className="text-[11px] w-[30px]">#</TableHead>
                         <TableHead className="text-[11px]">Field Name</TableHead>
@@ -2625,8 +2677,9 @@ export default function DatabaseManager() {
                     </TableBody>
                   </Table>
                 </div>
+                )}
               </div>
-            </div>
+            </div>  
           )}
 
           {createTableStep === 'confirm' && (
@@ -2670,10 +2723,15 @@ export default function DatabaseManager() {
             {createTableStep === 'source' && (
               <Button variant="outline" onClick={() => setIsCreateTableOpen(false)}>Cancel</Button>
             )}
-            {createTableStep === 'preview' && (
+            {createTableStep === 'upload' && (
               <>
                 <Button variant="outline" onClick={() => setCreateTableStep('source')}>Back</Button>
-                <Button onClick={() => setCreateTableStep('confirm')} disabled={!createTableName.trim()} data-testid="button-next-confirm">
+              </>
+            )}
+            {createTableStep === 'preview' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('upload')}>Back</Button>
+                <Button onClick={() => setCreateTableStep('confirm')} disabled={!createTableName.trim() || isParsingFile} data-testid="button-next-confirm">
                   Next
                 </Button>
               </>
