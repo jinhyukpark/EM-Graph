@@ -2253,70 +2253,27 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                     
                     {!isNodeFiltersHidden && (
                     <ScrollArea className="w-full pb-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="flex space-x-2">
-                            <button
-                                onClick={() => toggleNodeFilter('all')}
+                        <div className="flex space-x-1">
+                            {[
+                              { id: 'all', label: 'All Types' },
+                              { id: 'criminal', label: 'Criminal' },
+                              { id: 'detective', label: 'Detective' },
+                              { id: 'prison', label: 'Prison' },
+                              { id: 'victim', label: 'Victim' },
+                            ].map((item) => (
+                              <button
+                                key={item.id}
+                                onClick={() => toggleNodeFilter(item.id)}
                                 className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
-                                    selectedNodeFilters.includes('all') 
+                                    "px-3 py-1.5 rounded-full text-xs font-medium transition-colors border whitespace-nowrap",
+                                    selectedNodeFilters.includes(item.id)
                                         ? "bg-primary text-primary-foreground border-primary" 
                                         : "bg-card hover:bg-accent hover:text-accent-foreground border-border"
                                 )}
-                            >
-                                <span className="whitespace-nowrap">All Types</span>
-                            </button>
-                            
-                            <button
-                                onClick={() => toggleNodeFilter('criminal')}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
-                                    selectedNodeFilters.includes('criminal') 
-                                        ? "bg-red-500 text-white border-red-500" 
-                                        : "bg-card hover:bg-red-500/10 hover:border-red-500/50 border-border"
-                                )}
-                            >
-                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('criminal') ? "bg-white" : "bg-red-500")} />
-                                <span className="whitespace-nowrap">Criminal</span>
-                            </button>
-
-                            <button
-                                onClick={() => toggleNodeFilter('detective')}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
-                                    selectedNodeFilters.includes('detective') 
-                                        ? "bg-blue-500 text-white border-blue-500" 
-                                        : "bg-card hover:bg-blue-500/10 hover:border-blue-500/50 border-border"
-                                )}
-                            >
-                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('detective') ? "bg-white" : "bg-blue-500")} />
-                                <span className="whitespace-nowrap">Detective</span>
-                            </button>
-
-                            <button
-                                onClick={() => toggleNodeFilter('prison')}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
-                                    selectedNodeFilters.includes('prison') 
-                                        ? "bg-emerald-500 text-white border-emerald-500" 
-                                        : "bg-card hover:bg-emerald-500/10 hover:border-emerald-500/50 border-border"
-                                )}
-                            >
-                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('prison') ? "bg-white" : "bg-emerald-500")} />
-                                <span className="whitespace-nowrap">Prison</span>
-                            </button>
-
-                            <button
-                                onClick={() => toggleNodeFilter('victim')}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border",
-                                    selectedNodeFilters.includes('victim') 
-                                        ? "bg-amber-500 text-white border-amber-500" 
-                                        : "bg-card hover:bg-amber-500/10 hover:border-amber-500/50 border-border"
-                                )}
-                            >
-                                <div className={cn("w-2 h-2 rounded-full", selectedNodeFilters.includes('victim') ? "bg-white" : "bg-amber-500")} />
-                                <span className="whitespace-nowrap">Victim</span>
-                            </button>
+                              >
+                                {item.label}
+                              </button>
+                            ))}
                         </div>
                     </ScrollArea>
                     )}
