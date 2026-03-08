@@ -1609,29 +1609,29 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                 </p>
                             </div>
 
-                            {/* Node Type Selection Carousel */}
-                            <ScrollArea className="w-full pb-2">
-                                <div className="flex space-x-2">
+                            {/* Node Type Tab Bar */}
+                            <ScrollArea className="w-full">
+                                <div className="flex items-center border-b border-border">
                                     {Object.entries(nodeSizingConfig).map(([key, config]) => (
                                         <button
                                             key={key}
                                             onClick={() => setActiveSizingCategory(key)}
                                             className={cn(
-                                                "flex flex-col items-center gap-1.5 p-2 min-w-[80px] rounded-lg border cursor-pointer transition-all hover:bg-accent/50",
+                                                "px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer transition-all border-b-2 -mb-px",
                                                 activeSizingCategory === key 
-                                                    ? "bg-primary/10 border-primary/50 text-primary ring-1 ring-primary/20" 
-                                                    : "bg-card border-border text-muted-foreground"
+                                                    ? "border-primary text-primary" 
+                                                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                                             )}
                                         >
-                                            <span className="text-[10px] font-medium capitalize truncate max-w-[70px]">{config.alias || key}</span>
+                                            {config.alias || key}
                                         </button>
                                     ))}
                                     <button
                                         onClick={addCategory}
-                                        className="flex flex-col items-center justify-center gap-1.5 p-2 min-w-[80px] rounded-lg border border-dashed border-muted-foreground/30 cursor-pointer transition-all hover:bg-accent/50 hover:border-primary/50 hover:text-primary text-muted-foreground"
+                                        className="px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer transition-all border-b-2 -mb-px border-transparent text-muted-foreground/50 hover:text-primary hover:border-primary/30 flex items-center gap-1"
                                     >
-                                        <PlusCircle className="w-4 h-4" />
-                                        <span className="text-[10px] font-medium">Add New</span>
+                                        <PlusCircle className="w-3 h-3" />
+                                        <span>Add</span>
                                     </button>
                                 </div>
                             </ScrollArea>
