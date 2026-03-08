@@ -1613,18 +1613,24 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                             <ScrollArea className="w-full">
                                 <div className="flex items-center border-b border-border">
                                     {Object.entries(nodeSizingConfig).map(([key, config]) => (
-                                        <button
+                                        <div
                                             key={key}
                                             onClick={() => setActiveSizingCategory(key)}
                                             className={cn(
-                                                "px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer transition-all border-b-2 -mb-px",
+                                                "group relative flex items-center gap-1 px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer transition-all border-b-2 -mb-px",
                                                 activeSizingCategory === key 
                                                     ? "border-primary text-primary" 
                                                     : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                                             )}
                                         >
-                                            {config.alias || key}
-                                        </button>
+                                            <span>{config.alias || key}</span>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); removeCategory(key); }}
+                                                className="w-3.5 h-3.5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive ml-0.5"
+                                            >
+                                                <X className="w-2.5 h-2.5" />
+                                            </button>
+                                        </div>
                                     ))}
                                     <button
                                         onClick={addCategory}
