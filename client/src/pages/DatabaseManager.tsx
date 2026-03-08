@@ -149,7 +149,7 @@ export default function DatabaseManager() {
     { id: 't1', type: 'table', title: 'crime_incidents_2024' }
   ]);
   const [activeTabId, setActiveTabId] = useState('t1');
-  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom'}[]>([
+  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string}[]>([
     { id: '1', sql: "crime_incidents_2024 테이블에서 severity가 5보다 큰 데이터를 조회해줘", title: "자연어 쿼리 예시", type: 'custom' }
   ]);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -379,7 +379,37 @@ export default function DatabaseManager() {
   };
 
   const updateQueryBlock = (id: string, newSql: string) => {
-    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, sql: newSql } : b));
+    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, sql: newSql, generatedSql: undefined } : b));
+  };
+
+  const convertNaturalLanguageToSql = (id: string) => {
+    const block = queryBlocks.find(b => b.id === id);
+    if (!block || !block.sql.trim()) return;
+
+    const input = block.sql.trim().toLowerCase();
+    let generatedSql = "";
+
+    if (input.includes("severity") && input.includes("5")) {
+      generatedSql = "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
+    } else if (input.includes("전체") || input.includes("all") || input.includes("모든")) {
+      const table = input.includes("suspect") ? "suspect_profiles" : "crime_incidents_2024";
+      generatedSql = `SELECT * FROM ${table}\nLIMIT 100;`;
+    } else if (input.includes("count") || input.includes("개수") || input.includes("건수")) {
+      generatedSql = "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
+    } else if (input.includes("join") || input.includes("연결") || input.includes("결합")) {
+      generatedSql = "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
+    } else if (input.includes("location") || input.includes("위치") || input.includes("지역")) {
+      generatedSql = "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
+    } else {
+      generatedSql = `-- Generated from: "${block.sql}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
+    }
+
+    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, generatedSql } : b));
+    toast({ title: "Query Converted", description: "Natural language has been converted to SQL.", duration: 2000 });
+  };
+
+  const updateGeneratedSql = (id: string, newSql: string) => {
+    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, generatedSql: newSql } : b));
   };
 
   const [sidebarItems, setSidebarItems] = useState(SIDEBAR_ITEMS);
@@ -1870,11 +1900,48 @@ export default function DatabaseManager() {
                                        <textarea 
                                          value={block.sql}
                                          onChange={(e) => updateQueryBlock(block.id, e.target.value)}
-                                         className="w-full p-3 bg-transparent font-mono text-sm resize-none focus:outline-none text-foreground/80 min-h-[60px]"
+                                         className="w-full p-3 bg-transparent text-sm resize-none focus:outline-none text-foreground/80 min-h-[60px]"
                                          spellCheck={false}
                                          placeholder="원하는 데이터를 자연어로 설명해주세요..."
+                                         data-testid={`textarea-query-${block.id}`}
                                        />
+                                       <div className="flex justify-end px-3 pb-2">
+                                         <Button
+                                           size="sm"
+                                           className="h-7 text-xs gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white"
+                                           onClick={() => convertNaturalLanguageToSql(block.id)}
+                                           disabled={!block.sql.trim()}
+                                           data-testid={`button-convert-${block.id}`}
+                                         >
+                                           <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
+                                           Convert to SQL
+                                         </Button>
+                                       </div>
                                     </div>
+                                    {block.generatedSql && (
+                                      <div className="border-t border-indigo-200/60 bg-indigo-50/30">
+                                        <div className="flex items-center justify-between px-3 py-1.5 bg-indigo-100/40">
+                                          <span className="text-[10px] font-semibold text-indigo-600 uppercase tracking-wider">Generated SQL</span>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 px-2 gap-1"
+                                            onClick={() => handleRunQuery(block.generatedSql!)}
+                                            data-testid={`button-run-generated-${block.id}`}
+                                          >
+                                            <Play className="w-3 h-3" />
+                                            Run
+                                          </Button>
+                                        </div>
+                                        <textarea
+                                          value={block.generatedSql}
+                                          onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
+                                          className="w-full p-3 bg-transparent font-mono text-sm resize-none focus:outline-none text-indigo-900/80 min-h-[80px]"
+                                          spellCheck={false}
+                                          data-testid={`textarea-generated-sql-${block.id}`}
+                                        />
+                                      </div>
+                                    )}
                                   </div>
                                 ))}
                                 <Button 
