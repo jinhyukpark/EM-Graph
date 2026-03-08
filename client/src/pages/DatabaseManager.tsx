@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard, Loader2 } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard, Loader2, FileSpreadsheet, FileJson, FileText, Upload } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -179,6 +179,13 @@ export default function DatabaseManager() {
     member: ""
   });
 
+  const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
+  const [createTableStep, setCreateTableStep] = useState<'source' | 'preview' | 'confirm'>('source');
+  const [createTableFileType, setCreateTableFileType] = useState<'csv' | 'excel' | 'json' | null>(null);
+  const [createTableFileName, setCreateTableFileName] = useState("");
+  const [createTableName, setCreateTableName] = useState("");
+  const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
+
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
   const [isCreateGraphDialogOpen, setIsCreateGraphDialogOpen] = useState(false);
   const [newGraphName, setNewGraphName] = useState("");
@@ -202,6 +209,87 @@ export default function DatabaseManager() {
 
   const handleRemoveAccessUser = (userName: string) => {
     setNewGraphAccessUsers(newGraphAccessUsers.filter(u => u !== userName));
+  };
+
+  const MOCK_FILE_FIELDS: Record<string, {name: string, type: string, alias: string}[]> = {
+    'csv': [
+      { name: "id", type: "integer", alias: "" },
+      { name: "incident_date", type: "timestamp", alias: "" },
+      { name: "category", type: "varchar(100)", alias: "" },
+      { name: "description", type: "text", alias: "" },
+      { name: "lat", type: "decimal(10,6)", alias: "" },
+      { name: "lng", type: "decimal(10,6)", alias: "" },
+      { name: "severity_level", type: "integer", alias: "" },
+      { name: "status_code", type: "varchar(20)", alias: "" },
+    ],
+    'excel': [
+      { name: "Record_ID", type: "integer", alias: "" },
+      { name: "Full_Name", type: "varchar(255)", alias: "" },
+      { name: "Department", type: "varchar(100)", alias: "" },
+      { name: "Hire_Date", type: "date", alias: "" },
+      { name: "Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Is_Active", type: "boolean", alias: "" },
+      { name: "Manager_ID", type: "integer", alias: "" },
+      { name: "Email", type: "varchar(255)", alias: "" },
+      { name: "Phone_Number", type: "varchar(20)", alias: "" },
+      { name: "Notes", type: "text", alias: "" },
+    ],
+    'json': [
+      { name: "node_id", type: "uuid", alias: "" },
+      { name: "label", type: "varchar(200)", alias: "" },
+      { name: "properties", type: "jsonb", alias: "" },
+      { name: "created_at", type: "timestamp", alias: "" },
+      { name: "weight", type: "decimal(8,4)", alias: "" },
+      { name: "tags", type: "text[]", alias: "" },
+    ],
+  };
+
+  const handleFileTypeSelect = (fileType: 'csv' | 'excel' | 'json') => {
+    setCreateTableFileType(fileType);
+    const mockNames: Record<string, string> = {
+      csv: "incident_reports_2024.csv",
+      excel: "employee_records.xlsx",
+      json: "graph_nodes_export.json",
+    };
+    setCreateTableFileName(mockNames[fileType]);
+    const baseName = mockNames[fileType].replace(/\.\w+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
+    setCreateTableName(baseName);
+    setCreateTableFields(MOCK_FILE_FIELDS[fileType].map(f => ({ ...f })));
+    setCreateTableStep('preview');
+  };
+
+  const handleCreateTableConfirm = () => {
+    if (!createTableName.trim()) return;
+    const newId = `t-${Date.now()}`;
+    setSidebarItems(prev => {
+      return prev.map(cat => {
+        if (cat.category === 'Table') {
+          return {
+            ...cat,
+            subcategories: cat.subcategories?.map(sub => {
+              if (sub.name === 'Original') {
+                return {
+                  ...sub,
+                  items: [...sub.items, { id: newId, name: createTableName.trim(), icon: TableIcon, type: "table" as const }]
+                };
+              }
+              return sub;
+            })
+          };
+        }
+        return cat;
+      });
+    });
+    setIsCreateTableOpen(false);
+    setCreateTableStep('source');
+    setCreateTableFileType(null);
+    setCreateTableFileName("");
+    setCreateTableName("");
+    setCreateTableFields([]);
+    toast({
+      title: "Table Created",
+      description: `'${createTableName.trim()}' has been added to Original tables.`,
+    });
   };
 
   const handleCreateGraph = () => {
@@ -2360,6 +2448,200 @@ export default function DatabaseManager() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleCreateGraph} disabled={!newGraphName.trim()} data-testid="button-confirm-create-graph">Create Graph</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCreateTableOpen} onOpenChange={(open) => {
+        setIsCreateTableOpen(open);
+        if (!open) {
+          setCreateTableStep('source');
+          setCreateTableFileType(null);
+          setCreateTableFileName("");
+          setCreateTableName("");
+          setCreateTableFields([]);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              {createTableStep === 'source' && 'Create New Table'}
+              {createTableStep === 'preview' && 'Field Configuration'}
+              {createTableStep === 'confirm' && 'Confirm Table Creation'}
+            </DialogTitle>
+            <DialogDescription>
+              {createTableStep === 'source' && 'Select a file format to import data from.'}
+              {createTableStep === 'preview' && `Review detected fields from "${createTableFileName}". You can set aliases for each field.`}
+              {createTableStep === 'confirm' && `Table "${createTableName}" will be created in Original tables.`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {createTableStep === 'source' && (
+            <div className="grid grid-cols-3 gap-3 py-4">
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-green-500 hover:bg-green-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('csv')}
+                data-testid="button-import-csv"
+              >
+                <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">CSV</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Comma-separated</div>
+                </div>
+              </button>
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-blue-500 hover:bg-blue-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('excel')}
+                data-testid="button-import-excel"
+              >
+                <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <FileSpreadsheet className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">Excel</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">.xlsx / .xls</div>
+                </div>
+              </button>
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-amber-500 hover:bg-amber-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('json')}
+                data-testid="button-import-json"
+              >
+                <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                  <FileJson className="w-6 h-6 text-amber-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">JSON</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Structured data</div>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {createTableStep === 'preview' && (
+            <div className="space-y-4 py-2">
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-secondary/30 border border-border">
+                {createTableFileType === 'csv' && <FileText className="w-4 h-4 text-green-600" />}
+                {createTableFileType === 'excel' && <FileSpreadsheet className="w-4 h-4 text-blue-600" />}
+                {createTableFileType === 'json' && <FileJson className="w-4 h-4 text-amber-600" />}
+                <span className="text-sm font-medium">{createTableFileName}</span>
+                <Badge variant="secondary" className="text-[10px] ml-auto">{createTableFields.length} fields detected</Badge>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Table Name</Label>
+                <Input
+                  value={createTableName}
+                  onChange={(e) => setCreateTableName(e.target.value)}
+                  placeholder="Enter table name..."
+                  data-testid="input-create-table-name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fields</Label>
+                <div className="rounded-md border border-border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-secondary/20">
+                        <TableHead className="text-[11px] w-[30px]">#</TableHead>
+                        <TableHead className="text-[11px]">Field Name</TableHead>
+                        <TableHead className="text-[11px]">Type</TableHead>
+                        <TableHead className="text-[11px]">Alias</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {createTableFields.map((field, idx) => (
+                        <TableRow key={idx} className="hover:bg-secondary/10">
+                          <TableCell className="text-[11px] text-muted-foreground font-mono py-1.5">{idx + 1}</TableCell>
+                          <TableCell className="py-1.5">
+                            <span className="text-sm font-mono font-medium">{field.name}</span>
+                          </TableCell>
+                          <TableCell className="py-1.5">
+                            <Badge variant="outline" className="text-[10px] font-mono">{field.type}</Badge>
+                          </TableCell>
+                          <TableCell className="py-1.5">
+                            <Input
+                              value={field.alias}
+                              onChange={(e) => {
+                                const updated = [...createTableFields];
+                                updated[idx] = { ...updated[idx], alias: e.target.value };
+                                setCreateTableFields(updated);
+                              }}
+                              placeholder={field.name}
+                              className="h-7 text-xs"
+                              data-testid={`input-field-alias-${idx}`}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {createTableStep === 'confirm' && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-lg border border-border bg-secondary/10 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Table Name</span>
+                  <span className="text-sm font-medium font-mono">{createTableName}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Source File</span>
+                  <span className="text-sm">{createTableFileName}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Fields</span>
+                  <span className="text-sm">{createTableFields.length} columns</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Destination</span>
+                  <Badge variant="secondary" className="text-[10px]">Original (Source)</Badge>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {createTableFields.filter(f => f.alias.trim()).length > 0 && (
+                  <div className="space-y-1">
+                    <span className="font-medium">Aliases configured:</span>
+                    {createTableFields.filter(f => f.alias.trim()).map((f, i) => (
+                      <div key={i} className="flex items-center gap-1 pl-2">
+                        <span className="font-mono">{f.name}</span>
+                        <ArrowLeft className="w-3 h-3 rotate-180" />
+                        <span className="font-mono text-primary">{f.alias}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            {createTableStep === 'source' && (
+              <Button variant="outline" onClick={() => setIsCreateTableOpen(false)}>Cancel</Button>
+            )}
+            {createTableStep === 'preview' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('source')}>Back</Button>
+                <Button onClick={() => setCreateTableStep('confirm')} disabled={!createTableName.trim()} data-testid="button-next-confirm">
+                  Next
+                </Button>
+              </>
+            )}
+            {createTableStep === 'confirm' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('preview')}>Back</Button>
+                <Button onClick={handleCreateTableConfirm} data-testid="button-create-table-confirm">
+                  <Check className="w-4 h-4 mr-1" />
+                  Create Table
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
