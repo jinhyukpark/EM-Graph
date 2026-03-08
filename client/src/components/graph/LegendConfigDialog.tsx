@@ -91,41 +91,45 @@ function DraggableItem({ item, onUpdate, onRemove }: { item: LegendItem, onUpdat
           </SelectContent>
         </Select>
 
-        {/* Value/Range Input */}
-        {isRange ? (
-          <div className="flex items-center gap-1 flex-1 min-w-0">
+        {/* Value/Range Input - fixed width to align with other rows */}
+        <div className="w-[140px] shrink-0">
+          {isRange ? (
+            <div className="flex items-center gap-1">
+              <Input 
+                type="number"
+                value={item.min ?? 0} 
+                onChange={(e) => onUpdate(item.id, { min: Number(e.target.value), label: `${e.target.value}~${item.max ?? 100}` })}
+                className="h-7 text-xs flex-1 px-1.5"
+                placeholder="Min"
+              />
+              <span className="text-muted-foreground text-xs shrink-0">~</span>
+              <Input 
+                type="number"
+                value={item.max ?? 100} 
+                onChange={(e) => onUpdate(item.id, { max: Number(e.target.value), label: `${item.min ?? 0}~${e.target.value}` })}
+                className="h-7 text-xs flex-1 px-1.5"
+                placeholder="Max"
+              />
+            </div>
+          ) : (
             <Input 
-              type="number"
-              value={item.min ?? 0} 
-              onChange={(e) => onUpdate(item.id, { min: Number(e.target.value), label: `${e.target.value}~${item.max ?? 100}` })}
-              className="h-7 text-xs w-14 px-1.5"
-              placeholder="Min"
+              value={item.label} 
+              onChange={(e) => onUpdate(item.id, { label: e.target.value })}
+              className="h-7 text-xs"
+              placeholder="Category"
             />
-            <span className="text-muted-foreground text-xs shrink-0">~</span>
-            <Input 
-              type="number"
-              value={item.max ?? 100} 
-              onChange={(e) => onUpdate(item.id, { max: Number(e.target.value), label: `${item.min ?? 0}~${e.target.value}` })}
-              className="h-7 text-xs w-14 px-1.5"
-              placeholder="Max"
-            />
-          </div>
-        ) : (
-          <Input 
-            value={item.label} 
-            onChange={(e) => onUpdate(item.id, { label: e.target.value })}
-            className="h-7 text-xs flex-1 min-w-0"
-            placeholder="Category"
-          />
-        )}
+          )}
+        </div>
 
-        {/* Alias Input */}
-        <Input 
-          value={item.alias || ""} 
-          onChange={(e) => onUpdate(item.id, { alias: e.target.value })}
-          className="h-7 text-xs flex-1 min-w-0"
-          placeholder="Alias"
-        />
+        {/* Alias Input - fixed width to align */}
+        <div className="w-[140px] shrink-0">
+          <Input 
+            value={item.alias || ""} 
+            onChange={(e) => onUpdate(item.id, { alias: e.target.value })}
+            className="h-7 text-xs"
+            placeholder="Alias"
+          />
+        </div>
 
         {/* Delete Button */}
         <Button 
@@ -220,8 +224,8 @@ export function LegendConfigDialog({ open, onOpenChange, items, onSave, fieldNam
                 <div className="w-4"></div>
                 <div className="w-6">Color</div>
                 <div className="w-[80px]">Type</div>
-                <div className="flex-1">Value/Range</div>
-                <div className="flex-1">Alias</div>
+                <div className="w-[140px]">Value/Range</div>
+                <div className="w-[140px]">Alias</div>
                 <div className="w-7"></div>
              </div>
              
