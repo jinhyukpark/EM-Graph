@@ -2254,14 +2254,8 @@ export default function DatabaseManager() {
                                         <TableCell className="font-medium">{row.type}</TableCell>
                                         <TableCell>{row.location}</TableCell>
                                         <TableCell className="text-muted-foreground text-xs">{row.time}</TableCell>
-                                        <TableCell>
-                                          <Badge variant={row.severity > 5 ? "destructive" : "secondary"} className="text-[10px]">
-                                            Level {row.severity}
-                                          </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                           <Badge variant="outline" className="text-[10px]">{row.status}</Badge>
-                                        </TableCell>
+                                        <TableCell className="text-sm">{row.severity}</TableCell>
+                                        <TableCell className="text-sm">{row.status}</TableCell>
                                         <TableCell>
                                           <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
                                             <Trash2 className="w-3 h-3" />
