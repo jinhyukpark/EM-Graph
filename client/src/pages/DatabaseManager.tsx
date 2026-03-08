@@ -1160,7 +1160,9 @@ export default function DatabaseManager() {
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
                               </div>
-                              <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50">
+                              <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50" onClick={() => {
+                                toast({ title: "Saved", description: "Changes have been saved successfully.", duration: 2000 });
+                              }}>
                                 <Save className="w-4 h-4" />
                                 <span className="font-semibold">Save Changes</span>
                               </Button>
