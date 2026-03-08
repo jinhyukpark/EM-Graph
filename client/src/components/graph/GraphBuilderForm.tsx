@@ -92,9 +92,9 @@ export default function GraphBuilderForm() {
                   </Select>
                 </div>
                 
-                <div className="col-span-8 grid grid-cols-3 gap-4">
+                <div className="col-span-8">
                   <div className="space-y-2">
-                    <Label className="text-xs font-medium text-muted-foreground">Label Field</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
                     <Select defaultValue={node.labelField}>
                       <SelectTrigger className="h-9">
                         <SelectValue placeholder="Select Field" />
@@ -103,32 +103,6 @@ export default function GraphBuilderForm() {
                         <SelectItem value="type">type</SelectItem>
                         <SelectItem value="name">name</SelectItem>
                         <SelectItem value="id">id</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium text-muted-foreground">Size Metric</Label>
-                    <Select defaultValue={node.sizeField}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select Metric" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="severity">severity</SelectItem>
-                        <SelectItem value="age">age</SelectItem>
-                        <SelectItem value="none">None (Fixed)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium text-muted-foreground">Color Metric</Label>
-                    <Select defaultValue={node.colorField}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select Metric" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="severity">severity</SelectItem>
-                        <SelectItem value="status">status</SelectItem>
-                        <SelectItem value="age">age</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
