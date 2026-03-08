@@ -2340,13 +2340,14 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                             <div className="flex items-center gap-1.5">
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Min</span>
-                                                    <Input type="number" defaultValue="0" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="0" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
                                                 <span className="text-muted-foreground text-xs">-</span>
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Max</span>
-                                                    <Input type="number" defaultValue="100" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="100" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
+                                                <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] font-medium" data-testid="button-apply-risk-score">Apply</Button>
                                             </div>
                                         </div>
                                     </div>
@@ -2360,13 +2361,14 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                             <div className="flex items-center gap-1.5">
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Min</span>
-                                                    <Input type="number" defaultValue="18" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="18" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
                                                 <span className="text-muted-foreground text-xs">-</span>
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Max</span>
-                                                    <Input type="number" defaultValue="80" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="80" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
+                                                <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] font-medium" data-testid="button-apply-age">Apply</Button>
                                             </div>
                                         </div>
                                     </div>
@@ -2419,7 +2421,7 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                                                 Clearance Rate (%)
                                             </div>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-1.5">
                                                 <div className="relative w-12">
                                                     <Input 
                                                         type="number" 
@@ -2435,6 +2437,7 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                                         className="h-6 text-[10px] px-1 text-center bg-background focus:ring-1 focus:ring-primary border-transparent hover:border-border focus:border-primary transition-colors" 
                                                     />
                                                 </div>
+                                                <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] font-medium" data-testid="button-apply-clearance">Apply</Button>
                                             </div>
                                         </div>
                                         
@@ -2504,13 +2507,14 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                             <div className="flex items-center gap-1.5">
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Min</span>
-                                                    <Input type="number" defaultValue="0" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="0" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
                                                 <span className="text-muted-foreground text-xs">-</span>
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-[9px] text-muted-foreground">Max</span>
-                                                    <Input type="number" defaultValue="90" className="h-6 w-16 text-xs bg-background px-1.5" />
+                                                    <Input type="number" defaultValue="90" className="h-6 w-14 text-xs bg-background px-1.5" />
                                                 </div>
+                                                <Button size="sm" variant="outline" className="h-6 px-2 text-[10px] font-medium" data-testid="button-apply-occupancy">Apply</Button>
                                             </div>
                                         </div>
                                     </div>
