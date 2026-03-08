@@ -2195,11 +2195,20 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
 
                                                 {/* Conditional Settings based on Control Type */}
                                                 {(filter.controlType === 'range' || filter.controlType === 'input') && (
-                                                    <div className="bg-secondary/10 p-2 rounded-md space-y-2">
+                                                    <div className="bg-secondary/10 p-2.5 rounded-md space-y-2.5">
                                                         <Label className="text-[10px] text-muted-foreground font-medium">Range Settings</Label>
+                                                        {filter.controlType === 'range' && (
+                                                            <Slider 
+                                                                defaultValue={[filter.min ?? 0, filter.max ?? 100]} 
+                                                                min={filter.min ?? 0}
+                                                                max={filter.max ?? 100} 
+                                                                step={1} 
+                                                                className="py-1" 
+                                                            />
+                                                        )}
                                                         <div className="flex items-center gap-2">
-                                                            <div className="space-y-1 flex-1">
-                                                                <Label className="text-[10px] text-muted-foreground">Min</Label>
+                                                            <div className="flex items-center gap-1.5 flex-1">
+                                                                <Label className="text-[10px] text-muted-foreground shrink-0">Min</Label>
                                                                 <Input 
                                                                     type="number" 
                                                                     defaultValue={filter.min} 
@@ -2207,8 +2216,9 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                                                     onChange={(e) => updateFilterRange(key, filter.id, 'min', e.target.value)}
                                                                 />
                                                             </div>
-                                                            <div className="space-y-1 flex-1">
-                                                                <Label className="text-[10px] text-muted-foreground">Max</Label>
+                                                            <span className="text-muted-foreground text-xs">-</span>
+                                                            <div className="flex items-center gap-1.5 flex-1">
+                                                                <Label className="text-[10px] text-muted-foreground shrink-0">Max</Label>
                                                                 <Input 
                                                                     type="number" 
                                                                     defaultValue={filter.max} 
