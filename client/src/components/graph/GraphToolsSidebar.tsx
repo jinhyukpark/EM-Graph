@@ -2275,7 +2275,7 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                 ) : (
                   <>
                 {/* Node Type Filters Section (Carousel) */}
-                <div className="space-y-3 max-w-full relative overflow-hidden">
+                <div className="space-y-2 max-w-full relative overflow-hidden">
                     <div className="pr-4">
                         <SectionHeader 
                             icon={Filter} 
@@ -2286,7 +2286,7 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                     </div>
                     
                     {!isNodeFiltersHidden && (
-                    <ScrollArea className="w-full pb-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <ScrollArea className="w-full animate-in fade-in slide-in-from-top-2 duration-300">
                         <div className="flex space-x-1">
                             {[
                               { id: 'all', label: 'All Types' },
@@ -2316,9 +2316,9 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                 <Separator />
 
                 {/* Property Filters Section */}
-                <div className="space-y-3 relative">
+                <div className="space-y-2 relative">
                     <div>
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center justify-between mb-2">
                             <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                                 <Sliders className="w-4 h-4 text-primary" /> Property Filters
                             </h4>
