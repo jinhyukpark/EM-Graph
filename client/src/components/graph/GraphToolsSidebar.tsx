@@ -2112,6 +2112,24 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                             </button>
                                         </div>
                                     ))}
+                                    <button
+                                        onClick={() => {
+                                            const newKey = `category_${Date.now()}`;
+                                            setNodeFilterConfig(prev => ({
+                                                ...prev,
+                                                [newKey]: {
+                                                    type: `New Category`,
+                                                    color: 'bg-gray-500',
+                                                    filters: []
+                                                }
+                                            }));
+                                            setActiveFilterCategory(newKey);
+                                        }}
+                                        className="px-3 py-2 text-xs font-medium whitespace-nowrap cursor-pointer transition-all border-b-2 -mb-px border-transparent text-muted-foreground/50 hover:text-primary hover:border-primary/30 flex items-center gap-1"
+                                    >
+                                        <PlusCircle className="w-3 h-3" />
+                                        <span>Add</span>
+                                    </button>
                                 </div>
                             </ScrollArea>
 
