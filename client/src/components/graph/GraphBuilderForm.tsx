@@ -1,10 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, X, Plus, GripVertical, Trash2, Settings, Circle, Info, Table as TableIcon } from "lucide-react";
+import { Database, Network, ArrowRight, X, Plus, GripVertical, Trash2, Settings, Circle, Info, Table as TableIcon, Eye } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  Handle,
+  Position,
+  type Node as FlowNode,
+  type Edge as FlowEdge,
+  MarkerType,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
 interface Link {
   id: string;
@@ -22,6 +33,39 @@ interface NodeConfig {
   colorField: string;
   icon: string;
 }
+
+const nodeColors: Record<string, { bg: string; border: string; text: string }> = {
+  "crime_incidents_2024": { bg: "#EEF2FF", border: "#818CF8", text: "#4338CA" },
+  "suspect_profiles": { bg: "#F0FDF4", border: "#4ADE80", text: "#15803D" },
+  "location_hotspots": { bg: "#FFF7ED", border: "#FB923C", text: "#C2410C" },
+  "supply_chain_nodes": { bg: "#FDF2F8", border: "#F472B6", text: "#BE185D" },
+};
+
+const defaultColor = { bg: "#F8FAFC", border: "#94A3B8", text: "#475569" };
+
+function PreviewNode({ data }: { data: { label: string; field: string; color: { bg: string; border: string; text: string } } }) {
+  return (
+    <div
+      className="rounded-xl px-5 py-3 shadow-md border-2 min-w-[140px] text-center"
+      style={{ background: data.color.bg, borderColor: data.color.border }}
+    >
+      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="target" position={Position.Left} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <Handle type="source" position={Position.Right} className="!bg-transparent !border-0 !w-0 !h-0" />
+      <div className="text-[11px] font-bold tracking-wide" style={{ color: data.color.text }}>
+        {data.label}
+      </div>
+      {data.field && (
+        <div className="text-[9px] mt-1 opacity-70 font-medium" style={{ color: data.color.text }}>
+          field: {data.field}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const previewNodeTypes = { preview: PreviewNode };
 
 function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id: string) => void }) {
   const dragControls = useDragControls();
@@ -196,8 +240,94 @@ export default function GraphBuilderForm() {
     setNodes(nodes.filter(n => n.id !== id));
   };
 
+  const { flowNodes, flowEdges } = useMemo(() => {
+    const validNodes = nodes.filter(n => n.table);
+    const tableToNodeId = new Map<string, string>();
+    validNodes.forEach(n => {
+      if (!tableToNodeId.has(n.table)) {
+        tableToNodeId.set(n.table, n.id);
+      }
+    });
+
+    const uniqueTables = Array.from(tableToNodeId.keys());
+    const angleStep = (2 * Math.PI) / Math.max(uniqueTables.length, 1);
+    const radius = Math.max(120, uniqueTables.length * 60);
+    const centerX = 300;
+    const centerY = 150;
+
+    const fNodes: FlowNode[] = uniqueTables.map((table, i) => {
+      const nodeConfig = validNodes.find(n => n.table === table);
+      const color = nodeColors[table] || defaultColor;
+      const angle = angleStep * i - Math.PI / 2;
+      return {
+        id: tableToNodeId.get(table)!,
+        type: "preview",
+        position: {
+          x: centerX + radius * Math.cos(angle) - 70,
+          y: centerY + radius * Math.sin(angle) - 25,
+        },
+        data: {
+          label: table,
+          field: nodeConfig?.labelField || "",
+          color,
+        },
+      };
+    });
+
+    const fEdges: FlowEdge[] = links
+      .filter(l => l.sourceTable && l.targetTable && tableToNodeId.has(l.sourceTable) && tableToNodeId.has(l.targetTable))
+      .map((l) => ({
+        id: `edge-${l.id}`,
+        source: tableToNodeId.get(l.sourceTable)!,
+        target: tableToNodeId.get(l.targetTable)!,
+        label: `${l.sourceColumn} → ${l.targetColumn}`,
+        labelStyle: { fontSize: 10, fill: "#64748B", fontWeight: 500 },
+        labelBgStyle: { fill: "#F8FAFC", fillOpacity: 0.9 },
+        labelBgPadding: [6, 3] as [number, number],
+        labelBgBorderRadius: 4,
+        style: { stroke: "#94A3B8", strokeWidth: 2 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#94A3B8", width: 16, height: 16 },
+        animated: true,
+      }));
+
+    return { flowNodes: fNodes, flowEdges: fEdges };
+  }, [nodes, links]);
+
   return (
     <div className="space-y-6 pb-20">
+      {(flowNodes.length > 0) && (
+        <Card className="border-none shadow-sm overflow-hidden">
+          <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Eye className="w-4 h-4 text-slate-500" />
+              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Graph Preview</h3>
+            </div>
+            <div className="text-[10px] text-slate-400 font-medium">
+              {flowNodes.length} node{flowNodes.length !== 1 ? 's' : ''} · {flowEdges.length} link{flowEdges.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+          <div className="h-[280px] bg-white" data-testid="graph-preview">
+            <ReactFlow
+              nodes={flowNodes}
+              edges={flowEdges}
+              nodeTypes={previewNodeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.4 }}
+              proOptions={{ hideAttribution: true }}
+              nodesDraggable={true}
+              nodesConnectable={false}
+              elementsSelectable={false}
+              panOnDrag={true}
+              zoomOnScroll={true}
+              minZoom={0.3}
+              maxZoom={1.5}
+            >
+              <Background color="#E2E8F0" gap={20} size={1} />
+            </ReactFlow>
+          </div>
+        </Card>
+      )}
+
       <Card className="border-none shadow-sm overflow-hidden">
         <div className="bg-indigo-600/5 px-6 py-4 border-b border-indigo-100/50 flex items-center justify-between">
           <div className="flex items-center gap-3">
