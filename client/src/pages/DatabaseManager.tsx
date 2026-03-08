@@ -150,10 +150,7 @@ export default function DatabaseManager() {
   ]);
   const [activeTabId, setActiveTabId] = useState('t1');
   const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string, isConverting?: boolean}[]>([
-    { id: '1', sql: "Query all crime incidents with severity greater than 5", title: "SELECT Query", type: 'custom' },
-    { id: '2', sql: "Add a new robbery incident in Downtown area with severity 8", title: "INSERT Query", type: 'custom' },
-    { id: '3', sql: "Update all open cases in West End to investigating status", title: "UPDATE Query", type: 'custom' },
-    { id: '4', sql: "Delete all resolved cases older than 2024-06-01", title: "DELETE Query", type: 'custom' }
+    { id: '1', sql: "Query all crime incidents with severity greater than 5\nAdd a new robbery incident in Downtown area with severity 8\nUpdate all open cases in West End to investigating status\nDelete all resolved cases older than 2024-06-01", title: "Natural Language Query", type: 'custom' }
   ]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
@@ -388,6 +385,45 @@ export default function DatabaseManager() {
     setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, sql: newSql, generatedSql: undefined } : b));
   };
 
+  const convertSingleLine = (input: string): string => {
+    const lower = input.trim().toLowerCase();
+    if (!lower) return "";
+
+    if ((lower.includes("severity") && lower.includes("5")) || (lower.includes("greater") && lower.includes("5"))) {
+      return "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
+    } else if (lower.includes("add") || lower.includes("insert") || lower.includes("new") || lower.includes("create") || lower.includes("추가") || lower.includes("생성")) {
+      const type = lower.includes("robbery") ? "Robbery" : lower.includes("theft") ? "Theft" : lower.includes("assault") ? "Assault" : "Fraud";
+      const location = lower.includes("downtown") ? "Downtown" : lower.includes("west end") ? "West End" : lower.includes("harbor") ? "Harbor Area" : "Central Station";
+      const severity = lower.match(/severity\s*(\d+)/)?.[1] || "5";
+      return `INSERT INTO crime_incidents_2024 (type, location, time, severity, status)\nVALUES ('${type}', '${location}', NOW(), ${severity}, 'Open')\nRETURNING *;`;
+    } else if (lower.includes("update") || lower.includes("set") || lower.includes("change") || lower.includes("수정") || lower.includes("변경")) {
+      const newStatus = lower.includes("investigating") ? "Investigating" : lower.includes("closed") ? "Closed" : lower.includes("resolved") ? "Resolved" : "Pending";
+      const oldStatus = lower.includes("open") ? "Open" : lower.includes("pending") ? "Pending" : null;
+      const loc = lower.includes("west end") ? "West End" : lower.includes("downtown") ? "Downtown" : null;
+      let whereClause = "WHERE 1=1";
+      if (oldStatus) whereClause = `WHERE status = '${oldStatus}'`;
+      if (loc) whereClause += `\n  AND location = '${loc}'`;
+      return `UPDATE crime_incidents_2024\nSET status = '${newStatus}', updated_at = NOW()\n${whereClause};`;
+    } else if (lower.includes("delete") || lower.includes("remove") || lower.includes("drop") || lower.includes("삭제") || lower.includes("제거")) {
+      const status = lower.includes("resolved") ? "Resolved" : lower.includes("closed") ? "Closed" : null;
+      const dateMatch = lower.match(/(\d{4}-\d{2}-\d{2})/);
+      let whereClause = "WHERE 1=1";
+      if (status) whereClause = `WHERE status = '${status}'`;
+      if (dateMatch) whereClause += `\n  AND time < '${dateMatch[1]}'`;
+      return `DELETE FROM crime_incidents_2024\n${whereClause};`;
+    } else if (lower.includes("count") || lower.includes("개수") || lower.includes("건수")) {
+      return "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
+    } else if (lower.includes("join") || lower.includes("연결") || lower.includes("결합")) {
+      return "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
+    } else if (lower.includes("location") || lower.includes("위치") || lower.includes("지역")) {
+      return "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
+    } else if (lower.includes("all") || lower.includes("전체") || lower.includes("모든")) {
+      return "SELECT * FROM crime_incidents_2024\nORDER BY id ASC\nLIMIT 100;";
+    } else {
+      return `-- Generated from: "${input.trim()}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
+    }
+  };
+
   const convertNaturalLanguageToSql = (id: string) => {
     const block = queryBlocks.find(b => b.id === id);
     if (!block || !block.sql.trim()) return;
@@ -395,42 +431,9 @@ export default function DatabaseManager() {
     setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, isConverting: true, generatedSql: undefined } : b));
 
     setTimeout(() => {
-      const input = block.sql.trim().toLowerCase();
-      let generatedSql = "";
-
-      if ((input.includes("severity") && input.includes("5")) || (input.includes("greater") && input.includes("5"))) {
-        generatedSql = "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
-      } else if (input.includes("add") || input.includes("insert") || input.includes("new") || input.includes("create") || input.includes("추가") || input.includes("생성")) {
-        const type = input.includes("robbery") ? "Robbery" : input.includes("theft") ? "Theft" : input.includes("assault") ? "Assault" : "Fraud";
-        const location = input.includes("downtown") ? "Downtown" : input.includes("west end") ? "West End" : input.includes("harbor") ? "Harbor Area" : "Central Station";
-        const severity = input.match(/severity\s*(\d+)/)?.[1] || "5";
-        generatedSql = `INSERT INTO crime_incidents_2024 (type, location, time, severity, status)\nVALUES ('${type}', '${location}', NOW(), ${severity}, 'Open')\nRETURNING *;`;
-      } else if (input.includes("update") || input.includes("set") || input.includes("change") || input.includes("수정") || input.includes("변경")) {
-        const newStatus = input.includes("investigating") ? "Investigating" : input.includes("closed") ? "Closed" : input.includes("resolved") ? "Resolved" : "Pending";
-        const oldStatus = input.includes("open") ? "Open" : input.includes("pending") ? "Pending" : null;
-        const location = input.includes("west end") ? "West End" : input.includes("downtown") ? "Downtown" : null;
-        let whereClause = "WHERE 1=1";
-        if (oldStatus) whereClause = `WHERE status = '${oldStatus}'`;
-        if (location) whereClause += `\n  AND location = '${location}'`;
-        generatedSql = `UPDATE crime_incidents_2024\nSET status = '${newStatus}', updated_at = NOW()\n${whereClause};`;
-      } else if (input.includes("delete") || input.includes("remove") || input.includes("drop") || input.includes("삭제") || input.includes("제거")) {
-        const status = input.includes("resolved") ? "Resolved" : input.includes("closed") ? "Closed" : null;
-        const dateMatch = input.match(/(\d{4}-\d{2}-\d{2})/);
-        let whereClause = "WHERE 1=1";
-        if (status) whereClause = `WHERE status = '${status}'`;
-        if (dateMatch) whereClause += `\n  AND time < '${dateMatch[1]}'`;
-        generatedSql = `DELETE FROM crime_incidents_2024\n${whereClause};`;
-      } else if (input.includes("count") || input.includes("개수") || input.includes("건수")) {
-        generatedSql = "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
-      } else if (input.includes("join") || input.includes("연결") || input.includes("결합")) {
-        generatedSql = "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
-      } else if (input.includes("location") || input.includes("위치") || input.includes("지역")) {
-        generatedSql = "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
-      } else if (input.includes("all") || input.includes("전체") || input.includes("모든")) {
-        generatedSql = "SELECT * FROM crime_incidents_2024\nORDER BY id ASC\nLIMIT 100;";
-      } else {
-        generatedSql = `-- Generated from: "${block.sql}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
-      }
+      const lines = block.sql.split('\n').filter(l => l.trim());
+      const sqlParts = lines.map(line => convertSingleLine(line));
+      const generatedSql = sqlParts.filter(Boolean).join('\n\n');
 
       setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, generatedSql, isConverting: false } : b));
     }, 800);
@@ -1981,10 +1984,6 @@ export default function DatabaseManager() {
                                         <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" onClick={() => handleRunQuery(block.generatedSql || block.sql)}>
                                           <Play className="w-3 h-3" /> 
                                         </Button>
-                                        <div className="w-px h-3 bg-border mx-1" />
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeQueryBlock(block.id)}>
-                                          <Trash2 className="w-3 h-3" /> 
-                                        </Button>
                                       </div>
                                     </div>
                                     <div className="border-t border-border/50 bg-muted/20">
@@ -2035,14 +2034,6 @@ export default function DatabaseManager() {
                                     </div>
                                   </div>
                                 ))}
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="w-full border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-primary/50"
-                                  onClick={() => setQueryBlocks([...queryBlocks, { id: Date.now().toString(), sql: "", title: "New Query", type: 'custom' }])}
-                                >
-                                  <Plus className="w-4 h-4 mr-2" /> Add Query Block
-                                </Button>
                               </div>
                             </ScrollArea>
                           </div>
