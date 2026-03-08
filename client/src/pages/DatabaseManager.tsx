@@ -2108,57 +2108,6 @@ export default function DatabaseManager() {
                 data-testid="input-graph-name"
               />
             </div>
-            <div className="space-y-2">
-              <Label>Accessible Users</Label>
-              <div className="relative">
-                <Input
-                  placeholder="Search or add a user..."
-                  value={newGraphUserInput}
-                  onChange={(e) => setNewGraphUserInput(e.target.value)}
-                  data-testid="input-graph-user-search"
-                />
-                {newGraphUserInput.trim() && (
-                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-lg max-h-[160px] overflow-y-auto">
-                    {availableUsers
-                      .filter(u => u.name.toLowerCase().includes(newGraphUserInput.toLowerCase()) && !newGraphAccessUsers.includes(u.name))
-                      .map(u => (
-                        <div
-                          key={u.name}
-                          className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer text-sm"
-                          onClick={() => handleAddAccessUser(u.name)}
-                          data-testid={`option-user-${u.name.replace(/\s/g, '-').toLowerCase()}`}
-                        >
-                          <img src={u.avatar} alt={u.name} className="w-6 h-6 rounded-full" />
-                          <span>{u.name}</span>
-                        </div>
-                      ))}
-                    {availableUsers.filter(u => u.name.toLowerCase().includes(newGraphUserInput.toLowerCase()) && !newGraphAccessUsers.includes(u.name)).length === 0 && (
-                      <div className="px-3 py-2 text-xs text-muted-foreground">No matching users</div>
-                    )}
-                  </div>
-                )}
-              </div>
-              {newGraphAccessUsers.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {newGraphAccessUsers.map(userName => {
-                    const user = availableUsers.find(u => u.name === userName);
-                    return (
-                      <Badge key={userName} variant="secondary" className="pl-1 pr-1 py-1 gap-1.5 text-xs">
-                        <img src={user?.avatar || `https://i.pravatar.cc/150?u=${userName}`} alt={userName} className="w-5 h-5 rounded-full" />
-                        {userName}
-                        <button
-                          onClick={() => handleRemoveAccessUser(userName)}
-                          className="ml-0.5 hover:text-destructive transition-colors"
-                          data-testid={`remove-user-${userName.replace(/\s/g, '-').toLowerCase()}`}
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </Badge>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>Cancel</Button>
