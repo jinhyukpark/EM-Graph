@@ -159,6 +159,7 @@ export default function DatabaseManager() {
   const [queryResultType, setQueryResultType] = useState<'select' | 'insert' | 'update' | 'delete'>('select');
   const [queryResultMessage, setQueryResultMessage] = useState<string>("");
   const [hasTextSelection, setHasTextSelection] = useState(false);
+  const [selectedText, setSelectedText] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -592,74 +593,93 @@ export default function DatabaseManager() {
 
   const handleRunQuery = (sql: string) => {
     setIsExecuting(true);
-    const sqlUpper = sql.trim().toUpperCase();
     const actualSql = sql.trim();
+
+    const statements = actualSql.split(/;\s*/).map(s => s.trim()).filter(Boolean);
 
     setTimeout(() => {
       setExecutedQuerySql(actualSql);
 
-      if (sqlUpper.startsWith("INSERT")) {
-        setQueryResultType('insert');
-        const typeMatch = actualSql.match(/VALUES\s*\(\s*'([^']+)'/i);
-        const locMatch = actualSql.match(/VALUES\s*\([^,]+,\s*'([^']+)'/i);
-        const newRow = {
-          id: 101,
-          type: typeMatch?.[1] || "Unknown",
-          location: locMatch?.[1] || "Unknown",
-          time: new Date().toISOString().replace('T', ' ').substring(0, 16),
-          severity: 8,
-          status: "Open"
-        };
-        setQueryData([newRow]);
-        setQueryResultMessage("1 row inserted successfully.");
-      } else if (sqlUpper.startsWith("UPDATE")) {
-        setQueryResultType('update');
-        const statusMatch = actualSql.match(/SET\s+status\s*=\s*'([^']+)'/i);
-        const whereStatusMatch = actualSql.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
-        const whereLocMatch = actualSql.match(/location\s*=\s*'([^']+)'/i);
-        const newStatus = statusMatch?.[1] || "Updated";
-        let affected = MOCK_QUERY_DATA.filter(r => {
-          let match = true;
-          if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
-          if (whereLocMatch) match = match && r.location === whereLocMatch[1];
-          return match;
-        });
-        const updatedRows = affected.map(r => ({ ...r, status: newStatus }));
-        setQueryData(updatedRows.length > 0 ? updatedRows : [{ id: 0, type: "-", location: "-", time: "-", severity: 0, status: newStatus }]);
-        setQueryResultMessage(`${updatedRows.length} row(s) updated. Status changed to '${newStatus}'.`);
-      } else if (sqlUpper.startsWith("DELETE")) {
-        setQueryResultType('delete');
-        const whereStatusMatch = actualSql.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
-        const dateMatch = actualSql.match(/time\s*<\s*'([^']+)'/i);
-        let affected = MOCK_QUERY_DATA.filter(r => {
-          let match = true;
-          if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
-          if (dateMatch) match = match && r.time < dateMatch[1];
-          return match;
-        });
-        setQueryData(affected);
-        setQueryResultMessage(`${affected.length} row(s) deleted successfully.`);
-      } else {
-        setQueryResultType('select');
-        if (sqlUpper.includes("SEVERITY > 5")) {
-          const filtered = MOCK_QUERY_DATA.filter(r => r.severity > 5);
-          setQueryData(filtered);
-          setQueryResultMessage("");
-        } else if (sqlUpper.includes("GROUP BY")) {
-          setQueryData(MOCK_QUERY_DATA);
-          setQueryResultMessage("");
+      if (statements.length === 0) {
+        setIsExecuting(false);
+        return;
+      }
+
+      const results: { type: string; message: string; time: number }[] = [];
+      let lastSelectData: typeof MOCK_QUERY_DATA | null = null;
+      let hasSelect = false;
+
+      for (const stmt of statements) {
+        const upper = stmt.toUpperCase();
+        const execTime = Math.floor(Math.random() * 80) + 10;
+
+        if (upper.startsWith("SELECT")) {
+          hasSelect = true;
+          if (upper.includes("SEVERITY > 5")) {
+            lastSelectData = MOCK_QUERY_DATA.filter(r => r.severity > 5);
+          } else {
+            lastSelectData = MOCK_QUERY_DATA;
+          }
+          results.push({ type: "SELECT", message: `${lastSelectData.length} rows returned`, time: execTime });
+        } else if (upper.startsWith("INSERT")) {
+          const typeMatch = stmt.match(/VALUES\s*\(\s*'([^']+)'/i);
+          const locMatch = stmt.match(/VALUES\s*\([^,]+,\s*'([^']+)'/i);
+          const insertedType = typeMatch?.[1] || "Unknown";
+          const insertedLoc = locMatch?.[1] || "Unknown";
+          results.push({ type: "INSERT", message: `1 row inserted (type: '${insertedType}', location: '${insertedLoc}')`, time: execTime });
+        } else if (upper.startsWith("UPDATE")) {
+          const statusMatch = stmt.match(/SET\s+status\s*=\s*'([^']+)'/i);
+          const whereStatusMatch = stmt.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+          const whereLocMatch = stmt.match(/location\s*=\s*'([^']+)'/i);
+          const newStatus = statusMatch?.[1] || "Updated";
+          let count = MOCK_QUERY_DATA.filter(r => {
+            let match = true;
+            if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+            if (whereLocMatch) match = match && r.location === whereLocMatch[1];
+            return match;
+          }).length;
+          if (count === 0) count = Math.floor(Math.random() * 15) + 3;
+          results.push({ type: "UPDATE", message: `${count} row(s) updated — status set to '${newStatus}'`, time: execTime });
+        } else if (upper.startsWith("DELETE")) {
+          const whereStatusMatch = stmt.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+          const dateMatch = stmt.match(/time\s*<\s*'([^']+)'/i);
+          let count = MOCK_QUERY_DATA.filter(r => {
+            let match = true;
+            if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+            if (dateMatch) match = match && r.time < dateMatch[1];
+            return match;
+          }).length;
+          if (count === 0) count = Math.floor(Math.random() * 20) + 1;
+          results.push({ type: "DELETE", message: `${count} row(s) deleted`, time: execTime });
         } else {
-          setQueryData(MOCK_QUERY_DATA);
-          setQueryResultMessage("");
+          results.push({ type: "QUERY", message: `Statement executed`, time: execTime });
         }
+      }
+
+      const totalTime = results.reduce((sum, r) => sum + r.time, 0);
+
+      if (hasSelect && lastSelectData) {
+        setQueryResultType('select');
+        setQueryData(lastSelectData);
+        const nonSelectResults = results.filter(r => r.type !== "SELECT");
+        if (nonSelectResults.length > 0) {
+          const msgs = results.map(r => `[${r.type}] ${r.message} (${r.time}ms)`);
+          setQueryResultMessage(msgs.join('\n'));
+        } else {
+          setQueryResultMessage(`${lastSelectData.length} rows returned in ${totalTime}ms`);
+        }
+      } else {
+        setQueryResultType(results[results.length - 1].type.toLowerCase() as any);
+        setQueryData([]);
+        const msgs = results.map(r => `[${r.type}] ${r.message} (${r.time}ms)`);
+        setQueryResultMessage(msgs.join('\n'));
       }
 
       setQueryCurrentPage(1);
       setIsExecuting(false);
-      const resultType = sqlUpper.startsWith("INSERT") ? "INSERT" : sqlUpper.startsWith("UPDATE") ? "UPDATE" : sqlUpper.startsWith("DELETE") ? "DELETE" : "SELECT";
       toast({
         title: "Query Executed Successfully",
-        description: `${resultType} completed in 45ms`,
+        description: `${statements.length} statement(s) completed in ${totalTime}ms`,
       });
     }, 800);
   };
@@ -2002,7 +2022,10 @@ export default function DatabaseManager() {
                                         variant="ghost"
                                         size="icon"
                                         className="h-6 w-6 text-green-400 hover:text-green-300 hover:bg-green-500/20"
-                                        onClick={() => handleRunQuery(block.generatedSql || block.sql)}
+                                        onClick={() => {
+                                          const textToRun = selectedText.trim() || block.generatedSql || block.sql;
+                                          handleRunQuery(textToRun);
+                                        }}
                                         data-testid={`button-run-query-${block.id}`}
                                       >
                                         <Play className="w-3 h-3" />
@@ -2030,11 +2053,17 @@ export default function DatabaseManager() {
                                           onChange={(e) => updateQueryBlock(block.id, e.target.value)}
                                           onSelect={(e) => {
                                             const target = e.target as HTMLTextAreaElement;
-                                            setHasTextSelection(target.selectionStart !== target.selectionEnd);
+                                            const hasSel = target.selectionStart !== target.selectionEnd;
+                                            setHasTextSelection(hasSel);
+                                            setSelectedText(hasSel ? target.value.substring(target.selectionStart, target.selectionEnd) : "");
                                           }}
                                           onMouseUp={(e) => {
                                             const target = e.target as HTMLTextAreaElement;
-                                            setTimeout(() => setHasTextSelection(target.selectionStart !== target.selectionEnd), 0);
+                                            setTimeout(() => {
+                                              const hasSel = target.selectionStart !== target.selectionEnd;
+                                              setHasTextSelection(hasSel);
+                                              setSelectedText(hasSel ? target.value.substring(target.selectionStart, target.selectionEnd) : "");
+                                            }, 0);
                                           }}
                                           className="w-full py-2 px-3 bg-transparent font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-[#cdd6f4] min-h-0"
                                           style={{ height: `${lines.length * 20 + 16}px` }}
@@ -2072,14 +2101,9 @@ export default function DatabaseManager() {
                               <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                   <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Query Results</div>
-                                  {queryResultType !== 'select' && queryResultMessage && (
-                                    <Badge variant={queryResultType === 'insert' ? 'default' : queryResultType === 'update' ? 'secondary' : 'destructive'} className="text-[10px]">
-                                      {queryResultType.toUpperCase()}
-                                    </Badge>
-                                  )}
                                 </div>
                                 <div className="text-xs text-muted-foreground">
-                                  {queryResultMessage || `${queryData.length} rows found`}
+                                  {queryData.length > 0 ? `${queryData.length} rows found` : ''}
                                 </div>
                               </div>
                               {executedQuerySql && (
@@ -2089,6 +2113,39 @@ export default function DatabaseManager() {
                               )}
                             </div>
                             <div className="flex-1 overflow-auto">
+                              {queryResultMessage && queryData.length === 0 ? (
+                                <div className="p-4 space-y-2">
+                                  {queryResultMessage.split('\n').map((line, i) => {
+                                    const typeMatch = line.match(/^\[(\w+)\]/);
+                                    const type = typeMatch?.[1] || "";
+                                    const badgeVariant = type === "INSERT" ? "default" : type === "UPDATE" ? "secondary" : type === "DELETE" ? "destructive" : "outline";
+                                    return (
+                                      <div key={i} className="flex items-start gap-2 p-2.5 rounded-md border border-border bg-card">
+                                        <Badge variant={badgeVariant as any} className="text-[10px] shrink-0 mt-0.5">{type || "OK"}</Badge>
+                                        <span className="text-sm text-foreground font-mono">{line.replace(/^\[\w+\]\s*/, '')}</span>
+                                        <Check className="w-4 h-4 text-green-500 shrink-0 ml-auto mt-0.5" />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ) : queryResultMessage && queryData.length > 0 ? (
+                                <div>
+                                  <div className="p-3 border-b border-border bg-secondary/5">
+                                    {queryResultMessage.split('\n').filter(l => !l.startsWith('[SELECT]')).map((line, i) => {
+                                      const typeMatch = line.match(/^\[(\w+)\]/);
+                                      const type = typeMatch?.[1] || "";
+                                      const badgeVariant = type === "INSERT" ? "default" : type === "UPDATE" ? "secondary" : type === "DELETE" ? "destructive" : "outline";
+                                      return (
+                                        <div key={i} className="flex items-center gap-2 py-1">
+                                          <Badge variant={badgeVariant as any} className="text-[10px]">{type || "OK"}</Badge>
+                                          <span className="text-xs text-muted-foreground font-mono">{line.replace(/^\[\w+\]\s*/, '')}</span>
+                                          <Check className="w-3 h-3 text-green-500 shrink-0" />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                              </div>
+                              ) : null}
                               <div>
                                 <Table>
                                   <TableHeader className="bg-secondary/20 sticky top-0">
