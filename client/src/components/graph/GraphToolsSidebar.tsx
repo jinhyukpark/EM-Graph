@@ -1636,8 +1636,6 @@ export default function GraphToolsSidebar({ className, projectId, stats, setting
                                 </div>
                             </ScrollArea>
 
-                            <Separator />
-
                             {Object.entries(nodeSizingConfig)
                                 .filter(([key]) => key === activeSizingCategory)
                                 .map(([key, config], index, arr) => (
