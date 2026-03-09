@@ -2585,6 +2585,40 @@ export default function DatabaseManager() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Save Query</DialogTitle>
+            <DialogDescription>
+              Enter a name for your query to save it to the project.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Query Name</Label>
+              <Input
+                value={newQueryName}
+                onChange={(e) => setNewQueryName(e.target.value)}
+                placeholder="Enter query name..."
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveQuery(); }}
+                data-testid="input-query-name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setIsSaveDialogOpen(false); setNewQueryName(""); }}>Cancel</Button>
+            <Button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              disabled={!newQueryName.trim()}
+              onClick={handleSaveQuery}
+              data-testid="button-save-query-confirm"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
