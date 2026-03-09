@@ -134,7 +134,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
           </div>
         </div>
 
-        <div className="flex-1 grid grid-cols-5 gap-3">
+        <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_1fr] gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
             <Select defaultValue={node.table}>
@@ -159,6 +159,9 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
                 <SelectItem value="id">id</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="flex items-center h-9 mt-[22px]">
+            <div className="w-px h-8 bg-border"></div>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Image Field</Label>
