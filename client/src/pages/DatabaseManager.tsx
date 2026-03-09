@@ -188,7 +188,7 @@ export default function DatabaseManager() {
   const [createTableFileName, setCreateTableFileName] = useState("");
   const [createTableName, setCreateTableName] = useState("");
   const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
-  const [createTableDestination, setCreateTableDestination] = useState<'Original' | 'Custom'>('Original');
+  const [createTableDestination, setCreateTableDestination] = useState<'None' | 'Original' | 'Custom'>('Original');
   const [createTableSheets, setCreateTableSheets] = useState<Record<string, {name: string, type: string, alias: string}[]>>({});
   const [createTableActiveSheet, setCreateTableActiveSheet] = useState<string>("");
   const [isParsingFile, setIsParsingFile] = useState(false);
@@ -2718,10 +2718,11 @@ export default function DatabaseManager() {
                     <Label>Destination</Label>
                     <select
                       value={createTableDestination}
-                      onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
+                      onChange={(e) => setCreateTableDestination(e.target.value as 'None' | 'Original' | 'Custom')}
                       className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       data-testid="select-create-table-destination"
                     >
+                      <option value="None">None</option>
                       <option value="Original">Original</option>
                       <option value="Custom">Custom</option>
                     </select>
