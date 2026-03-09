@@ -601,6 +601,9 @@ export default function DatabaseManager() {
   const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [createCategoryParent, setCreateCategoryParent] = useState("");
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState(false);
+  const [deleteCategoryParent, setDeleteCategoryParent] = useState("");
+  const [deleteCategoryTarget, setDeleteCategoryTarget] = useState("");
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isSaveResultDialogOpen, setIsSaveResultDialogOpen] = useState(false);
   const [newQueryName, setNewQueryName] = useState("");
@@ -967,7 +970,11 @@ export default function DatabaseManager() {
                           <Plus className="w-3.5 h-3.5" />
                           Create Category
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive">
+                        <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive" onClick={() => {
+                          setDeleteCategoryParent(category.category);
+                          setDeleteCategoryTarget("");
+                          setIsDeleteCategoryOpen(true);
+                        }}>
                           <Trash2 className="w-3.5 h-3.5" />
                           Delete Category
                         </DropdownMenuItem>
@@ -2563,6 +2570,61 @@ export default function DatabaseManager() {
               data-testid="button-create-category-confirm"
             >
               Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Delete Category</DialogTitle>
+            <DialogDescription>
+              Select a subcategory to delete from "{deleteCategoryParent}". Items inside will also be removed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <select
+                value={deleteCategoryTarget}
+                onChange={(e) => setDeleteCategoryTarget(e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                data-testid="select-delete-category"
+              >
+                <option value="">Select category...</option>
+                {(sidebarItems.find(c => c.category === deleteCategoryParent)?.subcategories || []).map(sub => (
+                  <option key={sub.name} value={sub.name}>{sub.name} ({sub.items.length} items)</option>
+                ))}
+              </select>
+            </div>
+            {deleteCategoryTarget && (
+              <div className="text-xs text-destructive bg-destructive/10 p-2.5 rounded-md border border-destructive/20">
+                This will permanently delete the "{deleteCategoryTarget}" category and all {sidebarItems.find(c => c.category === deleteCategoryParent)?.subcategories?.find(s => s.name === deleteCategoryTarget)?.items.length || 0} items inside it.
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              disabled={!deleteCategoryTarget}
+              onClick={() => {
+                setSidebarItems(prev => prev.map(cat => {
+                  if (cat.category === deleteCategoryParent && cat.subcategories) {
+                    return {
+                      ...cat,
+                      subcategories: cat.subcategories.filter(sub => sub.name !== deleteCategoryTarget)
+                    };
+                  }
+                  return cat;
+                }));
+                setIsDeleteCategoryOpen(false);
+                setDeleteCategoryTarget("");
+              }}
+              data-testid="button-delete-category-confirm"
+            >
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
