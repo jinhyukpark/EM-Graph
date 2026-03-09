@@ -870,7 +870,7 @@ export default function DatabaseManager() {
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Select value={selectedProjectId} onValueChange={handleProjectChange}>
               <SelectTrigger className="w-full bg-background/50 h-9 text-sm">
-                <SelectValue placeholder="Select project" />
+                <SelectValue placeholder="Select database" />
               </SelectTrigger>
               <SelectContent>
                 {projects.map((project) => (
