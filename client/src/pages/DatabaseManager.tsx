@@ -2748,7 +2748,27 @@ export default function DatabaseManager() {
                               <span className="text-sm font-mono font-medium">{field.name}</span>
                             </TableCell>
                             <TableCell className="py-1.5">
-                              <Badge variant="outline" className="text-[10px] font-mono">{field.type}</Badge>
+                              <select
+                                value={field.type}
+                                onChange={(e) => {
+                                  const updated = [...createTableFields];
+                                  updated[idx] = { ...updated[idx], type: e.target.value };
+                                  setCreateTableFields(updated);
+                                  if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
+                                    setCreateTableSheets(prev => ({
+                                      ...prev,
+                                      [createTableActiveSheet]: updated
+                                    }));
+                                  }
+                                }}
+                                className="h-7 text-[10px] font-mono rounded-md border border-input bg-background px-1.5 py-0 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                data-testid={`select-field-type-${idx}`}
+                              >
+                                <option value={field.type}>{field.type}</option>
+                                {["integer","bigint","smallint","serial","uuid","varchar(255)","varchar(100)","varchar(50)","varchar(20)","varchar(10)","text","char(1)","boolean","date","timestamp","timestamptz","time","decimal(10,2)","decimal(12,2)","decimal(5,2)","numeric","real","double precision","jsonb","json","text[]","bytea"].filter(t => t !== field.type).map(t => (
+                                  <option key={t} value={t}>{t}</option>
+                                ))}
+                              </select>
                             </TableCell>
                             <TableCell className="py-1.5">
                               <Input
