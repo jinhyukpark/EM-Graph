@@ -2156,9 +2156,16 @@ export default function DatabaseManager() {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => setIsSaveDialogOpen(true)}>
+                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => {
+                            const isExistingQuery = sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId);
+                            if (isExistingQuery) {
+                              toast({ title: "Changes Saved", description: "Query changes have been saved successfully.", duration: 2000 });
+                            } else {
+                              setIsSaveDialogOpen(true);
+                            }
+                          }}>
                             <Save className="w-3 h-3" />
-                            Save
+                            {sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId) ? "Save Changes" : "Save"}
                           </Button>
                           <QueryTemplateDialog 
                             onSelectQuery={handleTemplateQuery} 
