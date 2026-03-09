@@ -2672,39 +2672,13 @@ export default function DatabaseManager() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label>Table Name</Label>
-                  <Input
-                    value={createTableName}
-                    onChange={(e) => setCreateTableName(e.target.value)}
-                    placeholder="Enter table name..."
-                    data-testid="input-create-table-name"
-                  />
+              {isParsingFile ? (
+                <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Parsing file and detecting fields...</span>
                 </div>
-                <div className="space-y-2">
-                  <Label>Destination</Label>
-                  <select
-                    value={createTableDestination}
-                    onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    data-testid="select-create-table-destination"
-                  >
-                    <option value="Original">Original</option>
-                    <option value="Custom">Custom</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Fields</Label>
-                {isParsingFile ? (
-                  <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
-                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    <span className="text-sm text-muted-foreground">Parsing file and detecting fields...</span>
-                  </div>
-                ) : (
-                <>
+              ) : (
+              <>
                 {Object.keys(createTableSheets).length > 1 && (
                   <div className="flex items-center gap-0 border-b border-border">
                     {Object.keys(createTableSheets).map((sheetName) => (
@@ -2729,53 +2703,80 @@ export default function DatabaseManager() {
                     ))}
                   </div>
                 )}
-                <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
-                  <Table>
-                    <TableHeader className="sticky top-0 z-10">
-                      <TableRow className="bg-secondary/20">
-                        <TableHead className="text-[11px] w-[30px]">#</TableHead>
-                        <TableHead className="text-[11px]">Field Name</TableHead>
-                        <TableHead className="text-[11px]">Type</TableHead>
-                        <TableHead className="text-[11px]">Alias</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {createTableFields.map((field, idx) => (
-                        <TableRow key={idx} className="hover:bg-secondary/10">
-                          <TableCell className="text-[11px] text-muted-foreground font-mono py-1.5">{idx + 1}</TableCell>
-                          <TableCell className="py-1.5">
-                            <span className="text-sm font-mono font-medium">{field.name}</span>
-                          </TableCell>
-                          <TableCell className="py-1.5">
-                            <Badge variant="outline" className="text-[10px] font-mono">{field.type}</Badge>
-                          </TableCell>
-                          <TableCell className="py-1.5">
-                            <Input
-                              value={field.alias}
-                              onChange={(e) => {
-                                const updated = [...createTableFields];
-                                updated[idx] = { ...updated[idx], alias: e.target.value };
-                                setCreateTableFields(updated);
-                                if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
-                                  setCreateTableSheets(prev => ({
-                                    ...prev,
-                                    [createTableActiveSheet]: updated
-                                  }));
-                                }
-                              }}
-                              placeholder={field.name}
-                              className="h-7 text-xs"
-                              data-testid={`input-field-alias-${idx}`}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Table Name</Label>
+                    <Input
+                      value={createTableName}
+                      onChange={(e) => setCreateTableName(e.target.value)}
+                      placeholder="Enter table name..."
+                      data-testid="input-create-table-name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Destination</Label>
+                    <select
+                      value={createTableDestination}
+                      onChange={(e) => setCreateTableDestination(e.target.value as 'Original' | 'Custom')}
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      data-testid="select-create-table-destination"
+                    >
+                      <option value="Original">Original</option>
+                      <option value="Custom">Custom</option>
+                    </select>
+                  </div>
                 </div>
-                </>
-                )}
-              </div>
+
+                <div className="space-y-2">
+                  <Label>Fields</Label>
+                  <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
+                    <Table>
+                      <TableHeader className="sticky top-0 z-10">
+                        <TableRow className="bg-secondary/20">
+                          <TableHead className="text-[11px] w-[30px]">#</TableHead>
+                          <TableHead className="text-[11px]">Field Name</TableHead>
+                          <TableHead className="text-[11px]">Type</TableHead>
+                          <TableHead className="text-[11px]">Alias</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {createTableFields.map((field, idx) => (
+                          <TableRow key={idx} className="hover:bg-secondary/10">
+                            <TableCell className="text-[11px] text-muted-foreground font-mono py-1.5">{idx + 1}</TableCell>
+                            <TableCell className="py-1.5">
+                              <span className="text-sm font-mono font-medium">{field.name}</span>
+                            </TableCell>
+                            <TableCell className="py-1.5">
+                              <Badge variant="outline" className="text-[10px] font-mono">{field.type}</Badge>
+                            </TableCell>
+                            <TableCell className="py-1.5">
+                              <Input
+                                value={field.alias}
+                                onChange={(e) => {
+                                  const updated = [...createTableFields];
+                                  updated[idx] = { ...updated[idx], alias: e.target.value };
+                                  setCreateTableFields(updated);
+                                  if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
+                                    setCreateTableSheets(prev => ({
+                                      ...prev,
+                                      [createTableActiveSheet]: updated
+                                    }));
+                                  }
+                                }}
+                                placeholder={field.name}
+                                className="h-7 text-xs"
+                                data-testid={`input-field-alias-${idx}`}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </>
+              )}
             </div>  
           )}
 
