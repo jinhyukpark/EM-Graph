@@ -188,6 +188,8 @@ export default function DatabaseManager() {
   const [createTableName, setCreateTableName] = useState("");
   const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
   const [createTableDestination, setCreateTableDestination] = useState<'Original' | 'Custom'>('Original');
+  const [createTableSheets, setCreateTableSheets] = useState<Record<string, {name: string, type: string, alias: string}[]>>({});
+  const [createTableActiveSheet, setCreateTableActiveSheet] = useState<string>("");
   const [isParsingFile, setIsParsingFile] = useState(false);
 
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
@@ -248,11 +250,39 @@ export default function DatabaseManager() {
     ],
   };
 
+  const MOCK_EXCEL_SHEETS: Record<string, {name: string, type: string, alias: string}[]> = {
+    'Employees': [
+      { name: "Record_ID", type: "integer", alias: "" },
+      { name: "Full_Name", type: "varchar(255)", alias: "" },
+      { name: "Department", type: "varchar(100)", alias: "" },
+      { name: "Hire_Date", type: "date", alias: "" },
+      { name: "Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Is_Active", type: "boolean", alias: "" },
+    ],
+    'Departments': [
+      { name: "Dept_ID", type: "integer", alias: "" },
+      { name: "Dept_Name", type: "varchar(100)", alias: "" },
+      { name: "Location", type: "varchar(200)", alias: "" },
+      { name: "Manager_Name", type: "varchar(255)", alias: "" },
+      { name: "Budget", type: "decimal(15,2)", alias: "" },
+    ],
+    'Salaries': [
+      { name: "Employee_ID", type: "integer", alias: "" },
+      { name: "Base_Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Bonus", type: "decimal(10,2)", alias: "" },
+      { name: "Tax_Rate", type: "decimal(5,2)", alias: "" },
+      { name: "Effective_Date", type: "date", alias: "" },
+      { name: "Currency", type: "varchar(10)", alias: "" },
+    ],
+  };
+
   const handleFileTypeSelect = (fileType: 'csv' | 'excel' | 'json') => {
     setCreateTableFileType(fileType);
     setCreateTableFileName("");
     setCreateTableName("");
     setCreateTableFields([]);
+    setCreateTableSheets({});
+    setCreateTableActiveSheet("");
     setCreateTableStep('upload');
   };
 
@@ -271,7 +301,20 @@ export default function DatabaseManager() {
     setCreateTableStep('preview');
 
     setTimeout(() => {
-      setCreateTableFields(MOCK_FILE_FIELDS[createTableFileType].map(f => ({ ...f })));
+      if (createTableFileType === 'excel') {
+        const sheets = Object.fromEntries(
+          Object.entries(MOCK_EXCEL_SHEETS).map(([k, v]) => [k, v.map(f => ({ ...f }))])
+        );
+        setCreateTableSheets(sheets);
+        const firstSheet = Object.keys(sheets)[0];
+        setCreateTableActiveSheet(firstSheet);
+        setCreateTableFields(sheets[firstSheet]);
+        setCreateTableName(firstSheet.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_'));
+      } else {
+        setCreateTableSheets({});
+        setCreateTableActiveSheet("");
+        setCreateTableFields(MOCK_FILE_FIELDS[createTableFileType].map(f => ({ ...f })));
+      }
       setIsParsingFile(false);
     }, 1500);
   };
@@ -2619,7 +2662,12 @@ export default function DatabaseManager() {
                     <span className="text-[10px] text-muted-foreground">Detecting fields...</span>
                   </div>
                 ) : (
-                  <Badge variant="secondary" className="text-[10px] ml-auto">{createTableFields.length} fields detected</Badge>
+                  <Badge variant="secondary" className="text-[10px] ml-auto">
+                    {Object.keys(createTableSheets).length > 1 
+                      ? `${Object.keys(createTableSheets).length} sheets · ${createTableFields.length} fields`
+                      : `${createTableFields.length} fields detected`
+                    }
+                  </Badge>
                 )}
               </div>
 
@@ -2655,6 +2703,31 @@ export default function DatabaseManager() {
                     <span className="text-sm text-muted-foreground">Parsing file and detecting fields...</span>
                   </div>
                 ) : (
+                <>
+                {Object.keys(createTableSheets).length > 1 && (
+                  <div className="flex items-center gap-0 border-b border-border">
+                    {Object.keys(createTableSheets).map((sheetName) => (
+                      <button
+                        key={sheetName}
+                        onClick={() => {
+                          setCreateTableActiveSheet(sheetName);
+                          setCreateTableFields(createTableSheets[sheetName]);
+                          setCreateTableName(sheetName.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_'));
+                        }}
+                        className={cn(
+                          "px-3 py-1.5 text-xs font-medium border-b-2 -mb-px transition-colors",
+                          createTableActiveSheet === sheetName
+                            ? "border-primary text-primary"
+                            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                        )}
+                        data-testid={`tab-sheet-${sheetName}`}
+                      >
+                        {sheetName}
+                        <span className="ml-1.5 text-[10px] text-muted-foreground">({createTableSheets[sheetName].length})</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
                   <Table>
                     <TableHeader className="sticky top-0 z-10">
@@ -2682,6 +2755,12 @@ export default function DatabaseManager() {
                                 const updated = [...createTableFields];
                                 updated[idx] = { ...updated[idx], alias: e.target.value };
                                 setCreateTableFields(updated);
+                                if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
+                                  setCreateTableSheets(prev => ({
+                                    ...prev,
+                                    [createTableActiveSheet]: updated
+                                  }));
+                                }
                               }}
                               placeholder={field.name}
                               className="h-7 text-xs"
@@ -2693,6 +2772,7 @@ export default function DatabaseManager() {
                     </TableBody>
                   </Table>
                 </div>
+                </>
                 )}
               </div>
             </div>  
