@@ -1,11 +1,10 @@
 import { useState, useMemo } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Layers, Image, MapPin, Tag, Weight } from "lucide-react";
+import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   ReactFlow,
   Background,
@@ -77,39 +76,7 @@ function CircleNode({ data }: { data: { label: string; field: string; color: { b
   );
 }
 
-function RadialNode({ data }: { data: { label: string; size: number; bg: string; border: string; text: string; isHub: boolean } }) {
-  const s = data.size;
-  return (
-    <div
-      style={{
-        width: s,
-        height: s,
-        borderRadius: "50%",
-        background: data.bg,
-        border: `${data.isHub ? 3 : 2}px solid ${data.border}`,
-        boxShadow: data.isHub ? `0 4px 16px ${data.border}40` : `0 1px 4px ${data.border}20`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0 !w-0 !h-0" />
-      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-0 !h-0" />
-      <Handle type="target" position={Position.Left} className="!bg-transparent !border-0 !w-0 !h-0" />
-      <Handle type="source" position={Position.Right} className="!bg-transparent !border-0 !w-0 !h-0" />
-      {data.label && (
-        <div className="text-center px-1" style={{ color: data.text }}>
-          <div style={{ fontSize: data.isHub ? 9 : 6, fontWeight: data.isHub ? 700 : 600, lineHeight: 1.2 }}>
-            {data.label}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 const previewNodeTypes = { circle: CircleNode };
-const radialNodeTypes = { radial: RadialNode };
 
 function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id: string) => void }) {
   const dragControls = useDragControls();
@@ -340,7 +307,6 @@ export default function GraphBuilderForm() {
     { id: "2", table: "suspect_profiles", labelField: "name", imageField: "none", latitudeField: "none", longitudeField: "none", sizeField: "age", colorField: "age", icon: "User" }
   ]);
 
-  const [previewTab, setPreviewTab] = useState<string>("default");
 
   const addLink = () => {
     setLinks([...links, { 
@@ -376,7 +342,7 @@ export default function GraphBuilderForm() {
     setNodes(nodes.filter(n => n.id !== id));
   };
 
-  const { flowNodes, flowEdges, massNodes, massEdges } = useMemo(() => {
+  const { flowNodes, flowEdges } = useMemo(() => {
     const validNodes = nodes.filter(n => n.table);
     const tableToNodeId = new Map<string, string>();
     validNodes.forEach(n => {
@@ -426,113 +392,7 @@ export default function GraphBuilderForm() {
         type: "default",
       }));
 
-    const seededRandom = (seed: number) => {
-      let s = seed;
-      return () => {
-        s = (s * 16807 + 0) % 2147483647;
-        return s / 2147483647;
-      };
-    };
-    const rand = seededRandom(42);
-
-    const allColors = Object.values(nodeColors);
-    const radialCenterX = 400;
-    const radialCenterY = 300;
-    const mNodes: FlowNode[] = [];
-    const mEdges: FlowEdge[] = [];
-
-    uniqueTables.forEach((table, tableIdx) => {
-      const color = nodeColors[table] || defaultColor;
-      const hubId = `hub-${tableIdx}`;
-      const hubAngle = (2 * Math.PI * tableIdx) / Math.max(uniqueTables.length, 1) - Math.PI / 2;
-      const hubDist = uniqueTables.length === 1 ? 0 : 180;
-      const hubX = radialCenterX + hubDist * Math.cos(hubAngle);
-      const hubY = radialCenterY + hubDist * Math.sin(hubAngle);
-
-      mNodes.push({
-        id: hubId,
-        type: "radial",
-        position: { x: hubX - 30, y: hubY - 30 },
-        data: { label: table, size: 60, bg: color.bg, border: color.border, text: color.text, isHub: true },
-      });
-
-      const satelliteCount = 15 + Math.floor(rand() * 10);
-      for (let j = 0; j < satelliteCount; j++) {
-        const satId = `sat-${tableIdx}-${j}`;
-        const ring = j < 8 ? 1 : 2;
-        const ringRadius = ring === 1 ? 80 + rand() * 40 : 140 + rand() * 60;
-        const angle = (2 * Math.PI * j) / satelliteCount + rand() * 0.4 - 0.2;
-        const satSize = 12 + Math.floor(rand() * 20);
-        const satColorIdx = Math.floor(rand() * allColors.length);
-        const satColor = rand() > 0.5 ? allColors[satColorIdx] : color;
-
-        mNodes.push({
-          id: satId,
-          type: "radial",
-          position: {
-            x: hubX + ringRadius * Math.cos(angle) - satSize / 2,
-            y: hubY + ringRadius * Math.sin(angle) - satSize / 2,
-          },
-          data: { label: "", size: satSize, bg: satColor.bg, border: satColor.border, text: satColor.text, isHub: false },
-        });
-
-        mEdges.push({
-          id: `radial-edge-${tableIdx}-${j}`,
-          source: hubId,
-          target: satId,
-          style: { stroke: `${color.border}50`, strokeWidth: 1 },
-          type: "default",
-        });
-
-        if (rand() > 0.7 && j > 0) {
-          const connectTo = Math.floor(rand() * j);
-          mEdges.push({
-            id: `cross-${tableIdx}-${j}-${connectTo}`,
-            source: satId,
-            target: `sat-${tableIdx}-${connectTo}`,
-            style: { stroke: "#CBD5E140", strokeWidth: 0.8 },
-            type: "default",
-          });
-        }
-      }
-    });
-
-    links
-      .filter(l => l.sourceTable && l.targetTable && tableToNodeId.has(l.sourceTable) && tableToNodeId.has(l.targetTable))
-      .forEach((l, idx) => {
-        const srcIdx = uniqueTables.indexOf(l.sourceTable);
-        const tgtIdx = uniqueTables.indexOf(l.targetTable);
-        if (srcIdx >= 0 && tgtIdx >= 0) {
-          mEdges.push({
-            id: `hub-link-${idx}`,
-            source: `hub-${srcIdx}`,
-            target: `hub-${tgtIdx}`,
-            label: `${l.sourceColumn} → ${l.targetColumn}`,
-            labelStyle: { fontSize: 9, fill: "#475569", fontWeight: 600 },
-            labelBgStyle: { fill: "#FFFFFF", fillOpacity: 0.9 },
-            labelBgPadding: [6, 3] as [number, number],
-            labelBgBorderRadius: 4,
-            style: { stroke: "#334155", strokeWidth: 2.5 },
-            markerEnd: { type: MarkerType.ArrowClosed, color: "#334155", width: 16, height: 16 },
-            type: "default",
-            animated: true,
-          });
-
-          for (let c = 0; c < 4; c++) {
-            const fromSat = Math.floor(rand() * 15);
-            const toSat = Math.floor(rand() * 15);
-            mEdges.push({
-              id: `cross-hub-${idx}-${c}`,
-              source: `sat-${srcIdx}-${fromSat}`,
-              target: `sat-${tgtIdx}-${toSat}`,
-              style: { stroke: "#94A3B840", strokeWidth: 0.8 },
-              type: "default",
-            });
-          }
-        }
-      });
-
-    return { flowNodes: fNodes, flowEdges: fEdges, massNodes: mNodes, massEdges: mEdges };
+    return { flowNodes: fNodes, flowEdges: fEdges };
   }, [nodes, links]);
 
   return (
@@ -605,59 +465,26 @@ export default function GraphBuilderForm() {
                 {flowNodes.length} node{flowNodes.length !== 1 ? "s" : ""} · {flowEdges.length} link{flowEdges.length !== 1 ? "s" : ""}
               </span>
             </div>
-            <Tabs value={previewTab} onValueChange={setPreviewTab}>
-              <TabsList className="h-7 p-0.5 bg-slate-200/60">
-                <TabsTrigger value="default" className="text-[10px] h-6 px-3 gap-1 data-[state=active]:bg-white" data-testid="tab-preview-default">
-                  <Eye className="w-3 h-3" />
-                  Default
-                </TabsTrigger>
-                <TabsTrigger value="mass" className="text-[10px] h-6 px-3 gap-1 data-[state=active]:bg-white" data-testid="tab-preview-mass">
-                  <Layers className="w-3 h-3" />
-                  1000+ Nodes
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
-          <div className={`bg-white ${previewTab === "mass" ? "h-[400px]" : "h-[280px]"}`} data-testid="graph-preview">
-            {previewTab === "default" ? (
-              <ReactFlow
-                key="default-preview"
-                nodes={flowNodes}
-                edges={flowEdges}
-                nodeTypes={previewNodeTypes}
-                fitView
-                fitViewOptions={{ padding: 0.5 }}
-                proOptions={{ hideAttribution: true }}
-                nodesDraggable={true}
-                nodesConnectable={false}
-                elementsSelectable={false}
-                panOnDrag={true}
-                zoomOnScroll={true}
-                minZoom={0.3}
-                maxZoom={2}
-              >
-                <Background color="#E2E8F0" gap={20} size={1} />
-              </ReactFlow>
-            ) : (
-              <ReactFlow
-                key="mass-preview"
-                nodes={massNodes}
-                edges={massEdges}
-                nodeTypes={radialNodeTypes}
-                fitView
-                fitViewOptions={{ padding: 0.3 }}
-                proOptions={{ hideAttribution: true }}
-                nodesDraggable={true}
-                nodesConnectable={false}
-                elementsSelectable={false}
-                panOnDrag={true}
-                zoomOnScroll={true}
-                minZoom={0.2}
-                maxZoom={3}
-              >
-                <Background color="#F1F5F9" gap={16} size={1} />
-              </ReactFlow>
-            )}
+          <div className="bg-white h-[280px]" data-testid="graph-preview">
+            <ReactFlow
+              key="default-preview"
+              nodes={flowNodes}
+              edges={flowEdges}
+              nodeTypes={previewNodeTypes}
+              fitView
+              fitViewOptions={{ padding: 0.5 }}
+              proOptions={{ hideAttribution: true }}
+              nodesDraggable={true}
+              nodesConnectable={false}
+              elementsSelectable={false}
+              panOnDrag={true}
+              zoomOnScroll={true}
+              minZoom={0.3}
+              maxZoom={2}
+            >
+              <Background color="#E2E8F0" gap={20} size={1} />
+            </ReactFlow>
           </div>
         </Card>
       )}
