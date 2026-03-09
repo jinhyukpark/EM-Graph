@@ -598,6 +598,9 @@ export default function DatabaseManager() {
   };
 
   const [sidebarItems, setSidebarItems] = useState(SIDEBAR_ITEMS);
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [createCategoryParent, setCreateCategoryParent] = useState("");
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isSaveResultDialogOpen, setIsSaveResultDialogOpen] = useState(false);
   const [newQueryName, setNewQueryName] = useState("");
@@ -956,7 +959,11 @@ export default function DatabaseManager() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem className="text-xs gap-2">
+                        <DropdownMenuItem className="text-xs gap-2" onClick={() => {
+                          setCreateCategoryParent(category.category);
+                          setNewCategoryName("");
+                          setIsCreateCategoryOpen(true);
+                        }}>
                           <Plus className="w-3.5 h-3.5" />
                           Create Category
                         </DropdownMenuItem>
@@ -2498,6 +2505,69 @@ export default function DatabaseManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Create Category</DialogTitle>
+            <DialogDescription>
+              Add a new subcategory under "{createCategoryParent}".
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="category-name">Category Name</Label>
+              <Input
+                id="category-name"
+                placeholder="Enter category name..."
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newCategoryName.trim()) {
+                    setSidebarItems(prev => prev.map(cat => {
+                      if (cat.category === createCategoryParent) {
+                        const existing = cat.subcategories || [];
+                        return {
+                          ...cat,
+                          subcategories: [...existing, { name: newCategoryName.trim(), items: [] }]
+                        };
+                      }
+                      return cat;
+                    }));
+                    setIsCreateCategoryOpen(false);
+                    setNewCategoryName("");
+                  }
+                }}
+                autoFocus
+                data-testid="input-new-category-name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
+            <Button
+              disabled={!newCategoryName.trim()}
+              onClick={() => {
+                setSidebarItems(prev => prev.map(cat => {
+                  if (cat.category === createCategoryParent) {
+                    const existing = cat.subcategories || [];
+                    return {
+                      ...cat,
+                      subcategories: [...existing, { name: newCategoryName.trim(), items: [] }]
+                    };
+                  }
+                  return cat;
+                }));
+                setIsCreateCategoryOpen(false);
+                setNewCategoryName("");
+              }}
+              data-testid="button-create-category-confirm"
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
         <DialogContent>
             <DialogHeader>
@@ -2723,8 +2793,9 @@ export default function DatabaseManager() {
                       data-testid="select-create-table-destination"
                     >
                       <option value="None">None</option>
-                      <option value="Original">Original</option>
-                      <option value="Custom">Custom</option>
+                      {(sidebarItems.find(c => c.category === 'Table')?.subcategories || []).map(sub => (
+                        <option key={sub.name} value={sub.name}>{sub.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
