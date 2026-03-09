@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag } from "lucide-react";
@@ -342,6 +342,31 @@ export default function GraphBuilderForm() {
     setNodes(nodes.filter(n => n.id !== id));
   };
 
+  const [previewHeight, setPreviewHeight] = useState(280);
+  const resizing = useRef(false);
+  const startY = useRef(0);
+  const startHeight = useRef(280);
+
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    resizing.current = true;
+    startY.current = e.clientY;
+    startHeight.current = previewHeight;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!resizing.current) return;
+      const delta = ev.clientY - startY.current;
+      setPreviewHeight(Math.max(150, Math.min(800, startHeight.current + delta)));
+    };
+    const onMouseUp = () => {
+      resizing.current = false;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }, [previewHeight]);
+
   const { flowNodes, flowEdges } = useMemo(() => {
     const validNodes = nodes.filter(n => n.table);
     const tableToNodeId = new Map<string, string>();
@@ -466,7 +491,7 @@ export default function GraphBuilderForm() {
               </span>
             </div>
           </div>
-          <div className="bg-white h-[280px]" data-testid="graph-preview">
+          <div className="bg-white" style={{ height: previewHeight }} data-testid="graph-preview">
             <ReactFlow
               key="default-preview"
               nodes={flowNodes}
@@ -485,6 +510,13 @@ export default function GraphBuilderForm() {
             >
               <Background color="#E2E8F0" gap={20} size={1} />
             </ReactFlow>
+          </div>
+          <div
+            className="h-2 bg-slate-50 border-t border-slate-100 cursor-row-resize flex items-center justify-center hover:bg-slate-100 transition-colors"
+            onMouseDown={handleResizeStart}
+            data-testid="graph-preview-resize"
+          >
+            <div className="w-8 h-0.5 rounded-full bg-slate-300" />
           </div>
         </Card>
       )}
