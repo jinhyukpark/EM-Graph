@@ -718,9 +718,12 @@ export default function DatabaseManager() {
   const handleSaveQuery = () => {
     if (!newQueryName.trim()) return;
 
-    // 1. Update Tab Title
-    const newTabs = tabs.map(t => t.id === activeTabId ? { ...t, title: newQueryName } : t);
+    const newId = `q-${Date.now()}`;
+
+    // 1. Update Tab Title and ID
+    const newTabs = tabs.map(t => t.id === activeTabId ? { ...t, id: newId, title: newQueryName } : t);
     setTabs(newTabs);
+    setActiveTabId(newId);
 
     // 2. Update Sidebar Items
     const newSidebarItems = [...sidebarItems];
@@ -729,7 +732,7 @@ export default function DatabaseManager() {
       const existingItem = queryCategory.items.find(i => i.name === newQueryName);
       if (!existingItem) {
         queryCategory.items.push({
-          id: `q-${Date.now()}`,
+          id: newId,
           name: newQueryName,
           icon: FileCode,
           type: "query"
