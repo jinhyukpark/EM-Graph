@@ -238,7 +238,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
         
-        <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_1fr_1fr] gap-3 items-end">
+        <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_auto_1fr_1fr] gap-3 items-end">
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Source Table</div>
             <Select defaultValue={link.sourceTable}>
@@ -283,6 +283,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 <SelectItem value="suspect_id">suspect_id</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex items-center h-9">
+            <div className="w-px h-8 bg-border"></div>
           </div>
 
           <div className="space-y-1.5">
