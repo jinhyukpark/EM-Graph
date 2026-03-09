@@ -2690,7 +2690,7 @@ export default function DatabaseManager() {
                           setCreateTableName(sheetName.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_'));
                         }}
                         className={cn(
-                          "px-3 py-1.5 text-xs font-medium border-b-2 -mb-px transition-colors",
+                          "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
                           createTableActiveSheet === sheetName
                             ? "border-primary text-primary"
                             : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
@@ -2761,7 +2761,7 @@ export default function DatabaseManager() {
                                     }));
                                   }
                                 }}
-                                className="h-7 text-[10px] font-mono rounded-md border border-input bg-background px-1.5 py-0 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                className="h-7 text-[10px] font-mono rounded-md border border-input bg-background pl-2 pr-6 py-0 shadow-sm appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_4px_center] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                 data-testid={`select-field-type-${idx}`}
                               >
                                 <option value={field.type}>{field.type}</option>
