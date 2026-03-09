@@ -119,11 +119,11 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
       value={node}
       dragListener={false}
       dragControls={dragControls}
-      className="border p-4 rounded-lg bg-card/50 space-y-3"
+      className="border p-4 rounded-lg bg-card/50"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         <div className="flex items-center h-9 mt-[22px]">
           <div
             className="text-muted-foreground/40 cursor-grab active:cursor-grabbing hover:text-muted-foreground/70 transition-colors"
@@ -133,94 +133,82 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <GripVertical className="w-4 h-4" />
           </div>
         </div>
-        <div className="w-[220px] shrink-0 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
-          <Select defaultValue={node.table}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="Select Table" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-              <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
-          <Select defaultValue={node.labelField}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="Select Field" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="type">type</SelectItem>
-              <SelectItem value="name">name</SelectItem>
-              <SelectItem value="id">id</SelectItem>
-            </SelectContent>
-          </Select>
+
+        <div className="flex-1 grid grid-cols-5 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
+            <Select defaultValue={node.table}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Select Table" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
+            <Select defaultValue={node.labelField}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Select Field" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="type">type</SelectItem>
+                <SelectItem value="name">name</SelectItem>
+                <SelectItem value="id">id</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Image Field</Label>
+            <Select defaultValue={node.imageField}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="None" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="photo_url">photo_url</SelectItem>
+                <SelectItem value="image">image</SelectItem>
+                <SelectItem value="thumbnail">thumbnail</SelectItem>
+                <SelectItem value="avatar">avatar</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Latitude</Label>
+            <Select defaultValue={node.latitudeField}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="None" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="latitude">latitude</SelectItem>
+                <SelectItem value="lat">lat</SelectItem>
+                <SelectItem value="y">y</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Longitude</Label>
+            <Select defaultValue={node.longitudeField}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="None" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="longitude">longitude</SelectItem>
+                <SelectItem value="lng">lng</SelectItem>
+                <SelectItem value="x">x</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="flex items-center h-9 mt-[22px]">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(node.id)}>
             <Trash2 className="w-4 h-4" />
           </Button>
-        </div>
-      </div>
-
-      <div className="flex items-start gap-4 pl-8">
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-            <Image className="w-3 h-3" />
-            Image Field
-          </Label>
-          <Select defaultValue={node.imageField}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="photo_url">photo_url</SelectItem>
-              <SelectItem value="image">image</SelectItem>
-              <SelectItem value="thumbnail">thumbnail</SelectItem>
-              <SelectItem value="avatar">avatar</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            Latitude Field
-          </Label>
-          <Select defaultValue={node.latitudeField}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="latitude">latitude</SelectItem>
-              <SelectItem value="lat">lat</SelectItem>
-              <SelectItem value="y">y</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            Longitude Field
-          </Label>
-          <Select defaultValue={node.longitudeField}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="longitude">longitude</SelectItem>
-              <SelectItem value="lng">lng</SelectItem>
-              <SelectItem value="x">x</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
     </Reorder.Item>
@@ -235,11 +223,11 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       value={link}
       dragListener={false}
       dragControls={dragControls}
-      className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm space-y-3"
+      className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         <div className="flex items-center h-9 mt-[22px]">
           <div
             className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
@@ -250,49 +238,78 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
         
-        <div className="flex-1 flex items-start gap-4">
-          <div className="flex-1 space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Source</div>
-            <div className="flex gap-2">
-              <Select defaultValue={link.sourceTable}>
-                <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue={link.sourceColumn}>
-                <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="id">id</SelectItem>
-                  <SelectItem value="suspect_id">suspect_id</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_1fr_1fr] gap-3 items-end">
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Source Table</div>
+            <Select defaultValue={link.sourceTable}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Source Column</div>
+            <Select defaultValue={link.sourceColumn}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">id</SelectItem>
+                <SelectItem value="suspect_id">suspect_id</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="flex items-center h-9 mt-[22px] text-muted-foreground">
+          <div className="flex items-center h-9 text-muted-foreground">
             <ArrowRight className="w-4 h-4" />
           </div>
 
-          <div className="flex-1 space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Target</div>
-            <div className="flex gap-2">
-              <Select defaultValue={link.targetTable}>
-                <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Select Table" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue={link.targetColumn}>
-                <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="id">id</SelectItem>
-                  <SelectItem value="suspect_id">suspect_id</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Target Table</div>
+            <Select defaultValue={link.targetTable}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Target Column</div>
+            <Select defaultValue={link.targetColumn}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">id</SelectItem>
+                <SelectItem value="suspect_id">suspect_id</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Label</div>
+            <Select defaultValue={link.labelField}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="type">type</SelectItem>
+                <SelectItem value="relationship">relationship</SelectItem>
+                <SelectItem value="status">status</SelectItem>
+                <SelectItem value="category">category</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Weight</div>
+            <Select defaultValue={link.weightField}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="weight">weight</SelectItem>
+                <SelectItem value="severity">severity</SelectItem>
+                <SelectItem value="count">count</SelectItem>
+                <SelectItem value="score">score</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -300,46 +317,6 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
             <Trash2 className="w-4 h-4" />
           </Button>
-        </div>
-      </div>
-
-      <div className="flex items-start gap-4 pl-8">
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-            <Tag className="w-3 h-3" />
-            Label Field
-          </Label>
-          <Select defaultValue={link.labelField}>
-            <SelectTrigger className="bg-white h-9">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="type">type</SelectItem>
-              <SelectItem value="relationship">relationship</SelectItem>
-              <SelectItem value="status">status</SelectItem>
-              <SelectItem value="category">category</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex-1 space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-            <Layers className="w-3 h-3" />
-            Weight Field
-          </Label>
-          <Select defaultValue={link.weightField}>
-            <SelectTrigger className="bg-white h-9">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="weight">weight</SelectItem>
-              <SelectItem value="severity">severity</SelectItem>
-              <SelectItem value="count">count</SelectItem>
-              <SelectItem value="score">score</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
     </Reorder.Item>
