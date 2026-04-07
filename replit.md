@@ -18,6 +18,7 @@ Preferred communication style: Simple, everyday language.
 - **Graph Visualization**: `@xyflow/react` (React Flow) for interactive node/edge graph rendering, ERD views, and data preprocessing pipelines
 - **Animations**: Framer Motion for transitions and drag-and-drop reordering
 - **Charts**: Recharts for data visualization (area charts, etc.)
+- **i18n**: Custom lightweight internationalization system (`client/src/lib/i18n.tsx`) with `LanguageProvider` context and `useLanguage` hook. Supports English (en) and Korean (ko). Language preference persisted in localStorage.
 - **Build Tool**: Vite with React plugin, served from `client/` directory, outputs to `dist/public/`
 - **Path Aliases**: `@/` maps to `client/src/`, `@shared/` maps to `shared/`, `@assets/` maps to `attached_assets/`
 

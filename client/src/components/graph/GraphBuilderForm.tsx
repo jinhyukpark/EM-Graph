@@ -5,6 +5,7 @@ import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as Tab
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/lib/i18n";
 import {
   ReactFlow,
   Background,
@@ -79,6 +80,7 @@ function CircleNode({ data }: { data: { label: string; field: string; color: { b
 const previewNodeTypes = { circle: CircleNode };
 
 function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id: string) => void }) {
+  const { t } = useLanguage();
   const dragControls = useDragControls();
 
   return (
@@ -103,7 +105,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
 
         <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_1fr] gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Table Source</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t("tableSource")}</Label>
             <Select defaultValue={node.table}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="Select Table" />
@@ -115,7 +117,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Node Field</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t("nodeField")}</Label>
             <Select defaultValue={node.labelField}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="Select Field" />
@@ -131,7 +133,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <div className="w-px h-8 bg-border"></div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Image Field</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t("imageField")}</Label>
             <Select defaultValue={node.imageField}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="None" />
@@ -146,7 +148,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Latitude</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t("latitude")}</Label>
             <Select defaultValue={node.latitudeField}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="None" />
@@ -160,7 +162,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground">Longitude</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t("longitude")}</Label>
             <Select defaultValue={node.longitudeField}>
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="None" />
@@ -186,6 +188,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
 }
 
 function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: string) => void }) {
+  const { t } = useLanguage();
   const dragControls = useDragControls();
 
   return (
@@ -210,7 +213,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         
         <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_auto_1fr_1fr] gap-3 items-end">
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Source Table</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
             <Select defaultValue={link.sourceTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
               <SelectContent>
@@ -220,7 +223,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </Select>
           </div>
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Source Column</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</div>
             <Select defaultValue={link.sourceColumn}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
               <SelectContent>
@@ -235,7 +238,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
 
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Target Table</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
             <Select defaultValue={link.targetTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
               <SelectContent>
@@ -245,7 +248,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </Select>
           </div>
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Target Column</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</div>
             <Select defaultValue={link.targetColumn}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
               <SelectContent>
@@ -260,7 +263,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
 
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Label</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
             <Select defaultValue={link.labelField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
               <SelectContent>
@@ -273,7 +276,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </Select>
           </div>
           <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Weight</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</div>
             <Select defaultValue={link.weightField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
               <SelectContent>
@@ -298,6 +301,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
 }
 
 export default function GraphBuilderForm() {
+  const { t } = useLanguage();
   const [links, setLinks] = useState<Link[]>([
     { id: "1", sourceTable: "crime_incidents_2024", sourceColumn: "suspect_id", targetTable: "suspect_profiles", targetColumn: "id", labelField: "none", weightField: "none" }
   ]);
@@ -429,13 +433,13 @@ export default function GraphBuilderForm() {
               <TableIcon className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">Node Configuration</h3>
-              <p className="text-[10px] text-indigo-600/70 font-medium">Select source tables and display fields</p>
+              <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">{t("nodeConfiguration")}</h3>
+              <p className="text-[10px] text-indigo-600/70 font-medium">{t("nodeConfigDesc")}</p>
             </div>
           </div>
           <Button size="sm" onClick={addNode} className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
             <Plus className="w-3.5 h-3.5" />
-            Add Node
+            {t("addNode")}
           </Button>
         </div>
         <CardContent className="p-6">
@@ -454,13 +458,13 @@ export default function GraphBuilderForm() {
                 <Database className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">Data Links</h3>
-                <p className="text-[10px] text-indigo-600/70 font-medium">Define connections between source tables</p>
+                <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">{t("dataLinks")}</h3>
+                <p className="text-[10px] text-indigo-600/70 font-medium">{t("dataLinksDesc")}</p>
               </div>
             </div>
             <Button size="sm" onClick={addLink} className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
               <Plus className="w-3.5 h-3.5" />
-              Add Link
+              {t("addLink")}
             </Button>
          </div>
          
@@ -485,7 +489,7 @@ export default function GraphBuilderForm() {
           <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Eye className="w-4 h-4 text-slate-500" />
-              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Graph Preview</h3>
+              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">{t("graphPreview")}</h3>
               <span className="text-[10px] text-slate-400 font-medium ml-2">
                 {flowNodes.length} node{flowNodes.length !== 1 ? "s" : ""} · {flowEdges.length} link{flowEdges.length !== 1 ? "s" : ""}
               </span>
@@ -522,8 +526,8 @@ export default function GraphBuilderForm() {
       )}
 
       <div className="flex justify-end gap-3 pt-4 pb-10">
-         <Button variant="outline" size="lg" className="h-10">Reset</Button>
-         <Button size="lg" className="bg-black hover:bg-black/90 text-white px-8 h-10">Generate Graph</Button>
+         <Button variant="outline" size="lg" className="h-10">{t("reset")}</Button>
+         <Button size="lg" className="bg-black hover:bg-black/90 text-white px-8 h-10">{t("generateGraph")}</Button>
       </div>
     </div>
   );

@@ -15,8 +15,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage, type Language } from "@/lib/i18n";
 
 export default function Settings() {
+  const { language, setLanguage, t } = useLanguage();
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
   
@@ -32,18 +34,18 @@ export default function Settings() {
     <Layout>
       <div className="container mx-auto px-6 py-8 max-w-5xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">MyPage</h1>
-          <p className="text-muted-foreground mt-2">Manage your account, team, billing, and system configurations.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("myPage")}</h1>
+          <p className="text-muted-foreground mt-2">{t("myPageDesc")}</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-6 lg:w-[900px]">
-            <TabsTrigger value="account">Account & Security</TabsTrigger>
-            <TabsTrigger value="team">Team & Roles</TabsTrigger>
-            <TabsTrigger value="billing">Billing & License</TabsTrigger>
-            <TabsTrigger value="usage">Usage</TabsTrigger>
-            <TabsTrigger value="ai-settings">AI Settings</TabsTrigger>
-            <TabsTrigger value="mcp">MCP Integrations</TabsTrigger>
+            <TabsTrigger value="account">{t("accountSecurity")}</TabsTrigger>
+            <TabsTrigger value="team">{t("teamRoles")}</TabsTrigger>
+            <TabsTrigger value="billing">{t("billingLicense")}</TabsTrigger>
+            <TabsTrigger value="usage">{t("usage")}</TabsTrigger>
+            <TabsTrigger value="ai-settings">{t("aiSettings")}</TabsTrigger>
+            <TabsTrigger value="mcp">{t("mcpIntegrations")}</TabsTrigger>
           </TabsList>
 
           {/* AI Settings Tab */}
@@ -55,15 +57,14 @@ export default function Settings() {
                             <Bot className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div>
-                            <CardTitle>AI Model Configuration</CardTitle>
-                            <CardDescription>Connect your preferred AI models to enhance the platform's capabilities.</CardDescription>
+                            <CardTitle>{t("aiModelConfig")}</CardTitle>
+                            <CardDescription>{t("aiModelConfigDesc")}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        By connecting external LLM (Large Language Model) services, you can unlock advanced features such as automatic graph generation, content summarization, and intelligent insights. 
-                        Please provide valid API keys for the services you wish to use. These keys are stored locally in your browser for security.
+                        {t("aiModelConfigInfo")}
                     </p>
                 </CardContent>
             </Card>
@@ -84,14 +85,14 @@ export default function Settings() {
                                 <CardDescription>Powerful models for reasoning and coding tasks.</CardDescription>
                             </div>
                         </div>
-                        <Badge variant="outline" className="bg-slate-100 text-slate-500">Not Connected</Badge>
+                        <Badge variant="outline" className="bg-slate-100 text-slate-500">{t("notConnected")}</Badge>
                     </CardHeader>
                     <CardContent className="space-y-4 pt-4">
                         <div className="space-y-2">
-                            <Label htmlFor="claude-key">API Key</Label>
+                            <Label htmlFor="claude-key">{t("apiKey")}</Label>
                             <div className="flex gap-2">
                                 <Input id="claude-key" type="password" placeholder="sk-ant-..." className="font-mono" />
-                                <Button>Connect</Button>
+                                <Button>{t("connect")}</Button>
                             </div>
                             <p className="text-xs text-muted-foreground mt-2">
                                 To get an API key, sign up at <a href="https://console.anthropic.com/" target="_blank" rel="noreferrer" className="text-primary hover:underline">console.anthropic.com</a>.
@@ -115,14 +116,14 @@ export default function Settings() {
                                 <CardDescription>Multimodal capabilities and fast processing.</CardDescription>
                             </div>
                         </div>
-                        <Badge variant="outline" className="bg-slate-100 text-slate-500">Not Connected</Badge>
+                        <Badge variant="outline" className="bg-slate-100 text-slate-500">{t("notConnected")}</Badge>
                     </CardHeader>
                     <CardContent className="space-y-4 pt-4">
                         <div className="space-y-2">
-                            <Label htmlFor="gemini-key">API Key</Label>
+                            <Label htmlFor="gemini-key">{t("apiKey")}</Label>
                             <div className="flex gap-2">
                                 <Input id="gemini-key" type="password" placeholder="AIza..." className="font-mono" />
-                                <Button>Connect</Button>
+                                <Button>{t("connect")}</Button>
                             </div>
                              <p className="text-xs text-muted-foreground mt-2">
                                 You can generate a Gemini API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-primary hover:underline">Google AI Studio</a>.
@@ -146,14 +147,14 @@ export default function Settings() {
                                 <CardDescription>Industry standard for language tasks.</CardDescription>
                             </div>
                         </div>
-                         <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Connected</Badge>
+                         <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">{t("connected")}</Badge>
                     </CardHeader>
                     <CardContent className="space-y-4 pt-4">
                         <div className="space-y-2">
-                            <Label htmlFor="openai-key">API Key</Label>
+                            <Label htmlFor="openai-key">{t("apiKey")}</Label>
                             <div className="flex gap-2">
                                 <Input id="openai-key" type="password" value="sk-proj-****************************" disabled className="font-mono bg-muted" />
-                                <Button variant="outline" className="text-destructive hover:text-destructive hover:bg-destructive/10">Disconnect</Button>
+                                <Button variant="outline" className="text-destructive hover:text-destructive hover:bg-destructive/10">{t("disconnect")}</Button>
                             </div>
                              <p className="text-xs text-muted-foreground mt-2">
                                 API keys can be managed in the <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer" className="text-primary hover:underline">OpenAI Platform dashboard</a>.
@@ -168,8 +169,8 @@ export default function Settings() {
           <TabsContent value="account" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Update your personal information and email address.</CardDescription>
+                <CardTitle>{t("profileInfo")}</CardTitle>
+                <CardDescription>{t("profileInfoDesc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-4 mb-4">
@@ -177,53 +178,87 @@ export default function Settings() {
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-primary text-primary-foreground text-lg">JD</AvatarFallback>
                   </Avatar>
-                  <Button variant="outline" size="sm">Change Avatar</Button>
+                  <Button variant="outline" size="sm">{t("changeAvatar")}</Button>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First name</Label>
+                    <Label htmlFor="firstName">{t("firstName")}</Label>
                     <Input id="firstName" defaultValue="John" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last name</Label>
+                    <Label htmlFor="lastName">{t("lastName")}</Label>
                     <Input id="lastName" defaultValue="Doe" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("email")}</Label>
                   <Input id="email" type="email" defaultValue="john@emgraph.ai" />
                 </div>
               </CardContent>
               <CardFooter className="border-t px-6 py-4">
-                <Button>Save Profile</Button>
+                <Button>{t("saveProfile")}</Button>
               </CardFooter>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Password & Security</CardTitle>
-                <CardDescription>Manage your password and security settings.</CardDescription>
+                <CardTitle>{t("passwordSecurity")}</CardTitle>
+                <CardDescription>{t("passwordSecurityDesc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current">Current Password</Label>
+                  <Label htmlFor="current">{t("currentPassword")}</Label>
                   <Input id="current" type="password" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="new">New Password</Label>
+                  <Label htmlFor="new">{t("newPassword")}</Label>
                   <Input id="new" type="password" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm">Confirm New Password</Label>
+                  <Label htmlFor="confirm">{t("confirmNewPassword")}</Label>
                   <Input id="confirm" type="password" />
                 </div>
               </CardContent>
               <CardFooter className="border-t px-6 py-4 flex justify-between items-center">
                 <div className="text-sm text-muted-foreground">
-                  Last changed: 3 months ago
+                  {t("lastChanged")}: 3 {t("monthsAgo")}
                 </div>
-                <Button variant="outline">Update Password</Button>
+                <Button variant="outline">{t("updatePassword")}</Button>
               </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  {t("language")}
+                </CardTitle>
+                <CardDescription>{t("languageDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-3">
+                  <Button
+                    variant={language === "en" ? "default" : "outline"}
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => setLanguage("en")}
+                    data-testid="button-lang-en"
+                  >
+                    {language === "en" && <Check className="w-4 h-4" />}
+                    {t("english")}
+                  </Button>
+                  <Button
+                    variant={language === "ko" ? "default" : "outline"}
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => setLanguage("ko")}
+                    data-testid="button-lang-ko"
+                  >
+                    {language === "ko" && <Check className="w-4 h-4" />}
+                    {t("korean")}
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
           </TabsContent>
 
@@ -232,40 +267,40 @@ export default function Settings() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="space-y-1">
-                  <CardTitle>Team Members</CardTitle>
-                  <CardDescription>Invite your colleagues and manage permissions.</CardDescription>
+                  <CardTitle>{t("teamMembers")}</CardTitle>
+                  <CardDescription>{t("teamMembersDesc")}</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm" className="gap-2">
                          <Shield className="w-4 h-4" />
-                         Role Guide
+                         {t("roleGuide")}
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Role Permissions Guide</DialogTitle>
-                        <DialogDescription>Understanding access levels in your workspace.</DialogDescription>
+                        <DialogTitle>{t("rolePermissionsGuide")}</DialogTitle>
+                        <DialogDescription>{t("rolePermissionsGuideDesc")}</DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 pt-4">
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
                              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Owner</Badge>
                            </div>
-                           <p className="text-sm text-muted-foreground">Full access to all features, billing, and team management. Can delete the workspace.</p>
+                           <p className="text-sm text-muted-foreground">{t("ownerDesc")}</p>
                          </div>
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
                              <Badge variant="outline" className="bg-secondary text-secondary-foreground border-secondary-foreground/20">Editor</Badge>
                            </div>
-                           <p className="text-sm text-muted-foreground">Can create and edit projects, databases, and resources. Cannot manage billing or invite members.</p>
+                           <p className="text-sm text-muted-foreground">{t("editorDesc")}</p>
                          </div>
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
                              <Badge variant="outline" className="text-muted-foreground border-border">Viewer</Badge>
                            </div>
-                           <p className="text-sm text-muted-foreground">Read-only access to projects and dashboards. Cannot make any changes or export data.</p>
+                           <p className="text-sm text-muted-foreground">{t("viewerDesc")}</p>
                          </div>
                       </div>
                     </DialogContent>
@@ -275,7 +310,7 @@ export default function Settings() {
                     <DialogTrigger asChild>
                       <Button className="gap-2">
                         <UserPlus className="w-4 h-4" />
-                        Invite Member
+                        {t("inviteMember")}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">

@@ -18,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { QueryTemplateDialog } from "@/components/database/QueryTemplateDialog";
+import { useLanguage } from "@/lib/i18n";
 import DataPreprocessingBuilder from "@/components/database/DataPreprocessingBuilder";
 import GraphBuilderForm from "@/components/graph/GraphBuilderForm";
 import {
@@ -145,6 +146,7 @@ interface EditingCell {
 }
 
 export default function DatabaseManager() {
+  const { t } = useLanguage();
   const [location, setLocation] = useLocation();
   const [tabs, setTabs] = useState<Tab[]>([
     { id: 't1', type: 'table', title: 'crime_incidents_2024' }
@@ -971,7 +973,7 @@ export default function DatabaseManager() {
                           setIsCreateCategoryOpen(true);
                         }}>
                           <Plus className="w-3.5 h-3.5" />
-                          Create Category
+                          {t("createCategory")}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive" onClick={() => {
                           setDeleteCategoryParent(category.category);
@@ -979,7 +981,7 @@ export default function DatabaseManager() {
                           setIsDeleteCategoryOpen(true);
                         }}>
                           <Trash2 className="w-3.5 h-3.5" />
-                          Delete Category
+                          {t("deleteCategory")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1085,36 +1087,36 @@ export default function DatabaseManager() {
                <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0 opacity-60 pointer-events-none select-none grayscale-[0.5]">
                 <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 text-white gap-2 shadow-sm mr-2" disabled>
                   <Plus className="w-4 h-4" />
-                  <span className="font-medium">New Query</span>
+                  <span className="font-medium">{t("newQuery")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <TableIcon className="w-4 h-4" />
-                  <span className="font-medium">Table</span>
+                  <span className="font-medium">{t("table")}</span>
                 </Button>
                 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <FileCode className="w-4 h-4" />
-                  <span className="font-medium">Query</span>
+                  <span className="font-medium">{t("query")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <Network className="w-4 h-4" />
-                  <span className="font-medium">Graph</span>
+                  <span className="font-medium">{t("graph")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <Import className="w-4 h-4" />
-                  <span className="font-medium">Import</span>
+                  <span className="font-medium">{t("import")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <FileUp className="w-4 h-4" />
-                  <span className="font-medium">Export</span>
+                  <span className="font-medium">{t("export")}</span>
                 </Button>
              </div>
             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
@@ -1135,7 +1137,7 @@ export default function DatabaseManager() {
              <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0">
                 <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm mr-2" onClick={() => createNew('query')}>
                   <Plus className="w-4 h-4" />
-                  <span className="font-medium">New Query</span>
+                  <span className="font-medium">{t("newQuery")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
@@ -1153,7 +1155,7 @@ export default function DatabaseManager() {
                   }}
                 >
                   <TableIcon className="w-4 h-4" />
-                  <span className="font-medium">Table</span>
+                  <span className="font-medium">{t("table")}</span>
                 </Button>
                 
                 <Button 
@@ -1168,7 +1170,7 @@ export default function DatabaseManager() {
                   }}
                 >
                   <FileCode className="w-4 h-4" />
-                  <span className="font-medium">Query</span>
+                  <span className="font-medium">{t("query")}</span>
                 </Button>
 
                 <Button 
@@ -1183,19 +1185,19 @@ export default function DatabaseManager() {
                   }}
                 >
                   <Network className="w-4 h-4" />
-                  <span className="font-medium">Graph</span>
+                  <span className="font-medium">{t("graph")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <Import className="w-4 h-4" />
-                  <span className="font-medium">Import</span>
+                  <span className="font-medium">{t("import")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <FileUp className="w-4 h-4" />
-                  <span className="font-medium">Export</span>
+                  <span className="font-medium">{t("export")}</span>
                 </Button>
              </div>
 

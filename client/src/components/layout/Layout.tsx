@@ -1,5 +1,6 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -34,6 +35,7 @@ const MOCK_ORGS = [
 ];
 
 export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
+  const { t } = useLanguage();
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
@@ -276,7 +278,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("px-3 pt-6 pb-2", isCollapsed && "px-0 text-center")}>
                {!isCollapsed && (
                  <div className="flex items-center mb-2 px-1">
-                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Workspace</span>
+                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("workspace")}</span>
                  </div>
                )}
                <div className={cn("flex items-center gap-2", isCollapsed && "justify-center")}>
@@ -301,7 +303,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                      )}
                    </DropdownMenuTrigger>
                    <DropdownMenuContent className="w-[200px]" align="start">
-                     <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Switch Workspace</DropdownMenuLabel>
+                     <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider font-bold">{t("switchWorkspace")}</DropdownMenuLabel>
                      {MOCK_ORGS.map((org) => (
                        <DropdownMenuItem key={org.id} onClick={() => handleOrgSelect(org)} className="flex items-center justify-between gap-2 cursor-pointer">
                          <div className="flex items-center gap-2">
@@ -353,13 +355,13 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <div className="mb-6 mt-1">
                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5 opacity-80">
                       <Database className="w-3 h-3" />
-                      Graph Database
+                      {t("graphDatabase")}
                    </div>
                    <Select>
                       <SelectTrigger className="h-9 text-xs bg-card hover:bg-accent/50 border-input shadow-sm transition-colors text-muted-foreground data-[placeholder]:text-muted-foreground">
                          <div className="flex items-center gap-2 truncate">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" />
-                            <SelectValue placeholder="Select Database..." />
+                            <SelectValue placeholder={t("selectDatabase")} />
                          </div>
                       </SelectTrigger>
                       <SelectContent>
@@ -367,7 +369,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                          <SelectItem value="db2">Supply Chain V2</SelectItem>
                          <div className="p-1 border-t border-border mt-1 pt-1">
                              <Button variant="ghost" className="w-full justify-start h-8 text-xs font-medium text-primary gap-2 px-2 hover:bg-primary/5 hover:text-primary">
-                                <Plus className="w-3 h-3" /> Create New Database
+                                <Plus className="w-3 h-3" /> {t("createNewDatabase")}
                              </Button>
                          </div>
                       </SelectContent>
@@ -381,7 +383,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <div>
                   {!isCollapsed && (
                     <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Nodes</span>
+                      <span>{t("nodes")}</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   )}
@@ -416,7 +418,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 <div>
                   {!isCollapsed && (
                     <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between group cursor-pointer">
-                      <span>Links</span>
+                      <span>{t("links")}</span>
                       <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   )}
@@ -449,19 +451,19 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           ) : (
             <div className={cn("space-y-1 animate-in fade-in duration-300", isCollapsed ? "p-2" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">Work</div>}
-              <NavItem href="/dashboard" icon={LayoutGrid} label="Dashboard" />
-              <NavItem href="/database" icon={Database} label="Database" />
-              <NavItem href="/resources" icon={Library} label="Resources" />
-              <NavItem href="/projects" icon={FolderOpen} label="Graph Analysis" />
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">{t("work")}</div>}
+              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
+              <NavItem href="/database" icon={Database} label={t("database")} />
+              <NavItem href="/resources" icon={Library} label={t("resources")} />
+              <NavItem href="/projects" icon={FolderOpen} label={t("graphAnalysis")} />
             </div>
           )}
           
           {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Ontology</div>}
-              <NavItem href="/knowledge-garden" icon={Sprout} label="Knowledge Garden" />
-              <NavItem href="/brain-market" icon={Brain} label="Brain Market" />
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
+              <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
+              <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
             </div>
           )}
         </nav>
@@ -475,14 +477,14 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className="bg-background rounded-lg p-3 border border-border shadow-sm">
               <div className="flex justify-between items-center mb-2">
                  <span className="text-xs font-medium flex items-center gap-1">
-                   <Database className="w-3 h-3 text-primary" /> Storage
+                   <Database className="w-3 h-3 text-primary" /> {t("storage")}
                  </span>
                  <span className="text-[10px] text-muted-foreground">{usage.used}GB / {usage.total}GB</span>
               </div>
               <Progress value={usage.percent} className="h-1.5 mb-2" />
                <div className="text-[10px] text-muted-foreground flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" />
-                  {(usage.total - usage.used).toFixed(1)}GB remaining
+                  {(usage.total - usage.used).toFixed(1)}GB {t("remaining")}
                </div>
             </div>
           )}
@@ -544,15 +546,15 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       <AlertDialog open={showLeaveConfirm} onOpenChange={setShowLeaveConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Leave Workspace</AlertDialogTitle>
+            <AlertDialogTitle>{t("leaveWorkspace")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to leave this workspace? Any unsaved changes may be lost.
+              {t("leaveWorkspaceDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={() => { setShowLeaveConfirm(false); setLocation("/projects"); }}>
-              Leave
+              {t("leave")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -561,17 +563,17 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+            <AlertDialogTitle>{t("unsavedChanges")}</AlertDialogTitle>
             <AlertDialogDescription>
               {alertAction === 'switch-org' 
-                ? "If you switch organizations, any unsaved changes will be lost. Are you sure you want to continue?"
-                : "If you log out, any unsaved changes will be lost. Are you sure you want to log out?"}
+                ? t("switchOrgWarning")
+                : t("logoutWarning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setAlertAction(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setAlertAction(null)}>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleAlertConfirm}>
-              {alertAction === 'switch-org' ? "Switch Organization" : "Log Out"}
+              {alertAction === 'switch-org' ? t("switchOrganization") : t("logOut")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
