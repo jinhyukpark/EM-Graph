@@ -11,12 +11,14 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useLanguage } from "@/lib/i18n";
 
 export default function CreateProject() {
   const [, setLocation] = useLocation();
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
+  const { t } = useLanguage();
 
   const createMutation = useMutation({
     mutationFn: async (data: { title: string; type: string; description: string }) => {
@@ -47,20 +49,20 @@ export default function CreateProject() {
             <CardHeader className="space-y-2">
               <div className="flex items-center gap-2 text-primary mb-2">
                 <Sparkles className="w-5 h-5" />
-                <span className="text-sm font-semibold uppercase tracking-widest">New Project</span>
+                <span className="text-sm font-semibold uppercase tracking-widest">{t("newProject")}</span>
               </div>
-              <CardTitle className="text-3xl">Initialize Network</CardTitle>
+              <CardTitle className="text-3xl">{t("initializeNetwork")}</CardTitle>
               <CardDescription>
-                Start by defining the core metadata for your relationship graph.
+                {t("initializeNetworkDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreate} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Project Title</Label>
+                  <Label htmlFor="title">{t("projectTitle")}</Label>
                   <Input 
                     id="title" 
-                    placeholder="e.g. Q1 Supply Chain Risk Analysis" 
+                    placeholder={t("projectTitlePlaceholder")} 
                     className="text-lg py-6 bg-background" 
                     required
                     value={title}
@@ -70,25 +72,25 @@ export default function CreateProject() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="type">Data Domain</Label>
+                  <Label htmlFor="type">{t("dataDomain")}</Label>
                   <Select required value={type} onValueChange={setType}>
                     <SelectTrigger className="py-6 bg-background" data-testid="select-type">
-                      <SelectValue placeholder="Select domain type" />
+                      <SelectValue placeholder={t("selectDomainType")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="crime">Crime & Security Analysis</SelectItem>
-                      <SelectItem value="supply">Supply Chain Logistics</SelectItem>
-                      <SelectItem value="social">Social Network Analysis</SelectItem>
-                      <SelectItem value="financial">Financial Transaction Graph</SelectItem>
+                      <SelectItem value="crime">{t("crimeAnalysis")}</SelectItem>
+                      <SelectItem value="supply">{t("supplyChainLogistics")}</SelectItem>
+                      <SelectItem value="social">{t("socialNetworkAnalysis")}</SelectItem>
+                      <SelectItem value="financial">{t("financialTransactionGraph")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="desc">Description</Label>
+                  <Label htmlFor="desc">{t("description")}</Label>
                   <Textarea 
                     id="desc" 
-                    placeholder="Briefly describe the goals of this analysis..." 
+                    placeholder={t("descriptionPlaceholder")} 
                     className="min-h-[120px] resize-none bg-background"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -98,7 +100,7 @@ export default function CreateProject() {
 
                 <div className="pt-4 flex justify-end">
                   <Button type="submit" size="lg" className="gap-2 text-md px-8" disabled={createMutation.isPending} data-testid="button-submit">
-                    {createMutation.isPending ? "Creating..." : "Continue to Schema Setup"}
+                    {createMutation.isPending ? t("creating") : t("continueToSchema")}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>

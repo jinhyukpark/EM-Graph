@@ -11,11 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowRight, Database, Settings2, Save, GripVertical, Trash2, Sliders } from "lucide-react";
+import { ArrowRight, Database, Settings2, Save, GripVertical, Trash2, Sliders, Plus } from "lucide-react";
 import { MOCK_FIELDS } from "@/lib/mockData";
+import { useLanguage } from "@/lib/i18n";
 
-// Custom Node Component for the Schema Builder
 function SchemaNode({ data }: { data: any }) {
+  const { t } = useLanguage();
   return (
     <div className="px-4 py-3 rounded-lg bg-card border-2 border-primary/50 shadow-md min-w-[180px]">
       <div className="flex items-center gap-3 mb-2">
@@ -25,11 +26,11 @@ function SchemaNode({ data }: { data: any }) {
         <div className="font-semibold text-sm">{data.label}</div>
       </div>
       <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">
-        {data.type} Field
+        {data.type} {t("field")}
       </div>
       {data.isPrimary && (
         <div className="mt-2 text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-full w-fit font-medium">
-          Primary Key
+          {t("primaryKey")}
         </div>
       )}
     </div>
@@ -43,6 +44,7 @@ export default function ProjectSetup() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [selectedField, setSelectedField] = useState<any>(null);
+  const { t } = useLanguage();
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: 'hsl(var(--primary))' }, markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' } }, eds)),
@@ -65,7 +67,6 @@ export default function ProjectSetup() {
 
       const data = JSON.parse(event.dataTransfer.getData("application/reactflow"));
       
-      // Get bounds for relative positioning
       const reactFlowBounds = document.querySelector(".react-flow")?.getBoundingClientRect();
       if (!reactFlowBounds) return;
 
@@ -93,20 +94,19 @@ export default function ProjectSetup() {
   return (
     <Layout>
       <div className="h-[calc(100vh-64px)] flex overflow-hidden">
-        {/* Left Sidebar: Data Source & Fields */}
         <div className="w-80 border-r border-border bg-card flex flex-col z-20">
           <div className="p-4 border-b border-border">
             <h2 className="font-semibold flex items-center gap-2">
               <Database className="w-4 h-4 text-primary" />
-              Data Sources
+              {t("dataSources")}
             </h2>
-            <p className="text-xs text-muted-foreground mt-1">Drag fields to canvas to define nodes</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("dragFieldsToCanvas")}</p>
           </div>
           
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-6">
               <div>
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Imported Data</h3>
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">{t("importedData")}</h3>
                 <div className="space-y-2">
                   {MOCK_FIELDS.crime.map((field) => (
                     <div
@@ -130,11 +130,10 @@ export default function ProjectSetup() {
           </ScrollArea>
         </div>
 
-        {/* Center: Canvas */}
         <div className="flex-1 relative bg-background/50">
           <div className="absolute top-4 left-4 z-10 bg-card/90 backdrop-blur p-2 rounded-md border border-border shadow-sm">
-             <h3 className="text-sm font-medium">Schema Builder</h3>
-             <p className="text-xs text-muted-foreground">Define Node & Edge Logic</p>
+             <h3 className="text-sm font-medium">{t("schemaBuilder")}</h3>
+             <p className="text-xs text-muted-foreground">{t("defineNodeEdgeLogic")}</p>
           </div>
           
           <ReactFlow
@@ -154,45 +153,43 @@ export default function ProjectSetup() {
           </ReactFlow>
         </div>
 
-        {/* Right Sidebar: Configuration */}
         <div className="w-80 border-l border-border bg-card flex flex-col z-20">
            <div className="p-4 border-b border-border flex justify-between items-center">
             <h2 className="font-semibold flex items-center gap-2">
               <Settings2 className="w-4 h-4 text-primary" />
-              Configuration
+              {t("configuration")}
             </h2>
             <Button size="sm" onClick={handleSave} className="h-8 gap-1 text-xs">
               <Save className="w-3 h-3" />
-              Save & View
+              {t("saveAndView")}
             </Button>
           </div>
 
           <ScrollArea className="flex-1">
             <div className="p-4 space-y-6">
-              {/* Global Graph Settings */}
               <div className="space-y-4">
-                <h3 className="text-sm font-medium border-b border-border pb-2">Node Appearance</h3>
+                <h3 className="text-sm font-medium border-b border-border pb-2">{t("nodeAppearance")}</h3>
                 
                 <div className="space-y-3">
-                  <Label className="text-xs">Default Node Size</Label>
+                  <Label className="text-xs">{t("defaultNodeSize")}</Label>
                   <Slider defaultValue={[33]} max={100} step={1} className="[&_.range-slider-thumb]:border-primary" />
                 </div>
 
                  <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs">Dynamic Sizing</Label>
+                    <Label className="text-xs">{t("dynamicSizing")}</Label>
                     <Switch />
                   </div>
-                  <p className="text-[10px] text-muted-foreground">Scale nodes based on connection count (degree centrality).</p>
+                  <p className="text-[10px] text-muted-foreground">{t("dynamicSizingDesc")}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                 <h3 className="text-sm font-medium border-b border-border pb-2">Filtering Rules</h3>
+                 <h3 className="text-sm font-medium border-b border-border pb-2">{t("filteringRules")}</h3>
                  <div className="space-y-3">
-                    <Label className="text-xs">Visible Filters</Label>
+                    <Label className="text-xs">{t("visibleFilters")}</Label>
                     <div className="flex flex-wrap gap-2">
-                      {['Date Range', 'Category', 'Severity'].map(tag => (
+                      {[t("dateRange"), t("category"), t("severity")].map(tag => (
                         <div key={tag} className="px-2 py-1 rounded-md bg-primary/10 border border-primary/20 text-[10px] text-primary flex items-center gap-1">
                           {tag}
                           <button className="hover:text-destructive"><Trash2 className="w-3 h-3" /></button>
@@ -208,12 +205,12 @@ export default function ProjectSetup() {
               <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
                 <div className="flex items-center gap-2 text-accent mb-1">
                   <Sliders className="w-4 h-4" />
-                  <span className="text-xs font-bold">AI Recommendations</span>
+                  <span className="text-xs font-bold">{t("aiRecommendations")}</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-tight">
-                  Nexus suggests using "Location" as the primary clustering key for this dataset.
+                  {t("aiRecommendationsDesc")}
                 </p>
-                <Button variant="link" className="h-auto p-0 text-[10px] text-accent mt-2">Apply Recommendation</Button>
+                <Button variant="link" className="h-auto p-0 text-[10px] text-accent mt-2">{t("applyRecommendation")}</Button>
               </div>
 
             </div>
@@ -223,5 +220,3 @@ export default function ProjectSetup() {
     </Layout>
   );
 }
-
-import { Plus } from "lucide-react";

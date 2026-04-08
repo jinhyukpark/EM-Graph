@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
+import { useLanguage } from "@/lib/i18n";
 import { 
     Search, 
     Filter, 
@@ -307,6 +308,7 @@ const BRAINS = [
 ];
 
 export default function BrainMarket() {
+    const { t } = useLanguage();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedBrain, setSelectedBrain] = useState<typeof BRAINS[0] | null>(null);
@@ -345,7 +347,7 @@ export default function BrainMarket() {
                         <div className="relative flex-1 max-w-2xl">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input 
-                                placeholder="Search for brains, topics, or authors..." 
+                                placeholder={t("searchBrainsPlaceholder")} 
                                 className="pl-10 h-11 bg-background shadow-sm border-muted-foreground/20"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -353,14 +355,14 @@ export default function BrainMarket() {
                         </div>
                         <Button variant="outline" className="h-11 gap-2 px-4">
                             <Filter className="w-4 h-4" />
-                            Filters
+                            {t("filter")}
                         </Button>
                         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="h-11">
                             <TabsList className="h-11 bg-muted/50">
-                                <TabsTrigger value="all" className="h-9">All Brains</TabsTrigger>
-                                <TabsTrigger value="popular" className="h-9">Popular</TabsTrigger>
-                                <TabsTrigger value="new" className="h-9">New Arrivals</TabsTrigger>
-                                <TabsTrigger value="free" className="h-9">Free</TabsTrigger>
+                                <TabsTrigger value="all" className="h-9">{t("allBrains")}</TabsTrigger>
+                                <TabsTrigger value="popular" className="h-9">{t("trending")}</TabsTrigger>
+                                <TabsTrigger value="new" className="h-9">{t("newest")}</TabsTrigger>
+                                <TabsTrigger value="free" className="h-9">{t("topRated")}</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -391,7 +393,7 @@ export default function BrainMarket() {
                                     
                                     <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-white z-10">
                                         <Badge variant="secondary" className="bg-black/40 backdrop-blur-md text-white border-white/10 hover:bg-black/60">
-                                            {brain.nodes.toLocaleString()} Nodes
+                                            {brain.nodes.toLocaleString()} {t("nodes")}
                                         </Badge>
                                         <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-md text-xs font-medium border border-white/10">
                                             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
@@ -443,7 +445,7 @@ export default function BrainMarket() {
                                         className="flex-1 text-xs h-9 border-primary/20 hover:bg-primary/5 hover:text-primary"
                                         onClick={() => setSelectedBrain(brain)}
                                     >
-                                        Preview
+                                        {t("preview")}
                                     </Button>
                                     <Button className="flex-1 text-xs h-9 gap-2 shadow-sm">
                                         Subscribe
@@ -489,10 +491,10 @@ export default function BrainMarket() {
                                 <div className="absolute bottom-6 left-8 right-8">
                                     <div className="flex items-center gap-2 mb-3">
                                         <Badge className="bg-primary hover:bg-primary text-primary-foreground border-none px-3 py-1">
-                                            {selectedBrain.nodes.toLocaleString()} Nodes
+                                            {selectedBrain.nodes.toLocaleString()} {t("nodes")}
                                         </Badge>
                                         <Badge variant="outline" className="bg-background/20 backdrop-blur text-foreground border-foreground/10 px-3 py-1">
-                                            {selectedBrain.edges.toLocaleString()} Edges
+                                            {selectedBrain.edges.toLocaleString()} {t("edges")}
                                         </Badge>
                                         <Badge variant="secondary" className="bg-background/80 backdrop-blur px-3 py-1">
                                             {selectedBrain.updateFrequency} Updates
@@ -506,7 +508,7 @@ export default function BrainMarket() {
                                         </span>
                                         <span className="flex items-center gap-1.5">
                                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                            {selectedBrain.rating} ({selectedBrain.reviews} reviews)
+                                            {selectedBrain.rating} ({selectedBrain.reviews} {t("reviews")})
                                         </span>
                                     </div>
                                 </div>
@@ -527,19 +529,19 @@ export default function BrainMarket() {
                                                 value="dataspecs" 
                                                 className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
-                                                Data & Ontology
+                                                {t("datasetOverview")}
                                             </TabsTrigger>
                                             <TabsTrigger 
                                                 value="author" 
                                                 className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
-                                                Author Info
+                                                {t("aboutAuthor")}
                                             </TabsTrigger>
                                             <TabsTrigger 
                                                 value="reviews" 
                                                 className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 font-medium"
                                             >
-                                                Reviews ({selectedBrain.reviews})
+                                                {t("reviews")} ({selectedBrain.reviews})
                                             </TabsTrigger>
                                         </TabsList>
                                     </div>
@@ -564,7 +566,7 @@ export default function BrainMarket() {
 
                                             <div className="space-y-4">
                                                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                                                    Key Features
+                                                    {t("keyFeatures")}
                                                 </h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     {selectedBrain.features.map((feature, idx) => (
@@ -581,27 +583,27 @@ export default function BrainMarket() {
                                             <div className="grid grid-cols-3 gap-4">
                                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
                                                     <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.entityTypes}</div>
-                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Entity Types</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("entityTypes")}</div>
                                                 </div>
                                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
                                                     <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.relationTypes}</div>
-                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Relation Types</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("relationTypes")}</div>
                                                 </div>
                                                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-center">
                                                     <div className="text-3xl font-bold text-primary mb-1">{selectedBrain.datasetStats.dataSources}</div>
-                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data Sources</div>
+                                                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("dataSources2")}</div>
                                                 </div>
                                             </div>
 
                                             <div className="space-y-4">
                                                 <h3 className="font-semibold text-lg flex items-center gap-2">
-                                                    Ontology Structure Preview
+                                                    {t("ontologyStructure")} {t("preview")}
                                                 </h3>
                                                 <div className="aspect-video w-full rounded-xl overflow-hidden border border-border bg-muted relative group">
                                                     {selectedBrain.ontologyImageSrc ? (
                                                         <img 
                                                             src={selectedBrain.ontologyImageSrc} 
-                                                            alt="Ontology Structure" 
+                                                            alt={t("ontologyStructure")} 
                                                             className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" 
                                                         />
                                                     ) : (
@@ -643,7 +645,7 @@ export default function BrainMarket() {
                                             <Separator />
                                             
                                             <div className="space-y-4">
-                                                <h4 className="font-medium text-sm uppercase text-muted-foreground tracking-wider">History & Track Record</h4>
+                                                <h4 className="font-medium text-sm uppercase text-muted-foreground tracking-wider">{t("authorHistory")}</h4>
                                                 <div className="grid gap-3">
                                                     {Array.isArray(selectedBrain.authorHistory) ? (
                                                         selectedBrain.authorHistory.map((history, idx) => (

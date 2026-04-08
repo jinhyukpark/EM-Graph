@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import Layout from "@/components/layout/Layout";
+import { useLanguage } from "@/lib/i18n";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ const INITIAL_CATEGORIES = [
 ];
 
 export default function ResourcesManager() {
+  const { t } = useLanguage();
   const [resources, setResources] = useState(INITIAL_RESOURCES);
   const [categories, setCategories] = useState(INITIAL_CATEGORIES);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -86,11 +88,10 @@ export default function ResourcesManager() {
     
     const id = newCategoryName.toLowerCase().replace(/\s+/g, '-');
     
-    // Check if category already exists
     if (categories.some(c => c.id === id)) {
       toast({
-        title: "Category exists",
-        description: "A category with this name already exists.",
+        title: t("categoryExists"),
+        description: t("categoryExistsDesc"),
         variant: "destructive"
       });
       return;
@@ -99,7 +100,7 @@ export default function ResourcesManager() {
     const newCategory = {
       id,
       label: newCategoryName,
-      icon: Folder, // Default icon for user created categories
+      icon: Folder,
       count: 0
     };
 
@@ -107,7 +108,7 @@ export default function ResourcesManager() {
     setNewCategoryName("");
     setIsCreateCategoryOpen(false);
     toast({
-      title: "Category Created",
+      title: t("categoryCreated"),
       description: `Category "${newCategoryName}" has been created.`
     });
   };
@@ -121,8 +122,8 @@ export default function ResourcesManager() {
     }
     
     toast({
-      title: "Category Deleted",
-      description: "Category has been removed."
+      title: t("categoryDeleted"),
+      description: t("categoryDeletedDesc")
     });
   };
 
@@ -136,7 +137,7 @@ export default function ResourcesManager() {
     setRenamingResource(null);
     setNewName("");
     toast({
-      title: "Resource Renamed",
+      title: t("resourceRenamed"),
       description: `Resource renamed to "${newName}".`
     });
   };
@@ -153,7 +154,7 @@ export default function ResourcesManager() {
     setMovingResource(null);
     setTargetMoveCategory("");
     toast({
-      title: "Resource Moved",
+      title: t("resourceMoved"),
       description: `Resource moved to "${targetLabel}".`
     });
   };
@@ -164,8 +165,8 @@ export default function ResourcesManager() {
     setResources(prev => prev.filter(r => r.id !== deletingResource.id));
     setDeletingResource(null);
     toast({
-      title: "Resource Deleted",
-      description: "Resource has been permanently deleted."
+      title: t("resourceDeleted"),
+      description: t("resourceDeletedDesc")
     });
   };
 
@@ -215,7 +216,6 @@ export default function ResourcesManager() {
       const ext = file.name.split('.').pop()?.toLowerCase() || '';
       let type = 'document';
       
-      // Basic type detection
       if (['jpg', 'jpeg', 'png', 'svg', 'gif', 'webp'].includes(ext)) type = 'image';
       else if (['mp4', 'mov', 'avi', 'mp3', 'wav', 'mkv'].includes(ext)) type = 'media';
       else if (['json', 'css', 'js', 'ts', 'html', 'py', 'sql'].includes(ext)) type = 'code';
@@ -234,10 +234,10 @@ export default function ResourcesManager() {
     setResources(prev => [...newResources, ...prev]);
     setIsUploadOpen(false);
     setSelectedFiles([]);
-    setSelectedCategory("all"); // Reset category selection
+    setSelectedCategory("all");
     
     toast({
-      title: "Upload Successful",
+      title: t("uploadSuccessful"),
       description: `${newResources.length} file(s) have been added.`,
     });
   };
@@ -256,14 +256,14 @@ export default function ResourcesManager() {
               }}
             >
               <Upload className="w-4 h-4 mr-2" />
-              Upload New
+              {t("uploadNew")}
             </Button>
           </div>
           
           <ScrollArea className="flex-1 py-4">
             <div className="px-3 space-y-1">
               <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between group">
-                Categories
+                {t("categories")}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -277,12 +277,12 @@ export default function ResourcesManager() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setIsCreateCategoryOpen(true)}>
                       <Plus className="w-3.5 h-3.5 mr-2" />
-                      Create Category
+                      {t("createCategory")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                      <DropdownMenuItem className="text-destructive" disabled>
                       <Trash2 className="w-3.5 h-3.5 mr-2" />
-                      Delete Category
+                      {t("deleteCategory")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -317,7 +317,7 @@ export default function ResourcesManager() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>{t("rename")}</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className="text-destructive" 
@@ -326,7 +326,7 @@ export default function ResourcesManager() {
                               handleDeleteCategory(category.id);
                             }}
                           >
-                            Delete
+                            {t("delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -334,10 +334,6 @@ export default function ResourcesManager() {
                   </button>
                   {category.id === 'all' && (
                     <div className="ml-5 mt-2 border-l border-border/60 pl-2">
-                       {/* This empty div acts as a visual connector guide, though the mapping below handles the items. 
-                           Since we're mapping flat, we just use the ml-4 on the container div above for indentation. 
-                           If we want a strict tree, we might change the CATEGORIES structure, but visual indentation works for now. 
-                       */}
                     </div>
                   )}
                 </div>
@@ -373,7 +369,7 @@ export default function ResourcesManager() {
               <div className="relative w-64">
                 <Search className="w-4 h-4 absolute left-2.5 top-3 text-muted-foreground" />
                 <Input 
-                  placeholder="Search resources..." 
+                  placeholder={t("searchResources")} 
                   className="pl-9 h-10 bg-background/50 border-border focus-visible:ring-primary/20" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -406,7 +402,7 @@ export default function ResourcesManager() {
               </div>
               <Button variant="outline" size="sm" className="h-10">
                 <Filter className="w-4 h-4 mr-2" />
-                Filter
+                {t("filter")}
               </Button>
             </div>
           </div>
@@ -464,14 +460,14 @@ export default function ResourcesManager() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => { setRenamingResource(resource); setNewName(resource.name); }}>
-                                Rename
+                                {t("rename")}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { setMovingResource(resource); }}>
-                                Move to...
+                                {t("moveTo")}...
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-destructive" onClick={() => setDeletingResource(resource)}>
-                                Delete
+                                {t("delete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -487,10 +483,10 @@ export default function ResourcesManager() {
                   <thead className="bg-secondary/10 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left w-10"></th>
-                      <th className="px-4 py-3 text-left">Name</th>
-                      <th className="px-4 py-3 text-left">Date Added</th>
-                      <th className="px-4 py-3 text-left">Size</th>
-                      <th className="px-4 py-3 text-left">Folder</th>
+                      <th className="px-4 py-3 text-left">{t("name")}</th>
+                      <th className="px-4 py-3 text-left">{t("dateAdded")}</th>
+                      <th className="px-4 py-3 text-left">{t("size")}</th>
+                      <th className="px-4 py-3 text-left">{t("folder")}</th>
                       <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -536,7 +532,7 @@ export default function ResourcesManager() {
              <Label htmlFor="category-select" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Target Category</Label>
              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                <SelectTrigger id="category-select" className="h-9">
-                 <SelectValue placeholder="Select a category" />
+                 <SelectValue placeholder={t("selectCategory")} />
                </SelectTrigger>
                <SelectContent>
                  <SelectItem value="all">Auto-detect / General</SelectItem>
@@ -562,8 +558,8 @@ export default function ResourcesManager() {
               <CloudUpload className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">Click to upload or drag and drop</p>
-              <p className="text-xs text-muted-foreground">SVG, PNG, JPG, PDF or MP4 (max. 10MB)</p>
+              <p className="text-sm font-medium text-foreground">{t("clickToUpload")}</p>
+              <p className="text-xs text-muted-foreground">{t("uploadHint")}</p>
             </div>
             <input 
               type="file" 
@@ -602,7 +598,7 @@ export default function ResourcesManager() {
               {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'No files selected'}
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+              <Button variant="outline" size="sm" onClick={() => setIsUploadOpen(false)}>{t("cancel")}</Button>
               <Button size="sm" onClick={handleUploadConfirm} disabled={selectedFiles.length === 0}>
                 Upload Files
               </Button>
@@ -614,7 +610,7 @@ export default function ResourcesManager() {
       <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
+            <DialogTitle>{t("createCategoryTitle")}</DialogTitle>
             <DialogDescription>
               Create a new folder to organize your resources.
             </DialogDescription>
@@ -622,7 +618,7 @@ export default function ResourcesManager() {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                {t("name")}
               </Label>
               <Input
                 id="name"
@@ -637,8 +633,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>Create Category</Button>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>{t("createCategory")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -693,15 +689,15 @@ export default function ResourcesManager() {
       <Dialog open={!!renamingResource} onOpenChange={(open) => !open && setRenamingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename Resource</DialogTitle>
+            <DialogTitle>{t("rename")}</DialogTitle>
             <DialogDescription>
-              Enter a new name for the resource.
+              {t("enterNewName")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="resource-name" className="text-right">
-                Name
+                {t("name")}
               </Label>
               <Input
                 id="resource-name"
@@ -715,8 +711,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenamingResource(null)}>Cancel</Button>
-            <Button onClick={handleRenameResource} disabled={!newName.trim() || newName === renamingResource?.name}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setRenamingResource(null)}>{t("cancel")}</Button>
+            <Button onClick={handleRenameResource} disabled={!newName.trim() || newName === renamingResource?.name}>{t("save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -725,17 +721,17 @@ export default function ResourcesManager() {
       <Dialog open={!!movingResource} onOpenChange={(open) => !open && setMovingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Move Resource</DialogTitle>
+            <DialogTitle>{t("moveResource")}</DialogTitle>
             <DialogDescription>
-              Select a destination category for this resource.
+              {t("selectTargetCategory")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="move-category">Destination Category</Label>
+              <Label htmlFor="move-category">{t("selectTargetCategory")}</Label>
               <Select value={targetMoveCategory} onValueChange={setTargetMoveCategory}>
                 <SelectTrigger id="move-category">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t("selectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.filter(c => c.id !== 'all').map(category => (
@@ -751,8 +747,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMovingResource(null)}>Cancel</Button>
-            <Button onClick={handleMoveResource} disabled={!targetMoveCategory}>Move Resource</Button>
+            <Button variant="outline" onClick={() => setMovingResource(null)}>{t("cancel")}</Button>
+            <Button onClick={handleMoveResource} disabled={!targetMoveCategory}>{t("moveResource")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -761,14 +757,14 @@ export default function ResourcesManager() {
       <Dialog open={!!deletingResource} onOpenChange={(open) => !open && setDeletingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Delete Resource</DialogTitle>
+            <DialogTitle>{t("delete")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{deletingResource?.name}"? This action cannot be undone.
+              {t("deleteResourceConfirm")} {t("deleteResourceWarning")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeletingResource(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteResource}>Delete Permanently</Button>
+            <Button variant="outline" onClick={() => setDeletingResource(null)}>{t("cancel")}</Button>
+            <Button variant="destructive" onClick={handleDeleteResource}>{t("delete")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

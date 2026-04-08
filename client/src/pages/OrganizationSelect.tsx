@@ -18,8 +18,8 @@ import { Building2, Plus, Search, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { useLanguage } from "@/lib/i18n";
 
-// Mock Organizations
 const MOCK_ORGS = [
   { id: "org-1", name: "Acme Corp", members: 12, role: "Admin", plan: "Enterprise" },
   { id: "org-2", name: "CyberSec Team", members: 5, role: "Member", plan: "Pro" },
@@ -33,6 +33,7 @@ export default function OrganizationSelect() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [orgs, setOrgs] = useState(MOCK_ORGS);
+  const { t } = useLanguage();
   
   const handleCreateOrg = () => {
     if (newOrgName.trim() && newOrgId.trim()) {
@@ -47,8 +48,6 @@ export default function OrganizationSelect() {
       setNewOrgName("");
       setNewOrgId("");
       setIsDialogOpen(false);
-      // Optional: Auto-redirect to dashboard
-      // setLocation("/dashboard"); 
     }
   };
 
@@ -61,12 +60,11 @@ export default function OrganizationSelect() {
     if (deleteOrgId) {
       setOrgs(orgs.filter(org => org.id !== deleteOrgId));
       setDeleteOrgId(null);
-      toast.success("조직이 삭제되었습니다.");
+      toast.success(t("orgDeleted"));
     }
   };
 
   const handleSelectOrg = (orgId: string) => {
-    // In a real app, you'd set the active organization context here
     console.log("Selected Org:", orgId);
     setLocation("/dashboard");
   };
@@ -77,22 +75,20 @@ export default function OrganizationSelect() {
       <div className="w-full max-w-lg space-y-8 relative z-10">
         
         <div className="text-center space-y-4 mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">워크스페이스 선택</h1>
-          <p className="text-slate-500">
-            협업 중인 조직을 선택하여 분석을 시작하세요.<br />
-            또는 새로운 팀을 만들어보세요.
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t("selectWorkspace")}</h1>
+          <p className="text-slate-500 whitespace-pre-line">
+            {t("selectWorkspaceDesc")}
           </p>
         </div>
 
-        {/* Organization List */}
         <Card className="shadow-sm border-slate-200 bg-white/80 backdrop-blur-sm flex flex-col">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Building2 className="w-5 h-5 text-indigo-500" />
-              내 조직
+              {t("myOrganizations")}
             </CardTitle>
             <CardDescription>
-              현재 <span className="text-indigo-600 font-bold text-base">{orgs.length}개</span> 조직에 참여중입니다.
+              {t("participatingIn")} <span className="text-indigo-600 font-bold text-base">{orgs.length}</span> {t("orgCount")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 max-h-[400px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
@@ -117,7 +113,7 @@ export default function OrganizationSelect() {
                       <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
                         <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">{org.role}</span>
                         <span className="text-slate-300">•</span>
-                        <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}명</span>
+                        <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {org.members}{t("members")}</span>
                       </div>
                     </div>
                   </div>
@@ -135,7 +131,7 @@ export default function OrganizationSelect() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                 <p className="text-slate-500 text-sm">참여중인 조직이 없습니다.</p>
+                 <p className="text-slate-500 text-sm">{t("noOrganizations")}</p>
               </div>
             )}
           </CardContent>
@@ -144,15 +140,15 @@ export default function OrganizationSelect() {
             <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>조직을 삭제하시겠습니까?</AlertDialogTitle>
+                  <AlertDialogTitle>{t("deleteOrgConfirm")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    이 작업은 되돌릴 수 없습니다. 조직과 관련된 모든 데이터가 영구적으로 삭제됩니다.
+                    {t("deleteOrgWarning")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                   <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
-                    삭제 확인
+                    {t("confirmDelete")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -161,40 +157,40 @@ export default function OrganizationSelect() {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700" size="lg">
-                  <Plus className="w-4 h-4" /> 새 조직 만들기
+                  <Plus className="w-4 h-4" /> {t("createNewOrg")}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>조직 생성</DialogTitle>
+                  <DialogTitle>{t("createOrg")}</DialogTitle>
                   <DialogDescription>
-                    팀원들과 함께 그래프 분석을 협업할 새로운 워크스페이스를 만듭니다.
+                    {t("createOrgDesc")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="org-name">조직 이름</Label>
+                    <Label htmlFor="org-name">{t("orgName")}</Label>
                     <Input 
                       id="org-name" 
-                      placeholder="예: 보안 분석 팀" 
+                      placeholder={t("orgNamePlaceholder")} 
                       value={newOrgName}
                       onChange={(e) => setNewOrgName(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="org-id">조직 아이디</Label>
+                    <Label htmlFor="org-id">{t("orgId")}</Label>
                     <Input 
                       id="org-id" 
-                      placeholder="예: security-team-01" 
+                      placeholder={t("orgIdPlaceholder")} 
                       value={newOrgId}
                       onChange={(e) => setNewOrgId(e.target.value)}
                     />
-                    <p className="text-xs text-muted-foreground">영문, 숫자, 하이픈(-)만 사용 가능합니다.</p>
+                    <p className="text-xs text-muted-foreground">{t("orgIdHint")}</p>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>취소</Button>
-                  <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>조직 생성</Button>
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t("cancel")}</Button>
+                  <Button onClick={handleCreateOrg} disabled={!newOrgName || !newOrgId}>{t("createOrg")}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

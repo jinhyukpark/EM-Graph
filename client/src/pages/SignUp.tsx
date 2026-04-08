@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowLeft, Check, Mail } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export default function SignUp() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -27,10 +30,10 @@ export default function SignUp() {
             </div>
           </Link>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-            Create your account
+            {t("createAccount")}
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Start analyzing your complex data today.
+            {t("startAnalyzing")}
           </p>
         </div>
       </div>
@@ -40,7 +43,7 @@ export default function SignUp() {
           <form className="space-y-6" action="#" method="POST" onSubmit={(e) => e.preventDefault()}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700">
-                Email address
+                {t("emailAddress")}
               </label>
               <div className="mt-1">
                 <input
@@ -56,7 +59,7 @@ export default function SignUp() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700">
-                Password
+                {t("password")}
               </label>
               <div className="mt-1">
                 <input
@@ -79,20 +82,20 @@ export default function SignUp() {
                   className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900">
-                  Remember me
+                  {t("rememberMe")}
                 </label>
               </div>
 
               <div className="text-sm">
                 <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                  Forgot your password?
+                  {t("forgotPassword")}
                 </a>
               </div>
             </div>
 
             <div>
               <Button type="submit" className="w-full flex justify-center py-2 px-4">
-                Sign up
+                {t("signUp")}
               </Button>
             </div>
           </form>
@@ -103,7 +106,7 @@ export default function SignUp() {
                 <div className="w-full border-t border-slate-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-slate-500">Or continue with</span>
+                <span className="bg-white px-2 text-slate-500">{t("orContinueWith")}</span>
               </div>
             </div>
 
@@ -124,9 +127,9 @@ export default function SignUp() {
           </div>
         </div>
         <p className="mt-6 text-center text-sm text-slate-500">
-          Already have an account?{' '}
+          {t("alreadyHaveAccount")}{' '}
           <Link href="/dashboard" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Log in
+            {t("logIn")}
           </Link>
         </p>
       </div>

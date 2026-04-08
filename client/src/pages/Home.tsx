@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Activity, ArrowRight, BarChart3, Clock, Database, FileText, Play, Plus, ShieldAlert, Zap } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
 import generatedImage from "../assets/generated_images/clean_white_data_network_background.png";
+import { useLanguage } from "@/lib/i18n";
 
 const DATA_INGESTION = [
   { name: "Mon", value: 240 },
@@ -17,15 +18,16 @@ const DATA_INGESTION = [
   { name: "Sun", value: 430 },
 ];
 
-const RECENT_ACTIVITY = [
-  { id: 1, title: "New Anomaly Detected", desc: "Crime Analysis 2024", time: "10m ago", icon: ShieldAlert, type: "alert" },
-  { id: 2, title: "Data Import Completed", desc: "Supply Chain Alpha", time: "1h ago", icon: Database, type: "success" },
-  { id: 3, title: "Query Execution", desc: "User John Doe ran complex analysis", time: "2h ago", icon: Play, type: "info" },
-  { id: 4, title: "Report Generated", desc: "Q1 Risk Assessment", time: "4h ago", icon: FileText, type: "default" },
-];
-
 export default function Home() {
   const [, setLocation] = useLocation();
+  const { t } = useLanguage();
+
+  const RECENT_ACTIVITY = [
+    { id: 1, title: t("newAnomalyDetected"), desc: "Crime Analysis 2024", time: "10m ago", icon: ShieldAlert, type: "alert" },
+    { id: 2, title: t("dataImportCompleted"), desc: "Supply Chain Alpha", time: "1h ago", icon: Database, type: "success" },
+    { id: 3, title: t("queryExecution"), desc: "User John Doe ran complex analysis", time: "2h ago", icon: Play, type: "info" },
+    { id: 4, title: t("reportGenerated"), desc: "Q1 Risk Assessment", time: "4h ago", icon: FileText, type: "default" },
+  ];
 
   return (
     <Layout>
@@ -41,28 +43,27 @@ export default function Home() {
       <div className="relative z-10 container mx-auto px-6 py-12 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">Overview</h1>
-            <p className="text-muted-foreground">System status and recent intelligence updates.</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground">{t("overview")}</h1>
+            <p className="text-muted-foreground">{t("systemStatus")}</p>
           </div>
           <div className="flex gap-3">
              <Button variant="outline" className="gap-2 bg-background/50 backdrop-blur" onClick={() => setLocation("/database")}>
                <Database className="w-4 h-4" />
-               Data Sources
+               {t("dataSources")}
              </Button>
              <Button className="gap-2 shadow-lg shadow-primary/20" onClick={() => setLocation("/create")}>
                <Plus className="w-4 h-4" />
-               New Analysis
+               {t("newAnalysis")}
              </Button>
           </div>
         </div>
 
-        {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total Active Nodes", value: "3,420", change: "+12%", icon: Activity, color: "text-primary" },
-            { label: "Relationships Mapped", value: "12,850", change: "+8%", icon: Zap, color: "text-accent" },
-            { label: "Resource Usage", value: "3.2 GB", change: "64%", icon: Database, color: "text-muted-foreground" },
-            { label: "Anomalies Detected", value: "24", change: "+2", icon: ShieldAlert, color: "text-destructive" },
+            { label: t("totalActiveNodes"), value: "3,420", change: "+12%", icon: Activity, color: "text-primary" },
+            { label: t("relationshipsMapped"), value: "12,850", change: "+8%", icon: Zap, color: "text-accent" },
+            { label: t("resourceUsage"), value: "3.2 GB", change: "64%", icon: Database, color: "text-muted-foreground" },
+            { label: t("anomaliesDetected"), value: "24", change: "+2", icon: ShieldAlert, color: "text-destructive" },
           ].map((stat, i) => (
             <Card key={i} className="bg-card/50 backdrop-blur border-border shadow-sm">
               <CardContent className="p-6">
@@ -80,14 +81,13 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Chart Section */}
           <Card className="lg:col-span-2 bg-card/50 backdrop-blur border-border shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-primary" />
-                Data Ingestion Volume
+                {t("dataIngestionVolume")}
               </CardTitle>
-              <CardDescription>Processed records over the last 7 days</CardDescription>
+              <CardDescription>{t("processedRecords")}</CardDescription>
             </CardHeader>
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -130,12 +130,11 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          {/* Activity Feed */}
           <Card className="bg-card/50 backdrop-blur border-border shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Clock className="w-5 h-5 text-primary" />
-                Recent Activity
+                {t("recentActivity")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -147,7 +146,6 @@ export default function Home() {
                       item.type === 'success' ? 'bg-emerald-500' : 
                       item.type === 'info' ? 'bg-primary' : 'bg-muted-foreground'
                     }`} />
-                    {/* Connecting line */}
                     <div className="absolute left-[3px] top-3 bottom-[-24px] w-px bg-border last:hidden" />
                     
                     <div className="flex-1 pb-1">
@@ -163,7 +161,7 @@ export default function Home() {
             </CardContent>
             <CardFooter>
               <Button variant="ghost" className="w-full text-xs text-muted-foreground hover:text-primary">
-                View All History <ArrowRight className="w-3 h-3 ml-1" />
+                {t("viewAllHistory")} <ArrowRight className="w-3 h-3 ml-1" />
               </Button>
             </CardFooter>
           </Card>

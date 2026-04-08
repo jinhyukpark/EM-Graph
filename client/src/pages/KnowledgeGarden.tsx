@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect, Component, ErrorInfo } from "react";
 import Layout from "@/components/layout/Layout";
+import { useLanguage } from "@/lib/i18n";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -765,6 +766,7 @@ function GraphView() {
 
 
 const WikiLink = ({ children }: { children: string }) => {
+  const { t } = useLanguage();
   const docName = children.replace(/\[\[|\]\]/g, '');
   
   return (
@@ -772,7 +774,7 @@ const WikiLink = ({ children }: { children: string }) => {
       className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/50 hover:bg-blue-100/80 border border-blue-100 hover:border-blue-200 rounded-md px-2 py-0.5 cursor-pointer transition-all text-[13px] font-medium align-middle mx-1 select-none group shadow-sm hover:shadow"
       onClick={(e) => {
         e.stopPropagation();
-        toast.info("Navigate to Document", {
+        toast.info(t("navigateToDocument"), {
           description: `Navigating to '${docName}'...`
         });
       }}
@@ -785,6 +787,7 @@ const WikiLink = ({ children }: { children: string }) => {
 
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
+  const { t } = useLanguage();
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -946,7 +949,7 @@ export default function KnowledgeGarden() {
             // Add new node
             const newNode = {
               id: `n-${Date.now()}`,
-              name: "Untitled Note",
+              name: t("untitledNote"),
               type: "note",
               active: true
             };
@@ -972,7 +975,7 @@ export default function KnowledgeGarden() {
                   node.children.forEach((c: any) => c.active = false);
                   node.children.push({
                       id: `n-${Date.now()}`,
-                      name: "Untitled Note",
+                      name: t("untitledNote"),
                       type: "note",
                       active: true
                   });
@@ -1079,7 +1082,7 @@ export default function KnowledgeGarden() {
                          >
                             <div className="flex items-center gap-2.5">
                                 <Network className={cn("w-4 h-4", showGraph ? "text-blue-500" : "text-muted-foreground/70")} />
-                                <span>Ontology</span>
+                                <span>{t("ontology")}</span>
                             </div>
                              {showGraph ? <Eye className="w-4 h-4 text-blue-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground/50" />}
                          </Button>
@@ -1203,7 +1206,7 @@ export default function KnowledgeGarden() {
                                      <div className="p-2">
                                          <div className="flex items-center gap-2">
                                              <Input 
-                                                 placeholder="New status..." 
+                                                 placeholder={t("newStatus")} 
                                                  className="h-7 text-xs" 
                                                  value={newStatusName}
                                                  onChange={(e) => setNewStatusName(e.target.value)}
@@ -1324,7 +1327,7 @@ export default function KnowledgeGarden() {
                                                 <input 
                                                     type="text" 
                                                     className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full text-xs"
-                                                    placeholder="Add tag"
+                                                    placeholder={t("addTag")}
                                                     value={newTagName}
                                                     onChange={(e) => setNewTagName(e.target.value)}
                                                     onKeyDown={handleAddTag}
@@ -1546,7 +1549,7 @@ export default function KnowledgeGarden() {
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
                               <Share2 className="w-4 h-4 text-blue-500" />
-                              <span className="font-semibold text-sm">Ontology</span>
+                              <span className="font-semibold text-sm">{t("ontology")}</span>
                            </div>
                            <Button 
                             variant="ghost" 
@@ -1754,17 +1757,17 @@ export default function KnowledgeGarden() {
                                 </div>
                                 {msg.role === 'assistant' && (
                                     <div className="flex justify-between mt-1 items-center">
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={t("rollback")}>
                                             <RotateCcw className="w-3.5 h-3.5" />
                                         </Button>
                                         <div className="flex gap-1">
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title={t("ontology")}>
                                                 <Share2 className="w-4 h-4" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={t("copyText")}>
                                                 <Copy className="w-3.5 h-3.5" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title={t("deleteMessage")}>
                                                 <Trash2 className="w-3.5 h-3.5" />
                                             </Button>
                                         </div>
@@ -1814,7 +1817,7 @@ export default function KnowledgeGarden() {
 
                           <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
                             <Textarea 
-                              placeholder="Ask anything..." 
+                              placeholder={t("askAnything")} 
                               className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
                             />
                             
@@ -1879,6 +1882,7 @@ function DeleteSessionDialog({
   onOpenChange: (open: boolean) => void; 
   onConfirm: () => void; 
 }) {
+  const { t } = useLanguage();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -1889,8 +1893,8 @@ function DeleteSessionDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">Delete</AlertDialogAction>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">{t("delete")}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

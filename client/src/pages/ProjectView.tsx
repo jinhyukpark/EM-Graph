@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useRoute } from "wouter";
+import { useLanguage } from "@/lib/i18n";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
@@ -64,6 +65,7 @@ import { useToast } from "@/hooks/use-toast";
 
 // Participants Component
 function ParticipantsDisplay() {
+  const { t } = useLanguage();
   const participants = [
     { id: 1, name: "John Doe", image: "https://github.com/shadcn.png", color: "bg-blue-500", initials: "JD" },
     { id: 2, name: "Sarah Smith", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop", color: "bg-green-500", initials: "SS" },
@@ -95,6 +97,7 @@ function ParticipantsDisplay() {
 }
 
 function InviteTeamDialog() {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [emails, setEmails] = useState("");
   const [role, setRole] = useState("viewer");
@@ -160,7 +163,7 @@ function InviteTeamDialog() {
         : `${firstMemberName} and ${count - 1} others invited to the project.`;
 
     toast({
-        title: "Invitation Sent",
+        title: t("invitationSent"),
         description: message,
         className: "bg-green-600 text-white border-none",
     });
@@ -181,7 +184,7 @@ function InviteTeamDialog() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-primary" />
-            Invite to Team
+            {t("inviteTeam")}
           </DialogTitle>
           <DialogDescription>
             Invite new members to collaborate on <span className="font-medium text-foreground">EM-Graph Analysis</span>.
@@ -190,8 +193,8 @@ function InviteTeamDialog() {
 
         <Tabs defaultValue="current" className="w-full mt-2">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="current">Current Team</TabsTrigger>
-                <TabsTrigger value="invite">Invite</TabsTrigger>
+                <TabsTrigger value="current">{t("currentTeam")}</TabsTrigger>
+                <TabsTrigger value="invite">{t("invite")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="current" className="space-y-4 focus-visible:outline-none">
@@ -219,20 +222,20 @@ function InviteTeamDialog() {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Manage Access</DropdownMenuLabel>
+                                            <DropdownMenuLabel>{t("changeRole")}</DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Admin")}>
-                                                <Shield className="w-3.5 h-3.5 mr-2 text-red-500" /> Make Admin
+                                                <Shield className="w-3.5 h-3.5 mr-2 text-red-500" /> {t("admin")}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Editor")}>
-                                                <Edit2 className="w-3.5 h-3.5 mr-2 text-blue-500" /> Make Editor
+                                                <Edit2 className="w-3.5 h-3.5 mr-2 text-blue-500" /> {t("editor")}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Viewer")}>
-                                                <Eye className="w-3.5 h-3.5 mr-2 text-green-500" /> Make Viewer
+                                                <Eye className="w-3.5 h-3.5 mr-2 text-green-500" /> {t("viewer")}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleRemoveMember(member.id)}>
-                                                <UserMinus className="w-3.5 h-3.5 mr-2" /> Remove from Team
+                                                <UserMinus className="w-3.5 h-3.5 mr-2" /> {t("remove")}
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                      </DropdownMenu>
@@ -253,7 +256,7 @@ function InviteTeamDialog() {
                                 inviteMethod === "email" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
                             )}
                         >
-                            Invite by Email
+                            {t("inviteByEmail")}
                         </button>
                         <button 
                             onClick={() => setInviteMethod("workspace")}
@@ -262,7 +265,7 @@ function InviteTeamDialog() {
                                 inviteMethod === "workspace" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
                             )}
                         >
-                            Add from Workspace
+                            {t("addFromWorkspace")}
                         </button>
                     </div>
                 </div>
@@ -272,7 +275,7 @@ function InviteTeamDialog() {
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
                             <Textarea 
-                                placeholder="Enter email addresses, separated by commas..." 
+                                placeholder={t("emailPlaceholder")} 
                                 value={emails}
                                 onChange={(e) => setEmails(e.target.value)}
                                 className="min-h-[100px] resize-none"
@@ -290,9 +293,9 @@ function InviteTeamDialog() {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                    <SelectItem value="editor">Editor</SelectItem>
-                                    <SelectItem value="viewer">Viewer</SelectItem>
+                                    <SelectItem value="admin">{t("admin")}</SelectItem>
+                                    <SelectItem value="editor">{t("editor")}</SelectItem>
+                                    <SelectItem value="viewer">{t("viewer")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -302,7 +305,7 @@ function InviteTeamDialog() {
                             setEmails("");
                         }} className="gap-2 w-full">
                             <Mail className="w-4 h-4" />
-                            Send Invitations
+                            {t("inviteMembers")}
                         </Button>
                     </div>
                 ) : (
@@ -310,7 +313,7 @@ function InviteTeamDialog() {
                          <div className="relative shrink-0">
                             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                             <Input 
-                                placeholder="Search workspace members..." 
+                                placeholder={t("searchWorkspaceMembers")} 
                                 className="h-9 pl-8 text-xs bg-secondary/20"
                                 value={workspaceSearch}
                                 onChange={(e) => setWorkspaceSearch(e.target.value)}
@@ -352,9 +355,9 @@ function InviteTeamDialog() {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="admin">Admin</SelectItem>
-                                                    <SelectItem value="editor">Editor</SelectItem>
-                                                    <SelectItem value="viewer">Viewer</SelectItem>
+                                                    <SelectItem value="admin">{t("admin")}</SelectItem>
+                                                    <SelectItem value="editor">{t("editor")}</SelectItem>
+                                                    <SelectItem value="viewer">{t("viewer")}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                          </div>
@@ -363,7 +366,7 @@ function InviteTeamDialog() {
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-8">
                                         <Search className="w-8 h-8 mb-2 opacity-20" />
-                                        <p className="text-xs">No members found</p>
+                                        <p className="text-xs">{t("noResults")}</p>
                                     </div>
                                 )}
                             </div>
@@ -376,7 +379,7 @@ function InviteTeamDialog() {
                                 onClick={handleInviteSelected}
                              >
                                 <UserPlus className="w-4 h-4" />
-                                Add {selectedMembers.length > 0 ? `${selectedMembers.length} Members` : "Selected"}
+                                {selectedMembers.length > 0 ? `${t("add")} ${selectedMembers.length}` : t("addSelected")}
                              </Button>
                         </div>
                     </div>
@@ -390,6 +393,7 @@ function InviteTeamDialog() {
 
 // AI Insight Card
 function GraphInsightCard({ onClose }: { onClose: () => void }) {
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
@@ -485,6 +489,7 @@ function GraphInsightCard({ onClose }: { onClose: () => void }) {
 
 // Timeline Component
 function GraphTimeline() {
+  const { t } = useLanguage();
   // Mock data for the timeline
   const timelineData = Array.from({ length: 60 }, (_, i) => ({
     date: new Date(2024, 0, 1 + i * 3), // Jan 2024 start
@@ -523,7 +528,7 @@ function GraphTimeline() {
               onClick={() => setShowSettings(true)}
            >
               <Settings className="w-3.5 h-3.5" />
-              <span>Settings</span>
+              <span>{t("settings")}</span>
            </Button>
 
            <div className="h-4 w-[1px] bg-border" />
@@ -580,8 +585,8 @@ function GraphTimeline() {
            </div>
            
            <div className="flex gap-6 text-muted-foreground font-mono">
-             <span title="Matching Items">{filteredCount}</span>
-             <span title="Percentage">{filteredPercent}%</span>
+             <span title={t("matchingItems")}>{filteredCount}</span>
+             <span title={t("percentage")}>{filteredPercent}%</span>
            </div>
         </div>
       </div>
@@ -691,7 +696,7 @@ function GraphTimeline() {
               <Label>Metric Field (Bar Chart Value)</Label>
               <Select value={selectedField} onValueChange={setSelectedField}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select metric" />
+                  <SelectValue placeholder={t("selectMetric")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="event_count">Event Frequency</SelectItem>
@@ -896,6 +901,7 @@ const INITIAL_SNAPSHOTS: Snapshot[] = [
 ];
 
 function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenChange: (open: boolean) => void, onSave: (title: string, description: string) => void }) {
+    const { t } = useLanguage();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
@@ -910,7 +916,7 @@ function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenC
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Save Snapshot</DialogTitle>
+                    <DialogTitle>{t("saveSnapshot")}</DialogTitle>
                     <DialogDescription>
                         Save the current graph state as a snapshot.
                     </DialogDescription>
@@ -918,7 +924,7 @@ function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenC
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="title">Title</Label>
-                        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Snapshot Name" />
+                        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("snapshotName")} />
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="description">Description</Label>
@@ -926,7 +932,7 @@ function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenC
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleSave}>Save Snapshot</Button>
+                    <Button onClick={handleSave}>{t("saveSnapshot")}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -952,6 +958,7 @@ const ShortestPathPanel = ({
   isActive: boolean,
   onToggleActive: (active: boolean) => void
 }) => {
+  const { t } = useLanguage();
   // Mock path finding
   const path = useMemo(() => {
     if (!isActive || !startNode || !endNode) return [];
@@ -1063,7 +1070,7 @@ const ShortestPathPanel = ({
             disabled={!startNode && !endNode}
           >
              <RotateCcw className="w-3.5 h-3.5 mr-2" />
-             Reset Selection
+             {t("reset")}
           </Button>
        </div>
 
@@ -1115,6 +1122,7 @@ const ShortestPathPanel = ({
 
 // Remove Layer Panel Component
 const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useLanguage();
   const [layers, setLayers] = React.useState([
     { 
         id: 1, 
@@ -1198,11 +1206,11 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
                        <div className={`w-1.5 h-8 rounded-full ${layer.color} shrink-0`} />
                        <div className="flex flex-col">
                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                             <span>NODES: {layer.nodes.length}</span>
+                             <span>{t("nodes")}: {layer.nodes.length}</span>
                              <span className="text-border">|</span>
-                             <span>EDGES: {layer.edgeCount}</span>
+                             <span>{t("edges")}: {layer.edgeCount}</span>
                            </span>
-                           <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
+                           <span className="text-sm font-medium text-foreground/90">{({"Holding Structures": t("holdingStructures"), "Key Subsidiaries": t("keySubsidiaries"), "Financial Affiliates": t("financialAffiliates"), "Value Up Programs": t("valueUpPrograms")}[layer.name] || layer.name)}</span>
                        </div>
                     </div>
                     <div className="flex items-center gap-1">
@@ -1237,6 +1245,7 @@ const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default function ProjectView() {
+  const { t } = useLanguage();
   const [, params] = useRoute("/project/:id/view");
   const projectId = params?.id;
   const { toast } = useToast();
@@ -1256,16 +1265,16 @@ export default function ProjectView() {
     };
     setSnapshots([newSnapshot, ...snapshots]);
     toast({
-      title: "Snapshot Saved",
-      description: "Network state has been saved successfully.",
+      title: t("snapshotSaved"),
+      description: t("snapshotSavedDesc"),
     });
   };
 
   const handleDeleteSnapshot = (id: string) => {
     setSnapshots(snapshots.filter(s => s.id !== id));
     toast({
-      title: "Snapshot Deleted",
-      description: "The snapshot has been removed.",
+      title: t("snapshotDeleted"),
+      description: t("snapshotDeletedDesc"),
     });
   };
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
@@ -1489,7 +1498,7 @@ export default function ProjectView() {
                   }}
               >
                   <RefreshCw className="w-4 h-4 text-muted-foreground" />
-                  <span>Refresh Network</span>
+                  <span>{t("reset")}</span>
               </div>
                <div 
                   className="flex items-center gap-2 px-2.5 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors"
@@ -1498,7 +1507,7 @@ export default function ProjectView() {
                   }}
               >
                   <Download className="w-4 h-4 text-muted-foreground" />
-                  <span>Save Snapshot</span>
+                  <span>{t("saveSnapshot")}</span>
               </div>
             </div>
           )}
@@ -1523,15 +1532,15 @@ export default function ProjectView() {
               </span>
               <div className="h-3 w-px bg-border mx-2" />
               <span className="flex items-center gap-1 mx-2">
-                Nodes <span className="font-mono text-foreground font-medium">{nodes.length}</span>
+                {t("nodes")} <span className="font-mono text-foreground font-medium">{nodes.length}</span>
               </span>
               <div className="h-3 w-px bg-border mx-2" />
               <span className="flex items-center gap-1 mx-2">
-                Links <span className="font-mono text-foreground font-medium">{edges.length}</span>
+                {t("links")} <span className="font-mono text-foreground font-medium">{edges.length}</span>
               </span>
               <div className="h-3 w-px bg-border mx-2" />
               <span className="flex items-center gap-1 mx-2">
-                Density <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
+                {t("density")} <span className="font-mono text-blue-500 font-medium">{(2 * edges.length / (Math.max(1, nodes.length) * (Math.max(1, nodes.length) - 1)) * 100).toFixed(2)}%</span>
               </span>
             </div>
 
@@ -1614,7 +1623,7 @@ export default function ProjectView() {
                  <div className="flex flex-col p-2 gap-1">
                     <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
                        <BoxSelect className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Nodes</span>
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">{t("select")} {t("nodes")}</span>
                     </Button>
                     
                     <div className="h-px bg-border/50 my-1 mx-2" />
@@ -1669,27 +1678,27 @@ export default function ProjectView() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden">
                            <Download className="w-5 h-5 shrink-0" />
-                           <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
+                           <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">{t("export")}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent side="right" align="end" className="w-48 ml-2">
-                        <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t("exportFormat")}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="cursor-pointer gap-2">
                           <Database className="w-4 h-4 text-blue-500" />
-                          <span>Ontology</span>
+                          <span>{t("ontology")}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer gap-2">
                           <NetworkIcon className="w-4 h-4 text-indigo-500" />
-                          <span>Graph</span>
+                          <span>{t("graph")}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer gap-2">
                           <FileJson className="w-4 h-4 text-orange-500" />
-                          <span>JSON</span>
+                          <span>{t("json")}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer gap-2">
                           <FileSpreadsheet className="w-4 h-4 text-green-500" />
-                          <span>Excel</span>
+                          <span>{t("excel")}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1721,7 +1730,7 @@ export default function ProjectView() {
               <div className="px-4 py-3 border-b border-border bg-secondary/10 flex justify-between items-center cursor-move">
                  <div className="flex flex-col">
                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                     Category
+                     {t("category")}
                    </h3>
                  </div>
                  <div className="flex items-center gap-1">
@@ -1739,7 +1748,7 @@ export default function ProjectView() {
                   <thead className="bg-secondary/20">
                     <tr className="text-muted-foreground">
                       <th className="px-3 py-2 text-left font-medium w-8"></th>
-                      <th className="px-2 py-2 text-left font-medium">Category</th>
+                      <th className="px-2 py-2 text-left font-medium">{t("category")}</th>
                       <th className="px-3 py-2 text-right font-medium">Count</th>
                       <th className="px-3 py-2 text-right font-medium">%</th>
                     </tr>
@@ -1765,7 +1774,7 @@ export default function ProjectView() {
                             <div className="flex items-center gap-2">
                               <div className={cn("w-2 h-2 rounded-full", item.color)} />
                               <span className={cn("font-medium truncate max-w-[120px]", !isSelected && "text-muted-foreground line-through decoration-muted-foreground/50")}>
-                                {item.alias || item.label}
+                                {item.alias || ({"Criminal": t("criminal"), "Detective": t("detective"), "Victim/Witness": t("victimWitness"), "Legal/Lawsuit": t("legalLawsuit"), "Asset/Location": t("assetLocation"), "Evidence": t("evidence")}[item.label] || item.label)}
                               </span>
                             </div>
                           </td>
@@ -1840,7 +1849,7 @@ export default function ProjectView() {
                   <p>Node detected as a high-traffic bridge in the network topology. Connected to 3 major clusters.</p>
                 </div>
 
-                <Button className="w-full" variant="secondary">View Raw Data</Button>
+                <Button className="w-full" variant="secondary">{t("details")}</Button>
               </div>
             </div>
           </div>
@@ -1852,7 +1861,7 @@ export default function ProjectView() {
             <SheetHeader className="p-6 border-b border-border">
               <SheetTitle className="flex items-center gap-2 text-xl">
                 <Settings className="w-5 h-5" />
-                Graph Settings
+                {t("graphSettings")}
               </SheetTitle>
               <SheetDescription>
                 Configure data sources, analysis functions, and visualization properties.
@@ -1863,8 +1872,8 @@ export default function ProjectView() {
               <Tabs defaultValue="graph-set" className="w-full">
                 <div className="px-6 py-4 border-b border-border bg-secondary/10 sticky top-0 z-10 backdrop-blur-md">
                   <TabsList className="w-full grid grid-cols-3">
-                    <TabsTrigger value="graph-set">Graph Set</TabsTrigger>
-                    <TabsTrigger value="function">Function</TabsTrigger>
+                    <TabsTrigger value="graph-set">{t("graph")}</TabsTrigger>
+                    <TabsTrigger value="function">{t("function_")}</TabsTrigger>
                     <TabsTrigger value="view">View</TabsTrigger>
                   </TabsList>
                 </div>
@@ -1873,8 +1882,8 @@ export default function ProjectView() {
                 <TabsContent value="graph-set" className="p-6 space-y-6 mt-0">
                   <Tabs defaultValue="nodes" className="w-full">
                     <TabsList className="w-40 mb-6 bg-secondary/50">
-                      <TabsTrigger value="nodes">Nodes</TabsTrigger>
-                      <TabsTrigger value="edges">Links</TabsTrigger>
+                      <TabsTrigger value="nodes">{t("nodes")}</TabsTrigger>
+                      <TabsTrigger value="edges">{t("links")}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="nodes" className="space-y-4">
@@ -1897,7 +1906,7 @@ export default function ProjectView() {
                             <div key={mapping.id} className="grid grid-cols-12 gap-4 p-3 items-center border-b border-border/50 last:border-0 hover:bg-secondary/10 transition-colors">
                               <div className="col-span-2">
                                 <Select defaultValue={mapping.sheet}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("select")} /></SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="Sheet1">Crime Data</SelectItem>
                                     <SelectItem value="Sheet2">Suspects</SelectItem>
@@ -1906,7 +1915,7 @@ export default function ProjectView() {
                               </div>
                               <div className="col-span-2">
                                 <Select defaultValue={mapping.key}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("select")} /></SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="id">ID</SelectItem>
                                     <SelectItem value="uuid">UUID</SelectItem>
@@ -1915,7 +1924,7 @@ export default function ProjectView() {
                               </div>
                               <div className="col-span-3">
                                 <Select defaultValue={mapping.title}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("select")} /></SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="name">Name</SelectItem>
                                     <SelectItem value="label">Label</SelectItem>
@@ -1924,7 +1933,7 @@ export default function ProjectView() {
                               </div>
                               <div className="col-span-2">
                                 <Select defaultValue={mapping.type}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("select")} /></SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="string">String</SelectItem>
                                     <SelectItem value="number">Number</SelectItem>
@@ -1933,7 +1942,7 @@ export default function ProjectView() {
                               </div>
                               <div className="col-span-2">
                                 <Select defaultValue={mapping.image}>
-                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                  <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("select")} /></SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="img_url">Image URL</SelectItem>
                                     <SelectItem value="icon">Icon Name</SelectItem>
@@ -1969,7 +1978,7 @@ export default function ProjectView() {
                         <div className="space-y-4">
                            <div className="grid grid-cols-2 gap-4">
                               <div className="grid gap-2">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase">Source Column</Label>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase">{t("sourceColumn")}</Label>
                                 <Select defaultValue="src">
                                   <SelectTrigger><SelectValue /></SelectTrigger>
                                   <SelectContent>
@@ -1978,7 +1987,7 @@ export default function ProjectView() {
                                 </Select>
                               </div>
                               <div className="grid gap-2">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase">Target Column</Label>
+                                <Label className="text-xs font-medium text-muted-foreground uppercase">{t("targetColumn")}</Label>
                                 <Select defaultValue="tgt">
                                   <SelectTrigger><SelectValue /></SelectTrigger>
                                   <SelectContent>
@@ -1998,7 +2007,7 @@ export default function ProjectView() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-medium text-sm">Active Filters</h3>
-                      <Button variant="ghost" size="sm" className="h-6 text-xs">Reset All</Button>
+                      <Button variant="ghost" size="sm" className="h-6 text-xs">{t("clearAll")}</Button>
                     </div>
                     
                     <div className="rounded-lg border border-border p-4 bg-card/50 space-y-4">
@@ -2074,8 +2083,8 @@ export default function ProjectView() {
             </div>
             
             <SheetFooter className="p-4 border-t border-border bg-background/95 backdrop-blur absolute bottom-0 w-full">
-               <Button variant="outline" className="w-1/3" onClick={() => setSettingsOpen(false)}>Cancel</Button>
-               <Button className="w-2/3 bg-primary hover:bg-primary/90 text-white">Apply Changes</Button>
+               <Button variant="outline" className="w-1/3" onClick={() => setSettingsOpen(false)}>{t("cancel")}</Button>
+               <Button className="w-2/3 bg-primary hover:bg-primary/90 text-white">{t("apply")}</Button>
             </SheetFooter>
           </SheetContent>
         </Sheet>
@@ -2110,9 +2119,9 @@ export default function ProjectView() {
                 <h4 className="font-medium text-sm uppercase tracking-wider text-muted-foreground">Recommended Actions</h4>
                 
                 {[
-                  "Filter network by 'Severity > 8' to isolate risk nodes.",
-                  "Run 'Shortest Path' analysis between Node A and Node B.",
-                  "Generate report for Q1 anomalies."
+                  t("filterNetworkPrompt"),
+                  t("shortestPathPrompt"),
+                  t("generateReportPrompt")
                 ].map((action, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 rounded-md hover:bg-secondary cursor-pointer transition-colors border border-transparent hover:border-border">
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
@@ -2126,7 +2135,7 @@ export default function ProjectView() {
 
               <div className="pt-4 border-t border-border">
                 <div className="relative">
-                  <Input placeholder="Ask Nexus about this graph..." className="pl-4 pr-10 py-6 bg-secondary/50 border-transparent focus-visible:ring-primary/20" />
+                  <Input placeholder={t("askNexusPlaceholder")} className="pl-4 pr-10 py-6 bg-secondary/50 border-transparent focus-visible:ring-primary/20" />
                   <Button size="icon" className="absolute right-2 top-2 h-8 w-8 bg-purple-600 hover:bg-purple-700 text-white">
                     <ArrowRight className="w-4 h-4" />
                   </Button>

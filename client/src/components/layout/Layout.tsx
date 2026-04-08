@@ -1,7 +1,7 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -35,7 +35,7 @@ const MOCK_ORGS = [
 ];
 
 export default function Layout({ children, sidebar, sidebarControls }: { children: React.ReactNode, sidebar?: React.ReactNode, sidebarControls?: React.ReactNode }) {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
@@ -488,6 +488,25 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                </div>
             </div>
           )}
+
+          {/* Language Toggle */}
+          <div className={cn("flex items-center", isCollapsed ? "justify-center" : "px-1")}>
+            <button
+              onClick={() => setLanguage(language === "en" ? "ko" : "en")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md text-xs font-medium transition-colors hover:bg-secondary",
+                isCollapsed ? "p-1.5" : "px-2 py-1.5 w-full justify-center"
+              )}
+              data-testid="button-language-toggle"
+            >
+              <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+              {!isCollapsed && (
+                <span className="text-muted-foreground">
+                  {language === "en" ? "EN" : "KR"} → {language === "en" ? "KR" : "EN"}
+                </span>
+              )}
+            </button>
+          </div>
 
           {/* User Profile */}
           <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3 px-1")}>
