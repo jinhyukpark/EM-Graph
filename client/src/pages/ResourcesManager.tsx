@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/lib/i18n";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -45,17 +46,23 @@ const INITIAL_RESOURCES = [
   { id: 12, name: "alert_sound.mp3", type: "media", ext: "mp3", size: "1.2 MB", date: "2024-02-15", folder: "Assets", url: null },
 ];
 
-const INITIAL_CATEGORIES = [
-  { id: "all", label: "All Resources", icon: Folder, count: 12 },
-  { id: "image", label: "Images", icon: FileImage, count: 4 },
-  { id: "document", label: "Documents", icon: FileText, count: 4 },
-  { id: "media", label: "Media", icon: FileVideo, count: 2 },
-  { id: "code", label: "Code & Config", icon: File, count: 2 },
+const CATEGORY_KEYS = [
+  { id: "all", labelKey: "resAllResources" as const, icon: Folder, count: 12 },
+  { id: "image", labelKey: "resImages" as const, icon: FileImage, count: 4 },
+  { id: "document", labelKey: "resDocuments" as const, icon: FileText, count: 4 },
+  { id: "media", labelKey: "resMedia" as const, icon: FileVideo, count: 2 },
+  { id: "code", labelKey: "resCodeConfig" as const, icon: File, count: 2 },
 ];
 
 export default function ResourcesManager() {
+  const { t } = useLanguage();
   const [resources, setResources] = useState(INITIAL_RESOURCES);
-  const [categories, setCategories] = useState(INITIAL_CATEGORIES);
+  const [customCategories, setCustomCategories] = useState<Array<{ id: string; label: string; icon: typeof Folder; count: number }>>([]);
+
+  const categories = [
+    ...CATEGORY_KEYS.map(c => ({ ...c, label: t(c.labelKey) })),
+    ...customCategories,
+  ];
   const [activeCategory, setActiveCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,11 +93,10 @@ export default function ResourcesManager() {
     
     const id = newCategoryName.toLowerCase().replace(/\s+/g, '-');
     
-    // Check if category already exists
     if (categories.some(c => c.id === id)) {
       toast({
-        title: "Category exists",
-        description: "A category with this name already exists.",
+        title: t("resCategoryExists"),
+        description: t("resCategoryExistsDesc"),
         variant: "destructive"
       });
       return;
@@ -99,30 +105,30 @@ export default function ResourcesManager() {
     const newCategory = {
       id,
       label: newCategoryName,
-      icon: Folder, // Default icon for user created categories
+      icon: Folder,
       count: 0
     };
 
-    setCategories(prev => [...prev, newCategory]);
+    setCustomCategories(prev => [...prev, newCategory]);
     setNewCategoryName("");
     setIsCreateCategoryOpen(false);
     toast({
-      title: "Category Created",
-      description: `Category "${newCategoryName}" has been created.`
+      title: t("resCategoryCreated"),
+      description: `"${newCategoryName}" ${t("resCategoryCreatedDesc")}`
     });
   };
 
   const handleDeleteCategory = (id: string) => {
     if (id === 'all') return;
     
-    setCategories(prev => prev.filter(c => c.id !== id));
+    setCustomCategories(prev => prev.filter(c => c.id !== id));
     if (activeCategory === id) {
       setActiveCategory('all');
     }
     
     toast({
-      title: "Category Deleted",
-      description: "Category has been removed."
+      title: t("resCategoryDeleted"),
+      description: t("resCategoryDeletedDesc")
     });
   };
 
@@ -136,8 +142,8 @@ export default function ResourcesManager() {
     setRenamingResource(null);
     setNewName("");
     toast({
-      title: "Resource Renamed",
-      description: `Resource renamed to "${newName}".`
+      title: t("resRenamed"),
+      description: `${t("resRenamedDesc")} "${newName}".`
     });
   };
 
@@ -153,8 +159,8 @@ export default function ResourcesManager() {
     setMovingResource(null);
     setTargetMoveCategory("");
     toast({
-      title: "Resource Moved",
-      description: `Resource moved to "${targetLabel}".`
+      title: t("resMoved"),
+      description: `${t("resMovedDesc")} "${targetLabel}".`
     });
   };
 
@@ -164,8 +170,8 @@ export default function ResourcesManager() {
     setResources(prev => prev.filter(r => r.id !== deletingResource.id));
     setDeletingResource(null);
     toast({
-      title: "Resource Deleted",
-      description: "Resource has been permanently deleted."
+      title: t("resDeleted"),
+      description: t("resDeletedDesc")
     });
   };
 
@@ -237,8 +243,8 @@ export default function ResourcesManager() {
     setSelectedCategory("all"); // Reset category selection
     
     toast({
-      title: "Upload Successful",
-      description: `${newResources.length} file(s) have been added.`,
+      title: t("resUploadSuccess"),
+      description: `${newResources.length}${t("resUploadSuccessDesc")}`,
     });
   };
 
@@ -256,14 +262,14 @@ export default function ResourcesManager() {
               }}
             >
               <Upload className="w-4 h-4 mr-2" />
-              Upload New
+              {t("resUploadNew")}
             </Button>
           </div>
           
           <ScrollArea className="flex-1 py-4">
             <div className="px-3 space-y-1">
               <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between group">
-                Categories
+                {t("resCategories")}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -277,12 +283,12 @@ export default function ResourcesManager() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setIsCreateCategoryOpen(true)}>
                       <Plus className="w-3.5 h-3.5 mr-2" />
-                      Create Category
+                      {t("resCreateCategory")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                      <DropdownMenuItem className="text-destructive" disabled>
                       <Trash2 className="w-3.5 h-3.5 mr-2" />
-                      Delete Category
+                      {t("resDeleteCategory")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -317,7 +323,7 @@ export default function ResourcesManager() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); /* Rename logic */ }}>Rename</DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); }}>{t("resRename")}</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className="text-destructive" 
@@ -326,7 +332,7 @@ export default function ResourcesManager() {
                               handleDeleteCategory(category.id);
                             }}
                           >
-                            Delete
+                            {t("resDelete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -348,12 +354,12 @@ export default function ResourcesManager() {
 
             <div className="px-3 space-y-1">
               <div className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Storage
+                {t("resStorage")}
               </div>
               <div className="px-3 py-2">
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="flex items-center gap-2 text-muted-foreground">
-                    <HardDrive className="w-4 h-4" /> Used
+                    <HardDrive className="w-4 h-4" /> {t("resUsed")}
                   </span>
                   <span className="font-medium">6.2 GB / 10 GB</span>
                 </div>
@@ -373,7 +379,7 @@ export default function ResourcesManager() {
               <div className="relative w-64">
                 <Search className="w-4 h-4 absolute left-2.5 top-3 text-muted-foreground" />
                 <Input 
-                  placeholder="Search resources..." 
+                  placeholder={t("resSearchPlaceholder")} 
                   className="pl-9 h-10 bg-background/50 border-border focus-visible:ring-primary/20" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -381,7 +387,7 @@ export default function ResourcesManager() {
               </div>
               <div className="h-4 w-px bg-border" />
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{filteredResources.length}</span> items found
+                <span className="font-medium text-foreground">{filteredResources.length}</span> {t("resItemsFound")}
               </div>
             </div>
 
@@ -406,7 +412,7 @@ export default function ResourcesManager() {
               </div>
               <Button variant="outline" size="sm" className="h-10">
                 <Filter className="w-4 h-4 mr-2" />
-                Filter
+                {t("resFilter")}
               </Button>
             </div>
           </div>
@@ -464,14 +470,14 @@ export default function ResourcesManager() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => { setRenamingResource(resource); setNewName(resource.name); }}>
-                                Rename
+                                {t("resRename")}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => { setMovingResource(resource); }}>
-                                Move to...
+                                {t("resMoveTo")}
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-destructive" onClick={() => setDeletingResource(resource)}>
-                                Delete
+                                {t("resDelete")}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -487,11 +493,11 @@ export default function ResourcesManager() {
                   <thead className="bg-secondary/10 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left w-10"></th>
-                      <th className="px-4 py-3 text-left">Name</th>
-                      <th className="px-4 py-3 text-left">Date Added</th>
-                      <th className="px-4 py-3 text-left">Size</th>
-                      <th className="px-4 py-3 text-left">Folder</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
+                      <th className="px-4 py-3 text-left">{t("resListName")}</th>
+                      <th className="px-4 py-3 text-left">{t("resListDate")}</th>
+                      <th className="px-4 py-3 text-left">{t("resListSize")}</th>
+                      <th className="px-4 py-3 text-left">{t("resListFolder")}</th>
+                      <th className="px-4 py-3 text-right">{t("resListActions")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
@@ -526,20 +532,20 @@ export default function ResourcesManager() {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Upload New Resource</DialogTitle>
+            <DialogTitle>{t("resUploadTitle")}</DialogTitle>
             <DialogDescription>
-              Add files to your project library.
+              {t("resUploadDesc")}
             </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-2 mb-4">
-             <Label htmlFor="category-select" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Target Category</Label>
+             <Label htmlFor="category-select" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("resTargetCategory")}</Label>
              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                <SelectTrigger id="category-select" className="h-9">
-                 <SelectValue placeholder="Select a category" />
+                 <SelectValue placeholder={t("resSelectCategory")} />
                </SelectTrigger>
                <SelectContent>
-                 <SelectItem value="all">Auto-detect / General</SelectItem>
+                 <SelectItem value="all">{t("resAutoDetect")}</SelectItem>
                  {categories.filter(c => c.id !== 'all').map(category => (
                    <SelectItem key={category.id} value={category.id}>
                      <div className="flex items-center gap-2">
@@ -562,8 +568,8 @@ export default function ResourcesManager() {
               <CloudUpload className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">Click to upload or drag and drop</p>
-              <p className="text-xs text-muted-foreground">SVG, PNG, JPG, PDF or MP4 (max. 10MB)</p>
+              <p className="text-sm font-medium text-foreground">{t("resClickToUpload")}</p>
+              <p className="text-xs text-muted-foreground">{t("resFileTypes")}</p>
             </div>
             <input 
               type="file" 
@@ -599,12 +605,12 @@ export default function ResourcesManager() {
 
           <DialogFooter className="sm:justify-between flex-row items-center gap-2">
             <div className="text-xs text-muted-foreground">
-              {selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'No files selected'}
+              {selectedFiles.length > 0 ? `${selectedFiles.length}${t("resFilesSelected")}` : t("resNoFilesSelected")}
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+              <Button variant="outline" size="sm" onClick={() => setIsUploadOpen(false)}>{t("resCancel")}</Button>
               <Button size="sm" onClick={handleUploadConfirm} disabled={selectedFiles.length === 0}>
-                Upload Files
+                {t("resUploadFiles")}
               </Button>
             </div>
           </DialogFooter>
@@ -614,21 +620,21 @@ export default function ResourcesManager() {
       <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Create New Category</DialogTitle>
+            <DialogTitle>{t("resCreateCategoryTitle")}</DialogTitle>
             <DialogDescription>
-              Create a new folder to organize your resources.
+              {t("resCreateCategoryDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                {t("resName")}
               </Label>
               <Input
                 id="name"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="e.g. Project Assets"
+                placeholder={t("resCreateCategoryPlaceholder")}
                 className="col-span-3"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleCreateCategory();
@@ -637,8 +643,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>Create Category</Button>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>{t("resCancel")}</Button>
+            <Button onClick={handleCreateCategory} disabled={!newCategoryName.trim()}>{t("resCreateCategory")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -666,13 +672,13 @@ export default function ResourcesManager() {
                   ) : selectedResource.type === 'media' ? (
                      <div className="text-center p-12">
                        <FileVideo className="w-24 h-24 mx-auto mb-4 text-white/50" />
-                       <p className="text-xl font-medium">Video Preview Unavailable</p>
+                       <p className="text-xl font-medium">{t("resVideoPreview")}</p>
                        <p className="text-sm text-white/50 mt-2">{selectedResource.name}</p>
                      </div>
                   ) : (
                     <div className="text-center p-12">
                        <File className="w-24 h-24 mx-auto mb-4 text-white/50" />
-                       <p className="text-xl font-medium">Preview Unavailable</p>
+                       <p className="text-xl font-medium">{t("resPreviewUnavailable")}</p>
                        <p className="text-sm text-white/50 mt-2">{selectedResource.name}</p>
                      </div>
                   )}
@@ -693,15 +699,15 @@ export default function ResourcesManager() {
       <Dialog open={!!renamingResource} onOpenChange={(open) => !open && setRenamingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename Resource</DialogTitle>
+            <DialogTitle>{t("resRenameTitle")}</DialogTitle>
             <DialogDescription>
-              Enter a new name for the resource.
+              {t("resRenameDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="resource-name" className="text-right">
-                Name
+                {t("resName")}
               </Label>
               <Input
                 id="resource-name"
@@ -715,8 +721,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenamingResource(null)}>Cancel</Button>
-            <Button onClick={handleRenameResource} disabled={!newName.trim() || newName === renamingResource?.name}>Save Changes</Button>
+            <Button variant="outline" onClick={() => setRenamingResource(null)}>{t("resCancel")}</Button>
+            <Button onClick={handleRenameResource} disabled={!newName.trim() || newName === renamingResource?.name}>{t("resSaveChanges")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -725,17 +731,17 @@ export default function ResourcesManager() {
       <Dialog open={!!movingResource} onOpenChange={(open) => !open && setMovingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Move Resource</DialogTitle>
+            <DialogTitle>{t("resMoveTitle")}</DialogTitle>
             <DialogDescription>
-              Select a destination category for this resource.
+              {t("resMoveDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="move-category">Destination Category</Label>
+              <Label htmlFor="move-category">{t("resDestCategory")}</Label>
               <Select value={targetMoveCategory} onValueChange={setTargetMoveCategory}>
                 <SelectTrigger id="move-category">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t("resSelectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.filter(c => c.id !== 'all').map(category => (
@@ -751,8 +757,8 @@ export default function ResourcesManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMovingResource(null)}>Cancel</Button>
-            <Button onClick={handleMoveResource} disabled={!targetMoveCategory}>Move Resource</Button>
+            <Button variant="outline" onClick={() => setMovingResource(null)}>{t("resCancel")}</Button>
+            <Button onClick={handleMoveResource} disabled={!targetMoveCategory}>{t("resMoveResource")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -761,14 +767,14 @@ export default function ResourcesManager() {
       <Dialog open={!!deletingResource} onOpenChange={(open) => !open && setDeletingResource(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Delete Resource</DialogTitle>
+            <DialogTitle>{t("resDeleteTitle")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{deletingResource?.name}"? This action cannot be undone.
+              {t("resDeleteConfirm")} "{deletingResource?.name}"{t("resDeleteConfirmSuffix")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeletingResource(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteResource}>Delete Permanently</Button>
+            <Button variant="outline" onClick={() => setDeletingResource(null)}>{t("resCancel")}</Button>
+            <Button variant="destructive" onClick={handleDeleteResource}>{t("resDeletePermanently")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
