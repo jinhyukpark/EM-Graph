@@ -136,12 +136,66 @@ const MOCK_RESPONSES: Record<string, { ko: string; en: string; sources: SourceCi
       en: ["What's the defect rate trend for optical PET?", "Compare quality vs competitors", "Show recent claim status"],
     },
   },
+  supply: {
+    ko: `공급망 현황 및 리스크 분석 결과입니다.
+
+**글로벌 공급망 리스크 요약**
+• 중동 지역 물류 불안정으로 화학제품 운송 지연 발생 중
+• 대체 해운 경로(희망봉 우회) 이용 시 운송비 18~22% 증가 예상
+• 중국 내 환경 규제 강화로 일부 원자재 수급 차질 우려
+
+**사업부별 영향도**
+• 산업자재: 철강 코일 수입 리드타임 2주 → 3.5주로 확대
+• 화학: 에틸렌 원료 수입선 다변화 진행 중 (중동 → 미국산 전환 검토)
+• 필름/전자재료: 일본산 광학 원료 수급 안정, 리스크 낮음
+• 패션: 베트남 OEM 공장 가동률 정상, 단 원단 수급 일부 지연
+
+**대응 방안**
+• 안전재고 2주분 → 4주분으로 확대 (경영기획실 승인 완료)
+• 대체 공급처 3개사 추가 등록 진행 중
+• 분기별 공급망 리스크 모니터링 대시보드 구축 예정`,
+    en: `Here is the supply chain risk analysis:
+
+**Global Supply Chain Risk Summary**
+• Middle East logistics instability causing chemical product shipping delays
+• Alternative shipping route (Cape of Good Hope) expected to increase costs by 18-22%
+• Tightening environmental regulations in China raising concerns for raw material supply
+
+**Impact by Division**
+• Industrial Materials: Steel coil import lead time extended from 2 weeks to 3.5 weeks
+• Chemicals: Ethylene feedstock import diversification underway (Middle East → US source review)
+• Film/Electronic Materials: Japanese optical material supply stable, low risk
+• Fashion: Vietnam OEM factory utilization normal, partial fabric supply delays
+
+**Countermeasures**
+• Safety stock expanded from 2 weeks to 4 weeks (approved by management planning office)
+• 3 additional alternative suppliers being registered
+• Quarterly supply chain risk monitoring dashboard planned`,
+    sources: [
+      { id: "s7", title: "글로벌 공급망 리스크 평가 보고서", department: "경영기획실", relevance: 97 },
+      { id: "s8", title: "2024 물류비 동향 분석", department: "SCM팀", relevance: 90 },
+      { id: "s9", title: "대체 공급처 평가 리포트", department: "구매팀", relevance: 85 },
+    ],
+    followUp: {
+      ko: ["사업부별 안전재고 현황 보여줘", "대체 공급처 상세 비교 분석해줘", "물류비 절감 방안이 있을까?"],
+      en: ["Show safety stock status by division", "Compare alternative suppliers in detail", "Any logistics cost reduction options?"],
+    },
+  },
 };
+
+let responseCounter = 0;
 
 function getResponse(query: string, lang: "en" | "ko") {
   const q = query.toLowerCase();
   if (q.includes("pet") || q.includes("필름") || q.includes("품질")) {
     return MOCK_RESPONSES.pet;
+  }
+  if (q.includes("공급") || q.includes("supply") || q.includes("리스크") || q.includes("risk") || q.includes("물류")) {
+    return MOCK_RESPONSES.supply;
+  }
+  responseCounter++;
+  if (responseCounter % 2 === 0) {
+    return MOCK_RESPONSES.supply;
   }
   return MOCK_RESPONSES.default;
 }
