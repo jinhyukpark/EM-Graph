@@ -25,8 +25,8 @@ export default function Settings() {
   const copyLink = () => {
     navigator.clipboard.writeText(inviteLink);
     toast({
-      title: "Link Copied",
-      description: "Invitation link copied to clipboard",
+      title: t("stLinkCopied"),
+      description: t("stLinkCopiedDesc"),
     });
   };
 
@@ -82,7 +82,7 @@ export default function Settings() {
                             </div>
                             <div>
                                 <CardTitle className="text-lg">Anthropic Claude</CardTitle>
-                                <CardDescription>Powerful models for reasoning and coding tasks.</CardDescription>
+                                <CardDescription>{t("stClaudeDesc")}</CardDescription>
                             </div>
                         </div>
                         <Badge variant="outline" className="bg-slate-100 text-slate-500">{t("notConnected")}</Badge>
@@ -95,8 +95,7 @@ export default function Settings() {
                                 <Button>{t("connect")}</Button>
                             </div>
                             <p className="text-xs text-muted-foreground mt-2">
-                                To get an API key, sign up at <a href="https://console.anthropic.com/" target="_blank" rel="noreferrer" className="text-primary hover:underline">console.anthropic.com</a>.
-                                Create a new key in the "API Keys" section of your account settings.
+                                {t("stClaudeKeyHelp")}
                             </p>
                         </div>
                     </CardContent>
@@ -113,7 +112,7 @@ export default function Settings() {
                             </div>
                             <div>
                                 <CardTitle className="text-lg">Google Gemini</CardTitle>
-                                <CardDescription>Multimodal capabilities and fast processing.</CardDescription>
+                                <CardDescription>{t("stGeminiDesc")}</CardDescription>
                             </div>
                         </div>
                         <Badge variant="outline" className="bg-slate-100 text-slate-500">{t("notConnected")}</Badge>
@@ -126,8 +125,7 @@ export default function Settings() {
                                 <Button>{t("connect")}</Button>
                             </div>
                              <p className="text-xs text-muted-foreground mt-2">
-                                You can generate a Gemini API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-primary hover:underline">Google AI Studio</a>.
-                                Ensure your project has the necessary API access enabled.
+                                {t("stGeminiKeyHelp")}
                             </p>
                         </div>
                     </CardContent>
@@ -144,7 +142,7 @@ export default function Settings() {
                             </div>
                             <div>
                                 <CardTitle className="text-lg">OpenAI GPT-4</CardTitle>
-                                <CardDescription>Industry standard for language tasks.</CardDescription>
+                                <CardDescription>{t("stOpenAIDesc")}</CardDescription>
                             </div>
                         </div>
                          <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">{t("connected")}</Badge>
@@ -157,7 +155,7 @@ export default function Settings() {
                                 <Button variant="outline" className="text-destructive hover:text-destructive hover:bg-destructive/10">{t("disconnect")}</Button>
                             </div>
                              <p className="text-xs text-muted-foreground mt-2">
-                                API keys can be managed in the <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer" className="text-primary hover:underline">OpenAI Platform dashboard</a>.
+                                {t("stOpenAIKeyHelp")}
                             </p>
                         </div>
                     </CardContent>
@@ -286,19 +284,19 @@ export default function Settings() {
                       <div className="space-y-4 pt-4">
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
-                             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Owner</Badge>
+                             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">{t("stOwner")}</Badge>
                            </div>
                            <p className="text-sm text-muted-foreground">{t("ownerDesc")}</p>
                          </div>
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
-                             <Badge variant="outline" className="bg-secondary text-secondary-foreground border-secondary-foreground/20">Editor</Badge>
+                             <Badge variant="outline" className="bg-secondary text-secondary-foreground border-secondary-foreground/20">{t("stEditor")}</Badge>
                            </div>
                            <p className="text-sm text-muted-foreground">{t("editorDesc")}</p>
                          </div>
                          <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
                            <div className="font-semibold flex items-center gap-2 mb-2">
-                             <Badge variant="outline" className="text-muted-foreground border-border">Viewer</Badge>
+                             <Badge variant="outline" className="text-muted-foreground border-border">{t("stViewer")}</Badge>
                            </div>
                            <p className="text-sm text-muted-foreground">{t("viewerDesc")}</p>
                          </div>
@@ -315,17 +313,17 @@ export default function Settings() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <DialogHeader>
-                        <DialogTitle>Invite Team Member</DialogTitle>
+                        <DialogTitle>{t("stInviteTeamMember")}</DialogTitle>
                         <DialogDescription>
-                          Send an invitation link or email to join your workspace.
+                          {t("stInviteTeamMemberDesc")}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-2">
-                          <Label>Email Invitation</Label>
+                          <Label>{t("stEmailInvitation")}</Label>
                           <div className="flex gap-2">
                             <Input placeholder="colleague@company.com" />
-                            <Button>Send</Button>
+                            <Button>{t("stSend")}</Button>
                           </div>
                         </div>
                         <div className="relative">
@@ -333,11 +331,11 @@ export default function Settings() {
                             <span className="w-full border-t" />
                           </div>
                           <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or share link</span>
+                            <span className="bg-background px-2 text-muted-foreground">{t("stOrShareLink")}</span>
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label>Invite Link</Label>
+                          <Label>{t("stInviteLink")}</Label>
                           <div className="flex items-center space-x-2">
                             <div className="grid flex-1 gap-2">
                               <Input
@@ -361,10 +359,10 @@ export default function Settings() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t("stMember")}</TableHead>
+                      <TableHead>{t("stRole")}</TableHead>
+                      <TableHead>{t("stStatus")}</TableHead>
+                      <TableHead className="text-right">{t("stActions")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -381,16 +379,16 @@ export default function Settings() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Owner</Badge>
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">{t("stOwner")}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          Active
+                          {t("stActive")}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" disabled>Manage</Button>
+                        <Button variant="ghost" size="sm" disabled>{t("stManage")}</Button>
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -411,16 +409,16 @@ export default function Settings() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="admin">Owner</SelectItem>
-                            <SelectItem value="editor">Editor</SelectItem>
-                            <SelectItem value="viewer">Viewer</SelectItem>
+                            <SelectItem value="admin">{t("stOwner")}</SelectItem>
+                            <SelectItem value="editor">{t("stEditor")}</SelectItem>
+                            <SelectItem value="viewer">{t("stViewer")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-medium">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          Active
+                          {t("stActive")}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -447,16 +445,16 @@ export default function Settings() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="admin">Owner</SelectItem>
-                            <SelectItem value="editor">Editor</SelectItem>
-                            <SelectItem value="viewer">Viewer</SelectItem>
+                            <SelectItem value="admin">{t("stOwner")}</SelectItem>
+                            <SelectItem value="editor">{t("stEditor")}</SelectItem>
+                            <SelectItem value="viewer">{t("stViewer")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-xs text-amber-500 font-medium">
                           <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          Pending
+                          {t("stPending")}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -472,28 +470,28 @@ export default function Settings() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Menu Access Permissions</CardTitle>
-                <CardDescription>Configure menu visibility and access rights for each role.</CardDescription>
+                <CardTitle>{t("stMenuAccessPermissions")}</CardTitle>
+                <CardDescription>{t("stMenuAccessPermissionsDesc")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="w-[300px]">Feature / Menu</TableHead>
-                      <TableHead className="text-center">Owner</TableHead>
-                      <TableHead className="text-center">Editor</TableHead>
-                      <TableHead className="text-center">Viewer</TableHead>
+                      <TableHead className="w-[300px]">{t("stFeatureMenu")}</TableHead>
+                      <TableHead className="text-center">{t("stOwner")}</TableHead>
+                      <TableHead className="text-center">{t("stEditor")}</TableHead>
+                      <TableHead className="text-center">{t("stViewer")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {[
-                      { feature: "Dashboard Access", owner: true, editor: true, viewer: true },
-                      { feature: "Projects (Create/Edit)", owner: true, editor: true, viewer: false },
-                      { feature: "Database (Write)", owner: true, editor: true, viewer: false },
-                      { feature: "Resources (Upload)", owner: true, editor: true, viewer: false },
-                      { feature: "Team Management", owner: true, editor: false, viewer: false },
-                      { feature: "Billing & License", owner: true, editor: false, viewer: false },
-                      { feature: "API Key Generation", owner: true, editor: true, viewer: false },
+                      { feature: t("stDashboardAccess"), owner: true, editor: true, viewer: true },
+                      { feature: t("stProjectsCreateEdit"), owner: true, editor: true, viewer: false },
+                      { feature: t("stDatabaseWrite"), owner: true, editor: true, viewer: false },
+                      { feature: t("stResourcesUpload"), owner: true, editor: true, viewer: false },
+                      { feature: t("stTeamManagement"), owner: true, editor: false, viewer: false },
+                      { feature: t("stBillingLicenseAccess"), owner: true, editor: false, viewer: false },
+                      { feature: t("stApiKeyGeneration"), owner: true, editor: true, viewer: false },
                     ].map((perm, i) => (
                       <TableRow key={i} className="hover:bg-transparent">
                         <TableCell className="font-medium">{perm.feature}</TableCell>
@@ -527,21 +525,21 @@ export default function Settings() {
                <Card className="border-border/50 relative overflow-hidden">
                  <CardHeader>
                    <CardTitle className="flex items-center gap-2">
-                     <span className="text-xl">Free</span>
+                     <span className="text-xl">{t("stFree")}</span>
                    </CardTitle>
-                   <CardDescription>Perfect for individuals starting out.</CardDescription>
+                   <CardDescription>{t("stFreeDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$0<span className="text-base font-normal text-muted-foreground">/mo</span></div>
                    <div className="space-y-3 mt-6">
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> Up to 3 Projects
+                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature1")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> Basic Analytics
+                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature2")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> Community Support
+                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature3")}
                      </div>
                    </div>
                  </CardContent>
@@ -549,44 +547,44 @@ export default function Settings() {
                    <Button variant="outline" className="w-full" onClick={() => {
                      toast({
                        variant: "destructive",
-                       title: "Plan Downgrade Failed",
-                       description: "Current usage (12 projects) exceeds the limit for the Free plan (3 projects). Please archive or delete projects before downgrading."
+                       title: t("stDowngradeFailed"),
+                       description: t("stDowngradeFailedDesc"),
                      });
-                   }}>Select Free Plan</Button>
+                   }}>{t("stSelectFreePlan")}</Button>
                  </CardFooter>
                </Card>
 
                {/* Pro Plan */}
                <Card className="bg-primary/5 border-primary shadow-lg scale-105 relative z-10">
                  <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-bl-lg">
-                   POPULAR
+                   {t("stPopular")}
                  </div>
                  <CardHeader>
                    <CardTitle className="flex items-center gap-2 text-primary">
                      <Zap className="w-5 h-5" />
-                     <span className="text-xl">Pro</span>
+                     <span className="text-xl">{t("stPro")}</span>
                    </CardTitle>
-                   <CardDescription>For professionals and small teams.</CardDescription>
+                   <CardDescription>{t("stProDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$49<span className="text-base font-normal text-muted-foreground">/mo</span></div>
                    <div className="space-y-3 mt-6">
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> Unlimited Projects
+                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature1")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> Advanced AI Analytics
+                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature2")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> 5 Team Members
+                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature3")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> Priority Support
+                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature4")}
                      </div>
                    </div>
                  </CardContent>
                  <CardFooter>
-                   <Button className="w-full shadow-md" disabled>Current Plan</Button>
+                   <Button className="w-full shadow-md" disabled>{t("stCurrentPlan")}</Button>
                  </CardFooter>
                </Card>
 
@@ -596,24 +594,24 @@ export default function Settings() {
                  <CardHeader>
                    <CardTitle className="flex items-center gap-2">
                      <Shield className="w-5 h-5 text-indigo-400" />
-                     <span className="text-xl">Premium</span>
+                     <span className="text-xl">{t("stPremium")}</span>
                    </CardTitle>
-                   <CardDescription className="text-slate-400">For large organizations requiring scale.</CardDescription>
+                   <CardDescription className="text-slate-400">{t("stPremiumDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$299<span className="text-base font-normal text-slate-400">/mo</span></div>
                    <div className="space-y-3 mt-6 text-slate-300">
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> Unlimited Everything
+                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature1")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> Dedicated Infrastructure
+                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature2")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> SSO & Audit Logs
+                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature3")}
                      </div>
                      <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> 24/7 Dedicated Support
+                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature4")}
                      </div>
                    </div>
                  </CardContent>
@@ -623,12 +621,12 @@ export default function Settings() {
                      className="w-full hover:bg-white hover:text-slate-900"
                      onClick={() => {
                        toast({
-                         title: "Upgrade Initiated",
-                         description: "Proceeding to checkout for Premium Plan ($299/mo).",
+                         title: t("stUpgradeInitiated"),
+                         description: t("stUpgradeInitiatedDesc"),
                        });
                      }}
                    >
-                     Upgrade to Premium
+                     {t("stUpgradeToPremium")}
                    </Button>
                  </CardFooter>
                </Card>
@@ -640,15 +638,14 @@ export default function Settings() {
                  <div className="space-y-1">
                    <h3 className="text-lg font-semibold flex items-center gap-2">
                      <Server className="w-5 h-5 text-indigo-400" />
-                     Need a custom solution?
+                     {t("stCustomSolution")}
                    </h3>
                    <p className="text-slate-400 text-sm max-w-2xl">
-                     For large-scale deployments, on-premise requirements, or custom integrations beyond the Premium plan, 
-                     our sales team can build a tailored package for your organization.
+                     {t("stCustomSolutionDesc")}
                    </p>
                  </div>
                  <Button className="bg-white text-slate-900 hover:bg-slate-100 shrink-0 ml-4">
-                   Contact Sales Team
+                   {t("stContactSales")}
                  </Button>
                </CardContent>
              </Card>
@@ -658,15 +655,15 @@ export default function Settings() {
              <div className="grid gap-6 md:grid-cols-2">
                <Card>
                  <CardHeader>
-                   <CardTitle>License Management</CardTitle>
-                   <CardDescription>Enter your enterprise license key.</CardDescription>
+                   <CardTitle>{t("stLicenseManagement")}</CardTitle>
+                   <CardDescription>{t("stLicenseManagementDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent className="space-y-4">
                    <div className="space-y-2">
-                     <Label>License Key</Label>
+                     <Label>{t("stLicenseKey")}</Label>
                      <div className="flex gap-2">
                        <Input className="font-mono" placeholder="XXXX-XXXX-XXXX-XXXX" defaultValue="" />
-                       <Button variant="secondary">Verify</Button>
+                       <Button variant="secondary">{t("stVerify")}</Button>
                      </div>
                    </div>
                  </CardContent>
@@ -674,23 +671,23 @@ export default function Settings() {
 
                <Card>
                  <CardHeader>
-                   <CardTitle>Payment Methods</CardTitle>
-                   <CardDescription>Manage your payment details.</CardDescription>
+                   <CardTitle>{t("stPaymentMethods")}</CardTitle>
+                   <CardDescription>{t("stPaymentMethodsDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
                    <div className="flex items-center justify-between p-4 border rounded-lg mb-4">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-6 bg-slate-800 rounded flex items-center justify-center text-white text-[10px] font-bold">VISA</div>
                         <div>
-                          <div className="font-medium text-sm">Visa ending in 4242</div>
-                          <div className="text-xs text-muted-foreground">Expires 12/28</div>
+                          <div className="font-medium text-sm">{t("stVisaEnding")}</div>
+                          <div className="text-xs text-muted-foreground">{t("stExpires")}</div>
                         </div>
                       </div>
-                      <Badge variant="secondary">Default</Badge>
+                      <Badge variant="secondary">{t("stDefault")}</Badge>
                    </div>
                    <Button variant="outline" className="w-full">
                      <Plus className="w-4 h-4 mr-2" />
-                     Add Payment Method
+                     {t("stAddPaymentMethod")}
                    </Button>
                  </CardContent>
                </Card>
@@ -698,25 +695,25 @@ export default function Settings() {
 
              <Card>
                <CardHeader>
-                 <CardTitle>Billing History</CardTitle>
-                 <CardDescription>View and download your past invoices.</CardDescription>
+                 <CardTitle>{t("stBillingHistory")}</CardTitle>
+                 <CardDescription>{t("stBillingHistoryDesc")}</CardDescription>
                </CardHeader>
                <CardContent>
                  <Table>
                    <TableHeader>
                      <TableRow>
-                       <TableHead>Invoice ID</TableHead>
-                       <TableHead>Date</TableHead>
-                       <TableHead>Amount</TableHead>
-                       <TableHead>Status</TableHead>
-                       <TableHead className="text-right">Action</TableHead>
+                       <TableHead>{t("stInvoiceId")}</TableHead>
+                       <TableHead>{t("stDate")}</TableHead>
+                       <TableHead>{t("stAmount")}</TableHead>
+                       <TableHead>{t("stStatus")}</TableHead>
+                       <TableHead className="text-right">{t("stAction")}</TableHead>
                      </TableRow>
                    </TableHeader>
                    <TableBody>
                      {[
-                       { id: "INV-2024-001", date: "Dec 01, 2024", amount: "$49.00", status: "Paid" },
-                       { id: "INV-2024-002", date: "Nov 01, 2024", amount: "$49.00", status: "Paid" },
-                       { id: "INV-2024-003", date: "Oct 01, 2024", amount: "$49.00", status: "Paid" },
+                       { id: "INV-2024-001", date: "Dec 01, 2024", amount: "$49.00", status: t("stPaid") },
+                       { id: "INV-2024-002", date: "Nov 01, 2024", amount: "$49.00", status: t("stPaid") },
+                       { id: "INV-2024-003", date: "Oct 01, 2024", amount: "$49.00", status: t("stPaid") },
                      ].map((invoice) => (
                        <TableRow key={invoice.id}>
                          <TableCell className="font-medium flex items-center gap-2">
@@ -749,18 +746,18 @@ export default function Settings() {
               <CardHeader className="flex flex-row items-center justify-between pb-4">
                 <div className="space-y-1">
                   <CardTitle className="text-lg text-primary flex items-center gap-2">
-                    <Zap className="w-5 h-5" /> Pro Plan
+                    <Zap className="w-5 h-5" /> {t("stProPlan")}
                   </CardTitle>
                   <CardDescription className="text-primary/80">
-                    You are currently on the Pro tier. Your plan renews on January 15, 2026.
+                    {t("stProPlanDesc")}
                   </CardDescription>
                 </div>
                 <div className="flex gap-3">
                   <Button variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
-                    Manage Subscription
+                    {t("stManageSubscription")}
                   </Button>
                   <Button onClick={() => setActiveTab("billing")}>
-                    Upgrade Plan
+                    {t("stUpgradePlan")}
                   </Button>
                 </div>
               </CardHeader>
@@ -769,11 +766,11 @@ export default function Settings() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Projects</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalProjects")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">12 / 20</div>
-                  <p className="text-xs text-muted-foreground mt-1">Projects created across all users</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t("stProjectsCreatedDesc")}</p>
                   <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <div className="h-full bg-primary w-[60%]" />
                   </div>
@@ -781,11 +778,11 @@ export default function Settings() {
               </Card>
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Data Usage</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalDataUsage")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">3.2 GB / 5.0 GB</div>
-                  <p className="text-xs text-muted-foreground mt-1">Storage used by uploaded files and databases</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t("stStorageUsedDesc")}</p>
                   <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <div className="h-full bg-indigo-500 w-[64%]" />
                   </div>
@@ -795,26 +792,26 @@ export default function Settings() {
 
             <Card>
               <CardHeader>
-                <CardTitle>User Usage Statistics</CardTitle>
-                <CardDescription>Breakdown of resource consumption by team member.</CardDescription>
+                <CardTitle>{t("stUserUsageStats")}</CardTitle>
+                <CardDescription>{t("stUserUsageStatsDesc")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead className="text-right">Projects Created</TableHead>
-                      <TableHead className="text-right">Data Usage</TableHead>
-                      <TableHead className="text-right">Last Active</TableHead>
+                      <TableHead>{t("stUser")}</TableHead>
+                      <TableHead>{t("stRole")}</TableHead>
+                      <TableHead className="text-right">{t("stProjectsCreated")}</TableHead>
+                      <TableHead className="text-right">{t("stDataUsage")}</TableHead>
+                      <TableHead className="text-right">{t("stLastActive")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {[
-                      { name: "John Doe", email: "john@emgraph.ai", role: "Owner", projects: 5, storage: "1.2 GB", lastActive: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
-                      { name: "Alice Smith", email: "alice@emgraph.ai", role: "Editor", projects: 4, storage: "1.5 GB", lastActive: "2 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
-                      { name: "Mike Kim", email: "mike@partner.com", role: "Viewer", projects: 0, storage: "0 GB", lastActive: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
-                      { name: "Sarah Lee", email: "sarah@emgraph.ai", role: "Editor", projects: 3, storage: "500 MB", lastActive: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
+                      { name: "John Doe", email: "john@emgraph.ai", role: t("stOwner"), projects: 5, storage: "1.2 GB", lastActive: t("stJustNow"), avatar: "JD", color: "bg-primary/20 text-primary" },
+                      { name: "Alice Smith", email: "alice@emgraph.ai", role: t("stEditor"), projects: 4, storage: "1.5 GB", lastActive: t("stHoursAgo"), avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+                      { name: "Mike Kim", email: "mike@partner.com", role: t("stViewer"), projects: 0, storage: "0 GB", lastActive: t("stPending"), avatar: "MK", color: "bg-slate-200 text-slate-500" },
+                      { name: "Sarah Lee", email: "sarah@emgraph.ai", role: t("stEditor"), projects: 3, storage: "500 MB", lastActive: t("stDayAgo"), avatar: "SL", color: "bg-green-500/20 text-green-600" },
                     ].map((user, i) => (
                       <TableRow key={i}>
                         <TableCell className="font-medium">
@@ -848,65 +845,65 @@ export default function Settings() {
           <TabsContent value="mcp" className="space-y-6">
              <div className="flex items-center justify-between">
                <div>
-                 <h3 className="text-lg font-medium">Model Context Protocol (MCP)</h3>
-                 <p className="text-sm text-muted-foreground">Connect external data and tools to your AI context.</p>
+                 <h3 className="text-lg font-medium">{t("stMcpTitle")}</h3>
+                 <p className="text-sm text-muted-foreground">{t("stMcpDesc")}</p>
                </div>
                <Dialog>
                  <DialogTrigger asChild>
                    <Button>
                      <Plus className="w-4 h-4 mr-2" />
-                     Add MCP Server
+                     {t("stAddMcpServer")}
                    </Button>
                  </DialogTrigger>
                  <DialogContent className="sm:max-w-[525px]">
                    <DialogHeader>
-                     <DialogTitle>Add MCP Server</DialogTitle>
+                     <DialogTitle>{t("stAddMcpServer")}</DialogTitle>
                      <DialogDescription>
-                       Register a new Model Context Protocol server to extend your AI capabilities.
+                       {t("stAddMcpServerDesc")}
                      </DialogDescription>
                    </DialogHeader>
                    <div className="grid gap-4 py-4">
                      <div className="grid grid-cols-4 items-center gap-4">
                        <Label htmlFor="mcp-name" className="text-right">
-                         Name
+                         {t("stName")}
                        </Label>
                        <Input id="mcp-name" placeholder="e.g. Production DB" className="col-span-3" />
                      </div>
                      <div className="grid grid-cols-4 items-center gap-4">
                        <Label htmlFor="mcp-url" className="text-right">
-                         Endpoint URL
+                         {t("stEndpointUrl")}
                        </Label>
                        <Input id="mcp-url" placeholder="https://mcp.example.com/v1" className="col-span-3 font-mono text-xs" />
                      </div>
                      <div className="grid grid-cols-4 items-center gap-4">
                        <Label htmlFor="mcp-type" className="text-right">
-                         Type
+                         {t("stType")}
                        </Label>
                        <Select>
                          <SelectTrigger className="col-span-3">
-                           <SelectValue placeholder="Select server type" />
+                           <SelectValue placeholder={t("stSelectServerType")} />
                          </SelectTrigger>
                          <SelectContent>
-                           <SelectItem value="db">Database</SelectItem>
-                           <SelectItem value="vcs">Version Control</SelectItem>
-                           <SelectItem value="communication">Communication</SelectItem>
-                           <SelectItem value="knowledge">Knowledge Base</SelectItem>
-                           <SelectItem value="other">Other</SelectItem>
+                           <SelectItem value="db">{t("stDatabase")}</SelectItem>
+                           <SelectItem value="vcs">{t("stVersionControl")}</SelectItem>
+                           <SelectItem value="communication">{t("stCommunication")}</SelectItem>
+                           <SelectItem value="knowledge">{t("stKnowledgeBase")}</SelectItem>
+                           <SelectItem value="other">{t("stOther")}</SelectItem>
                          </SelectContent>
                        </Select>
                      </div>
                      <div className="grid grid-cols-4 items-start gap-4">
                        <Label htmlFor="mcp-token" className="text-right pt-2">
-                         Auth Token
+                         {t("stAuthToken")}
                        </Label>
                        <div className="col-span-3 space-y-2">
                           <Input id="mcp-token" type="password" placeholder="Optional access token" />
-                          <p className="text-[10px] text-muted-foreground">Leave blank if the server is public or uses IP whitelisting.</p>
+                          <p className="text-[10px] text-muted-foreground">{t("stAuthTokenHelp")}</p>
                        </div>
                      </div>
                    </div>
                    <DialogFooter>
-                     <Button type="submit">Connect Server</Button>
+                     <Button type="submit">{t("stConnectServer")}</Button>
                    </DialogFooter>
                  </DialogContent>
                </Dialog>
@@ -939,7 +936,7 @@ export default function Settings() {
                          <div className={`w-2 h-2 rounded-full ${
                            mcp.status === 'connected' ? 'bg-emerald-500' : 'bg-muted-foreground'
                          }`} />
-                         {mcp.status === 'connected' ? 'Connected' : 'Disconnected'}
+                         {mcp.status === 'connected' ? t("stConnected") : t("stDisconnected")}
                        </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -948,16 +945,16 @@ export default function Settings() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t("stActions")}</DropdownMenuLabel>
                           <DropdownMenuItem className="gap-2">
-                            <Pencil className="w-4 h-4" /> Configure
+                            <Pencil className="w-4 h-4" /> {t("stConfigure")}
                           </DropdownMenuItem>
                           <DropdownMenuItem className="gap-2">
-                            <RefreshCw className="w-4 h-4" /> Refresh Status
+                            <RefreshCw className="w-4 h-4" /> {t("stRefreshStatus")}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
-                            <Trash2 className="w-4 h-4" /> Delete Server
+                            <Trash2 className="w-4 h-4" /> {t("stDeleteServer")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
