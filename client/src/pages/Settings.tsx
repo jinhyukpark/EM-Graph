@@ -190,7 +190,7 @@ export default function Settings() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t("email")}</Label>
-                  <Input id="email" type="email" defaultValue="john@emgraph.ai" />
+                  <Input id="email" type="email" defaultValue="john@kolon.com" />
                 </div>
               </CardContent>
               <CardFooter className="border-t px-6 py-4">
@@ -374,7 +374,7 @@ export default function Settings() {
                           </Avatar>
                           <div>
                             <div className="font-medium">John Doe</div>
-                            <div className="text-xs text-muted-foreground">john@emgraph.ai</div>
+                            <div className="text-xs text-muted-foreground">john@kolon.com</div>
                           </div>
                         </div>
                       </TableCell>
@@ -399,7 +399,7 @@ export default function Settings() {
                           </Avatar>
                           <div>
                             <div className="font-medium">Alice Smith</div>
-                            <div className="text-xs text-muted-foreground">alice@emgraph.ai</div>
+                            <div className="text-xs text-muted-foreground">alice@kolon.com</div>
                           </div>
                         </div>
                       </TableCell>
@@ -435,7 +435,7 @@ export default function Settings() {
                           </Avatar>
                           <div>
                             <div className="font-medium">Mike Kim</div>
-                            <div className="text-xs text-muted-foreground">mike@partner.com</div>
+                            <div className="text-xs text-muted-foreground">mike@kolon.com</div>
                           </div>
                         </div>
                       </TableCell>
@@ -808,10 +808,10 @@ export default function Settings() {
                   </TableHeader>
                   <TableBody>
                     {[
-                      { name: "John Doe", email: "john@emgraph.ai", role: t("stOwner"), projects: 5, storage: "1.2 GB", lastActive: t("stJustNow"), avatar: "JD", color: "bg-primary/20 text-primary" },
-                      { name: "Alice Smith", email: "alice@emgraph.ai", role: t("stEditor"), projects: 4, storage: "1.5 GB", lastActive: t("stHoursAgo"), avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
-                      { name: "Mike Kim", email: "mike@partner.com", role: t("stViewer"), projects: 0, storage: "0 GB", lastActive: t("stPending"), avatar: "MK", color: "bg-slate-200 text-slate-500" },
-                      { name: "Sarah Lee", email: "sarah@emgraph.ai", role: t("stEditor"), projects: 3, storage: "500 MB", lastActive: t("stDayAgo"), avatar: "SL", color: "bg-green-500/20 text-green-600" },
+                      { name: "John Doe", email: "john@kolon.com", role: t("stOwner"), projects: 5, storage: "1.2 GB", lastActive: t("stJustNow"), avatar: "JD", color: "bg-primary/20 text-primary" },
+                      { name: "Alice Smith", email: "alice@kolon.com", role: t("stEditor"), projects: 4, storage: "1.5 GB", lastActive: t("stHoursAgo"), avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+                      { name: "Mike Kim", email: "mike@kolon.com", role: t("stViewer"), projects: 0, storage: "0 GB", lastActive: t("stPending"), avatar: "MK", color: "bg-slate-200 text-slate-500" },
+                      { name: "Sarah Lee", email: "sarah@kolon.com", role: t("stEditor"), projects: 3, storage: "500 MB", lastActive: t("stDayAgo"), avatar: "SL", color: "bg-green-500/20 text-green-600" },
                     ].map((user, i) => (
                       <TableRow key={i}>
                         <TableCell className="font-medium">
