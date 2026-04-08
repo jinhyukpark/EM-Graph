@@ -503,7 +503,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             >
               <Globe className="w-4 h-4 shrink-0" />
               {!isCollapsed && (
-                <span className="font-medium">{language === "en" ? "한국어로 전환" : "Switch to EN"}</span>
+                <span className="font-medium">{language === "en" ? "한국어로 전환" : "ENG "}</span>
               )}
             </Button>
           </div>
