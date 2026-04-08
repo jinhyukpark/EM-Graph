@@ -14,7 +14,6 @@ import {
   ReactFlow,
   Background,
   Controls,
-  MiniMap,
   type Node,
   type Edge,
   useNodesState,
@@ -497,10 +496,6 @@ export default function IntelliSearch() {
                       >
                         <Background gap={20} size={1} />
                         <Controls />
-                        <MiniMap
-                          nodeStrokeWidth={3}
-                          className="!bg-background !border-border"
-                        />
                       </ReactFlow>
                     </div>
                   </CardContent>
