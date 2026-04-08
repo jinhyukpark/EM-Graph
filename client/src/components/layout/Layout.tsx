@@ -1,7 +1,7 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ChevronDown, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, Sparkles } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -46,8 +46,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(MOCK_ORGS[0]);
   const [pendingOrg, setPendingOrg] = useState<typeof MOCK_ORGS[0] | null>(null);
-  const [searchExpanded, setSearchExpanded] = useState(false);
-  const [chatbotExpanded, setChatbotExpanded] = useState(false);
   
   // Sidebar resizing
   const [sidebarWidth, setSidebarWidth] = useState(280);
@@ -88,8 +86,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
     if (location === '/knowledge-garden' || location.startsWith('/knowledge-garden/')) {
       setIsCollapsed(true);
     }
-    if (location.startsWith('/search')) setSearchExpanded(true);
-    if (location.startsWith('/chatbot')) setChatbotExpanded(true);
   }, [location]);
 
   // Mock Usage Data for Sidebar
@@ -468,87 +464,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
               <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
-            </div>
-          )}
-
-          {!isProjectView && (
-            <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("intelligence")}</div>}
-              
-              {isCollapsed ? (
-                <>
-                  <NavItem href="/search/fulltext" icon={Search} label={t("intelligentSearch")} />
-                  <NavItem href="/chatbot/interface" icon={MessageSquare} label={t("intelligentChatbot")} />
-                </>
-              ) : (
-                <div className="space-y-0.5">
-                  <div>
-                    <button
-                      onClick={() => setSearchExpanded(!searchExpanded)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors mb-0.5 w-full",
-                        location.startsWith("/search")
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      )}
-                      data-testid="nav-intelligent-search"
-                    >
-                      <Search className="w-4 h-4" />
-                      <span className="flex-1 text-left">{t("intelligentSearch")}</span>
-                      {searchExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                    </button>
-                    {searchExpanded && (
-                      <div className="ml-7 space-y-0.5 animate-in slide-in-from-top-2 duration-200">
-                        <Link href="/search/fulltext" className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                          location === "/search/fulltext" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )} data-testid="nav-fulltext-search">
-                          {t("fullTextSearch")}
-                        </Link>
-                        <Link href="/search/semantic" className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                          location === "/search/semantic" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )} data-testid="nav-semantic-search">
-                          {t("semanticSearch")}
-                        </Link>
-                        <Link href="/search/graph-map" className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                          location === "/search/graph-map" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )} data-testid="nav-graph-map">
-                          {t("relationGraphMap")}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <button
-                      onClick={() => setChatbotExpanded(!chatbotExpanded)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors mb-0.5 w-full",
-                        location.startsWith("/chatbot")
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      )}
-                      data-testid="nav-intelligent-chatbot"
-                    >
-                      <MessageSquare className="w-4 h-4" />
-                      <span className="flex-1 text-left">{t("intelligentChatbot")}</span>
-                      {chatbotExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                    </button>
-                    {chatbotExpanded && (
-                      <div className="ml-7 space-y-0.5 animate-in slide-in-from-top-2 duration-200">
-                        <Link href="/chatbot/interface" className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors",
-                          location === "/chatbot/interface" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )} data-testid="nav-chat-interface">
-                          {t("chatInterface")}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </nav>
