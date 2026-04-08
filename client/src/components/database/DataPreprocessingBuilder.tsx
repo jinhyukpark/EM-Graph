@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/lib/i18n";
 
 // Mock Data for Preview
 const PREVIEW_DATA: Record<string, any[]> = {
@@ -39,38 +40,42 @@ const PREVIEW_DATA: Record<string, any[]> = {
 
 // ... Node Components (SourceNode, OperationNode, DestinationNode) ...
 // Interactive Node Components
-const SourceNode = ({ data }: any) => (
-  <div className="bg-card border-2 border-primary/20 rounded-lg shadow-sm min-w-[180px] overflow-hidden">
-    <Handle type="source" position={Position.Right} className="!bg-primary" />
-    <div className="bg-primary/5 px-2 py-1.5 border-b border-primary/10 flex items-center gap-2">
-      <TableIcon className="w-3.5 h-3.5 text-primary" />
-      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Source Table</span>
-    </div>
-    <div className="p-2 space-y-2">
-      <div className="space-y-1">
-        <Label className="text-[9px] text-muted-foreground uppercase">Select Table</Label>
-        <Select defaultValue={data.label}>
-          <SelectTrigger className="h-7 text-[10px] bg-background">
-            <SelectValue placeholder="Select table" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="crime_incidents_2024" className="text-xs">crime_incidents_2024</SelectItem>
-            <SelectItem value="suspect_profiles" className="text-xs">suspect_profiles</SelectItem>
-            <SelectItem value="location_hotspots" className="text-xs">location_hotspots</SelectItem>
-            <SelectItem value="supply_chain_nodes" className="text-xs">supply_chain_nodes</SelectItem>
-          </SelectContent>
-        </Select>
+const SourceNode = ({ data }: any) => {
+  const { t } = useLanguage();
+  return (
+    <div className="bg-card border-2 border-primary/20 rounded-lg shadow-sm min-w-[180px] overflow-hidden">
+      <Handle type="source" position={Position.Right} className="!bg-primary" />
+      <div className="bg-primary/5 px-2 py-1.5 border-b border-primary/10 flex items-center gap-2">
+        <TableIcon className="w-3.5 h-3.5 text-primary" />
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("tableSource")}</span>
       </div>
-      <div className="flex items-center justify-between text-[10px] text-muted-foreground bg-secondary/20 p-1 rounded">
-        <span>Rows:</span>
-        <span className="font-mono">{data.rowCount}</span>
+      <div className="p-2 space-y-2">
+        <div className="space-y-1">
+          <Label className="text-[9px] text-muted-foreground uppercase">{t("selectTable")}</Label>
+          <Select defaultValue={data.label}>
+            <SelectTrigger className="h-7 text-[10px] bg-background">
+              <SelectValue placeholder={t("selectTable")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="crime_incidents_2024" className="text-xs">crime_incidents_2024</SelectItem>
+              <SelectItem value="suspect_profiles" className="text-xs">suspect_profiles</SelectItem>
+              <SelectItem value="location_hotspots" className="text-xs">location_hotspots</SelectItem>
+              <SelectItem value="supply_chain_nodes" className="text-xs">supply_chain_nodes</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground bg-secondary/20 p-1 rounded">
+          <span>{t("rows")}:</span>
+          <span className="font-mono">{data.rowCount}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const OperationNode = ({ data, id }: any) => {
   const { setNodes } = useReactFlow();
+  const { t } = useLanguage();
   
   // Ensure we have valid data defaults
   const sources = data.sources || [];
@@ -112,23 +117,23 @@ const OperationNode = ({ data, id }: any) => {
         {data.subType === 'join' && (
           <>
             <div className="space-y-1">
-              <Label className="text-[9px] text-muted-foreground uppercase">Join Type</Label>
+              <Label className="text-[9px] text-muted-foreground uppercase">{t("joinType")}</Label>
               <Select defaultValue="inner">
                 <SelectTrigger className="h-7 text-[10px] bg-background">
-                  <SelectValue placeholder="Select type" />
+                  <SelectValue placeholder={t("selectType")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="inner" className="text-xs">Inner Join</SelectItem>
-                  <SelectItem value="left" className="text-xs">Left Join</SelectItem>
-                  <SelectItem value="right" className="text-xs">Right Join</SelectItem>
-                  <SelectItem value="full" className="text-xs">Full Outer Join</SelectItem>
+                  <SelectItem value="inner" className="text-xs">{t("innerJoin")}</SelectItem>
+                  <SelectItem value="left" className="text-xs">{t("leftJoin")}</SelectItem>
+                  <SelectItem value="right" className="text-xs">{t("rightJoin")}</SelectItem>
+                  <SelectItem value="full" className="text-xs">{t("fullOuterJoin")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                 <Label className="text-[9px] text-muted-foreground uppercase">On Keys</Label>
+                 <Label className="text-[9px] text-muted-foreground uppercase">{t("onKeys")}</Label>
               </div>
               
               <div className="space-y-1.5">
@@ -180,7 +185,7 @@ const OperationNode = ({ data, id }: any) => {
                 ))}
               </div>
               {sources.length === 0 && (
-                <p className="text-[9px] text-amber-500 mt-1">Connect source tables to configure keys.</p>
+                <p className="text-[9px] text-amber-500 mt-1">{t("connectSourcesToConfigureKeys")}</p>
               )}
             </div>
           </>
@@ -190,7 +195,7 @@ const OperationNode = ({ data, id }: any) => {
           <div className="space-y-2">
             <div className="grid grid-cols-2 gap-1.5">
               <div className="space-y-1">
-                <Label className="text-[9px] text-muted-foreground uppercase">Column</Label>
+                <Label className="text-[9px] text-muted-foreground uppercase">{t("column")}</Label>
                 <Select defaultValue="severity">
                   <SelectTrigger className="h-7 text-[10px] bg-background">
                     <SelectValue />
@@ -203,7 +208,7 @@ const OperationNode = ({ data, id }: any) => {
                 </Select>
               </div>
               <div className="space-y-1">
-                <Label className="text-[9px] text-muted-foreground uppercase">Operator</Label>
+                <Label className="text-[9px] text-muted-foreground uppercase">{t("operator")}</Label>
                 <Select defaultValue="gt">
                   <SelectTrigger className="h-7 text-[10px] bg-background">
                     <SelectValue />
@@ -212,19 +217,19 @@ const OperationNode = ({ data, id }: any) => {
                     <SelectItem value="eq" className="text-xs">=</SelectItem>
                     <SelectItem value="gt" className="text-xs">&gt;</SelectItem>
                     <SelectItem value="lt" className="text-xs">&lt;</SelectItem>
-                    <SelectItem value="contains" className="text-xs">Contains</SelectItem>
+                    <SelectItem value="contains" className="text-xs">{t("contains")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <Input placeholder="Value" className="h-7 text-[10px]" />
+            <Input placeholder={t("value")} className="h-7 text-[10px]" />
           </div>
         )}
 
         {data.subType === 'transform' && (
           <div className="space-y-2">
             <div className="space-y-1">
-               <Label className="text-[9px] text-muted-foreground uppercase">Target Column</Label>
+               <Label className="text-[9px] text-muted-foreground uppercase">{t("targetColumn")}</Label>
                <Select defaultValue="time">
                   <SelectTrigger className="h-7 text-[10px] bg-background">
                     <SelectValue />
@@ -236,15 +241,15 @@ const OperationNode = ({ data, id }: any) => {
                </Select>
             </div>
             <div className="space-y-1">
-               <Label className="text-[9px] text-muted-foreground uppercase">Function</Label>
+               <Label className="text-[9px] text-muted-foreground uppercase">{t("functionLabel")}</Label>
                <Select defaultValue="extract_hour">
                   <SelectTrigger className="h-7 text-[10px] bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="extract_hour" className="text-xs">Extract Hour</SelectItem>
-                    <SelectItem value="to_upper" className="text-xs">To Uppercase</SelectItem>
-                    <SelectItem value="normalize" className="text-xs">Normalize (0-1)</SelectItem>
+                    <SelectItem value="extract_hour" className="text-xs">{t("extractHour")}</SelectItem>
+                    <SelectItem value="to_upper" className="text-xs">{t("toUppercase")}</SelectItem>
+                    <SelectItem value="normalize" className="text-xs">{t("normalizeRange")}</SelectItem>
                   </SelectContent>
                </Select>
             </div>
@@ -255,25 +260,28 @@ const OperationNode = ({ data, id }: any) => {
   );
 };
 
-const DestinationNode = ({ data }: any) => (
-  <div className="bg-card border-2 border-emerald-500/20 rounded-lg shadow-sm min-w-[180px] overflow-hidden">
-    <Handle type="target" position={Position.Left} className="!bg-emerald-500" />
-    <div className="bg-emerald-500/5 px-2 py-1.5 border-b border-emerald-500/10 flex items-center gap-2">
-      <Database className="w-3.5 h-3.5 text-emerald-600" />
-      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Destination</span>
-    </div>
-    <div className="p-2 space-y-2">
-      <div className="space-y-1">
-        <Label className="text-[9px] text-muted-foreground uppercase">New Table Name</Label>
-        <Input placeholder="e.g. processed_data_v1" className="h-7 text-[10px]" defaultValue={data.label !== 'Target Table' ? data.label : ''} />
+const DestinationNode = ({ data }: any) => {
+  const { t } = useLanguage();
+  return (
+    <div className="bg-card border-2 border-emerald-500/20 rounded-lg shadow-sm min-w-[180px] overflow-hidden">
+      <Handle type="target" position={Position.Left} className="!bg-emerald-500" />
+      <div className="bg-emerald-500/5 px-2 py-1.5 border-b border-emerald-500/10 flex items-center gap-2">
+        <Database className="w-3.5 h-3.5 text-emerald-600" />
+        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">{t("destination")}</span>
       </div>
-      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-        Ready to export
+      <div className="p-2 space-y-2">
+        <div className="space-y-1">
+          <Label className="text-[9px] text-muted-foreground uppercase">{t("newTableName")}</Label>
+          <Input placeholder="e.g. processed_data_v1" className="h-7 text-[10px]" defaultValue={data.label !== 'Target Table' ? data.label : ''} />
+        </div>
+        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          {t("readyToExport")}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const NODE_TYPES = {
   source: SourceNode,
@@ -291,6 +299,7 @@ const INITIAL_NODES: Node[] = [
 ];
 
 function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => void }) {
+  const { t } = useLanguage();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [draggedType, setDraggedType] = useState<string | null>(null);
@@ -447,17 +456,17 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
   const getInitialDataForType = (type: string) => {
     switch (type) {
       case 'join':
-        return { label: 'Join / Merge', subType: 'join', icon: <GitMerge className="w-4 h-4 text-indigo-600" />, description: 'Left, Right, Inner Join' };
+        return { label: t('joinMerge'), subType: 'join', icon: <GitMerge className="w-4 h-4 text-indigo-600" />, description: 'Left, Right, Inner Join' };
       case 'filter':
-        return { label: 'Filter Rows', subType: 'filter', icon: <ListFilter className="w-4 h-4 text-indigo-600" />, description: 'Filter by conditions' };
+        return { label: t('filterRows'), subType: 'filter', icon: <ListFilter className="w-4 h-4 text-indigo-600" />, description: 'Filter by conditions' };
       case 'transform':
-        return { label: 'Transform', subType: 'transform', icon: <ArrowRightLeft className="w-4 h-4 text-indigo-600" />, description: 'Rename, Type Cast' };
+        return { label: t('transform'), subType: 'transform', icon: <ArrowRightLeft className="w-4 h-4 text-indigo-600" />, description: 'Rename, Type Cast' };
       case 'source':
         return { label: 'crime_incidents_2024', rowCount: '1,420' };
       case 'destination':
-        return { label: 'Target Table' };
+        return { label: t('targetTable') };
       default:
-        return { label: 'Operation' };
+        return { label: t('operation') };
     }
   };
 
@@ -467,7 +476,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
   };
 
   const onNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
-    const label = node.data.label as string || 'Data Preview';
+    const label = node.data.label as string || t('dataResult');
     const newTab = { id: node.id, label };
     
     setPreviewTabs(prev => {
@@ -504,7 +513,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
           <div className="absolute top-4 right-4 z-10 flex gap-2">
             <Button variant="outline" size="sm" className="bg-background shadow-sm">
               <Trash2 className="w-4 h-4 mr-2" />
-              Clear
+              {t("clear")}
             </Button>
             <Button 
               size="sm" 
@@ -519,13 +528,13 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                 }));
                 onRun?.(resultData);
                 toast({
-                  title: "Pipeline Executed",
-                  description: "Data processing complete. Check the result tab.",
+                  title: t("pipelineExecuted"),
+                  description: t("pipelineExecutedDesc"),
                 });
               }}
             >
               <Play className="w-4 h-4 mr-2" />
-              Run Pipeline
+              {t("runPipeline")}
             </Button>
           </div>
           
@@ -555,7 +564,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
               <div className="p-4 border-b border-border flex items-center justify-between bg-secondary/10">
                 <h3 className="font-semibold flex items-center gap-2 text-sm">
                   <Activity className="w-4 h-4" />
-                  Edge Properties
+                  {t("edgeProperties")}
                 </h3>
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setSelectedEdge(null)}>
                   <X className="w-4 h-4" />
@@ -563,7 +572,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
               </div>
               <div className="p-4 space-y-6">
                 <div className="space-y-3">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Line Style</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("lineStyle")}</Label>
                   <div className="flex flex-col gap-2">
                     <Button 
                       variant={selectedEdge.type === 'default' || !selectedEdge.type ? "default" : "outline"} 
@@ -571,7 +580,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       className="h-8 text-xs justify-start"
                       onClick={() => updateEdgeType('default')}
                     >
-                      <Spline className="w-3 h-3 mr-2" /> Bezier Curve
+                      <Spline className="w-3 h-3 mr-2" /> {t("bezierCurve")}
                     </Button>
                     <Button 
                       variant={selectedEdge.type === 'straight' ? "default" : "outline"} 
@@ -579,7 +588,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       className="h-8 text-xs justify-start"
                       onClick={() => updateEdgeType('straight')}
                     >
-                      <ArrowRight className="w-3 h-3 mr-2" /> Straight Line
+                      <ArrowRight className="w-3 h-3 mr-2" /> {t("straightLine")}
                     </Button>
                     <Button 
                       variant={selectedEdge.type === 'step' ? "default" : "outline"} 
@@ -587,13 +596,13 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       className="h-8 text-xs justify-start"
                       onClick={() => updateEdgeType('step')}
                     >
-                      <Type className="w-3 h-3 mr-2" /> Step Line
+                      <Type className="w-3 h-3 mr-2" /> {t("stepLine")}
                     </Button>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Animation</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("animation")}</Label>
                   <div className="flex items-center gap-2">
                     <Button 
                       variant={selectedEdge.animated ? "default" : "outline"} 
@@ -601,7 +610,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       className="w-full h-8 text-xs"
                       onClick={() => updateEdgeAnimation(true)}
                     >
-                      Animated
+                      {t("animated")}
                     </Button>
                     <Button 
                       variant={!selectedEdge.animated ? "default" : "outline"} 
@@ -609,15 +618,15 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       className="w-full h-8 text-xs"
                       onClick={() => updateEdgeAnimation(false)}
                     >
-                      Static
+                      {t("staticLabel")}
                     </Button>
                   </div>
                 </div>
 
                 <div className="p-3 bg-secondary/20 rounded-lg border border-border/50 text-xs text-muted-foreground">
                   <p>ID: <span className="font-mono">{selectedEdge.id}</span></p>
-                  <p className="mt-1">Source: <span className="font-mono">{selectedEdge.source}</span></p>
-                  <p>Target: <span className="font-mono">{selectedEdge.target}</span></p>
+                  <p className="mt-1">{t("source")}: <span className="font-mono">{selectedEdge.source}</span></p>
+                  <p>{t("target")}: <span className="font-mono">{selectedEdge.target}</span></p>
                 </div>
               </div>
             </div>
@@ -626,16 +635,16 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
               <div className="p-4 border-b border-border">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Layers className="w-4 h-4" />
-                  Components
+                  {t("components")}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">Drag components to build your pipeline.</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("dragComponentsDesc")}</p>
               </div>
               
               <ScrollArea className="flex-1">
                 <div className="p-4 space-y-6">
                   {/* Sources */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Data Sources</h4>
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("dataSources")}</h4>
                     <div 
                       className="bg-card border border-border p-3 rounded-lg shadow-sm cursor-grab hover:border-primary/50 transition-colors flex items-center gap-3"
                       draggable
@@ -644,13 +653,13 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       <div className="bg-primary/10 p-1.5 rounded text-primary">
                         <TableIcon className="w-4 h-4" />
                       </div>
-                      <div className="text-sm font-medium">Table Source</div>
+                      <div className="text-sm font-medium">{t("tableSource")}</div>
                     </div>
                   </div>
 
                   {/* Operations */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Operations</h4>
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("operations")}</h4>
                     
                     <div 
                       className="bg-card border border-border p-3 rounded-lg shadow-sm cursor-grab hover:border-indigo-500/50 transition-colors flex items-center gap-3"
@@ -661,8 +670,8 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                         <GitMerge className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium">Join / Merge</div>
-                        <div className="text-[10px] text-muted-foreground">Combine two datasets</div>
+                        <div className="text-sm font-medium">{t("joinMerge")}</div>
+                        <div className="text-[10px] text-muted-foreground">{t("combineTwoDatasets")}</div>
                       </div>
                     </div>
 
@@ -675,8 +684,8 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                         <ListFilter className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium">Filter</div>
-                        <div className="text-[10px] text-muted-foreground">Select specific rows</div>
+                        <div className="text-sm font-medium">{t("filter")}</div>
+                        <div className="text-[10px] text-muted-foreground">{t("selectSpecificRows")}</div>
                       </div>
                     </div>
 
@@ -689,15 +698,15 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                         <ArrowRightLeft className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-sm font-medium">Transform</div>
-                        <div className="text-[10px] text-muted-foreground">Modify columns</div>
+                        <div className="text-sm font-medium">{t("transform")}</div>
+                        <div className="text-[10px] text-muted-foreground">{t("modifyColumns")}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Destination */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Output</h4>
+                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("output")}</h4>
                     <div 
                       className="bg-card border border-border p-3 rounded-lg shadow-sm cursor-grab hover:border-emerald-500/50 transition-colors flex items-center gap-3"
                       draggable
@@ -706,7 +715,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                       <div className="bg-emerald-500/10 p-1.5 rounded text-emerald-600">
                         <Database className="w-4 h-4" />
                       </div>
-                      <div className="text-sm font-medium">New Table</div>
+                      <div className="text-sm font-medium">{t("newTable")}</div>
                     </div>
                   </div>
                 </div>
@@ -764,9 +773,9 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
              <Tabs defaultValue="data" className="w-full h-full flex flex-col">
                 <div className="px-4 border-b border-border flex items-center justify-between">
                   <TabsList className="h-9 bg-transparent p-0">
-                    <TabsTrigger value="data" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">Data Result</TabsTrigger>
-                    <TabsTrigger value="schema" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">Schema</TabsTrigger>
-                    <TabsTrigger value="logs" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">Execution Logs</TabsTrigger>
+                    <TabsTrigger value="data" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">{t("dataResult")}</TabsTrigger>
+                    <TabsTrigger value="schema" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">{t("schema")}</TabsTrigger>
+                    <TabsTrigger value="logs" className="h-9 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none text-xs">{t("executionLogs")}</TabsTrigger>
                   </TabsList>
                 </div>
                 
@@ -775,13 +784,13 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                     <Table>
                       <TableHeader className="sticky top-0 bg-secondary/5 z-10">
                         <TableRow className="hover:bg-transparent border-b border-border">
-                          {Object.keys((PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default'])[0]).map((key) => (
+                          {Object.keys((PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default'])[0]).map((key) => (
                             <TableHead key={key} className="h-8 text-xs font-semibold uppercase tracking-wider">{key}</TableHead>
                           ))}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {getPaginatedData(PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).map((row: any, i: number) => (
+                        {getPaginatedData(PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).map((row: any, i: number) => (
                           <TableRow key={i} className="hover:bg-secondary/20 border-b border-border/50">
                             {Object.values(row).map((val: any, j: number) => (
                                <TableCell key={j} className="py-1.5 text-xs">{val}</TableCell>
@@ -796,11 +805,11 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                   <div className="border-t border-border p-2 bg-secondary/5 flex items-center justify-between">
                      <div className="flex items-center gap-4 text-xs">
                         <div className="flex items-center gap-2 text-muted-foreground">
-                           <span>Total: <span className="font-mono font-medium text-foreground">{(PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length}</span> rows</span>
+                           <span>{t("total")}: <span className="font-mono font-medium text-foreground">{(PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length}</span> {t("rows")}</span>
                         </div>
                         <Separator orientation="vertical" className="h-4" />
                         <div className="flex items-center gap-2">
-                           <span className="text-muted-foreground">Rows per page:</span>
+                           <span className="text-muted-foreground">{t("rowsPerPage")}:</span>
                            <Select value={rowsPerPage.toString()} onValueChange={(v) => setRowsPerPage(Number(v))}>
                               <SelectTrigger className="h-6 text-xs w-[60px]">
                                  <SelectValue />
@@ -827,7 +836,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                         
                         {/* Page Numbers */}
                         {(() => {
-                          const totalRows = (PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length;
+                          const totalRows = (PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length;
                           const totalPages = Math.ceil(totalRows / rowsPerPage);
                           const pages = [];
                           
@@ -888,7 +897,7 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                           variant="ghost" 
                           size="icon" 
                           className="h-6 w-6"
-                          disabled={currentPage * rowsPerPage >= (PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length}
+                          disabled={currentPage * rowsPerPage >= (PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length}
                           onClick={() => setCurrentPage(p => p + 1)}
                         >
                            <ChevronRight className="w-3 h-3" />
@@ -897,13 +906,13 @@ function DataPreprocessingBuilderContent({ onRun }: { onRun?: (data: any[]) => v
                   </div>
                 </TabsContent>
                 <TabsContent value="schema" className="p-4 m-0">
-                  <div className="text-sm text-muted-foreground">Schema information will appear here.</div>
+                  <div className="text-sm text-muted-foreground">{t("schemaInfoDesc")}</div>
                 </TabsContent>
                 <TabsContent value="logs" className="p-4 m-0">
                   <div className="text-sm text-muted-foreground font-mono">
-                    [10:24:01] Process started<br/>
-                    [10:24:02] Fetched {(PREVIEW_DATA[previewTabs.find(t => t.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length} rows<br/>
-                    [10:24:02] Completed successfully
+                    [10:24:01] {t("processStarted")}<br/>
+                    [10:24:02] {t("fetched")} {(PREVIEW_DATA[previewTabs.find(tab => tab.id === activeTabId)?.label || ''] || PREVIEW_DATA['default']).length} {t("rows")}<br/>
+                    [10:24:02] {t("completedSuccessfully")}
                   </div>
                 </TabsContent>
              </Tabs>

@@ -10,8 +10,10 @@ import type { Project } from "@shared/schema";
 import generatedImage from "../assets/generated_images/clean_white_data_network_background.png";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { formatDistanceToNow } from "date-fns";
+import { useLanguage } from "@/lib/i18n";
 
 export default function Projects() {
+  const { t } = useLanguage();
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"],
   });
@@ -39,13 +41,13 @@ export default function Projects() {
       <div className="relative z-10 container mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground" data-testid="text-page-title">Projects</h1>
-            <p className="text-muted-foreground">Manage your relationship intelligence projects.</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground" data-testid="text-page-title">{t("projects")}</h1>
+            <p className="text-muted-foreground">{t("manageProjectsDesc")}</p>
           </div>
           <Link href="/create">
             <Button size="lg" className="gap-2 shadow-lg shadow-primary/20 hidden md:flex" data-testid="button-new-project">
               <Plus className="w-5 h-5" />
-              New Graph
+              {t("newGraph")}
             </Button>
           </Link>
         </div>
@@ -80,7 +82,7 @@ export default function Projects() {
                             data-testid={`button-delete-${project.id}`}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
+                            {t("delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -102,10 +104,10 @@ export default function Projects() {
                     <div className="flex items-center gap-4">
                        <span className="flex items-center gap-1">
                          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                         {project.nodes} Nodes
+                         {project.nodes} {t("nodes")}
                        </span>
                        <Button variant="ghost" size="sm" className="h-7 gap-1 hover:text-primary hover:bg-primary/10 -mr-2">
-                          Open <ArrowRight className="w-3 h-3" />
+                          {t("open")} <ArrowRight className="w-3 h-3" />
                        </Button>
                     </div>
                   </CardFooter>
@@ -118,7 +120,7 @@ export default function Projects() {
                 <div className="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                   <Plus className="w-8 h-8" />
                 </div>
-                <span className="font-medium">Create New Project</span>
+                <span className="font-medium">{t("createNewProject")}</span>
               </div>
             </Link>
           </div>
