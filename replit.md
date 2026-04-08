@@ -2,7 +2,12 @@
 
 ## Overview
 
-Nexus is a full-stack web application for building, analyzing, and visualizing complex relationship networks from data. It provides tools for creating projects, managing databases, building interactive graphs, collaborating through notes/comments, and exploring knowledge through a visual "Knowledge Garden." The application includes features like a landing page, project management, database querying, graph visualization with node/edge configuration, resource management, AI copilot integration, and a "Brain Market" for sharing graph ontologies.
+Nexus is a full-stack web application for building, analyzing, and visualizing complex relationship networks from data. It provides tools for creating projects, managing databases, building interactive graphs, collaborating through notes/comments, and exploring knowledge through a visual "Knowledge Garden." The application includes features like a landing page, project management, database querying, graph visualization with node/edge configuration, resource management, AI copilot integration, a "Brain Market" for sharing graph ontologies, intelligent search (Full-Text, Semantic, Relation Graph Map), and an intelligent chatbot interface.
+
+### Sidebar Navigation Structure
+- **WORK**: Dashboard, Database, Resources, Graph Analysis
+- **ONTOLOGY**: Knowledge Garden, Brain Market
+- **INTELLIGENCE**: Intelligent Search (Full-Text `/search/fulltext`, Semantic `/search/semantic`, Graph Map `/search/graph-map`), Intelligent Chatbot (Chat Interface `/chatbot/interface`) — accordion sub-menus with auto-expand on route match
 
 ## User Preferences
 
@@ -18,7 +23,7 @@ Preferred communication style: Simple, everyday language.
 - **Graph Visualization**: `@xyflow/react` (React Flow) for interactive node/edge graph rendering, ERD views, and data preprocessing pipelines
 - **Animations**: Framer Motion for transitions and drag-and-drop reordering
 - **Charts**: Recharts for data visualization (area charts, etc.)
-- **i18n**: Custom lightweight internationalization system (`client/src/lib/i18n.tsx`) with `LanguageProvider` context and `useLanguage` hook. Supports English (en) and Korean (ko). Language preference persisted in localStorage key `"em-graph-language"`. Language toggle button in Layout.tsx sidebar (Globe icon, between storage widget and user profile). All pages and major components are fully translated: Home, Projects, CreateProject, SignUp, OrganizationSelect, ProjectSetup, KnowledgeGarden, ProjectView, BrainMarket, ResourcesManager, DatabaseManager, GraphBuilder, GraphBuilderForm, DataPreprocessingBuilder, Settings, not-found.
+- **i18n**: Custom lightweight internationalization system (`client/src/lib/i18n.tsx`) with `LanguageProvider` context and `useLanguage` hook. Supports English (en) and Korean (ko). Language preference persisted in localStorage key `"em-graph-language"`. Language toggle button in Layout.tsx sidebar (Globe icon, between storage widget and user profile). All pages and major components are fully translated: Home, Projects, CreateProject, SignUp, OrganizationSelect, ProjectSetup, KnowledgeGarden, ProjectView, BrainMarket, ResourcesManager, DatabaseManager, GraphBuilder, GraphBuilderForm, DataPreprocessingBuilder, Settings, FullTextSearch, SemanticSearch, GraphMap, ChatbotInterface, not-found.
 - **Build Tool**: Vite with React plugin, served from `client/` directory, outputs to `dist/public/`
 - **Path Aliases**: `@/` maps to `client/src/`, `@shared/` maps to `shared/`, `@assets/` maps to `attached_assets/`
 
