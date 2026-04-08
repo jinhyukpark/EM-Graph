@@ -145,18 +145,25 @@ const SEMANTIC_RESULTS: SemanticResult[] = [
 ];
 
 const GRAPH_NODES: Node[] = [
-  { id: "n1", position: { x: 400, y: 50 }, data: { label: "원자재 가격", type: "keyword" }, type: "entityNode" },
-  { id: "n2", position: { x: 100, y: 180 }, data: { label: "POSCO", type: "company" }, type: "entityNode" },
-  { id: "n3", position: { x: 350, y: 200 }, data: { label: "산업자재사업부", type: "department" }, type: "entityNode" },
-  { id: "n4", position: { x: 650, y: 180 }, data: { label: "화학사업부", type: "department" }, type: "entityNode" },
-  { id: "n5", position: { x: 150, y: 350 }, data: { label: "철강 코일", type: "material" }, type: "entityNode" },
-  { id: "n6", position: { x: 400, y: 350 }, data: { label: "PET 필름", type: "material" }, type: "entityNode" },
-  { id: "n7", position: { x: 650, y: 350 }, data: { label: "에틸렌", type: "material" }, type: "entityNode" },
-  { id: "n8", position: { x: 250, y: 480 }, data: { label: "동박", type: "material" }, type: "entityNode" },
-  { id: "n9", position: { x: 500, y: 480 }, data: { label: "ABS 수지", type: "material" }, type: "entityNode" },
-  { id: "n10", position: { x: 100, y: 480 }, data: { label: "현대제철", type: "company" }, type: "entityNode" },
-  { id: "n11", position: { x: 750, y: 350 }, data: { label: "패션사업부", type: "department" }, type: "entityNode" },
-  { id: "n12", position: { x: 800, y: 480 }, data: { label: "리사이클 폴리에스터", type: "material" }, type: "entityNode" },
+  { id: "n1", position: { x: 450, y: 30 }, data: { label: "원자재 가격", type: "keyword" }, type: "entityNode" },
+  { id: "n2", position: { x: 80, y: 160 }, data: { label: "POSCO", type: "company" }, type: "entityNode" },
+  { id: "n3", position: { x: 320, y: 170 }, data: { label: "산업자재사업부", type: "department" }, type: "entityNode" },
+  { id: "n4", position: { x: 620, y: 150 }, data: { label: "화학사업부", type: "department" }, type: "entityNode" },
+  { id: "n5", position: { x: 100, y: 320 }, data: { label: "철강 코일", type: "material" }, type: "entityNode" },
+  { id: "n6", position: { x: 350, y: 330 }, data: { label: "PET 필름", type: "material" }, type: "entityNode" },
+  { id: "n7", position: { x: 620, y: 320 }, data: { label: "에틸렌", type: "material" }, type: "entityNode" },
+  { id: "n8", position: { x: 220, y: 460 }, data: { label: "동박", type: "material" }, type: "entityNode" },
+  { id: "n9", position: { x: 500, y: 460 }, data: { label: "ABS 수지", type: "material" }, type: "entityNode" },
+  { id: "n10", position: { x: 50, y: 460 }, data: { label: "현대제철", type: "company" }, type: "entityNode" },
+  { id: "n11", position: { x: 900, y: 170 }, data: { label: "패션사업부", type: "department" }, type: "entityNode" },
+  { id: "n12", position: { x: 830, y: 320 }, data: { label: "리사이클 폴리에스터", type: "material" }, type: "entityNode" },
+  { id: "n13", position: { x: 900, y: 30 }, data: { label: "공급망 리스크", type: "keyword" }, type: "entityNode" },
+  { id: "n14", position: { x: 1100, y: 150 }, data: { label: "필름/전자재료사업부", type: "department" }, type: "entityNode" },
+  { id: "n15", position: { x: 1050, y: 320 }, data: { label: "편광필름", type: "material" }, type: "entityNode" },
+  { id: "n16", position: { x: 1150, y: 460 }, data: { label: "디스플레이 패널", type: "material" }, type: "entityNode" },
+  { id: "n17", position: { x: 750, y: 460 }, data: { label: "GRS 인증", type: "keyword" }, type: "entityNode" },
+  { id: "n18", position: { x: 350, y: 460 }, data: { label: "LG화학", type: "company" }, type: "entityNode" },
+  { id: "n19", position: { x: 950, y: 460 }, data: { label: "나일론 원사", type: "material" }, type: "entityNode" },
 ];
 
 const GRAPH_EDGES: Edge[] = [
@@ -172,6 +179,17 @@ const GRAPH_EDGES: Edge[] = [
   { id: "e10", source: "n3", target: "n8", label: "조달", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#10b981" } },
   { id: "e11", source: "n7", target: "n12", label: "원료", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#f59e0b" } },
   { id: "e12", source: "n11", target: "n12", label: "사용", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#ec4899" } },
+  { id: "e13", source: "n13", target: "n11", label: "영향", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#6366f1" } },
+  { id: "e14", source: "n13", target: "n14", label: "영향", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#6366f1" } },
+  { id: "e15", source: "n14", target: "n15", label: "생산", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#10b981" } },
+  { id: "e16", source: "n14", target: "n6", label: "관리", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#10b981" } },
+  { id: "e17", source: "n15", target: "n16", label: "부품", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#f59e0b" } },
+  { id: "e18", source: "n11", target: "n17", label: "인증", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#ec4899" } },
+  { id: "e19", source: "n12", target: "n17", label: "적용", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#f59e0b" } },
+  { id: "e20", source: "n18", target: "n9", label: "공급", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#8b5cf6" } },
+  { id: "e21", source: "n18", target: "n7", label: "공급", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#8b5cf6" } },
+  { id: "e22", source: "n11", target: "n19", label: "조달", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#ec4899" } },
+  { id: "e23", source: "n1", target: "n13", label: "연관", markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: "#6366f1" } },
 ];
 
 const NODE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
