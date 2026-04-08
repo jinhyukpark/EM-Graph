@@ -215,7 +215,7 @@ export default function Home() {
                     </div>
                     <Badge
                       variant={stat.changeDir === "up" ? "default" : "secondary"}
-                      className={`font-mono text-[10px] gap-1 ${
+                      className={`font-mono text-xs px-2 py-0.5 gap-1 ${
                         stat.labelKey === "anomaliesDetected"
                           ? "bg-destructive/10 text-destructive border-destructive/20"
                           : stat.changeDir === "up"
@@ -223,8 +223,8 @@ export default function Home() {
                           : ""
                       }`}
                     >
-                      {stat.changeDir === "up" && stat.labelKey !== "anomaliesDetected" && <ArrowUpRight className="w-3 h-3" />}
-                      {stat.labelKey === "anomaliesDetected" && <AlertTriangle className="w-3 h-3" />}
+                      {stat.changeDir === "up" && stat.labelKey !== "anomaliesDetected" && <ArrowUpRight className="w-3.5 h-3.5" />}
+                      {stat.labelKey === "anomaliesDetected" && <AlertTriangle className="w-3.5 h-3.5" />}
                       {stat.change} {t("vsYesterday")}
                     </Badge>
                   </div>
