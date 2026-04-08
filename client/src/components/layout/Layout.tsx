@@ -29,7 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 // Mock Organizations (duplicated for mockup)
 const MOCK_ORGS = [
-  { id: "org-1", name: "Acme Corp", members: 12, role: "Admin", plan: "Enterprise" },
+  { id: "org-1", name: "코오롱인더스트리", members: 12, role: "Admin", plan: "Enterprise" },
   { id: "org-2", name: "CyberSec Team", members: 5, role: "Member", plan: "Pro" },
   { id: "org-3", name: "Data Lab", members: 3, role: "Viewer", plan: "Free" }
 ];
