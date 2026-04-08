@@ -497,25 +497,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           )}
 
-          {/* Language Toggle */}
-          <div className={cn("flex items-center", isCollapsed ? "justify-center" : "px-1")}>
-            <Button
-              variant="ghost"
-              size={isCollapsed ? "icon" : "sm"}
-              className={cn(
-                "text-muted-foreground hover:text-foreground hover:bg-secondary",
-                isCollapsed ? "h-8 w-8" : "h-8 w-full justify-start gap-2 text-xs"
-              )}
-              onClick={() => setLanguage(language === "en" ? "ko" : "en")}
-              data-testid="button-language-toggle"
-            >
-              <Globe className="w-4 h-4 shrink-0" />
-              {!isCollapsed && (
-                <span className="font-medium">{language === "en" ? "한국어로 전환" : "ENG "}</span>
-              )}
-            </Button>
-          </div>
-
           {/* User Profile */}
           <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3 px-1")}>
             <div 
@@ -536,14 +517,46 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               )}
             </div>
             {!isCollapsed && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                onClick={handleLogoutClick}
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      onClick={() => setLanguage(language === "en" ? "ko" : "en")}
+                      data-testid="button-language-toggle"
+                    >
+                      <Globe className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
+                </Tooltip>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  onClick={handleLogoutClick}
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+            {isCollapsed && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    onClick={() => setLanguage(language === "en" ? "ko" : "en")}
+                    data-testid="button-language-toggle-collapsed"
+                  >
+                    <Globe className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>
