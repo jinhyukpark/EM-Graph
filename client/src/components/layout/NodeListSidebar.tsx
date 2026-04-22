@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight, Database, Table as TableIcon } from "lucide-react";
+import { Search, Settings, Filter, MoreHorizontal, MapPin, Calendar, User, Briefcase, ArrowLeft, Network, Maximize2, X, ChevronLeft, ChevronRight, Database, Table as TableIcon, Target } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -159,7 +159,7 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
       </Carousel>
 
       <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
-        <DialogContent className="max-w-[95vw] w-full h-[95vh] p-0 border-none bg-black/95 shadow-2xl flex flex-col outline-none">
+        <DialogContent className="max-w-[60vw] w-auto h-auto max-h-[70vh] p-0 border-none bg-black/95 shadow-2xl flex flex-col outline-none">
           {/* Header Controls */}
           <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
             <Button 
@@ -177,7 +177,7 @@ function NodeImageCarousel({ images, name }: { images: string[], name: string })
             <img 
               src={images[fullscreenIndex]} 
               alt={`${name} - Fullscreen`} 
-              className="max-w-full max-h-[75vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300"
+              className="max-w-full max-h-[55vh] object-contain shadow-2xl animate-in zoom-in-95 duration-300"
             />
 
             {/* Navigation Arrows (Large) */}
@@ -271,17 +271,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
     
     return (
       <div className="flex flex-col h-full animate-in slide-in-from-left-5 duration-300">
-        <div className="px-4 py-3 border-b border-border">
-          <div className="flex items-center gap-2 mb-2">
-             <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2" onClick={() => onNodeSelect?.(null as any)}>
-               <ArrowLeft className="w-4 h-4" />
-             </Button>
-             <h3 className="text-sm font-semibold uppercase tracking-wider">Component Details</h3>
-          </div>
-          
-          <div className="w-full bg-muted rounded-lg border border-border/50 overflow-hidden mb-0 relative group/carousel">
-             <NodeImageCarousel images={displayImages} name={displayName} />
-          </div>
+        <div className="w-full bg-muted overflow-hidden relative group/carousel border-b border-border">
+           <NodeImageCarousel images={displayImages} name={displayName} />
         </div>
 
         <ScrollArea className="flex-1 p-0">
@@ -290,6 +281,9 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               <div className="px-4 py-3 border-b border-border/50">
                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
                    <Settings className="w-3.5 h-3.5" /> Properties
+                   <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" onClick={() => onNodeSelect?.(null as any)}>
+                     <ArrowLeft className="w-3.5 h-3.5" />
+                   </Button>
                  </h4>
                  <div className="grid gap-2 text-sm bg-card rounded-md border p-3">
                     <div className="grid grid-cols-2 py-1 border-b border-border/50 pb-1">
@@ -342,8 +336,8 @@ export default function NodeListSidebar({ onNodeSelect, selectedNodeId, selected
               </div>
 
               <div className="p-4">
-                 <Button className="w-full gap-2" variant="secondary">
-                    <Filter className="w-4 h-4" /> Filter by this Node
+                 <Button className="w-full gap-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md" variant="default">
+                    <Target className="w-4 h-4" /> Locate Node
                  </Button>
               </div>
            </div>

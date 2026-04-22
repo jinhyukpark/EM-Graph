@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard } from "lucide-react";
+import { Database, Play, Plus, Search, Table as TableIcon, MoreHorizontal, Save, RefreshCw, Trash2, FileCode, ChevronRight, ChevronDown, Network, X, Import, FileUp, LayoutTemplate, Signal, User, Workflow, ChevronLeft, ArrowLeft, Info, Copy, Edit3, Check, LayoutDashboard, Loader2, FileSpreadsheet, FileJson, FileText, Upload } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -17,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { QueryTemplateDialog } from "@/components/database/QueryTemplateDialog";
+import { useLanguage } from "@/lib/i18n";
 import DataPreprocessingBuilder from "@/components/database/DataPreprocessingBuilder";
 import GraphBuilderForm from "@/components/graph/GraphBuilderForm";
 import {
@@ -144,17 +146,25 @@ interface EditingCell {
 }
 
 export default function DatabaseManager() {
+  const { t } = useLanguage();
   const [location, setLocation] = useLocation();
   const [tabs, setTabs] = useState<Tab[]>([
     { id: 't1', type: 'table', title: 'crime_incidents_2024' }
   ]);
   const [activeTabId, setActiveTabId] = useState('t1');
-  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom'}[]>([
-    { id: '1', sql: "crime_incidents_2024 테이블에서 severity가 5보다 큰 데이터를 조회해줘", title: "자연어 쿼리 예시", type: 'custom' }
+  const [queryBlocks, setQueryBlocks] = useState<{id: string, sql: string, title?: string, description?: string, type?: 'template' | 'custom', generatedSql?: string, isConverting?: boolean}[]>([
+    { id: '1', sql: "Query all crime incidents with severity greater than 5\nAdd a new robbery incident in Downtown area with severity 8\nUpdate all open cases in West End to investigating status\nDelete all resolved cases older than 2024-06-01", title: "Natural Language Query", type: 'custom' }
   ]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [tableData, setTableData] = useState(MOCK_TABLE_DATA);
   const [queryData, setQueryData] = useState(MOCK_QUERY_DATA);
+  const [executedQuerySql, setExecutedQuerySql] = useState<string>("");
+  const [queryResultType, setQueryResultType] = useState<'select' | 'insert' | 'update' | 'delete'>('select');
+  const [queryResultMessage, setQueryResultMessage] = useState<string>("");
+  const [hasTextSelection, setHasTextSelection] = useState(false);
+  const [selectedText, setSelectedText] = useState("");
+  const [editingQueryResultCell, setEditingQueryResultCell] = useState<{rowId: number, field: string} | null>(null);
+  const [editingQueryResultValue, setEditingQueryResultValue] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
@@ -174,7 +184,190 @@ export default function DatabaseManager() {
     member: ""
   });
 
+  const [isCreateTableOpen, setIsCreateTableOpen] = useState(false);
+  const [createTableStep, setCreateTableStep] = useState<'source' | 'upload' | 'preview' | 'confirm'>('source');
+  const [createTableFileType, setCreateTableFileType] = useState<'csv' | 'excel' | 'json' | null>(null);
+  const [createTableFileName, setCreateTableFileName] = useState("");
+  const [createTableName, setCreateTableName] = useState("");
+  const [createTableFields, setCreateTableFields] = useState<{name: string, type: string, alias: string}[]>([]);
+  const [createTableDestination, setCreateTableDestination] = useState<'None' | 'Original' | 'Custom'>('Original');
+  const [createTableSheets, setCreateTableSheets] = useState<Record<string, {name: string, type: string, alias: string}[]>>({});
+  const [createTableActiveSheet, setCreateTableActiveSheet] = useState<string>("");
+  const [isParsingFile, setIsParsingFile] = useState(false);
+
   const [isGraphBuilderOpen, setIsGraphBuilderOpen] = useState(false);
+  const [isCreateGraphDialogOpen, setIsCreateGraphDialogOpen] = useState(false);
+  const [newGraphName, setNewGraphName] = useState("");
+  const [newGraphAccessUsers, setNewGraphAccessUsers] = useState<string[]>([]);
+  const [newGraphUserInput, setNewGraphUserInput] = useState("");
+
+  const availableUsers = [
+    { name: "Sarah Chen", avatar: "https://i.pravatar.cc/150?u=sarah" },
+    { name: "David Kim", avatar: "https://i.pravatar.cc/150?u=david" },
+    { name: "Emily Park", avatar: "https://i.pravatar.cc/150?u=emily" },
+    { name: "James Lee", avatar: "https://i.pravatar.cc/150?u=james" },
+    { name: "Maria Garcia", avatar: "https://i.pravatar.cc/150?u=maria" },
+  ];
+
+  const handleAddAccessUser = (userName: string) => {
+    if (userName.trim() && !newGraphAccessUsers.includes(userName.trim())) {
+      setNewGraphAccessUsers([...newGraphAccessUsers, userName.trim()]);
+    }
+    setNewGraphUserInput("");
+  };
+
+  const handleRemoveAccessUser = (userName: string) => {
+    setNewGraphAccessUsers(newGraphAccessUsers.filter(u => u !== userName));
+  };
+
+  const MOCK_FILE_FIELDS: Record<string, {name: string, type: string, alias: string}[]> = {
+    'csv': [
+      { name: "id", type: "integer", alias: "" },
+      { name: "incident_date", type: "timestamp", alias: "" },
+      { name: "category", type: "varchar(100)", alias: "" },
+      { name: "description", type: "text", alias: "" },
+      { name: "lat", type: "decimal(10,6)", alias: "" },
+      { name: "lng", type: "decimal(10,6)", alias: "" },
+      { name: "severity_level", type: "integer", alias: "" },
+      { name: "status_code", type: "varchar(20)", alias: "" },
+    ],
+    'excel': [
+      { name: "Record_ID", type: "integer", alias: "" },
+      { name: "Full_Name", type: "varchar(255)", alias: "" },
+      { name: "Department", type: "varchar(100)", alias: "" },
+      { name: "Hire_Date", type: "date", alias: "" },
+      { name: "Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Is_Active", type: "boolean", alias: "" },
+      { name: "Manager_ID", type: "integer", alias: "" },
+      { name: "Email", type: "varchar(255)", alias: "" },
+      { name: "Phone_Number", type: "varchar(20)", alias: "" },
+      { name: "Notes", type: "text", alias: "" },
+    ],
+    'json': [
+      { name: "node_id", type: "uuid", alias: "" },
+      { name: "label", type: "varchar(200)", alias: "" },
+      { name: "properties", type: "jsonb", alias: "" },
+      { name: "created_at", type: "timestamp", alias: "" },
+      { name: "weight", type: "decimal(8,4)", alias: "" },
+      { name: "tags", type: "text[]", alias: "" },
+    ],
+  };
+
+  const MOCK_EXCEL_SHEETS: Record<string, {name: string, type: string, alias: string}[]> = {
+    'Employees': [
+      { name: "Record_ID", type: "integer", alias: "" },
+      { name: "Full_Name", type: "varchar(255)", alias: "" },
+      { name: "Department", type: "varchar(100)", alias: "" },
+      { name: "Hire_Date", type: "date", alias: "" },
+      { name: "Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Is_Active", type: "boolean", alias: "" },
+    ],
+    'Departments': [
+      { name: "Dept_ID", type: "integer", alias: "" },
+      { name: "Dept_Name", type: "varchar(100)", alias: "" },
+      { name: "Location", type: "varchar(200)", alias: "" },
+      { name: "Manager_Name", type: "varchar(255)", alias: "" },
+      { name: "Budget", type: "decimal(15,2)", alias: "" },
+    ],
+    'Salaries': [
+      { name: "Employee_ID", type: "integer", alias: "" },
+      { name: "Base_Salary", type: "decimal(12,2)", alias: "" },
+      { name: "Bonus", type: "decimal(10,2)", alias: "" },
+      { name: "Tax_Rate", type: "decimal(5,2)", alias: "" },
+      { name: "Effective_Date", type: "date", alias: "" },
+      { name: "Currency", type: "varchar(10)", alias: "" },
+    ],
+  };
+
+  const handleFileTypeSelect = (fileType: 'csv' | 'excel' | 'json') => {
+    setCreateTableFileType(fileType);
+    setCreateTableFileName("");
+    setCreateTableName("");
+    setCreateTableFields([]);
+    setCreateTableSheets({});
+    setCreateTableActiveSheet("");
+    setCreateTableStep('upload');
+  };
+
+  const handleFileUpload = () => {
+    if (!createTableFileType) return;
+    const mockNames: Record<string, string> = {
+      csv: "incident_reports_2024.csv",
+      excel: "employee_records.xlsx",
+      json: "graph_nodes_export.json",
+    };
+    const fileName = mockNames[createTableFileType];
+    setCreateTableFileName(fileName);
+    const baseName = fileName.replace(/\.\w+$/, '').replace(/[^a-zA-Z0-9_]/g, '_');
+    setCreateTableName(baseName);
+    setIsParsingFile(true);
+    setCreateTableStep('preview');
+
+    setTimeout(() => {
+      if (createTableFileType === 'excel') {
+        const sheets = Object.fromEntries(
+          Object.entries(MOCK_EXCEL_SHEETS).map(([k, v]) => [k, v.map(f => ({ ...f }))])
+        );
+        setCreateTableSheets(sheets);
+        const firstSheet = Object.keys(sheets)[0];
+        setCreateTableActiveSheet(firstSheet);
+        setCreateTableFields(sheets[firstSheet]);
+        setCreateTableName(firstSheet.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_'));
+      } else {
+        setCreateTableSheets({});
+        setCreateTableActiveSheet("");
+        setCreateTableFields(MOCK_FILE_FIELDS[createTableFileType].map(f => ({ ...f })));
+      }
+      setIsParsingFile(false);
+    }, 1500);
+  };
+
+  const handleCreateTableConfirm = () => {
+    if (!createTableName.trim()) return;
+    const newId = `t-${Date.now()}`;
+    setSidebarItems(prev => {
+      return prev.map(cat => {
+        if (cat.category === 'Table') {
+          return {
+            ...cat,
+            subcategories: cat.subcategories?.map(sub => {
+              if (sub.name === createTableDestination) {
+                return {
+                  ...sub,
+                  items: [...sub.items, { id: newId, name: createTableName.trim(), icon: TableIcon, type: "table" as const }]
+                };
+              }
+              return sub;
+            })
+          };
+        }
+        return cat;
+      });
+    });
+    setIsCreateTableOpen(false);
+    setCreateTableStep('source');
+    setCreateTableFileType(null);
+    setCreateTableFileName("");
+    setCreateTableName("");
+    setCreateTableFields([]);
+    setCreateTableDestination('Original');
+    toast({
+      title: t("tableCreated"),
+      description: `'${createTableName.trim()}' has been added to ${createTableDestination} tables.`,
+    });
+  };
+
+  const handleCreateGraph = () => {
+    if (!newGraphName.trim()) return;
+    const id = `graph-builder-${Date.now()}`;
+    setTabs([...tabs, { id, type: 'graph', title: newGraphName.trim() }]);
+    setActiveTabId(id);
+    setIsGraphBuilderOpen(true);
+    setIsCreateGraphDialogOpen(false);
+    setNewGraphName("");
+    setNewGraphAccessUsers([]);
+    setNewGraphUserInput("");
+  };
 
   // Pagination state for table view
   const [currentPage, setCurrentPage] = useState(1);
@@ -201,7 +394,7 @@ export default function DatabaseManager() {
         : row
     ));
     setInlineEditCell(null);
-    toast({ title: "Cell Updated", description: "Value has been saved." });
+    toast({ title: t("cellUpdated"), description: t("savedSuccessfully") });
   };
 
   const handleAddRow = () => {
@@ -222,7 +415,7 @@ export default function DatabaseManager() {
     setNewRowData({ company_name: "", age: "", member: "" });
     
     toast({
-      title: "Row Added",
+      title: t("rowAdded"),
       description: `New record for "${newRow.company_name}" has been added.`,
     });
   };
@@ -249,7 +442,7 @@ export default function DatabaseManager() {
   const handleInsert = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Record Added",
+      title: t("recordAdded"),
       description: "New row successfully inserted into 'crime_incidents_2024'",
     });
   };
@@ -317,17 +510,18 @@ export default function DatabaseManager() {
   };
 
   const handleTemplateQuery = (generatedQuery: string, description?: string) => {
-    const newBlock = {
-      id: Date.now().toString(),
-      sql: generatedQuery,
-      title: description || "Template Query",
-      description: description,
-      type: 'template' as const
-    };
-    setQueryBlocks([...queryBlocks, newBlock]);
+    setQueryBlocks(prev => {
+      if (prev.length === 0) {
+        return [{ id: '1', sql: generatedQuery, title: "Query Editor", type: 'custom' as const }];
+      }
+      const first = prev[0];
+      const currentSql = first.sql.trimEnd();
+      const newSql = currentSql ? `${currentSql}\n${generatedQuery}` : generatedQuery;
+      return [{ ...first, sql: newSql, generatedSql: undefined }];
+    });
     toast({
-      title: "Template Applied",
-      description: "New query block has been added to the editor.",
+      title: t("templateApplied"),
+      description: "Query has been inserted into the editor.",
     });
   };
 
@@ -344,10 +538,74 @@ export default function DatabaseManager() {
   };
 
   const updateQueryBlock = (id: string, newSql: string) => {
-    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, sql: newSql } : b));
+    setQueryBlocks(queryBlocks.map(b => b.id === id ? { ...b, sql: newSql, generatedSql: undefined } : b));
+  };
+
+  const convertSingleLine = (input: string): string => {
+    const lower = input.trim().toLowerCase();
+    if (!lower) return "";
+
+    if ((lower.includes("severity") && lower.includes("5")) || (lower.includes("greater") && lower.includes("5"))) {
+      return "SELECT * FROM crime_incidents_2024\nWHERE severity > 5\nORDER BY severity DESC;";
+    } else if (lower.includes("add") || lower.includes("insert") || lower.includes("new") || lower.includes("create") || lower.includes("추가") || lower.includes("생성")) {
+      const type = lower.includes("robbery") ? "Robbery" : lower.includes("theft") ? "Theft" : lower.includes("assault") ? "Assault" : "Fraud";
+      const location = lower.includes("downtown") ? "Downtown" : lower.includes("west end") ? "West End" : lower.includes("harbor") ? "Harbor Area" : "Central Station";
+      const severity = lower.match(/severity\s*(\d+)/)?.[1] || "5";
+      return `INSERT INTO crime_incidents_2024 (type, location, time, severity, status)\nVALUES ('${type}', '${location}', NOW(), ${severity}, 'Open')\nRETURNING *;`;
+    } else if (lower.includes("update") || lower.includes("set") || lower.includes("change") || lower.includes("수정") || lower.includes("변경")) {
+      const newStatus = lower.includes("investigating") ? "Investigating" : lower.includes("closed") ? "Closed" : lower.includes("resolved") ? "Resolved" : "Pending";
+      const oldStatus = lower.includes("open") ? "Open" : lower.includes("pending") ? "Pending" : null;
+      const loc = lower.includes("west end") ? "West End" : lower.includes("downtown") ? "Downtown" : null;
+      let whereClause = "WHERE 1=1";
+      if (oldStatus) whereClause = `WHERE status = '${oldStatus}'`;
+      if (loc) whereClause += `\n  AND location = '${loc}'`;
+      return `UPDATE crime_incidents_2024\nSET status = '${newStatus}', updated_at = NOW()\n${whereClause};`;
+    } else if (lower.includes("delete") || lower.includes("remove") || lower.includes("drop") || lower.includes("삭제") || lower.includes("제거")) {
+      const status = lower.includes("resolved") ? "Resolved" : lower.includes("closed") ? "Closed" : null;
+      const dateMatch = lower.match(/(\d{4}-\d{2}-\d{2})/);
+      let whereClause = "WHERE 1=1";
+      if (status) whereClause = `WHERE status = '${status}'`;
+      if (dateMatch) whereClause += `\n  AND time < '${dateMatch[1]}'`;
+      return `DELETE FROM crime_incidents_2024\n${whereClause};`;
+    } else if (lower.includes("count") || lower.includes("개수") || lower.includes("건수")) {
+      return "SELECT type, COUNT(*) as count\nFROM crime_incidents_2024\nGROUP BY type\nORDER BY count DESC;";
+    } else if (lower.includes("join") || lower.includes("연결") || lower.includes("결합")) {
+      return "SELECT c.*, s.name, s.age\nFROM crime_incidents_2024 c\nJOIN suspect_profiles s ON c.suspect_id = s.id;";
+    } else if (lower.includes("location") || lower.includes("위치") || lower.includes("지역")) {
+      return "SELECT location, COUNT(*) as incident_count\nFROM crime_incidents_2024\nGROUP BY location\nORDER BY incident_count DESC;";
+    } else if (lower.includes("all") || lower.includes("전체") || lower.includes("모든")) {
+      return "SELECT * FROM crime_incidents_2024\nORDER BY id ASC\nLIMIT 100;";
+    } else {
+      return `-- Generated from: "${input.trim()}"\nSELECT * FROM crime_incidents_2024\nWHERE 1=1\nLIMIT 100;`;
+    }
+  };
+
+  const convertNaturalLanguageToSql = (id: string) => {
+    const block = queryBlocks.find(b => b.id === id);
+    if (!block || !block.sql.trim()) return;
+
+    setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, isConverting: true, generatedSql: undefined } : b));
+
+    setTimeout(() => {
+      const lines = block.sql.split('\n').filter(l => l.trim());
+      const sqlParts = lines.map(line => convertSingleLine(line));
+      const generatedSql = sqlParts.filter(Boolean).join('\n\n');
+
+      setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, generatedSql, isConverting: false } : b));
+    }, 800);
+  };
+
+  const updateGeneratedSql = (id: string, newSql: string) => {
+    setQueryBlocks(prev => prev.map(b => b.id === id ? { ...b, generatedSql: newSql } : b));
   };
 
   const [sidebarItems, setSidebarItems] = useState(SIDEBAR_ITEMS);
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [createCategoryParent, setCreateCategoryParent] = useState("");
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState(false);
+  const [deleteCategoryParent, setDeleteCategoryParent] = useState("");
+  const [deleteCategoryTarget, setDeleteCategoryTarget] = useState("");
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isSaveResultDialogOpen, setIsSaveResultDialogOpen] = useState(false);
   const [newQueryName, setNewQueryName] = useState("");
@@ -375,7 +633,7 @@ export default function DatabaseManager() {
 
   const handleBulkDelete = () => {
     toast({
-      title: "Items Deleted",
+      title: t("itemsDeleted"),
       description: `${selectedItemsForEdit.length} items have been removed.`,
     });
     setSelectedItemsForEdit([]);
@@ -384,7 +642,7 @@ export default function DatabaseManager() {
 
   const handleBulkCopy = () => {
     toast({
-      title: "Copies Created",
+      title: t("copiesCreated"),
       description: `Successfully created copies for ${selectedItemsForEdit.length} items.`,
     });
     setSelectedItemsForEdit([]);
@@ -399,7 +657,7 @@ export default function DatabaseManager() {
     } else {
         setSelectedProjectId(value);
         toast({
-            title: "Project Switched",
+            title: t("projectSwitched"),
             description: `Switched to ${projects.find(p => p.id === value)?.name}`,
         });
     }
@@ -414,7 +672,7 @@ export default function DatabaseManager() {
     setNewProjectName("");
     setIsCreateProjectDialogOpen(false);
     toast({
-        title: "Project Created",
+        title: t("projectCreated"),
         description: `Project '${newProject.name}' has been successfully created.`,
     });
   };
@@ -424,7 +682,7 @@ export default function DatabaseManager() {
     setTabs([...tabs, { 
       id: newTabId, 
       type: 'pipeline-result', 
-      title: 'Pipeline Result', 
+      title: t("pipelineResult"), 
       data 
     }]);
     setActiveTabId(newTabId);
@@ -454,7 +712,7 @@ export default function DatabaseManager() {
     setNewTableName("");
     
     toast({
-      title: "Table Saved",
+      title: t("tableSaved"),
       description: `Result saved as '${newTableName}' in Custom tables.`,
     });
   };
@@ -462,9 +720,12 @@ export default function DatabaseManager() {
   const handleSaveQuery = () => {
     if (!newQueryName.trim()) return;
 
-    // 1. Update Tab Title
-    const newTabs = tabs.map(t => t.id === activeTabId ? { ...t, title: newQueryName } : t);
+    const newId = `q-${Date.now()}`;
+
+    // 1. Update Tab Title and ID
+    const newTabs = tabs.map(t => t.id === activeTabId ? { ...t, id: newId, title: newQueryName } : t);
     setTabs(newTabs);
+    setActiveTabId(newId);
 
     // 2. Update Sidebar Items
     const newSidebarItems = [...sidebarItems];
@@ -473,7 +734,7 @@ export default function DatabaseManager() {
       const existingItem = queryCategory.items.find(i => i.name === newQueryName);
       if (!existingItem) {
         queryCategory.items.push({
-          id: `q-${Date.now()}`,
+          id: newId,
           name: newQueryName,
           icon: FileCode,
           type: "query"
@@ -487,18 +748,127 @@ export default function DatabaseManager() {
     setNewQueryName("");
     
     toast({
-      title: "Query Saved",
+      title: t("querySaved"),
       description: `Query '${newQueryName}' has been saved to your project.`,
     });
   };
 
+  const handleQueryResultCellEdit = (rowId: number, field: string) => {
+    const row = queryData.find(r => r.id === rowId);
+    if (!row) return;
+    setEditingQueryResultCell({ rowId, field });
+    setEditingQueryResultValue(String((row as any)[field]));
+  };
+
+  const handleQueryResultCellSave = () => {
+    if (!editingQueryResultCell) return;
+    const { rowId, field } = editingQueryResultCell;
+    setQueryData(prev => prev.map(r => {
+      if (r.id === rowId) {
+        const updated = { ...r };
+        if (field === 'severity' || field === 'id') {
+          (updated as any)[field] = Number(editingQueryResultValue) || (updated as any)[field];
+        } else {
+          (updated as any)[field] = editingQueryResultValue;
+        }
+        return updated;
+      }
+      return r;
+    }));
+    setEditingQueryResultCell(null);
+    setEditingQueryResultValue("");
+    toast({ title: t("fieldUpdated"), description: `Row ${rowId}: '${field}' has been updated.`, duration: 2000 });
+  };
+
   const handleRunQuery = (sql: string) => {
     setIsExecuting(true);
+    const actualSql = sql.trim();
+
+    const statements = actualSql.split(/;\s*/).map(s => s.trim()).filter(Boolean);
+
     setTimeout(() => {
+      setExecutedQuerySql(actualSql);
+
+      if (statements.length === 0) {
+        setIsExecuting(false);
+        return;
+      }
+
+      const results: { type: string; message: string; time: number }[] = [];
+      let lastSelectData: typeof MOCK_QUERY_DATA | null = null;
+      let hasSelect = false;
+
+      for (const stmt of statements) {
+        const upper = stmt.toUpperCase();
+        const execTime = Math.floor(Math.random() * 80) + 10;
+
+        if (upper.startsWith("SELECT")) {
+          hasSelect = true;
+          if (upper.includes("SEVERITY > 5")) {
+            lastSelectData = MOCK_QUERY_DATA.filter(r => r.severity > 5);
+          } else {
+            lastSelectData = MOCK_QUERY_DATA;
+          }
+          results.push({ type: "SELECT", message: `${lastSelectData.length} rows returned`, time: execTime });
+        } else if (upper.startsWith("INSERT")) {
+          const typeMatch = stmt.match(/VALUES\s*\(\s*'([^']+)'/i);
+          const locMatch = stmt.match(/VALUES\s*\([^,]+,\s*'([^']+)'/i);
+          const insertedType = typeMatch?.[1] || "Unknown";
+          const insertedLoc = locMatch?.[1] || "Unknown";
+          results.push({ type: "INSERT", message: `1 row inserted (type: '${insertedType}', location: '${insertedLoc}')`, time: execTime });
+        } else if (upper.startsWith("UPDATE")) {
+          const statusMatch = stmt.match(/SET\s+status\s*=\s*'([^']+)'/i);
+          const whereStatusMatch = stmt.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+          const whereLocMatch = stmt.match(/location\s*=\s*'([^']+)'/i);
+          const newStatus = statusMatch?.[1] || "Updated";
+          let count = MOCK_QUERY_DATA.filter(r => {
+            let match = true;
+            if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+            if (whereLocMatch) match = match && r.location === whereLocMatch[1];
+            return match;
+          }).length;
+          if (count === 0) count = Math.floor(Math.random() * 15) + 3;
+          results.push({ type: "UPDATE", message: `${count} row(s) updated — status set to '${newStatus}'`, time: execTime });
+        } else if (upper.startsWith("DELETE")) {
+          const whereStatusMatch = stmt.match(/WHERE\s+status\s*=\s*'([^']+)'/i);
+          const dateMatch = stmt.match(/time\s*<\s*'([^']+)'/i);
+          let count = MOCK_QUERY_DATA.filter(r => {
+            let match = true;
+            if (whereStatusMatch) match = match && r.status === whereStatusMatch[1];
+            if (dateMatch) match = match && r.time < dateMatch[1];
+            return match;
+          }).length;
+          if (count === 0) count = Math.floor(Math.random() * 20) + 1;
+          results.push({ type: "DELETE", message: `${count} row(s) deleted`, time: execTime });
+        } else {
+          results.push({ type: "QUERY", message: `Statement executed`, time: execTime });
+        }
+      }
+
+      const totalTime = results.reduce((sum, r) => sum + r.time, 0);
+
+      if (hasSelect && lastSelectData) {
+        setQueryResultType('select');
+        setQueryData(lastSelectData);
+        const nonSelectResults = results.filter(r => r.type !== "SELECT");
+        if (nonSelectResults.length > 0) {
+          const msgs = results.map(r => `[${r.type}] ${r.message} (${r.time}ms)`);
+          setQueryResultMessage(msgs.join('\n'));
+        } else {
+          setQueryResultMessage(`${lastSelectData.length} rows returned in ${totalTime}ms`);
+        }
+      } else {
+        setQueryResultType(results[results.length - 1].type.toLowerCase() as any);
+        setQueryData([]);
+        const msgs = results.map(r => `[${r.type}] ${r.message} (${r.time}ms)`);
+        setQueryResultMessage(msgs.join('\n'));
+      }
+
+      setQueryCurrentPage(1);
       setIsExecuting(false);
       toast({
-        title: "Query Executed Successfully",
-        description: `Fetched ${queryData.length} rows in 45ms`,
+        title: t("queryExecutedSuccessfully"),
+        description: `${statements.length} statement(s) completed in ${totalTime}ms`,
       });
     }, 800);
   };
@@ -512,7 +882,7 @@ export default function DatabaseManager() {
           <div className="h-16 flex items-center px-4 border-b border-border shrink-0">
             <Select value={selectedProjectId} onValueChange={handleProjectChange}>
               <SelectTrigger className="w-full bg-background/50 h-9 text-sm">
-                <SelectValue placeholder="Select project" />
+                <SelectValue placeholder="Select database" />
               </SelectTrigger>
               <SelectContent>
                 {projects.map((project) => (
@@ -524,7 +894,7 @@ export default function DatabaseManager() {
                 <SelectItem value="create_new" className="text-primary font-medium focus:text-primary cursor-pointer">
                     <div className="flex items-center gap-2">
                         <Plus className="w-3.5 h-3.5" />
-                        Create New Project
+                        {t("createNewProject")}
                     </div>
                 </SelectItem>
               </SelectContent>
@@ -537,15 +907,15 @@ export default function DatabaseManager() {
                   <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center mb-3">
                     <Database className="w-5 h-5 opacity-50" />
                   </div>
-                  <p className="text-xs font-medium">No Project Selected</p>
-                  <p className="text-[10px] mt-1 opacity-70">Select a project to view contents</p>
+                  <p className="text-xs font-medium">{t("noProjectSelected")}</p>
+                  <p className="text-[10px] mt-1 opacity-70">{t("selectProjectToView")}</p>
                 </div>
               ) : (
                 sidebarItems.map((category, idx) => (
                 <div key={idx} className={`space-y-1 ${category.isTool ? "mt-8 pt-6 border-t border-border/50" : ""}`}>
                   {category.isTool && (
                     <div className="px-4 mb-2">
-                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">External Tools</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">{t("externalTools")}</span>
                     </div>
                   )}
                   <div 
@@ -597,13 +967,21 @@ export default function DatabaseManager() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem className="text-xs gap-2">
+                        <DropdownMenuItem className="text-xs gap-2" onClick={() => {
+                          setCreateCategoryParent(category.category);
+                          setNewCategoryName("");
+                          setIsCreateCategoryOpen(true);
+                        }}>
                           <Plus className="w-3.5 h-3.5" />
-                          Create Category
+                          {t("createCategory")}
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive">
+                        <DropdownMenuItem className="text-xs gap-2 text-destructive focus:text-destructive" onClick={() => {
+                          setDeleteCategoryParent(category.category);
+                          setDeleteCategoryTarget("");
+                          setIsDeleteCategoryOpen(true);
+                        }}>
                           <Trash2 className="w-3.5 h-3.5" />
-                          Delete Category
+                          {t("deleteCategory")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -690,10 +1068,10 @@ export default function DatabaseManager() {
           </ScrollArea>
           <div className="p-4 border-t border-border bg-secondary/10">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-              <span>Connection Status</span>
+              <span>{t("connectionStatus")}</span>
               <span className="flex items-center gap-1.5 text-emerald-500 font-medium">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Connected
+                {t("connected")}
               </span>
             </div>
             <div className="text-[10px] font-mono text-muted-foreground/70">
@@ -709,45 +1087,45 @@ export default function DatabaseManager() {
                <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0 opacity-60 pointer-events-none select-none grayscale-[0.5]">
                 <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 text-white gap-2 shadow-sm mr-2" disabled>
                   <Plus className="w-4 h-4" />
-                  <span className="font-medium">New Query</span>
+                  <span className="font-medium">{t("newQuery")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <TableIcon className="w-4 h-4" />
-                  <span className="font-medium">Table</span>
+                  <span className="font-medium">{t("table")}</span>
                 </Button>
                 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <FileCode className="w-4 h-4" />
-                  <span className="font-medium">Query</span>
+                  <span className="font-medium">{t("query")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 gap-2 text-muted-foreground" disabled>
                   <Network className="w-4 h-4" />
-                  <span className="font-medium">Graph</span>
+                  <span className="font-medium">{t("graph")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <Import className="w-4 h-4" />
-                  <span className="font-medium">Import</span>
+                  <span className="font-medium">{t("import")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <FileUp className="w-4 h-4" />
-                  <span className="font-medium">Export</span>
+                  <span className="font-medium">{t("export")}</span>
                 </Button>
              </div>
             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
               <div className="w-24 h-24 rounded-full bg-secondary/30 flex items-center justify-center mb-6">
                 <LayoutDashboard className="w-12 h-12 opacity-20" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Select a Project</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t("selectAProject")}</h3>
               <p className="text-sm text-center max-w-sm leading-relaxed text-muted-foreground/70">
-                Choose a project from the sidebar to view and manage your data tables, queries, and graph visualizations.
+                {t("selectProjectDesc")}
               </p>
             </div>
           </div>
@@ -759,7 +1137,7 @@ export default function DatabaseManager() {
              <div className="h-16 flex items-center gap-1 px-4 border-b border-border shrink-0">
                 <Button variant="default" size="sm" className="h-9 px-3 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm mr-2" onClick={() => createNew('query')}>
                   <Plus className="w-4 h-4" />
-                  <span className="font-medium">New Query</span>
+                  <span className="font-medium">{t("newQuery")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
@@ -777,7 +1155,7 @@ export default function DatabaseManager() {
                   }}
                 >
                   <TableIcon className="w-4 h-4" />
-                  <span className="font-medium">Table</span>
+                  <span className="font-medium">{t("table")}</span>
                 </Button>
                 
                 <Button 
@@ -792,7 +1170,7 @@ export default function DatabaseManager() {
                   }}
                 >
                   <FileCode className="w-4 h-4" />
-                  <span className="font-medium">Query</span>
+                  <span className="font-medium">{t("query")}</span>
                 </Button>
 
                 <Button 
@@ -807,19 +1185,19 @@ export default function DatabaseManager() {
                   }}
                 >
                   <Network className="w-4 h-4" />
-                  <span className="font-medium">Graph</span>
+                  <span className="font-medium">{t("graph")}</span>
                 </Button>
 
                 <div className="h-4 w-px bg-border mx-2" />
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <Import className="w-4 h-4" />
-                  <span className="font-medium">Import</span>
+                  <span className="font-medium">{t("import")}</span>
                 </Button>
 
                 <Button variant="ghost" size="sm" className="h-9 px-3 text-muted-foreground/50 gap-2" disabled>
                   <FileUp className="w-4 h-4" />
-                  <span className="font-medium">Export</span>
+                  <span className="font-medium">{t("export")}</span>
                 </Button>
              </div>
 
@@ -873,7 +1251,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Build and automate data transformation pipelines. Connect multiple steps to clean, filter, and enrich your raw data into refined assets for analysis.
+                                {t("preprocessDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -882,12 +1260,12 @@ export default function DatabaseManager() {
                           <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                               <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Preprocessing</h3>
-                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedPreprocessing")}</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("preprocessing")}</Badge>
                             </div>
                             <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('preprocessing')}>
                               <Plus className="w-4 h-4" />
-                              Create Preprocessing
+                              {t("createPreprocessing")}
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -900,9 +1278,9 @@ export default function DatabaseManager() {
                                   <div className="flex-1 min-w-0">
                                     <div className="text-sm font-semibold truncate">{tool.name}</div>
                                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>Active Pipeline</span>
+                                      <span>{t("activePipeline")}</span>
                                       <span className="w-1 h-1 rounded-full bg-border" />
-                                      <span>Ready</span>
+                                      <span>{t("ready")}</span>
                                     </div>
                                   </div>
                                 </CardContent>
@@ -914,7 +1292,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Preprocessing</span>
+                                <span className="text-xs font-medium">{t("newPreprocessing")}</span>
                               </div>
                             </Card>
                           </div>
@@ -929,14 +1307,14 @@ export default function DatabaseManager() {
                 <div className="flex flex-col h-full bg-background border-t-4 border-indigo-500/20">
                   <div className="h-12 border-b border-border bg-indigo-50/10 flex items-center justify-between px-4">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 border-indigo-200">Pipeline Result</Badge>
+                      <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("pipelineResult")}</Badge>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {activeTab.data?.length || 0} rows generated
+                        {activeTab.data?.length || 0} {t("rowsGenerated")}
                       </span>
                     </div>
                     <Button size="sm" className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => setIsSaveResultDialogOpen(true)}>
                       <Save className="w-4 h-4" />
-                      Save to Table
+                      {t("saveToTable")}
                     </Button>
                   </div>
                   <div className="flex-1 overflow-auto">
@@ -977,7 +1355,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-emerald-900/70 leading-relaxed pr-8">
-                                Visualize complex relationships between your data entities. Explore connections, patterns, and network structures within your saved tables.
+                                {t("graphDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -986,8 +1364,8 @@ export default function DatabaseManager() {
                                 <div className="flex items-center justify-between mb-6">
                                   <div className="flex items-center gap-2">
                                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedGraphs")}</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">{t("visualization")}</Badge>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {isEditMode ? (
@@ -1001,7 +1379,7 @@ export default function DatabaseManager() {
                                           }}
                                           className="h-8 text-xs px-3"
                                         >
-                                          Cancel
+                                          {t("cancel")}
                                         </Button>
                                         <Button 
                                           variant="outline" 
@@ -1011,7 +1389,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Copy className="w-3.5 h-3.5" />
-                                          Make Copy
+                                          {t("makeCopy")}
                                         </Button>
                                         <Button 
                                           variant="destructive" 
@@ -1021,7 +1399,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
-                                          Delete ({selectedItemsForEdit.length})
+                                          {t("delete")} ({selectedItemsForEdit.length})
                                         </Button>
                                       </>
                                     ) : (
@@ -1033,20 +1411,16 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Edit3 className="w-3.5 h-3.5" />
-                                          Edit
+                                          {t("edit")}
                                         </Button>
                                         <Button 
                                           size="sm" 
                                           className="bg-primary hover:bg-primary/90 text-white gap-2"
-                                          onClick={() => {
-                                            const id = `graph-builder-${Date.now()}`;
-                                            setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
-                                            setActiveTabId(id);
-                                            setIsGraphBuilderOpen(true);
-                                          }}
+                                          onClick={() => setIsCreateGraphDialogOpen(true)}
+                                          data-testid="button-create-new-graph"
                                         >
                                           <Plus className="w-4 h-4" />
-                                          Create New Graph
+                                          {t("createNewGraph")}
                                         </Button>
                                       </>
                                     )}
@@ -1095,16 +1469,12 @@ export default function DatabaseManager() {
                                   ))}
                             <Card 
                               className="border-dashed flex items-center justify-center p-4 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all"
-                              onClick={() => {
-                                const id = `graph-builder-${Date.now()}`;
-                                setTabs([...tabs, { id, type: 'graph', title: 'New Graph' }]);
-                                setActiveTabId(id);
-                                setIsGraphBuilderOpen(true);
-                              }}
+                              onClick={() => setIsCreateGraphDialogOpen(true)}
+                              data-testid="card-new-graph"
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Graph</span>
+                                <span className="text-xs font-medium">{t("newGraph")}</span>
                               </div>
                             </Card>
                           </div>
@@ -1131,11 +1501,13 @@ export default function DatabaseManager() {
                             <div className="flex items-center gap-3">
                               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
+                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">{t("liveDraft")}</span>
                               </div>
-                              <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50">
+                              <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50" onClick={() => {
+                                toast({ title: t("saved"), description: t("savedSuccessfully"), duration: 2000 });
+                              }}>
                                 <Save className="w-4 h-4" />
-                                <span className="font-semibold">Save Changes</span>
+                                <span className="font-semibold">{t("saveChanges")}</span>
                               </Button>
                             </div>
                           </div>
@@ -1195,11 +1567,11 @@ export default function DatabaseManager() {
                                <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
                                  <Network className="w-8 h-8 text-primary/50" />
                                </div>
-                               <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
+                               <h3 className="text-lg font-medium text-foreground">{t("graphVisualization")}</h3>
                                <p className="max-w-md text-center mt-2 mb-6 text-sm">
-                                 Configure your graph settings in the Graph view to visualize relationships between tables.
+                                 {t("graphVisualizationDesc")}
                                </p>
-                               <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                               <Button onClick={() => setIsGraphBuilderOpen(true)}>{t("openGraphBuilder")}</Button>
                             </div>
                           )}
                         </div>
@@ -1222,8 +1594,8 @@ export default function DatabaseManager() {
                             <ArrowLeft className="h-5 w-5" />
                           </Button>
                           <div className="flex items-center gap-2">
-                            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
-                            <span className="text-sm text-muted-foreground">{mockTableDataState.length} rows generated</span>
+                            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">{t("pipelineResult")}</div>
+                            <span className="text-sm text-muted-foreground">{mockTableDataState.length} {t("rowsGenerated")}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1231,14 +1603,14 @@ export default function DatabaseManager() {
                             <DialogTrigger asChild>
                               <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
                                 <Plus className="h-4 w-4" />
-                                Add New Row
+                                {t("addNewRow")}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
-                                <DialogTitle>Add New Row</DialogTitle>
+                                <DialogTitle>{t("addNewRow")}</DialogTitle>
                                 <DialogDescription>
-                                  Enter values for the new record.
+                                  {t("enterNewRowValues")}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="grid gap-4 py-4">
@@ -1291,14 +1663,14 @@ export default function DatabaseManager() {
                                 </div>
                               </div>
                               <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>Cancel</Button>
-                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>Add Row</Button>
+                                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>{t("cancel")}</Button>
+                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>{t("addRow")}</Button>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
                           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
                             <Save className="h-4 w-4" />
-                            Save to Table
+                            {t("saveToTable")}
                           </Button>
                         </div>
                       </div>
@@ -1375,7 +1747,7 @@ export default function DatabaseManager() {
                           {/* Pagination - directly below table */}
                           <div className="flex items-center justify-between p-3 border-t bg-card/50">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>Rows per page:</span>
+                              <span>{t("rowsPerPage")}</span>
                               <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
                                 <SelectTrigger className="h-8 w-[70px]">
                                   <SelectValue />
@@ -1456,7 +1828,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
+                                {t("tableDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -1468,8 +1840,8 @@ export default function DatabaseManager() {
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-2">
                                 <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
-                                <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedTables")}</h3>
+                                <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("storage")}</Badge>
                               </div>
                               <div className="flex items-center gap-2">
                                 {isEditMode ? (
@@ -1483,7 +1855,7 @@ export default function DatabaseManager() {
                                       }}
                                       className="h-8 text-xs px-3"
                                     >
-                                      Cancel
+                                      {t("cancel")}
                                     </Button>
                                     <Button 
                                       variant="outline" 
@@ -1493,7 +1865,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Copy className="w-3.5 h-3.5" />
-                                      Make Copy
+                                      {t("makeCopy")}
                                     </Button>
                                     <Button 
                                       variant="destructive" 
@@ -1503,7 +1875,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
-                                      Delete ({selectedTablesForEdit.length})
+                                      {t("delete")} ({selectedTablesForEdit.length})
                                     </Button>
                                   </>
                                 ) : (
@@ -1515,7 +1887,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Edit3 className="w-3.5 h-3.5" />
-                                      Edit
+                                      {t("edit")}
                                     </Button>
                                     <Button 
                                       size="sm" 
@@ -1523,7 +1895,7 @@ export default function DatabaseManager() {
                                       onClick={() => setIsCreateTableOpen(true)}
                                     >
                                       <Plus className="w-4 h-4" />
-                                      Create New Table
+                                      {t("createNewTable")}
                                     </Button>
                                   </>
                                 )}
@@ -1535,7 +1907,7 @@ export default function DatabaseManager() {
                                     <div className="space-y-3">
                                       <div className="flex items-center gap-2 px-1">
                                         <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Original</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">{t("original")}</span>
                                         <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-slate-100 text-slate-500 border-slate-200">SOURCE</Badge>
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
@@ -1585,7 +1957,7 @@ export default function DatabaseManager() {
                                     <div className="space-y-3">
                                       <div className="flex items-center gap-2 px-1">
                                         <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Custom</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">{t("custom")}</span>
                                         <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-indigo-50 text-indigo-500 border-indigo-100 uppercase font-bold tracking-tighter">Processed</Badge>
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
@@ -1655,7 +2027,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Write and save SQL queries to extract specific insights from your repository. Access your library of saved queries for rapid data exploration.
+                                {t("queryDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -1664,8 +2036,8 @@ export default function DatabaseManager() {
                                 <div className="flex items-center justify-between mb-6">
                                   <div className="flex items-center gap-2">
                                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedQueries")}</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("storage")}</Badge>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {isEditMode ? (
@@ -1679,7 +2051,7 @@ export default function DatabaseManager() {
                                           }}
                                           className="h-8 text-xs px-3"
                                         >
-                                          Cancel
+                                          {t("cancel")}
                                         </Button>
                                         <Button 
                                           variant="outline" 
@@ -1689,7 +2061,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Copy className="w-3.5 h-3.5" />
-                                          Make Copy
+                                          {t("makeCopy")}
                                         </Button>
                                         <Button 
                                           variant="destructive" 
@@ -1699,7 +2071,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
-                                          Delete ({selectedItemsForEdit.length})
+                                          {t("delete")} ({selectedItemsForEdit.length})
                                         </Button>
                                       </>
                                     ) : (
@@ -1711,11 +2083,11 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Edit3 className="w-3.5 h-3.5" />
-                                          Edit
+                                          {t("edit")}
                                         </Button>
                                         <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('query')}>
                                           <Plus className="w-4 h-4" />
-                                          Create New Query
+                                          {t("createNewQuery")}
                                         </Button>
                                       </>
                                     )}
@@ -1772,7 +2144,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Query</span>
+                                <span className="text-xs font-medium">{t("newQuery")}</span>
                               </div>
                             </Card>
                           </div>
@@ -1784,21 +2156,28 @@ export default function DatabaseManager() {
                       {/* Query Editor Toolbar */}
                       <div className="h-12 border-b border-border bg-background/50 flex items-center justify-between px-4">
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-mono text-[10px] bg-secondary/50">Read-Write</Badge>
-                          <span className="text-xs text-muted-foreground">Last synced: Just now</span>
+                          <Badge variant="outline" className="font-mono text-[10px] bg-secondary/50">{t("readWrite")}</Badge>
+                          <span className="text-xs text-muted-foreground">{t("lastSyncedJustNow")}</span>
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => setIsSaveDialogOpen(true)}>
+                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => {
+                            const isExistingQuery = sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId);
+                            if (isExistingQuery) {
+                              toast({ title: t("changesSaved"), description: t("savedSuccessfully"), duration: 2000 });
+                            } else {
+                              setIsSaveDialogOpen(true);
+                            }
+                          }}>
                             <Save className="w-3 h-3" />
-                            Save
+                            {sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId) ? t("saveChanges") : t("save")}
                           </Button>
                           <QueryTemplateDialog 
                             onSelectQuery={handleTemplateQuery} 
                             trigger={
                               <Button size="sm" className="h-7 text-xs gap-1 bg-indigo-600 hover:bg-indigo-700 text-white">
                                 <LayoutTemplate className="w-3 h-3" />
-                                Template
+                                {t("template")}
                               </Button>
                             }
                           />
@@ -1809,55 +2188,111 @@ export default function DatabaseManager() {
                       <ResizablePanelGroup direction="vertical" className="flex-1 flex flex-col overflow-hidden">
                         {/* SQL Editor Area */}
                         <ResizablePanel defaultSize={30} minSize={10}>
-                          <div className="h-full border-b border-border bg-card/20 flex flex-col">
-                            <ScrollArea className="flex-1 bg-secondary/5">
-                              <div className="p-4 space-y-4">
-                                {queryBlocks.map((block) => (
-                                  <div key={block.id} className="group relative border border-border rounded-lg bg-card shadow-sm hover:border-primary/30 transition-all overflow-hidden mb-3">
-                                    <div className="flex items-center justify-between px-3 py-2 bg-background">
-                                      <div className="flex-1 flex items-center gap-2">
-                                        <span className="text-sm font-medium text-foreground leading-none">
-                                           {block.title || "Query"}
-                                        </span>
-                                      </div>
-                                      <div className="flex items-center">
-                                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground mr-3">
-                                           <span>업데이트됨 1개월 전</span>
-                                           <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center">
-                                             <User className="w-3.5 h-3.5 text-indigo-600" />
-                                           </div>
-                                        </div>
-                                        <div className="h-3 w-px bg-border mr-1" />
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-primary" onClick={() => handleRunQuery(block.sql)}>
-                                          <Play className="w-3 h-3" /> 
-                                        </Button>
-                                        <div className="w-px h-3 bg-border mx-1" />
-                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => removeQueryBlock(block.id)}>
-                                          <Trash2 className="w-3 h-3" /> 
-                                        </Button>
-                                      </div>
+                          <div className="h-full flex flex-col bg-[#1e1e2e] overflow-hidden">
+                            {queryBlocks.map((block) => {
+                              const lines = block.sql.split('\n');
+                              const generatedLines = block.generatedSql ? block.generatedSql.split('\n') : [];
+                              return (
+                                <div key={block.id} className="flex-1 flex flex-col overflow-hidden">
+                                  <div className="flex items-center justify-between px-3 py-1.5 bg-[#181825] border-b border-[#313244]">
+                                    <div className="flex items-center gap-2">
+                                      <FileCode className="w-3.5 h-3.5 text-indigo-400" />
+                                      <span className="text-xs font-medium text-[#cdd6f4]">{t("queryEditor")}</span>
                                     </div>
-                                    <div className="border-t border-border/50 bg-muted/20">
-                                       <textarea 
-                                         value={block.sql}
-                                         onChange={(e) => updateQueryBlock(block.id, e.target.value)}
-                                         className="w-full p-3 bg-transparent font-mono text-sm resize-none focus:outline-none text-foreground/80 min-h-[60px]"
-                                         spellCheck={false}
-                                         placeholder="원하는 데이터를 자연어로 설명해주세요..."
-                                       />
+                                    <div className="flex items-center gap-1">
+                                      {block.isConverting && (
+                                        <div className="flex items-center gap-1.5 mr-2">
+                                          <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                                          <span className="text-[10px] text-[#a6adc8]">{t("converting")}</span>
+                                        </div>
+                                      )}
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className={`h-6 text-[10px] gap-1 px-2 transition-all ${hasTextSelection ? 'text-indigo-300 hover:text-indigo-200 hover:bg-indigo-500/20' : 'text-[#585b70] cursor-not-allowed'}`}
+                                        onClick={() => convertNaturalLanguageToSql(block.id)}
+                                        disabled={!hasTextSelection || block.isConverting}
+                                        data-testid={`button-convert-${block.id}`}
+                                      >
+                                        {block.isConverting ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : (
+                                          <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
+                                        )}
+                                        {t("convertToSql")}
+                                      </Button>
+                                      <div className="w-px h-3 bg-[#313244] mx-0.5" />
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-6 w-6 text-green-400 hover:text-green-300 hover:bg-green-500/20"
+                                        onClick={() => {
+                                          const textToRun = selectedText.trim() || block.generatedSql || block.sql;
+                                          handleRunQuery(textToRun);
+                                        }}
+                                        data-testid={`button-run-query-${block.id}`}
+                                      >
+                                        <Play className="w-3 h-3" />
+                                      </Button>
                                     </div>
                                   </div>
-                                ))}
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="w-full border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-primary/50"
-                                  onClick={() => setQueryBlocks([...queryBlocks, { id: Date.now().toString(), sql: "", title: "New Query", type: 'custom' }])}
-                                >
-                                  <Plus className="w-4 h-4 mr-2" /> Add Query Block
-                                </Button>
-                              </div>
-                            </ScrollArea>
+                                  <ScrollArea className="flex-1">
+                                    <div className="flex min-h-full">
+                                      <div className="flex flex-col py-2 px-0 bg-[#181825] border-r border-[#313244] select-none shrink-0 min-w-[36px]">
+                                        {lines.map((_, i) => (
+                                          <div key={`nl-${i}`} className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-[#585b70] font-mono">{i + 1}</div>
+                                        ))}
+                                        {block.generatedSql && !block.isConverting && (
+                                          <>
+                                            <div className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-[#313244] font-mono">---</div>
+                                            {generatedLines.map((_, i) => (
+                                              <div key={`sql-${i}`} className="text-right pr-2 pl-2 text-[11px] leading-[20px] text-indigo-500/60 font-mono">{lines.length + i + 1}</div>
+                                            ))}
+                                          </>
+                                        )}
+                                      </div>
+                                      <div className="flex-1 flex flex-col">
+                                        <textarea
+                                          value={block.sql}
+                                          onChange={(e) => updateQueryBlock(block.id, e.target.value)}
+                                          onSelect={(e) => {
+                                            const target = e.target as HTMLTextAreaElement;
+                                            const hasSel = target.selectionStart !== target.selectionEnd;
+                                            setHasTextSelection(hasSel);
+                                            setSelectedText(hasSel ? target.value.substring(target.selectionStart, target.selectionEnd) : "");
+                                          }}
+                                          onMouseUp={(e) => {
+                                            const target = e.target as HTMLTextAreaElement;
+                                            setTimeout(() => {
+                                              const hasSel = target.selectionStart !== target.selectionEnd;
+                                              setHasTextSelection(hasSel);
+                                              setSelectedText(hasSel ? target.value.substring(target.selectionStart, target.selectionEnd) : "");
+                                            }, 0);
+                                          }}
+                                          className="w-full py-2 px-3 bg-transparent font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-[#cdd6f4] min-h-0"
+                                          style={{ height: `${lines.length * 20 + 16}px` }}
+                                          spellCheck={false}
+                                          placeholder={t("enterNaturalLanguage")}
+                                          data-testid={`textarea-query-${block.id}`}
+                                        />
+                                        {block.generatedSql && !block.isConverting && (
+                                          <div className="border-t border-dashed border-indigo-500/30">
+                                            <textarea
+                                              value={block.generatedSql}
+                                              onChange={(e) => updateGeneratedSql(block.id, e.target.value)}
+                                              className="w-full py-2 px-3 bg-indigo-950/20 font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-indigo-300 min-h-0"
+                                              style={{ height: `${generatedLines.length * 20 + 16}px` }}
+                                              spellCheck={false}
+                                              data-testid={`textarea-generated-sql-${block.id}`}
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </ScrollArea>
+                                </div>
+                              );
+                            })}
                           </div>
                         </ResizablePanel>
 
@@ -1866,53 +2301,113 @@ export default function DatabaseManager() {
                         {/* Results Table */}
                         <ResizablePanel defaultSize={70} minSize={10}>
                           <div className="h-full flex flex-col bg-background overflow-hidden">
-                            <div className="px-4 py-2 border-b border-border bg-secondary/10 flex justify-between items-center">
-                              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Query Results</div>
-                              <div className="text-xs text-muted-foreground">{queryData.length} rows found</div>
+                            <div className="px-4 py-2 border-b border-border bg-secondary/10 flex flex-col gap-1">
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("queryResults")}</div>
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {queryData.length > 0 ? `${queryData.length} ${t("rowsFound")}` : ''}
+                                </div>
+                              </div>
+                              {executedQuerySql && (
+                                <div className="rounded border border-border/50 bg-muted/30 px-2.5 py-1.5 font-mono text-[11px] text-muted-foreground whitespace-pre-wrap leading-relaxed" data-testid="text-executed-query">
+                                  {executedQuerySql}
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 overflow-auto">
+                              {queryResultMessage && queryData.length === 0 ? (
+                                <div className="p-4 space-y-2">
+                                  {queryResultMessage.split('\n').map((line, i) => {
+                                    const typeMatch = line.match(/^\[(\w+)\]/);
+                                    const type = typeMatch?.[1] || "";
+                                    const badgeVariant = type === "INSERT" ? "default" : type === "UPDATE" ? "secondary" : type === "DELETE" ? "destructive" : "outline";
+                                    return (
+                                      <div key={i} className="flex items-start gap-2 p-2.5 rounded-md border border-border bg-card">
+                                        <Badge variant={badgeVariant as any} className="text-[10px] shrink-0 mt-0.5">{type || "OK"}</Badge>
+                                        <span className="text-sm text-foreground font-mono">{line.replace(/^\[\w+\]\s*/, '')}</span>
+                                        <Check className="w-4 h-4 text-green-500 shrink-0 ml-auto mt-0.5" />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ) : queryResultMessage && queryData.length > 0 ? (
+                                <div>
+                                  <div className="p-3 border-b border-border bg-secondary/5">
+                                    {queryResultMessage.split('\n').filter(l => !l.startsWith('[SELECT]')).map((line, i) => {
+                                      const typeMatch = line.match(/^\[(\w+)\]/);
+                                      const type = typeMatch?.[1] || "";
+                                      const badgeVariant = type === "INSERT" ? "default" : type === "UPDATE" ? "secondary" : type === "DELETE" ? "destructive" : "outline";
+                                      return (
+                                        <div key={i} className="flex items-center gap-2 py-1">
+                                          <Badge variant={badgeVariant as any} className="text-[10px]">{type || "OK"}</Badge>
+                                          <span className="text-xs text-muted-foreground font-mono">{line.replace(/^\[\w+\]\s*/, '')}</span>
+                                          <Check className="w-3 h-3 text-green-500 shrink-0" />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                              </div>
+                              ) : null}
                               <div>
-                                <Table>
-                                  <TableHeader className="bg-secondary/20 sticky top-0">
-                                    <TableRow>
-                                      <TableHead className="w-[60px]">ID</TableHead>
-                                      <TableHead>Type</TableHead>
-                                      <TableHead>Location</TableHead>
-                                      <TableHead>Time</TableHead>
-                                      <TableHead>Severity</TableHead>
-                                      <TableHead>Status</TableHead>
-                                      <TableHead className="w-[50px]"></TableHead>
+                                <Table className="border-collapse [&_th]:border [&_th]:border-border [&_td]:border [&_td]:border-border">
+                                  <TableHeader className="sticky top-0">
+                                    <TableRow className="bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
+                                      <TableHead className="w-[60px] text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">ID</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Type</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Location</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Time</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Severity</TableHead>
+                                      <TableHead className="text-indigo-700 dark:text-indigo-300 font-semibold text-[11px]">Status</TableHead>
                                     </TableRow>
                                   </TableHeader>
                                   <TableBody>
-                                    {paginatedQueryData.map((row) => (
-                                      <TableRow key={row.id} className="hover:bg-secondary/30">
-                                        <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
-                                        <TableCell className="font-medium">{row.type}</TableCell>
-                                        <TableCell>{row.location}</TableCell>
-                                        <TableCell className="text-muted-foreground text-xs">{row.time}</TableCell>
-                                        <TableCell>
-                                          <Badge variant={row.severity > 5 ? "destructive" : "secondary"} className="text-[10px]">
-                                            Level {row.severity}
-                                          </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                           <Badge variant="outline" className="text-[10px]">{row.status}</Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
-                                            <Trash2 className="w-3 h-3" />
-                                          </Button>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
+                                    {paginatedQueryData.map((row) => {
+                                      const renderCell = (field: string, value: any, className?: string) => {
+                                        const isEditing = editingQueryResultCell?.rowId === row.id && editingQueryResultCell?.field === field;
+                                        if (isEditing) {
+                                          return (
+                                            <TableCell className="p-0">
+                                              <input
+                                                autoFocus
+                                                value={editingQueryResultValue}
+                                                onChange={(e) => setEditingQueryResultValue(e.target.value)}
+                                                onKeyDown={(e) => { if (e.key === 'Enter') handleQueryResultCellSave(); if (e.key === 'Escape') setEditingQueryResultCell(null); }}
+                                                onBlur={handleQueryResultCellSave}
+                                                className="w-full h-full px-4 py-2 text-sm bg-indigo-50 dark:bg-indigo-950/30 border-2 border-indigo-400 outline-none"
+                                                data-testid={`input-edit-${field}-${row.id}`}
+                                              />
+                                            </TableCell>
+                                          );
+                                        }
+                                        return (
+                                          <TableCell
+                                            className={`cursor-default select-none ${className || ''}`}
+                                            onDoubleClick={() => handleQueryResultCellEdit(row.id, field)}
+                                          >
+                                            {value}
+                                          </TableCell>
+                                        );
+                                      };
+                                      return (
+                                        <TableRow key={row.id} className="hover:bg-secondary/30">
+                                          <TableCell className="font-mono text-xs text-muted-foreground">{row.id}</TableCell>
+                                          {renderCell('type', row.type, 'font-medium')}
+                                          {renderCell('location', row.location)}
+                                          {renderCell('time', row.time, 'text-muted-foreground text-xs')}
+                                          {renderCell('severity', row.severity, 'text-sm')}
+                                          {renderCell('status', row.status, 'text-sm')}
+                                        </TableRow>
+                                      );
+                                    })}
                                   </TableBody>
                                 </Table>
                                 
                                 {/* Query Results Pagination */}
                                 <div className="flex items-center justify-between p-3 border-t bg-card/50">
                                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <span>Rows per page:</span>
+                                    <span>{t("rowsPerPage")}</span>
                                     <Select value={queryRowsPerPage.toString()} onValueChange={(v) => { setQueryRowsPerPage(Number(v)); setQueryCurrentPage(1); }}>
                                       <SelectTrigger className="h-8 w-[70px]">
                                         <SelectValue />
@@ -1987,7 +2482,7 @@ export default function DatabaseManager() {
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center">
                     <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                    <p>Select an item from the sidebar or create a new one</p>
+                    <p>{t("selectItemOrCreate")}</p>
                   </div>
                 </div>
               )
@@ -1995,7 +2490,7 @@ export default function DatabaseManager() {
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <div className="text-center">
                   <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p>Select an item from the sidebar or create a new one</p>
+                  <p>{t("selectItemOrCreate")}</p>
                 </div>
               </div>
             )}
@@ -2007,11 +2502,11 @@ export default function DatabaseManager() {
       <Dialog open={isSaveResultDialogOpen} onOpenChange={setIsSaveResultDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save Result Table</DialogTitle>
+            <DialogTitle>{t("saveResultTable")}</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-               <Label>Table Name</Label>
+               <Label>{t("tableName")}</Label>
                <Input 
                  placeholder="e.g. processed_crime_data_v1" 
                  value={newTableName}
@@ -2019,24 +2514,176 @@ export default function DatabaseManager() {
                  autoFocus
                />
                <p className="text-xs text-muted-foreground">
-                 This table will be saved to the "Table &gt; Custom" category.
+                 {t("saveTableCustomDesc")}
                </p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>Save Table</Button>
+            <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>{t("saveTable")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{t("createCategory")}</DialogTitle>
+            <DialogDescription>
+              Add a new subcategory under "{createCategoryParent}".
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="category-name">{t("categoryName")}</Label>
+              <Input
+                id="category-name"
+                placeholder="Enter category name..."
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newCategoryName.trim()) {
+                    setSidebarItems(prev => prev.map(cat => {
+                      if (cat.category === createCategoryParent) {
+                        const existing = cat.subcategories || [];
+                        return {
+                          ...cat,
+                          subcategories: [...existing, { name: newCategoryName.trim(), items: [] }]
+                        };
+                      }
+                      return cat;
+                    }));
+                    setIsCreateCategoryOpen(false);
+                    setNewCategoryName("");
+                  }
+                }}
+                autoFocus
+                data-testid="input-new-category-name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>{t("cancel")}</Button>
+            <Button
+              disabled={!newCategoryName.trim()}
+              onClick={() => {
+                setSidebarItems(prev => prev.map(cat => {
+                  if (cat.category === createCategoryParent) {
+                    const existing = cat.subcategories || [];
+                    return {
+                      ...cat,
+                      subcategories: [...existing, { name: newCategoryName.trim(), items: [] }]
+                    };
+                  }
+                  return cat;
+                }));
+                setIsCreateCategoryOpen(false);
+                setNewCategoryName("");
+              }}
+              data-testid="button-create-category-confirm"
+            >
+              {t("create")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{t("saveQuery")}</DialogTitle>
+            <DialogDescription>
+              {t("saveQueryDesc")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>{t("queryName")}</Label>
+              <Input
+                value={newQueryName}
+                onChange={(e) => setNewQueryName(e.target.value)}
+                placeholder="Enter query name..."
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveQuery(); }}
+                data-testid="input-query-name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setIsSaveDialogOpen(false); setNewQueryName(""); }}>{t("cancel")}</Button>
+            <Button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              disabled={!newQueryName.trim()}
+              onClick={handleSaveQuery}
+              data-testid="button-save-query-confirm"
+            >
+              {t("save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{t("deleteCategory")}</DialogTitle>
+            <DialogDescription>
+              Select a subcategory to delete from "{deleteCategoryParent}". Items inside will also be removed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>{t("categoryName")}</Label>
+              <select
+                value={deleteCategoryTarget}
+                onChange={(e) => setDeleteCategoryTarget(e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                data-testid="select-delete-category"
+              >
+                <option value="">{t("selectCategory")}</option>
+                {(sidebarItems.find(c => c.category === deleteCategoryParent)?.subcategories || []).map(sub => (
+                  <option key={sub.name} value={sub.name}>{sub.name} ({sub.items.length} items)</option>
+                ))}
+              </select>
+            </div>
+            {deleteCategoryTarget && (
+              <div className="text-xs text-destructive bg-destructive/10 p-2.5 rounded-md border border-destructive/20">
+                This will permanently delete the "{deleteCategoryTarget}" category and all {sidebarItems.find(c => c.category === deleteCategoryParent)?.subcategories?.find(s => s.name === deleteCategoryTarget)?.items.length || 0} items inside it.
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)}>{t("cancel")}</Button>
+            <Button
+              variant="destructive"
+              disabled={!deleteCategoryTarget}
+              onClick={() => {
+                setSidebarItems(prev => prev.map(cat => {
+                  if (cat.category === deleteCategoryParent && cat.subcategories) {
+                    return {
+                      ...cat,
+                      subcategories: cat.subcategories.filter(sub => sub.name !== deleteCategoryTarget)
+                    };
+                  }
+                  return cat;
+                }));
+                setIsDeleteCategoryOpen(false);
+                setDeleteCategoryTarget("");
+              }}
+              data-testid="button-delete-category-confirm"
+            >
+              {t("delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
+                <DialogTitle>{t("createNewProject")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                    <Label htmlFor="project-name">Project Name</Label>
+                    <Label htmlFor="project-name">{t("projectName")}</Label>
                     <Input 
                         id="project-name" 
                         placeholder="Enter project name..." 
@@ -2048,16 +2695,358 @@ export default function DatabaseManager() {
                         autoFocus
                     />
                     <p className="text-xs text-muted-foreground">
-                        Create a new project workspace to organize your data and analysis.
+                        {t("createProjectDesc")}
                     </p>
                 </div>
             </div>
             <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>Create Project</Button>
+                <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>{t("cancel")}</Button>
+                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>{t("createProject")}</Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={isCreateGraphDialogOpen} onOpenChange={setIsCreateGraphDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle>{t("createNewGraph")}</DialogTitle>
+            <DialogDescription>
+              {t("createGraphDesc")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="graph-name">{t("graphName")}</Label>
+              <Input
+                id="graph-name"
+                placeholder="e.g. Crime Network 2024"
+                value={newGraphName}
+                onChange={(e) => setNewGraphName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleCreateGraph();
+                }}
+                autoFocus
+                data-testid="input-graph-name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleCreateGraph} disabled={!newGraphName.trim()} data-testid="button-confirm-create-graph">{t("createGraph")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCreateTableOpen} onOpenChange={(open) => {
+        setIsCreateTableOpen(open);
+        if (!open) {
+          setCreateTableStep('source');
+          setCreateTableFileType(null);
+          setCreateTableFileName("");
+          setCreateTableName("");
+          setCreateTableFields([]);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[780px]">
+          <DialogHeader>
+            <DialogTitle>
+              {createTableStep === 'source' && t("createNewTable")}
+              {createTableStep === 'upload' && `${t("upload")} ${createTableFileType === 'csv' ? 'CSV' : createTableFileType === 'excel' ? 'Excel' : 'JSON'}`}
+              {createTableStep === 'preview' && t("fieldConfiguration")}
+              {createTableStep === 'confirm' && t("confirmTableCreation")}
+            </DialogTitle>
+            <DialogDescription>
+              {createTableStep === 'source' && t("selectFileFormat")}
+              {createTableStep === 'upload' && `${t("upload")} ${createTableFileType === 'csv' ? '.csv' : createTableFileType === 'excel' ? '.xlsx / .xls' : '.json'}`}
+              {createTableStep === 'preview' && (createTableFileName ? `Review detected fields from "${createTableFileName}".` : t("parsingFile"))}
+              {createTableStep === 'confirm' && `Table "${createTableName}" will be created in Original tables.`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {createTableStep === 'source' && (
+            <div className="grid grid-cols-3 gap-3 py-4">
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-green-500 hover:bg-green-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('csv')}
+                data-testid="button-import-csv"
+              >
+                <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">CSV</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{t("commaSeparated")}</div>
+                </div>
+              </button>
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-blue-500 hover:bg-blue-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('excel')}
+                data-testid="button-import-excel"
+              >
+                <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <FileSpreadsheet className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">Excel</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">.xlsx / .xls</div>
+                </div>
+              </button>
+              <button
+                className="flex flex-col items-center gap-3 p-6 rounded-lg border-2 border-dashed border-border hover:border-amber-500 hover:bg-amber-50/50 transition-all group cursor-pointer"
+                onClick={() => handleFileTypeSelect('json')}
+                data-testid="button-import-json"
+              >
+                <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
+                  <FileJson className="w-6 h-6 text-amber-600" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">JSON</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{t("structuredData")}</div>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {createTableStep === 'upload' && (
+            <div className="py-4">
+              <div
+                className="border-2 border-dashed border-border rounded-lg p-10 flex flex-col items-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-secondary/10 transition-all"
+                onClick={handleFileUpload}
+                data-testid="dropzone-upload"
+              >
+                <div className="w-16 h-16 rounded-full bg-secondary/30 flex items-center justify-center">
+                  <Upload className="w-7 h-7 text-muted-foreground" />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-medium">{t("clickToUpload")}</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {createTableFileType === 'csv' && 'Supports .csv files up to 50MB'}
+                    {createTableFileType === 'excel' && 'Supports .xlsx and .xls files up to 50MB'}
+                    {createTableFileType === 'json' && 'Supports .json files up to 50MB'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {createTableStep === 'preview' && (
+            <div className="space-y-4 py-2">
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-secondary/30 border border-border">
+                {createTableFileType === 'csv' && <FileText className="w-4 h-4 text-green-600" />}
+                {createTableFileType === 'excel' && <FileSpreadsheet className="w-4 h-4 text-blue-600" />}
+                {createTableFileType === 'json' && <FileJson className="w-4 h-4 text-amber-600" />}
+                <span className="text-sm font-medium">{createTableFileName}</span>
+                {isParsingFile ? (
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground">{t("detectingFields")}</span>
+                  </div>
+                ) : (
+                  <Badge variant="secondary" className="text-[10px] ml-auto">
+                    {Object.keys(createTableSheets).length > 1 
+                      ? `${Object.keys(createTableSheets).length} sheets · ${createTableFields.length} ${t("fields")}`
+                      : `${createTableFields.length} ${t("fieldsDetected")}`
+                    }
+                  </Badge>
+                )}
+              </div>
+
+              {isParsingFile ? (
+                <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">{t("parsingFile")}</span>
+                </div>
+              ) : (
+              <>
+                {Object.keys(createTableSheets).length > 1 && (
+                  <div className="flex items-center gap-0 border-b border-border">
+                    {Object.keys(createTableSheets).map((sheetName) => (
+                      <button
+                        key={sheetName}
+                        onClick={() => {
+                          setCreateTableActiveSheet(sheetName);
+                          setCreateTableFields(createTableSheets[sheetName]);
+                          setCreateTableName(sheetName.toLowerCase().replace(/[^a-zA-Z0-9_]/g, '_'));
+                        }}
+                        className={cn(
+                          "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+                          createTableActiveSheet === sheetName
+                            ? "border-primary text-primary"
+                            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                        )}
+                        data-testid={`tab-sheet-${sheetName}`}
+                      >
+                        {sheetName}
+                        <span className="ml-1.5 text-[10px] text-muted-foreground">({createTableSheets[sheetName].length})</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>{t("tableName")}</Label>
+                    <Input
+                      value={createTableName}
+                      onChange={(e) => setCreateTableName(e.target.value)}
+                      placeholder="Enter table name..."
+                      data-testid="input-create-table-name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t("destination")}</Label>
+                    <select
+                      value={createTableDestination}
+                      onChange={(e) => setCreateTableDestination(e.target.value as 'None' | 'Original' | 'Custom')}
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      data-testid="select-create-table-destination"
+                    >
+                      <option value="None">None</option>
+                      {(sidebarItems.find(c => c.category === 'Table')?.subcategories || []).map(sub => (
+                        <option key={sub.name} value={sub.name}>{sub.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t("fields")}</Label>
+                  <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
+                    <Table>
+                      <TableHeader className="sticky top-0 z-10">
+                        <TableRow className="bg-secondary/20">
+                          <TableHead className="text-[11px] w-[30px]">#</TableHead>
+                          <TableHead className="text-[11px]">{t("fieldName")}</TableHead>
+                          <TableHead className="text-[11px]">{t("fieldType")}</TableHead>
+                          <TableHead className="text-[11px]">{t("alias")}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {createTableFields.map((field, idx) => (
+                          <TableRow key={idx} className="hover:bg-secondary/10">
+                            <TableCell className="text-[11px] text-muted-foreground font-mono py-1.5">{idx + 1}</TableCell>
+                            <TableCell className="py-1.5">
+                              <span className="text-sm font-mono font-medium">{field.name}</span>
+                            </TableCell>
+                            <TableCell className="py-1.5">
+                              <select
+                                value={field.type}
+                                onChange={(e) => {
+                                  const updated = [...createTableFields];
+                                  updated[idx] = { ...updated[idx], type: e.target.value };
+                                  setCreateTableFields(updated);
+                                  if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
+                                    setCreateTableSheets(prev => ({
+                                      ...prev,
+                                      [createTableActiveSheet]: updated
+                                    }));
+                                  }
+                                }}
+                                className="h-7 text-[10px] font-mono rounded-md border border-input bg-background pl-2 pr-6 py-0 shadow-sm appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_4px_center] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                data-testid={`select-field-type-${idx}`}
+                              >
+                                <option value={field.type}>{field.type}</option>
+                                {["integer","bigint","smallint","serial","uuid","varchar(255)","varchar(100)","varchar(50)","varchar(20)","varchar(10)","text","char(1)","boolean","date","timestamp","timestamptz","time","decimal(10,2)","decimal(12,2)","decimal(5,2)","numeric","real","double precision","jsonb","json","text[]","bytea"].filter(t => t !== field.type).map(t => (
+                                  <option key={t} value={t}>{t}</option>
+                                ))}
+                              </select>
+                            </TableCell>
+                            <TableCell className="py-1.5">
+                              <Input
+                                value={field.alias}
+                                onChange={(e) => {
+                                  const updated = [...createTableFields];
+                                  updated[idx] = { ...updated[idx], alias: e.target.value };
+                                  setCreateTableFields(updated);
+                                  if (createTableActiveSheet && createTableSheets[createTableActiveSheet]) {
+                                    setCreateTableSheets(prev => ({
+                                      ...prev,
+                                      [createTableActiveSheet]: updated
+                                    }));
+                                  }
+                                }}
+                                placeholder={field.name}
+                                className="h-7 text-xs"
+                                data-testid={`input-field-alias-${idx}`}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </>
+              )}
+            </div>  
+          )}
+
+          {createTableStep === 'confirm' && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-lg border border-border bg-secondary/10 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{t("tableName")}</span>
+                  <span className="text-sm font-medium font-mono">{createTableName}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{t("sourceFile")}</span>
+                  <span className="text-sm">{createTableFileName}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{t("fields")}</span>
+                  <span className="text-sm">{createTableFields.length} {t("columns")}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{t("destination")}</span>
+                  <Badge variant="secondary" className="text-[10px]">{createTableDestination}</Badge>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {createTableFields.filter(f => f.alias.trim()).length > 0 && (
+                  <div className="space-y-1">
+                    <span className="font-medium">{t("aliasesConfigured")}</span>
+                    {createTableFields.filter(f => f.alias.trim()).map((f, i) => (
+                      <div key={i} className="flex items-center gap-1 pl-2">
+                        <span className="font-mono">{f.name}</span>
+                        <ArrowLeft className="w-3 h-3 rotate-180" />
+                        <span className="font-mono text-primary">{f.alias}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            {createTableStep === 'source' && (
+              <Button variant="outline" onClick={() => setIsCreateTableOpen(false)}>{t("cancel")}</Button>
+            )}
+            {createTableStep === 'upload' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('source')}>{t("back")}</Button>
+              </>
+            )}
+            {createTableStep === 'preview' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('upload')}>{t("back")}</Button>
+                <Button onClick={() => setCreateTableStep('confirm')} disabled={!createTableName.trim() || isParsingFile} data-testid="button-next-confirm">
+                  {t("next")}
+                </Button>
+              </>
+            )}
+            {createTableStep === 'confirm' && (
+              <>
+                <Button variant="outline" onClick={() => setCreateTableStep('preview')}>{t("back")}</Button>
+                <Button onClick={handleCreateTableConfirm} data-testid="button-create-table-confirm">
+                  <Check className="w-4 h-4 mr-1" />
+                  {t("createTable")}
+                </Button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </Layout>
   );
 }

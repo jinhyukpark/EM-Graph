@@ -1,4 +1,5 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useRoute } from "wouter";
 import Layout from "@/components/layout/Layout";
 import NodeListSidebar, { MOCK_COMPANY_NODES } from "@/components/layout/NodeListSidebar";
 import ImageNode from "@/components/graph/ImageNode";
@@ -13,13 +14,22 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit } from "lucide-react";
+import { Search, Filter, Bot, Layers, ZoomIn, ZoomOut, Maximize2, Share2, Info, Settings, Palette, Zap, Sparkles, ArrowRight, Plus, Minus, Circle, Network, List, LayoutTemplate, PanelRightClose, PanelRightOpen, RefreshCw, Waypoints, EyeOff, Scale, Grid, Cpu, Download, Share, MousePointer2, ChevronDown, ChevronRight, MessageSquare, Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, X, Edit, BoxSelect, Route, Scissors, RotateCcw, FileJson, FileSpreadsheet, Database, Network as NetworkIcon } from "lucide-react";
 import { LegendConfigDialog, type LegendItem } from "@/components/graph/LegendConfigDialog";
 import { MOCK_FIELDS } from "@/lib/mockData";
 import "@xyflow/react/dist/style.css";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import CenterEdge from "@/components/graph/CenterEdge";
 import ERDGraphView from "@/components/graph/ERDGraphView";
@@ -47,8 +57,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Mail, UserPlus, Shield, Edit2, Eye } from "lucide-react";
+import { Check, Mail, UserPlus, Shield, Edit2, Eye, UserMinus, MoreHorizontal } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Participants Component
 function ParticipantsDisplay() {
@@ -83,17 +95,79 @@ function ParticipantsDisplay() {
 }
 
 function InviteTeamDialog() {
+  const { toast } = useToast();
   const [emails, setEmails] = useState("");
   const [role, setRole] = useState("viewer");
   const [open, setOpen] = useState(false);
+  const [inviteMethod, setInviteMethod] = useState<"email" | "workspace">("email");
+  const [workspaceSearch, setWorkspaceSearch] = useState("");
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
+  const [memberRoles, setMemberRoles] = useState<Record<number, string>>({});
 
-  // Mock users for "Select from team"
-  const teamMembers = [
+  // Mock current project members (for "Current Team" tab)
+  const [currentMembers, setCurrentMembers] = useState([
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Owner", initial: "JD", color: "bg-blue-500" },
+    { id: 2, name: "Sarah Smith", email: "sarah@example.com", role: "Editor", initial: "SS", color: "bg-green-500" },
+    { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Viewer", initial: "MJ", color: "bg-purple-500" },
+  ]);
+
+  const handleRoleChange = (id: number, newRole: string) => {
+    setCurrentMembers(currentMembers.map(m => m.id === id ? { ...m, role: newRole } : m));
+  };
+
+  const handleRemoveMember = (id: number) => {
+    setCurrentMembers(currentMembers.filter(m => m.id !== id));
+  };
+
+  // Mock workspace users (for "Invite -> Add from Workspace")
+  const workspaceMembers = [
     { id: 1, name: "Alice Kim", email: "alice@example.com", avatar: null, initial: "AK" },
     { id: 2, name: "Bob Lee", email: "bob@example.com", avatar: null, initial: "BL" },
     { id: 3, name: "Charlie Park", email: "charlie@example.com", avatar: null, initial: "CP" },
     { id: 4, name: "David Choi", email: "david@example.com", avatar: null, initial: "DC" },
+    { id: 5, name: "Eva Green", email: "eva@example.com", avatar: null, initial: "EG" },
+    { id: 6, name: "Frank White", email: "frank@example.com", avatar: null, initial: "FW" },
+    { id: 7, name: "Grace Lee", email: "grace@example.com", avatar: null, initial: "GL" },
+    { id: 8, name: "Henry Ford", email: "henry@example.com", avatar: null, initial: "HF" },
   ];
+
+  const filteredWorkspaceMembers = workspaceMembers.filter(member => 
+    member.name.toLowerCase().includes(workspaceSearch.toLowerCase()) || 
+    member.email.toLowerCase().includes(workspaceSearch.toLowerCase())
+  );
+
+  const toggleSelection = (id: number) => {
+    setSelectedMembers(prev => 
+      prev.includes(id) ? prev.filter(mid => mid !== id) : [...prev, id]
+    );
+  };
+
+  const handleMemberRoleChange = (id: number, role: string) => {
+    setMemberRoles(prev => ({ ...prev, [id]: role }));
+  };
+
+  const handleInviteSelected = () => {
+    if (selectedMembers.length === 0) return;
+
+    const count = selectedMembers.length;
+    const firstMemberId = selectedMembers[0];
+    const firstMember = workspaceMembers.find(m => m.id === firstMemberId);
+    const firstMemberName = firstMember ? firstMember.name : "Unknown";
+
+    const message = count === 1
+        ? `${firstMemberName} invited to the project.`
+        : `${firstMemberName} and ${count - 1} others invited to the project.`;
+
+    toast({
+        title: t("invitationSent"),
+        description: message,
+        className: "bg-green-600 text-white border-none",
+    });
+
+    // Reset selection
+    setSelectedMembers([]);
+    setMemberRoles({});
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -102,99 +176,210 @@ function InviteTeamDialog() {
             <Plus className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-primary" />
             Invite to Team
           </DialogTitle>
           <DialogDescription>
-            Invite new members to collaborate on this project.
+            Invite new members to collaborate on <span className="font-medium text-foreground">EM-Graph Analysis</span>.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="team" className="w-full mt-2">
+        <Tabs defaultValue="current" className="w-full mt-2">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="team">Existing Team</TabsTrigger>
-                <TabsTrigger value="email">Invite by Email</TabsTrigger>
+                <TabsTrigger value="current">Current Team</TabsTrigger>
+                <TabsTrigger value="invite">Invite</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="team" className="space-y-4 focus-visible:outline-none">
+            <TabsContent value="current" className="space-y-4 focus-visible:outline-none">
                 <div className="space-y-2">
                     <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto bg-card">
-                        {teamMembers.map(member => (
-                            <div key={member.id} className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors cursor-pointer group">
+                        {currentMembers.map(member => (
+                            <div key={member.id} className="flex items-center justify-between p-3">
                                  <div className="flex items-center gap-3">
                                     <Avatar className="h-8 w-8 border border-border">
-                                        <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
+                                        <AvatarFallback className={cn("text-xs text-white", member.color)}>{member.initial}</AvatarFallback>
                                     </Avatar>
                                     <div>
                                         <div className="text-sm font-medium leading-none">{member.name}</div>
                                         <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
                                     </div>
                                  </div>
-                                 <Button size="sm" variant="outline" className="h-7 px-3 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary hover:text-primary-foreground">
-                                    Add
-                                 </Button>
+                                 <div className="flex items-center gap-2">
+                                     <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-secondary rounded">
+                                        {member.role}
+                                     </div>
+                                     <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                                                <MoreHorizontal className="w-4 h-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Manage Access</DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Admin")}>
+                                                <Shield className="w-3.5 h-3.5 mr-2 text-red-500" /> Make Admin
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Editor")}>
+                                                <Edit2 className="w-3.5 h-3.5 mr-2 text-blue-500" /> Make Editor
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleRoleChange(member.id, "Viewer")}>
+                                                <Eye className="w-3.5 h-3.5 mr-2 text-green-500" /> Make Viewer
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleRemoveMember(member.id)}>
+                                                <UserMinus className="w-3.5 h-3.5 mr-2" /> Remove from Team
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                     </DropdownMenu>
+                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </TabsContent>
 
-            <TabsContent value="email" className="space-y-4 focus-visible:outline-none">
-                <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
-                    <Textarea 
-                        placeholder="Enter email addresses, separated by commas..." 
-                        value={emails}
-                        onChange={(e) => setEmails(e.target.value)}
-                        className="min-h-[120px] resize-none"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
+            <TabsContent value="invite" className="space-y-4 focus-visible:outline-none">
+                <div className="flex justify-center mb-4">
+                    <div className="inline-flex items-center p-1 bg-secondary/50 rounded-lg">
+                        <button 
+                            onClick={() => setInviteMethod("email")}
+                            className={cn(
+                                "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                                inviteMethod === "email" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Invite by Email
+                        </button>
+                        <button 
+                            onClick={() => setInviteMethod("workspace")}
+                            className={cn(
+                                "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                                inviteMethod === "workspace" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Add from Workspace
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
-                    <div className="flex flex-col space-y-1">
-                        <span className="text-sm font-medium leading-none">Access Role</span>
-                        <span className="text-xs text-muted-foreground">Set default permissions for new members</span>
+                {inviteMethod === "email" ? (
+                    <div className="space-y-4 animate-in fade-in duration-200">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-semibold uppercase text-muted-foreground">Email Addresses</Label>
+                            <Textarea 
+                                placeholder="Enter email addresses, separated by commas..." 
+                                value={emails}
+                                onChange={(e) => setEmails(e.target.value)}
+                                className="min-h-[100px] resize-none"
+                            />
+                            <p className="text-[10px] text-muted-foreground">Multiple emails can be entered using commas.</p>
+                        </div>
+
+                        <div className="flex items-center justify-between space-x-2 bg-secondary/30 p-3 rounded-lg border border-border/50">
+                            <div className="flex flex-col space-y-1">
+                                <span className="text-sm font-medium leading-none">Access Role</span>
+                                <span className="text-xs text-muted-foreground">Set default permissions</span>
+                            </div>
+                            <Select value={role} onValueChange={setRole}>
+                                <SelectTrigger className="w-[120px] h-8 text-xs bg-background">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="editor">Editor</SelectItem>
+                                    <SelectItem value="viewer">Viewer</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        
+                        <Button type="submit" onClick={() => {
+                            setOpen(false);
+                            setEmails("");
+                        }} className="gap-2 w-full">
+                            <Mail className="w-4 h-4" />
+                            Send Invitations
+                        </Button>
                     </div>
-                    <Select value={role} onValueChange={setRole}>
-                        <SelectTrigger className="w-[140px] h-8 text-xs bg-background">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="admin">
-                                <div className="flex items-center gap-2">
-                                    <Shield className="w-3.5 h-3.5 text-red-500" />
-                                    <span>Admin</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="editor">
-                                 <div className="flex items-center gap-2">
-                                    <Edit2 className="w-3.5 h-3.5 text-blue-500" />
-                                    <span>Editor</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="viewer">
-                                 <div className="flex items-center gap-2">
-                                    <Eye className="w-3.5 h-3.5 text-green-500" />
-                                    <span>Viewer</span>
-                                </div>
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                
-                <div className="pt-2">
-                    <Button type="submit" onClick={() => {
-                        setOpen(false);
-                        setEmails("");
-                    }} className="gap-2 w-full">
-                        <Mail className="w-4 h-4" />
-                        Send Invitations
-                    </Button>
-                </div>
+                ) : (
+                    <div className="space-y-4 animate-in fade-in duration-200 flex flex-col h-[400px]">
+                         <div className="relative shrink-0">
+                            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                            <Input 
+                                placeholder="Search workspace members..." 
+                                className="h-9 pl-8 text-xs bg-secondary/20"
+                                value={workspaceSearch}
+                                onChange={(e) => setWorkspaceSearch(e.target.value)}
+                            />
+                        </div>
+                        
+                        <div className="flex-1 min-h-0 border rounded-md overflow-hidden bg-card mt-2 flex flex-col">
+                            <div className="overflow-y-auto flex-1 divide-y">
+                                {filteredWorkspaceMembers.length > 0 ? (
+                                    filteredWorkspaceMembers.map(member => (
+                                    <div 
+                                        key={member.id} 
+                                        className={cn(
+                                            "flex items-center justify-between p-3 transition-colors cursor-pointer group",
+                                            selectedMembers.includes(member.id) ? "bg-primary/5 border-l-2 border-primary" : "hover:bg-accent/50 border-l-2 border-transparent"
+                                        )}
+                                        onClick={() => toggleSelection(member.id)}
+                                    >
+                                         <div className="flex items-center gap-3">
+                                            <Checkbox 
+                                                checked={selectedMembers.includes(member.id)}
+                                                onCheckedChange={() => toggleSelection(member.id)}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                            <Avatar className="h-8 w-8 border border-border">
+                                                <AvatarFallback className="text-xs bg-secondary">{member.initial}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <div className="text-sm font-medium leading-none">{member.name}</div>
+                                                <div className="text-xs text-muted-foreground mt-1">{member.email}</div>
+                                            </div>
+                                         </div>
+                                         <div onClick={(e) => e.stopPropagation()}>
+                                            <Select 
+                                                value={memberRoles[member.id] || "viewer"} 
+                                                onValueChange={(val) => handleMemberRoleChange(member.id, val)}
+                                            >
+                                                <SelectTrigger className="w-[90px] h-7 text-[10px] bg-background">
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="admin">Admin</SelectItem>
+                                                    <SelectItem value="editor">Editor</SelectItem>
+                                                    <SelectItem value="viewer">Viewer</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                         </div>
+                                    </div>
+                                ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-8">
+                                        <Search className="w-8 h-8 mb-2 opacity-20" />
+                                        <p className="text-xs">No members found</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="shrink-0 pt-2">
+                             <Button 
+                                className="w-full gap-2" 
+                                disabled={selectedMembers.length === 0}
+                                onClick={handleInviteSelected}
+                             >
+                                <UserPlus className="w-4 h-4" />
+                                Add {selectedMembers.length > 0 ? `${selectedMembers.length} Members` : "Selected"}
+                             </Button>
+                        </div>
+                    </div>
+                )}
             </TabsContent>
         </Tabs>
       </DialogContent>
@@ -308,25 +493,94 @@ function GraphTimeline() {
   }));
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedField, setSelectedField] = useState("event_count");
+  const [dateRange, setDateRange] = useState({ start: "2024-01-01", end: "2024-06-30" });
+  
+  // Filter State
+  const [filterRange, setFilterRange] = useState([0, 100]);
+  const [isFilterEnabled, setIsFilterEnabled] = useState(true);
+
+  const filteredCount = timelineData.filter(d => !isFilterEnabled || (d.value >= filterRange[0] && d.value <= filterRange[1])).length;
+  const filteredPercent = Math.round((filteredCount / timelineData.length) * 100);
   
   return (
     <div className="absolute bottom-0 left-0 right-0 z-10 bg-background/95 backdrop-blur-sm border-t border-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
       {/* Header / Filter Bar */}
       <div className="h-9 border-b border-border/50 bg-secondary/10 flex items-center justify-between px-4 text-xs">
-        <div className="flex items-center gap-2 text-muted-foreground">
-           <Maximize2 className="w-3.5 h-3.5 cursor-pointer hover:text-foreground transition-colors" />
-        </div>
-        <div className="flex items-center gap-6">
-           <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-             <Checkbox defaultChecked className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" />
-             <div className="flex items-center gap-1.5">
-               <span className="w-2 h-2 rounded-full bg-green-500" />
-               <span className="font-medium text-foreground">&lt; 100</span>
-             </div>
+        <div className="flex items-center gap-4">
+           <div className="flex items-center gap-2 text-muted-foreground">
+              <Maximize2 className="w-3.5 h-3.5 cursor-pointer hover:text-foreground transition-colors" />
            </div>
+           
+           <div className="h-4 w-[1px] bg-border" />
+
+           <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 gap-2 text-xs font-normal text-muted-foreground hover:text-foreground px-2"
+              onClick={() => setShowSettings(true)}
+           >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Settings</span>
+           </Button>
+
+           <div className="h-4 w-[1px] bg-border" />
+
+           <div className="flex items-center gap-2">
+               <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
+               <span className="text-[11px] text-foreground font-bold">
+                  {format(new Date(dateRange.start), 'MMM d, yyyy')} - {format(new Date(dateRange.end), 'MMM d, yyyy')}
+               </span>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+           <div className="flex items-center gap-2">
+             <Checkbox 
+                checked={isFilterEnabled}
+                onCheckedChange={(c) => setIsFilterEnabled(!!c)}
+                className="w-3.5 h-3.5 data-[state=checked]:bg-blue-600 border-blue-600/50" 
+             />
+             
+             <Popover>
+                <PopoverTrigger asChild>
+                    <div className="flex items-center gap-1.5 cursor-pointer hover:bg-secondary/50 px-2 py-0.5 rounded transition-colors">
+                       <span className={`w-2 h-2 rounded-full ${isFilterEnabled ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                       <span className="font-medium text-foreground">
+                          {filterRange[0] === 0 ? `< ${filterRange[1]}` : `${filterRange[0]} - ${filterRange[1]}`}
+                       </span>
+                    </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-60 p-4" align="end">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <h4 className="font-medium leading-none text-sm">Value Filter</h4>
+                            <span className="text-xs text-muted-foreground">
+                                {filterRange[0]} - {filterRange[1]}
+                            </span>
+                        </div>
+                        <Slider
+                            defaultValue={[0, 100]}
+                            value={filterRange}
+                            min={0}
+                            max={100}
+                            step={1}
+                            onValueChange={setFilterRange}
+                            className="w-full"
+                        />
+                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>0</span>
+                            <span>100</span>
+                        </div>
+                    </div>
+                </PopoverContent>
+             </Popover>
+           </div>
+           
            <div className="flex gap-6 text-muted-foreground font-mono">
-             <span>90</span>
-             <span>5%</span>
+             <span title="Matching Items">{filteredCount}</span>
+             <span title="Percentage">{filteredPercent}%</span>
            </div>
         </div>
       </div>
@@ -334,10 +588,13 @@ function GraphTimeline() {
       {/* Timeline Chart Area */}
       <div className="h-32 w-full px-4 pt-6 pb-2 relative group/chart">
         <div className="h-full w-full flex items-end gap-[3px] px-8">
-          {timelineData.map((d, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer">
+          {timelineData.map((d, i) => {
+            const isDimmed = isFilterEnabled && (d.value < filterRange[0] || d.value > filterRange[1]);
+            
+            return (
+            <div key={i} className={`flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer ${isDimmed ? 'opacity-20 grayscale' : ''}`}>
               {/* Event Marker (Red Circle) */}
-              {d.hasEvent && (
+              {d.hasEvent && !isDimmed && (
                 <div className="absolute -top-3 w-2.5 h-2.5 rounded-full border-[1.5px] border-red-500 bg-background z-10 group-hover:bg-red-500 transition-colors" />
               )}
               
@@ -346,18 +603,22 @@ function GraphTimeline() {
                 className={cn(
                   "w-full rounded-t-sm transition-all duration-200 min-h-[4px]",
                   d.hasEvent ? "bg-slate-400 group-hover:bg-slate-500" : "bg-slate-300/60 group-hover:bg-slate-400/80",
-                  d.isHigh && "bg-slate-500 group-hover:bg-slate-600"
+                  d.isHigh && "bg-slate-500 group-hover:bg-slate-600",
+                  isDimmed && "bg-slate-200"
                 )}
                 style={{ height: `${d.value}%` }}
               />
               
               {/* Tooltip */}
+              {!isDimmed && (
               <div className="absolute bottom-full mb-3 hidden group-hover:block bg-popover text-popover-foreground text-[10px] px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap border border-border z-30 animate-in fade-in slide-in-from-bottom-1 duration-200">
                 <div className="font-semibold">{format(d.date, 'MMM d, yyyy')}</div>
                 <div className="text-muted-foreground">{d.value} events recorded</div>
               </div>
+              )}
             </div>
-          ))}
+            );
+          })}
         </div>
         
         {/* Month Labels */}
@@ -373,9 +634,8 @@ function GraphTimeline() {
 
       {/* Control Bar */}
       <div className="h-12 border-t border-border bg-card flex items-center justify-between px-6">
-         <div className="flex items-center gap-2">
-             <span className="text-[11px] text-muted-foreground font-medium">Timeline Range:</span>
-             <span className="text-[11px] text-foreground font-bold">Jan 1, 2024 - Jun 30, 2024</span>
+         <div className="flex items-center gap-4">
+             {/* Empty left side since settings moved to top */}
          </div>
 
          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-4">
@@ -416,6 +676,59 @@ function GraphTimeline() {
              </Button>
          </div>
       </div>
+
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Timeline Settings</DialogTitle>
+            <DialogDescription>
+              Configure the data source and time range for the timeline visualization.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Metric Field (Bar Chart Value)</Label>
+              <Select value={selectedField} onValueChange={setSelectedField}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select metric" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="event_count">Event Frequency</SelectItem>
+                  <SelectItem value="amount">Transaction Amount</SelectItem>
+                  <SelectItem value="risk_score">Risk Score</SelectItem>
+                  <SelectItem value="connections">Connection Activity</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">Select which data field determines the height of the bars.</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Time Period</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Start Date</span>
+                  <Input 
+                    type="date" 
+                    value={dateRange.start} 
+                    onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">End Date</span>
+                  <Input 
+                    type="date" 
+                    value={dateRange.end} 
+                    onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowSettings(false)}>Apply Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -554,11 +867,406 @@ const DEFAULT_LEGEND_ITEMS: LegendItem[] = [
   { id: "6", label: "Evidence", color: "bg-slate-500", alias: "Evidence" },
 ];
 
-import GraphToolsSidebar, { GraphSettings } from "@/components/graph/GraphToolsSidebar";
+import GraphToolsSidebar, { type GraphSettings, type Snapshot } from "@/components/graph/GraphToolsSidebar";
+import { Camera } from "lucide-react";
+
+const INITIAL_SNAPSHOTS: Snapshot[] = [
+    {
+        id: '1',
+        title: 'Initial Investigation',
+        date: '2024-02-10 14:30',
+        description: 'Baseline network structure before adding new evidence.',
+        thumbnail: 'bg-blue-100'
+    },
+    {
+        id: '2',
+        title: 'Suspect Cluster Analysis',
+        date: '2024-02-12 09:15',
+        description: 'Focused view on the primary suspect group and their immediate connections.',
+        thumbnail: 'bg-indigo-100'
+    },
+    {
+        id: '3',
+        title: 'Financial Flow Path',
+        date: '2024-02-13 11:45',
+        description: 'Highlighted path showing money laundering route through shell companies.',
+        thumbnail: 'bg-emerald-100'
+    }
+];
+
+function SnapshotDialog({ open, onOpenChange, onSave }: { open: boolean, onOpenChange: (open: boolean) => void, onSave: (title: string, description: string) => void }) {
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+
+    const handleSave = () => {
+        onSave(title, description);
+        setTitle("");
+        setDescription("");
+        onOpenChange(false);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Save Snapshot</DialogTitle>
+                    <DialogDescription>
+                        Save the current graph state as a snapshot.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Title</Label>
+                        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Snapshot Name" />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description..." />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSave}>Save Snapshot</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
 import CompareDialog from "@/components/graph/CompareDialog";
 
+// Shortest Path Panel Component
+const ShortestPathPanel = ({ 
+  startNode, 
+  endNode, 
+  onReset, 
+  onClose,
+  allNodes,
+  isActive,
+  onToggleActive
+}: { 
+  startNode: any, 
+  endNode: any, 
+  onReset: () => void, 
+  onClose: () => void,
+  allNodes: any[],
+  isActive: boolean,
+  onToggleActive: (active: boolean) => void
+}) => {
+  // Mock path finding
+  const path = useMemo(() => {
+    if (!isActive || !startNode || !endNode) return [];
+    // Find a random intermediate node different from start and end if possible
+    const intermediate = allNodes.find(n => n.id !== startNode.id && n.id !== endNode.id && Math.random() > 0.5);
+    // If no intermediate found or just for variety, sometimes direct path, sometimes via 1 node.
+    // For this mockup, let's always try to find one if we have enough nodes.
+    if (intermediate) {
+        return [startNode, intermediate, endNode];
+    }
+    return [startNode, endNode];
+  }, [startNode, endNode, allNodes, isActive]);
+
+  return (
+    <div className="absolute top-20 right-4 w-80 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-300 pointer-events-auto">
+       {/* Header - Professional Look */}
+       <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-muted/20">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                <Route className="w-4 h-4" />
+             </div>
+             <div className="flex flex-col">
+                <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase">Graph Analysis</span>
+                <span className="font-semibold text-sm tracking-tight text-foreground">SHORTEST PATH</span>
+             </div>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex items-center gap-2">
+                <Label htmlFor="sp-active" className="text-[10px] font-bold text-muted-foreground uppercase cursor-pointer">Active</Label>
+                <Switch 
+                  id="sp-active" 
+                  checked={isActive} 
+                  onCheckedChange={onToggleActive} 
+                  className="scale-75 data-[state=checked]:bg-emerald-500" 
+                />
+             </div>
+             <div className="w-px h-4 bg-border mx-1" />
+             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors" onClick={onClose}>
+                <X className="w-3.5 h-3.5" />
+             </Button>
+          </div>
+       </div>
+
+       {/* Selection Area */}
+       <div className={`p-5 space-y-2 transition-opacity duration-300 ${!isActive ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className="flex flex-col gap-1">
+             {/* Node Circles & Connector */}
+             <div className="flex items-center justify-between px-4 relative">
+                 {/* Connecting Line (Horizontal) - Positioned behind circles */}
+                 <div className="absolute left-8 right-8 top-1/2 h-0.5 bg-gradient-to-r from-blue-500/30 via-border to-indigo-500/30 -z-10 -translate-y-1/2" />
+                 
+                 {/* Arrow in middle */}
+                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 bg-background rounded-full p-1 border border-border shadow-sm">
+                    <ArrowRight className="w-3 h-3 text-muted-foreground/70" />
+                 </div>
+
+                 {/* Start Node Circle */}
+                 <div className="relative z-10">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ring-4 ring-background transition-all duration-300
+                       ${startNode 
+                          ? 'bg-blue-600 text-white shadow-blue-500/20 scale-110' 
+                          : 'bg-muted border-2 border-dashed border-muted-foreground/30 text-muted-foreground'
+                       }`}
+                    >
+                       A
+                    </div>
+                    {!startNode && <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping -z-10" />}
+                 </div>
+
+                 {/* End Node Circle */}
+                 <div className="relative z-10">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ring-4 ring-background transition-all duration-300
+                       ${endNode 
+                          ? 'bg-indigo-600 text-white shadow-indigo-500/20 scale-110' 
+                          : 'bg-muted border-2 border-dashed border-muted-foreground/30 text-muted-foreground'
+                       }`}
+                    >
+                       B
+                    </div>
+                    {startNode && !endNode && <div className="absolute inset-0 rounded-full bg-indigo-500/20 animate-ping -z-10" />}
+                 </div>
+             </div>
+
+             {/* Labels & Node Names */}
+             <div className="flex justify-between items-start gap-4">
+                 {/* Source Info */}
+                 <div className="flex-1 text-center flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Source</span>
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${startNode ? 'text-foreground bg-blue-500/5' : 'text-transparent bg-transparent h-7'}`}>
+                       {startNode ? startNode.data.label : '-'}
+                    </div>
+                 </div>
+
+                 {/* Target Info */}
+                 <div className="flex-1 text-center flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Target</span>
+                    <div className={`text-sm font-bold truncate max-w-[120px] px-2 py-1 rounded-md transition-colors ${endNode ? 'text-foreground bg-indigo-500/5' : 'text-transparent bg-transparent h-7'}`}>
+                       {endNode ? endNode.data.label : '-'}
+                    </div>
+                 </div>
+             </div>
+          </div>
+
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="w-full border-dashed border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground text-xs font-medium h-8" 
+            onClick={onReset}
+            disabled={!startNode && !endNode}
+          >
+             <RotateCcw className="w-3.5 h-3.5 mr-2" />
+             Reset Selection
+          </Button>
+       </div>
+
+       {/* Result Area */}
+       {startNode && endNode && (
+          <div className="border-t border-border/50 bg-muted/5 p-5 animate-in slide-in-from-bottom-2 duration-300">
+             <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                   <Sparkles className="w-3 h-3 text-amber-500" />
+                   Analysis Result
+                </h4>
+                <Badge variant="outline" className="text-[10px] h-5 bg-background font-mono font-medium">
+                   {path.length - 1} HOP{path.length - 1 !== 1 ? 'S' : ''}
+                </Badge>
+             </div>
+             
+             <div className="flex flex-col gap-2 relative">
+                {/* Visual Path Connector Line */}
+                <div className="absolute left-[14px] top-3 bottom-3 w-0.5 bg-border -z-10" />
+                
+                {path.map((node, i) => (
+                   <div key={node.id} className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300" style={{ animationDelay: `${i * 100}ms` }}>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border shrink-0 z-10 transition-all duration-300
+                         ${i === 0 
+                            ? 'bg-blue-500 border-blue-600 text-white shadow-blue-500/20 shadow-lg' 
+                            : i === path.length - 1 
+                               ? 'bg-indigo-500 border-indigo-600 text-white shadow-indigo-500/20 shadow-lg' 
+                               : 'bg-background border-border text-muted-foreground'
+                         }`}
+                      >
+                         {i + 1}
+                      </div>
+                      <div className={`px-3 py-1.5 rounded-md text-xs font-medium border shadow-sm w-full truncate transition-all duration-200
+                         ${i === 0 || i === path.length - 1 
+                            ? 'bg-background border-border text-foreground' 
+                            : 'bg-muted/30 border-transparent text-muted-foreground'
+                         }`}
+                      >
+                         {node.data.label}
+                      </div>
+                   </div>
+                ))}
+             </div>
+          </div>
+       )}
+    </div>
+  );
+};
+
+// Remove Layer Panel Component
+const RemoveLayerPanel = ({ onClose }: { onClose: () => void }) => {
+  const [layers, setLayers] = React.useState([
+    { 
+        id: 1, 
+        name: "Holding Structures", 
+        level: "Level 1", 
+        color: "bg-blue-600",
+        nodes: ["Holdings Inc", "Group Corp", "Parent Co"],
+        edgeCount: 15
+    },
+    { 
+        id: 2, 
+        name: "Key Subsidiaries", 
+        level: "Level 2", 
+        color: "bg-indigo-600", 
+        nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"],
+        edgeCount: 24
+    },
+    { 
+        id: 3, 
+        name: "Financial Affiliates", 
+        level: "Level 3", 
+        color: "bg-blue-400", 
+        nodes: ["Finance Co", "Investment Inc", "Bank Unit"],
+        edgeCount: 8
+    },
+    { 
+        id: 4, 
+        name: "Value Up Programs", 
+        level: "Level 4", 
+        color: "bg-sky-300", 
+        nodes: ["Program A", "Initiative B"],
+        edgeCount: 4
+    }
+  ]);
+  
+  const [expandedLayer, setExpandedLayer] = React.useState<number | null>(null);
+  
+  const removeLayer = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLayers(layers.filter(l => l.id !== id));
+  };
+  
+  const toggleExpand = (id: number) => {
+    setExpandedLayer(expandedLayer === id ? null : id);
+  };
+
+  return (
+    <div className="absolute top-20 right-4 w-80 bg-background/95 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl overflow-hidden z-20 animate-in slide-in-from-right-5 duration-300 pointer-events-auto">
+       <div className="px-5 py-4 border-b border-border/50 flex items-center justify-between bg-muted/20">
+          <div className="flex items-center gap-3">
+             <h3 className="font-bold text-sm">Hub Nodes</h3>
+             <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 border-primary/20 text-primary hover:text-primary hover:bg-primary/10 font-medium">
+                <Layers className="w-3.5 h-3.5" />
+                Hide
+             </Button>
+          </div>
+          <div className="flex items-center gap-1">
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground" onClick={() => setLayers([
+                { id: 1, name: "Holding Structures", level: "Level 1", color: "bg-blue-600", nodes: ["Holdings Inc", "Group Corp", "Parent Co"], edgeCount: 15 },
+                { id: 2, name: "Key Subsidiaries", level: "Level 2", color: "bg-indigo-600", nodes: ["Tech Sub", "Auto Parts", "Chemical Div", "Logistics"], edgeCount: 24 },
+                { id: 3, name: "Financial Affiliates", level: "Level 3", color: "bg-blue-400", nodes: ["Finance Co", "Investment Inc", "Bank Unit"], edgeCount: 8 },
+                { id: 4, name: "Value Up Programs", level: "Level 4", color: "bg-sky-300", nodes: ["Program A", "Initiative B"], edgeCount: 4 }
+             ])}>
+                <RotateCcw className="w-3.5 h-3.5" />
+             </Button>
+             <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground" onClick={onClose}>
+                <X className="w-4 h-4" />
+             </Button>
+          </div>
+       </div>
+
+       <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+          {layers.map((layer) => (
+             <div 
+                key={layer.id} 
+                className={`rounded-lg border border-border bg-card/50 hover:bg-card transition-all duration-300 group shadow-sm cursor-pointer overflow-hidden ${expandedLayer === layer.id ? 'ring-1 ring-primary/20 bg-card' : ''}`}
+                onClick={() => toggleExpand(layer.id)}
+             >
+                <div className="flex items-center justify-between p-3">
+                    <div className="flex items-center gap-3">
+                       <div className={`w-1.5 h-8 rounded-full ${layer.color} shrink-0`} />
+                       <div className="flex flex-col">
+                           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                             <span>NODES: {layer.nodes.length}</span>
+                             <span className="text-border">|</span>
+                             <span>EDGES: {layer.edgeCount}</span>
+                           </span>
+                           <span className="text-sm font-medium text-foreground/90">{layer.name}</span>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${expandedLayer === layer.id ? 'rotate-90' : ''}`} />
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-50 group-hover:opacity-100 transition-opacity" onClick={(e) => removeLayer(layer.id, e)}>
+                           <X className="w-3.5 h-3.5" />
+                        </Button>
+                    </div>
+                </div>
+                
+                {/* Expanded Content - Node Tags */}
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedLayer === layer.id ? 'max-h-40 opacity-100 border-t border-border/50' : 'max-h-0 opacity-0'}`}>
+                    <div className="p-3 bg-secondary/10 flex flex-wrap gap-1.5">
+                        {layer.nodes.map((node, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-[10px] font-normal bg-background border-border/50 hover:bg-secondary">
+                                {node}
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
+             </div>
+          ))}
+          {layers.length === 0 && (
+             <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
+                <Layers className="w-8 h-8 opacity-20" />
+                <span className="text-xs">All layers hidden</span>
+             </div>
+          )}
+       </div>
+    </div>
+  );
+};
+
 export default function ProjectView() {
+  const [, params] = useRoute("/project/:id/view");
+  const projectId = params?.id;
+  const { toast } = useToast();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
+  
+  // Snapshot State
+  const [snapshots, setSnapshots] = useState<Snapshot[]>(INITIAL_SNAPSHOTS);
+  const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
+
+  const handleCreateSnapshot = (title: string, description: string) => {
+    const newSnapshot: Snapshot = {
+      id: Date.now().toString(),
+      title,
+      date: format(new Date(), "yyyy-MM-dd HH:mm"),
+      description,
+      thumbnail: 'bg-primary/10' // Mock thumbnail
+    };
+    setSnapshots([newSnapshot, ...snapshots]);
+    toast({
+      title: "Snapshot Saved",
+      description: "Network state has been saved successfully.",
+    });
+  };
+
+  const handleDeleteSnapshot = (id: string) => {
+    setSnapshots(snapshots.filter(s => s.id !== id));
+    toast({
+      title: "Snapshot Deleted",
+      description: "The snapshot has been removed.",
+    });
+  };
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [compareOpen, setCompareOpen] = useState(false);
@@ -566,6 +1274,14 @@ export default function ProjectView() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [graphToolsOpen, setGraphToolsOpen] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<"nav" | "list">("list");
+  
+  // Shortest Path State
+  const [isShortestPathMode, setIsShortestPathMode] = useState(false);
+  const [isShortestPathActive, setIsShortestPathActive] = useState(true);
+  const [shortestPathData, setShortestPathData] = useState<{ start: any | null, end: any | null }>({ start: null, end: null });
+
+  // Remove Layer State
+  const [isRemoveLayerMode, setIsRemoveLayerMode] = useState(false);
   
   // New state for View Mode (Graph vs ERD)
   const [viewMode, setViewMode] = useState<'graph' | 'erd'>('graph');
@@ -638,6 +1354,14 @@ export default function ProjectView() {
   };
 
   const onNodeClick = (_: any, node: any) => {
+    if (isShortestPathMode && isShortestPathActive) {
+      if (!shortestPathData.start) {
+        setShortestPathData(prev => ({ ...prev, start: node }));
+      } else if (!shortestPathData.end && node.id !== shortestPathData.start.id) {
+        setShortestPathData(prev => ({ ...prev, end: node }));
+      }
+      return;
+    }
     setSelectedNode(node);
   };
 
@@ -784,6 +1508,14 @@ export default function ProjectView() {
           {/* Top Center Stats Bar */}
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 pointer-events-none">
             <div className="flex items-center bg-card/80 backdrop-blur-md border border-border/50 rounded-full h-10 px-4 shadow-lg pointer-events-auto text-xs text-muted-foreground">
+              <Button 
+                 variant="ghost" 
+                 size="icon" 
+                 className="h-6 w-6 -ml-1 mr-2 text-muted-foreground hover:text-foreground" 
+                 onClick={() => {}}
+              >
+                  <RefreshCw className="w-3.5 h-3.5" />
+              </Button>
               <span className="font-medium text-foreground mr-3">
                 <span className="text-muted-foreground font-normal mr-1">Project:</span>
                 Graph View
@@ -808,8 +1540,11 @@ export default function ProjectView() {
             </Button>
           </div>
           
-          {/* Participants - Top Right */}
-          <div className="absolute top-4 right-4 z-10 pointer-events-auto">
+          {/* Participants - Moved to Bottom Left above Timeline */}
+          <div className={cn(
+            "absolute left-4 z-10 pointer-events-auto transition-all duration-300",
+             graphSettings.showTimeline ? "bottom-[240px]" : "bottom-4"
+          )}>
              <ParticipantsDisplay />
           </div>
 
@@ -818,6 +1553,28 @@ export default function ProjectView() {
             onOpenChange={setCompareOpen} 
             nodes={nodes} 
           />
+
+          {/* Shortest Path Panel */}
+          {isShortestPathMode && (
+              <ShortestPathPanel 
+                  startNode={shortestPathData.start}
+                  endNode={shortestPathData.end}
+                  onReset={() => setShortestPathData({ start: null, end: null })}
+                  onClose={() => {
+                      setIsShortestPathMode(false);
+                      setShortestPathData({ start: null, end: null });
+                  }}
+                  allNodes={nodes}
+                  isActive={isShortestPathActive}
+                  onToggleActive={setIsShortestPathActive}
+              />
+          )}
+
+          {/* Remove Layer Panel */}
+          {isRemoveLayerMode && (
+             <RemoveLayerPanel onClose={() => setIsRemoveLayerMode(false)} />
+          )}
+
 
           {/* Graph Visualization */}
           <ReactFlow
@@ -855,20 +1612,44 @@ export default function ProjectView() {
                  {/* Tools List */}
                  <div className="flex flex-col p-2 gap-1">
                     <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <MousePointer2 className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Mode</span>
+                       <BoxSelect className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Select Nodes</span>
                     </Button>
                     
                     <div className="h-px bg-border/50 my-1 mx-2" />
                     
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <RefreshCw className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Refresh Layout</span>
-                    </Button>
 
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
+                    <Button 
+                        variant={isShortestPathMode ? "secondary" : "ghost"} 
+                        size="icon" 
+                        className={`w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden ${isShortestPathMode ? 'bg-primary/10 text-primary' : ''}`}
+                        onClick={() => {
+                            setIsShortestPathMode(!isShortestPathMode);
+                            if (isShortestPathMode) {
+                                // Turning off
+                                setShortestPathData({ start: null, end: null });
+                            } else {
+                                setIsRemoveLayerMode(false);
+                            }
+                        }}
+                    >
                        <Waypoints className="w-5 h-5 shrink-0" />
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Shortest Path</span>
+                    </Button>
+
+                    <Button 
+                        variant={isRemoveLayerMode ? "secondary" : "ghost"} 
+                        size="icon" 
+                        className={`w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden ${isRemoveLayerMode ? 'bg-primary/10 text-primary' : ''}`}
+                        onClick={() => {
+                            setIsRemoveLayerMode(!isRemoveLayerMode);
+                            if (!isRemoveLayerMode) {
+                                setIsShortestPathMode(false);
+                            }
+                        }}
+                    >
+                       <Layers className="w-5 h-5 shrink-0" />
+                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Remove Layer</span>
                     </Button>
 
                     <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
@@ -883,10 +1664,34 @@ export default function ProjectView() {
                        <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Filters</span>
                     </Button>
 
-                    <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden" onClick={() => {}}>
-                       <Download className="w-5 h-5 shrink-0" />
-                       <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="w-full h-10 justify-start px-2 hover:bg-primary/10 hover:text-primary transition-colors gap-3 relative overflow-hidden">
+                           <Download className="w-5 h-5 shrink-0" />
+                           <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm">Export</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="right" align="end" className="w-48 ml-2">
+                        <DropdownMenuLabel>Export Format</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <Database className="w-4 h-4 text-blue-500" />
+                          <span>Ontology</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <NetworkIcon className="w-4 h-4 text-indigo-500" />
+                          <span>Graph</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <FileJson className="w-4 h-4 text-orange-500" />
+                          <span>JSON</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2">
+                          <FileSpreadsheet className="w-4 h-4 text-green-500" />
+                          <span>Excel</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                  </div>
               </div>
             </motion.div>
@@ -980,6 +1785,7 @@ export default function ProjectView() {
             <div className="w-14 h-full overflow-visible">
                 <GraphToolsSidebar 
                   className="w-full h-full border-none bg-transparent"
+                  projectId={projectId}
                   stats={{
                     nodes: nodes.length,
                     edges: edges.length,
@@ -988,6 +1794,11 @@ export default function ProjectView() {
                   }}
                   settings={graphSettings}
                   onSettingsChange={setGraphSettings}
+                  nodes={nodes}
+                  edges={edges}
+                  snapshots={snapshots}
+                  onDeleteSnapshot={handleDeleteSnapshot}
+                  onOpenCreateSnapshot={() => setIsSnapshotDialogOpen(true)}
                 />
             </div>
         </div>
@@ -1323,6 +2134,11 @@ export default function ProjectView() {
             </div>
           </SheetContent>
         </Sheet>
+        <SnapshotDialog 
+          open={isSnapshotDialogOpen} 
+          onOpenChange={setIsSnapshotDialogOpen} 
+          onSave={handleCreateSnapshot} 
+        />
         <LegendConfigDialog 
            open={isLegendConfigOpen} 
            onOpenChange={setIsLegendConfigOpen}

@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { LanguageProvider } from "@/lib/i18n";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import LandingPage from "@/pages/LandingPage";
@@ -19,6 +20,9 @@ import SignUp from "@/pages/SignUp";
 import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 import BrainMarket from "@/pages/BrainMarket";
+import IntelliSearch from "@/pages/IntelliSearch";
+import Chatbot from "@/pages/Chatbot";
+import BusinessGlossary from "@/pages/BusinessGlossary";
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
 // but don't affect the actual functionality of the application.
@@ -48,6 +52,7 @@ function AppRouter() {
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
         <Route path="/brain-market" component={BrainMarket} />
+        <Route path="/business-glossary" component={BusinessGlossary} />
         <Route path="/create" component={CreateProject} />
         <Route path="/project/:id/setup" component={ProjectSetup} />
         <Route path="/project/:id/view" component={ProjectView} />
@@ -55,6 +60,8 @@ function AppRouter() {
         <Route path="/resources" component={ResourcesManager} />
         <Route path="/settings" component={Settings} />
         <Route path="/graph-builder" component={GraphBuilder} />
+        <Route path="/intelligence/search" component={IntelliSearch} />
+        <Route path="/intelligence/chatbot" component={Chatbot} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
@@ -64,10 +71,12 @@ function AppRouter() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <AppRouter />
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <AppRouter />
+        </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
