@@ -18,7 +18,8 @@ Preferred communication style: Simple, everyday language.
 - **Graph Visualization**: `@xyflow/react` (React Flow) for interactive node/edge graph rendering, ERD views, and data preprocessing pipelines
 - **Animations**: Framer Motion for transitions and drag-and-drop reordering
 - **Charts**: Recharts for data visualization (area charts, etc.)
-- **i18n**: Custom lightweight internationalization system (`client/src/lib/i18n.tsx`) with `LanguageProvider` context and `useLanguage` hook. Supports English (en) and Korean (ko). Language preference persisted in localStorage.
+- **i18n**: Custom lightweight internationalization system (`client/src/lib/i18n.tsx`) with `LanguageProvider` context and `useLanguage` hook. Supports English (en) and Korean (ko). Language preference persisted in localStorage key `"em-graph-language"`. Language toggle button in Layout.tsx sidebar (Globe icon, between storage widget and user profile). All pages and major components are fully translated: Home, Projects, CreateProject, SignUp, OrganizationSelect, ProjectSetup, KnowledgeGarden, ProjectView, BrainMarket, ResourcesManager, DatabaseManager, GraphBuilder, GraphBuilderForm, DataPreprocessingBuilder, IntelliSearch, Chatbot, Settings, BusinessGlossary, not-found.
+- **Business Glossary**: `client/src/pages/BusinessGlossary.tsx` — docs-style guide page for managing business terms, metadata attributes, synonyms, and prohibited terms. Located under Ontology section in sidebar (3rd item). Route: `/business-glossary`. Uses i18n keys prefixed with `bg`. Contains 코오롱인더스트리 dummy data (PET필름, 편광필름, 아라미드, 열연코일, MOQ, BOM, etc.).
 - **Build Tool**: Vite with React plugin, served from `client/` directory, outputs to `dist/public/`
 - **Path Aliases**: `@/` maps to `client/src/`, `@shared/` maps to `shared/`, `@assets/` maps to `attached_assets/`
 

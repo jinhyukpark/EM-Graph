@@ -42,7 +42,7 @@ export default function Projects() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2 text-foreground" data-testid="text-page-title">{t("projects")}</h1>
-            <p className="text-muted-foreground">{t("manageProjects")}</p>
+            <p className="text-muted-foreground">{t("manageProjectsDesc")}</p>
           </div>
           <Link href="/create">
             <Button size="lg" className="gap-2 shadow-lg shadow-primary/20 hidden md:flex" data-testid="button-new-project">

@@ -157,7 +157,6 @@ function InviteTeamDialog() {
     const firstMember = workspaceMembers.find(m => m.id === firstMemberId);
     const firstMemberName = firstMember ? firstMember.name : "Unknown";
 
-    // Korean message as requested: "Park Jin-hyuk 외 2명이 프로젝트에 초대 되었습니다."
     const message = count === 1
         ? `${firstMemberName} invited to the project.`
         : `${firstMemberName} and ${count - 1} others invited to the project.`;

@@ -108,7 +108,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <Label className="text-xs font-medium text-muted-foreground">{t("tableSource")}</Label>
             <Select defaultValue={node.table}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="Select Table" />
+                <SelectValue placeholder={t("selectTable")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
@@ -120,7 +120,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <Label className="text-xs font-medium text-muted-foreground">{t("nodeField")}</Label>
             <Select defaultValue={node.labelField}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="Select Field" />
+                <SelectValue placeholder={t("selectField")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="type">type</SelectItem>
@@ -136,10 +136,10 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <Label className="text-xs font-medium text-muted-foreground">{t("imageField")}</Label>
             <Select defaultValue={node.imageField}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="None" />
+                <SelectValue placeholder={t("none")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="none">{t("none")}</SelectItem>
                 <SelectItem value="photo_url">photo_url</SelectItem>
                 <SelectItem value="image">image</SelectItem>
                 <SelectItem value="thumbnail">thumbnail</SelectItem>
@@ -151,10 +151,10 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <Label className="text-xs font-medium text-muted-foreground">{t("latitude")}</Label>
             <Select defaultValue={node.latitudeField}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="None" />
+                <SelectValue placeholder={t("none")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="none">{t("none")}</SelectItem>
                 <SelectItem value="latitude">latitude</SelectItem>
                 <SelectItem value="lat">lat</SelectItem>
                 <SelectItem value="y">y</SelectItem>
@@ -165,10 +165,10 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
             <Label className="text-xs font-medium text-muted-foreground">{t("longitude")}</Label>
             <Select defaultValue={node.longitudeField}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="None" />
+                <SelectValue placeholder={t("none")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="none">{t("none")}</SelectItem>
                 <SelectItem value="longitude">longitude</SelectItem>
                 <SelectItem value="lng">lng</SelectItem>
                 <SelectItem value="x">x</SelectItem>
@@ -215,7 +215,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
             <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
                 <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
@@ -225,7 +225,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</div>
             <Select defaultValue={link.sourceColumn}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="id">id</SelectItem>
                 <SelectItem value="suspect_id">suspect_id</SelectItem>
@@ -240,7 +240,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
             <Select defaultValue={link.targetTable}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Table" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
                 <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
@@ -250,7 +250,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</div>
             <Select defaultValue={link.targetColumn}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="Column" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="id">id</SelectItem>
                 <SelectItem value="suspect_id">suspect_id</SelectItem>
@@ -265,9 +265,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
             <Select defaultValue={link.labelField}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="none">{t("none")}</SelectItem>
                 <SelectItem value="type">type</SelectItem>
                 <SelectItem value="relationship">relationship</SelectItem>
                 <SelectItem value="status">status</SelectItem>
@@ -278,9 +278,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</div>
             <Select defaultValue={link.weightField}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="None" /></SelectTrigger>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="none">{t("none")}</SelectItem>
                 <SelectItem value="weight">weight</SelectItem>
                 <SelectItem value="severity">severity</SelectItem>
                 <SelectItem value="count">count</SelectItem>
@@ -478,7 +478,7 @@ export default function GraphBuilderForm() {
            {links.length === 0 && (
              <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-slate-50/50">
                 <Network className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                <p className="text-sm">No links defined. Add a link to connect your data.</p>
+                <p className="text-sm">{t("noLinksDefinedDesc")}</p>
              </div>
            )}
          </div>
@@ -491,7 +491,7 @@ export default function GraphBuilderForm() {
               <Eye className="w-4 h-4 text-slate-500" />
               <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">{t("graphPreview")}</h3>
               <span className="text-[10px] text-slate-400 font-medium ml-2">
-                {flowNodes.length} node{flowNodes.length !== 1 ? "s" : ""} · {flowEdges.length} link{flowEdges.length !== 1 ? "s" : ""}
+                {flowNodes.length} {t("nodes")} · {flowEdges.length} {t("links")}
               </span>
             </div>
           </div>

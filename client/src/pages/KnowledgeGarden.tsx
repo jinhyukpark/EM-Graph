@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef, useEffect, Component, ErrorInfo } from "react";
 import Layout from "@/components/layout/Layout";
-import { useLanguage } from "@/lib/i18n";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,15 +91,15 @@ class GraphErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
 
 // --- Mock Data ---
 
-const stockPrison = "/assets/generated_images/subtle_dark_data_network_background.png";
-const stockDetective = "/assets/generated_images/police_detectives_in_high-tech_room.png";
-const stockCriminal = "/assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png";
-const stockVictim = "/assets/generated_images/scientist_with_test_tube.png";
-const stockCase = "/assets/generated_images/abstract_database_ontology_illustration.png";
-const stockVictimB = "/assets/generated_images/abstract_collaboration_network_illustration.png";
-const stockCompany = "/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png";
-const stockPhone = "/assets/generated_images/data_import_and_mapping_ui.png";
-const stockMoney = "/assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png";
+import stockPrison from '@assets/stock_images/modern_prison_buildi_9bacaffd.jpg';
+import stockDetective from '@assets/stock_images/police_detective_inv_e00135e9.jpg';
+import stockCriminal from '@assets/stock_images/criminal_mugshot_or__e3300888.jpg';
+import stockVictim from '@assets/stock_images/victim_of_crime_port_a8ed2300.jpg';
+import stockCase from '@assets/stock_images/legal_case_file_docu_d34f6df4.jpg';
+import stockVictimB from '@assets/stock_images/portrait_of_a_young__70369a95.jpg';
+import stockCompany from '@assets/stock_images/modern_corporate_off_11c42306.jpg';
+import stockPhone from '@assets/stock_images/old_burner_mobile_ph_af367193.jpg';
+import stockMoney from '@assets/stock_images/stacks_of_money_in_b_5f30198e.jpg';
 
 const STATUS_OPTIONS = [
   { id: 'draft', label: 'Draft', color: 'bg-slate-500' },
@@ -766,7 +765,6 @@ function GraphView() {
 
 
 const WikiLink = ({ children }: { children: string }) => {
-  const { t } = useLanguage();
   const docName = children.replace(/\[\[|\]\]/g, '');
   
   return (
@@ -774,7 +772,7 @@ const WikiLink = ({ children }: { children: string }) => {
       className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/50 hover:bg-blue-100/80 border border-blue-100 hover:border-blue-200 rounded-md px-2 py-0.5 cursor-pointer transition-all text-[13px] font-medium align-middle mx-1 select-none group shadow-sm hover:shadow"
       onClick={(e) => {
         e.stopPropagation();
-        toast.info(t("navigateToDocument"), {
+        toast.info("Navigate to Document", {
           description: `Navigating to '${docName}'...`
         });
       }}
@@ -787,7 +785,6 @@ const WikiLink = ({ children }: { children: string }) => {
 
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
-  const { t } = useLanguage();
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -949,7 +946,7 @@ export default function KnowledgeGarden() {
             // Add new node
             const newNode = {
               id: `n-${Date.now()}`,
-              name: t("untitledNote"),
+              name: "Untitled Note",
               type: "note",
               active: true
             };
@@ -975,7 +972,7 @@ export default function KnowledgeGarden() {
                   node.children.forEach((c: any) => c.active = false);
                   node.children.push({
                       id: `n-${Date.now()}`,
-                      name: t("untitledNote"),
+                      name: "Untitled Note",
                       type: "note",
                       active: true
                   });
@@ -1082,7 +1079,7 @@ export default function KnowledgeGarden() {
                          >
                             <div className="flex items-center gap-2.5">
                                 <Network className={cn("w-4 h-4", showGraph ? "text-blue-500" : "text-muted-foreground/70")} />
-                                <span>{t("ontology")}</span>
+                                <span>Ontology</span>
                             </div>
                              {showGraph ? <Eye className="w-4 h-4 text-blue-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground/50" />}
                          </Button>
@@ -1168,7 +1165,7 @@ export default function KnowledgeGarden() {
                            </button>
                            <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
                              <MessageSquare className="w-3.5 h-3.5" />
-                             <span>문서정리</span>
+                             <span>{t("documents")}</span>
                            </button>
                         </div>
                         
@@ -1206,7 +1203,7 @@ export default function KnowledgeGarden() {
                                      <div className="p-2">
                                          <div className="flex items-center gap-2">
                                              <Input 
-                                                 placeholder={t("newStatus")} 
+                                                 placeholder="New status..." 
                                                  className="h-7 text-xs" 
                                                  value={newStatusName}
                                                  onChange={(e) => setNewStatusName(e.target.value)}
@@ -1327,7 +1324,7 @@ export default function KnowledgeGarden() {
                                                 <input 
                                                     type="text" 
                                                     className="bg-transparent border-none outline-none w-16 placeholder:text-muted-foreground/50 h-full text-xs"
-                                                    placeholder={t("addTag")}
+                                                    placeholder="Add tag"
                                                     value={newTagName}
                                                     onChange={(e) => setNewTagName(e.target.value)}
                                                     onKeyDown={handleAddTag}
@@ -1549,7 +1546,7 @@ export default function KnowledgeGarden() {
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
                               <Share2 className="w-4 h-4 text-blue-500" />
-                              <span className="font-semibold text-sm">{t("ontology")}</span>
+                              <span className="font-semibold text-sm">Ontology</span>
                            </div>
                            <Button 
                             variant="ghost" 
@@ -1757,17 +1754,17 @@ export default function KnowledgeGarden() {
                                 </div>
                                 {msg.role === 'assistant' && (
                                     <div className="flex justify-between mt-1 items-center">
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={t("rollback")}>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
                                             <RotateCcw className="w-3.5 h-3.5" />
                                         </Button>
                                         <div className="flex gap-1">
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title={t("ontology")}>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
                                                 <Share2 className="w-4 h-4" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={t("copyText")}>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
                                                 <Copy className="w-3.5 h-3.5" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title={t("deleteMessage")}>
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
                                                 <Trash2 className="w-3.5 h-3.5" />
                                             </Button>
                                         </div>
@@ -1817,7 +1814,7 @@ export default function KnowledgeGarden() {
 
                           <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
                             <Textarea 
-                              placeholder={t("askAnything")} 
+                              placeholder="Ask anything..." 
                               className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
                             />
                             
@@ -1882,7 +1879,6 @@ function DeleteSessionDialog({
   onOpenChange: (open: boolean) => void; 
   onConfirm: () => void; 
 }) {
-  const { t } = useLanguage();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -1893,8 +1889,8 @@ function DeleteSessionDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">{t("delete")}</AlertDialogAction>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

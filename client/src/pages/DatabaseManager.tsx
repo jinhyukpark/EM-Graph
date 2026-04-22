@@ -352,7 +352,7 @@ export default function DatabaseManager() {
     setCreateTableFields([]);
     setCreateTableDestination('Original');
     toast({
-      title: "Table Created",
+      title: t("tableCreated"),
       description: `'${createTableName.trim()}' has been added to ${createTableDestination} tables.`,
     });
   };
@@ -394,7 +394,7 @@ export default function DatabaseManager() {
         : row
     ));
     setInlineEditCell(null);
-    toast({ title: "Cell Updated", description: "Value has been saved." });
+    toast({ title: t("cellUpdated"), description: t("savedSuccessfully") });
   };
 
   const handleAddRow = () => {
@@ -415,7 +415,7 @@ export default function DatabaseManager() {
     setNewRowData({ company_name: "", age: "", member: "" });
     
     toast({
-      title: "Row Added",
+      title: t("rowAdded"),
       description: `New record for "${newRow.company_name}" has been added.`,
     });
   };
@@ -442,7 +442,7 @@ export default function DatabaseManager() {
   const handleInsert = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Record Added",
+      title: t("recordAdded"),
       description: "New row successfully inserted into 'crime_incidents_2024'",
     });
   };
@@ -520,7 +520,7 @@ export default function DatabaseManager() {
       return [{ ...first, sql: newSql, generatedSql: undefined }];
     });
     toast({
-      title: "Template Applied",
+      title: t("templateApplied"),
       description: "Query has been inserted into the editor.",
     });
   };
@@ -633,7 +633,7 @@ export default function DatabaseManager() {
 
   const handleBulkDelete = () => {
     toast({
-      title: "Items Deleted",
+      title: t("itemsDeleted"),
       description: `${selectedItemsForEdit.length} items have been removed.`,
     });
     setSelectedItemsForEdit([]);
@@ -642,7 +642,7 @@ export default function DatabaseManager() {
 
   const handleBulkCopy = () => {
     toast({
-      title: "Copies Created",
+      title: t("copiesCreated"),
       description: `Successfully created copies for ${selectedItemsForEdit.length} items.`,
     });
     setSelectedItemsForEdit([]);
@@ -657,7 +657,7 @@ export default function DatabaseManager() {
     } else {
         setSelectedProjectId(value);
         toast({
-            title: "Project Switched",
+            title: t("projectSwitched"),
             description: `Switched to ${projects.find(p => p.id === value)?.name}`,
         });
     }
@@ -672,7 +672,7 @@ export default function DatabaseManager() {
     setNewProjectName("");
     setIsCreateProjectDialogOpen(false);
     toast({
-        title: "Project Created",
+        title: t("projectCreated"),
         description: `Project '${newProject.name}' has been successfully created.`,
     });
   };
@@ -682,7 +682,7 @@ export default function DatabaseManager() {
     setTabs([...tabs, { 
       id: newTabId, 
       type: 'pipeline-result', 
-      title: 'Pipeline Result', 
+      title: t("pipelineResult"), 
       data 
     }]);
     setActiveTabId(newTabId);
@@ -712,7 +712,7 @@ export default function DatabaseManager() {
     setNewTableName("");
     
     toast({
-      title: "Table Saved",
+      title: t("tableSaved"),
       description: `Result saved as '${newTableName}' in Custom tables.`,
     });
   };
@@ -748,7 +748,7 @@ export default function DatabaseManager() {
     setNewQueryName("");
     
     toast({
-      title: "Query Saved",
+      title: t("querySaved"),
       description: `Query '${newQueryName}' has been saved to your project.`,
     });
   };
@@ -777,7 +777,7 @@ export default function DatabaseManager() {
     }));
     setEditingQueryResultCell(null);
     setEditingQueryResultValue("");
-    toast({ title: "Field Updated", description: `Row ${rowId}: '${field}' has been updated.`, duration: 2000 });
+    toast({ title: t("fieldUpdated"), description: `Row ${rowId}: '${field}' has been updated.`, duration: 2000 });
   };
 
   const handleRunQuery = (sql: string) => {
@@ -867,7 +867,7 @@ export default function DatabaseManager() {
       setQueryCurrentPage(1);
       setIsExecuting(false);
       toast({
-        title: "Query Executed Successfully",
+        title: t("queryExecutedSuccessfully"),
         description: `${statements.length} statement(s) completed in ${totalTime}ms`,
       });
     }, 800);
@@ -894,7 +894,7 @@ export default function DatabaseManager() {
                 <SelectItem value="create_new" className="text-primary font-medium focus:text-primary cursor-pointer">
                     <div className="flex items-center gap-2">
                         <Plus className="w-3.5 h-3.5" />
-                        Create New Project
+                        {t("createNewProject")}
                     </div>
                 </SelectItem>
               </SelectContent>
@@ -907,15 +907,15 @@ export default function DatabaseManager() {
                   <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center mb-3">
                     <Database className="w-5 h-5 opacity-50" />
                   </div>
-                  <p className="text-xs font-medium">No Project Selected</p>
-                  <p className="text-[10px] mt-1 opacity-70">Select a project to view contents</p>
+                  <p className="text-xs font-medium">{t("noProjectSelected")}</p>
+                  <p className="text-[10px] mt-1 opacity-70">{t("selectProjectToView")}</p>
                 </div>
               ) : (
                 sidebarItems.map((category, idx) => (
                 <div key={idx} className={`space-y-1 ${category.isTool ? "mt-8 pt-6 border-t border-border/50" : ""}`}>
                   {category.isTool && (
                     <div className="px-4 mb-2">
-                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">External Tools</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">{t("externalTools")}</span>
                     </div>
                   )}
                   <div 
@@ -1068,10 +1068,10 @@ export default function DatabaseManager() {
           </ScrollArea>
           <div className="p-4 border-t border-border bg-secondary/10">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-              <span>Connection Status</span>
+              <span>{t("connectionStatus")}</span>
               <span className="flex items-center gap-1.5 text-emerald-500 font-medium">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Connected
+                {t("connected")}
               </span>
             </div>
             <div className="text-[10px] font-mono text-muted-foreground/70">
@@ -1123,9 +1123,9 @@ export default function DatabaseManager() {
               <div className="w-24 h-24 rounded-full bg-secondary/30 flex items-center justify-center mb-6">
                 <LayoutDashboard className="w-12 h-12 opacity-20" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Select a Project</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t("selectAProject")}</h3>
               <p className="text-sm text-center max-w-sm leading-relaxed text-muted-foreground/70">
-                Choose a project from the sidebar to view and manage your data tables, queries, and graph visualizations.
+                {t("selectProjectDesc")}
               </p>
             </div>
           </div>
@@ -1251,7 +1251,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Build and automate data transformation pipelines. Connect multiple steps to clean, filter, and enrich your raw data into refined assets for analysis.
+                                {t("preprocessDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -1260,12 +1260,12 @@ export default function DatabaseManager() {
                           <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-2">
                               <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Preprocessing</h3>
-                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Processing</Badge>
+                              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedPreprocessing")}</h3>
+                              <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("preprocessing")}</Badge>
                             </div>
                             <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('preprocessing')}>
                               <Plus className="w-4 h-4" />
-                              Create Preprocessing
+                              {t("createPreprocessing")}
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1278,9 +1278,9 @@ export default function DatabaseManager() {
                                   <div className="flex-1 min-w-0">
                                     <div className="text-sm font-semibold truncate">{tool.name}</div>
                                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                                      <span>Active Pipeline</span>
+                                      <span>{t("activePipeline")}</span>
                                       <span className="w-1 h-1 rounded-full bg-border" />
-                                      <span>Ready</span>
+                                      <span>{t("ready")}</span>
                                     </div>
                                   </div>
                                 </CardContent>
@@ -1292,7 +1292,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Preprocessing</span>
+                                <span className="text-xs font-medium">{t("newPreprocessing")}</span>
                               </div>
                             </Card>
                           </div>
@@ -1307,14 +1307,14 @@ export default function DatabaseManager() {
                 <div className="flex flex-col h-full bg-background border-t-4 border-indigo-500/20">
                   <div className="h-12 border-b border-border bg-indigo-50/10 flex items-center justify-between px-4">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 border-indigo-200">Pipeline Result</Badge>
+                      <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("pipelineResult")}</Badge>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {activeTab.data?.length || 0} rows generated
+                        {activeTab.data?.length || 0} {t("rowsGenerated")}
                       </span>
                     </div>
                     <Button size="sm" className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => setIsSaveResultDialogOpen(true)}>
                       <Save className="w-4 h-4" />
-                      Save to Table
+                      {t("saveToTable")}
                     </Button>
                   </div>
                   <div className="flex-1 overflow-auto">
@@ -1355,7 +1355,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-emerald-900/70 leading-relaxed pr-8">
-                                Visualize complex relationships between your data entities. Explore connections, patterns, and network structures within your saved tables.
+                                {t("graphDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -1364,8 +1364,8 @@ export default function DatabaseManager() {
                                 <div className="flex items-center justify-between mb-6">
                                   <div className="flex items-center gap-2">
                                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Graphs</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">Visualization</Badge>
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedGraphs")}</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-emerald-500/10 text-emerald-600 border-emerald-200">{t("visualization")}</Badge>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {isEditMode ? (
@@ -1379,7 +1379,7 @@ export default function DatabaseManager() {
                                           }}
                                           className="h-8 text-xs px-3"
                                         >
-                                          Cancel
+                                          {t("cancel")}
                                         </Button>
                                         <Button 
                                           variant="outline" 
@@ -1389,7 +1389,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Copy className="w-3.5 h-3.5" />
-                                          Make Copy
+                                          {t("makeCopy")}
                                         </Button>
                                         <Button 
                                           variant="destructive" 
@@ -1399,7 +1399,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
-                                          Delete ({selectedItemsForEdit.length})
+                                          {t("delete")} ({selectedItemsForEdit.length})
                                         </Button>
                                       </>
                                     ) : (
@@ -1411,7 +1411,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Edit3 className="w-3.5 h-3.5" />
-                                          Edit
+                                          {t("edit")}
                                         </Button>
                                         <Button 
                                           size="sm" 
@@ -1420,7 +1420,7 @@ export default function DatabaseManager() {
                                           data-testid="button-create-new-graph"
                                         >
                                           <Plus className="w-4 h-4" />
-                                          Create New Graph
+                                          {t("createNewGraph")}
                                         </Button>
                                       </>
                                     )}
@@ -1474,7 +1474,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Graph</span>
+                                <span className="text-xs font-medium">{t("newGraph")}</span>
                               </div>
                             </Card>
                           </div>
@@ -1501,13 +1501,13 @@ export default function DatabaseManager() {
                             <div className="flex items-center gap-3">
                               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live Draft</span>
+                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">{t("liveDraft")}</span>
                               </div>
                               <Button variant="outline" size="sm" className="h-9 gap-2 bg-background border-border shadow-sm hover:bg-secondary/50" onClick={() => {
-                                toast({ title: "Saved", description: "Changes have been saved successfully.", duration: 2000 });
+                                toast({ title: t("saved"), description: t("savedSuccessfully"), duration: 2000 });
                               }}>
                                 <Save className="w-4 h-4" />
-                                <span className="font-semibold">Save Changes</span>
+                                <span className="font-semibold">{t("saveChanges")}</span>
                               </Button>
                             </div>
                           </div>
@@ -1567,11 +1567,11 @@ export default function DatabaseManager() {
                                <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
                                  <Network className="w-8 h-8 text-primary/50" />
                                </div>
-                               <h3 className="text-lg font-medium text-foreground">Graph Visualization</h3>
+                               <h3 className="text-lg font-medium text-foreground">{t("graphVisualization")}</h3>
                                <p className="max-w-md text-center mt-2 mb-6 text-sm">
-                                 Configure your graph settings in the Graph view to visualize relationships between tables.
+                                 {t("graphVisualizationDesc")}
                                </p>
-                               <Button onClick={() => setIsGraphBuilderOpen(true)}>Open Graph Builder</Button>
+                               <Button onClick={() => setIsGraphBuilderOpen(true)}>{t("openGraphBuilder")}</Button>
                             </div>
                           )}
                         </div>
@@ -1594,8 +1594,8 @@ export default function DatabaseManager() {
                             <ArrowLeft className="h-5 w-5" />
                           </Button>
                           <div className="flex items-center gap-2">
-                            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">Pipeline Result</div>
-                            <span className="text-sm text-muted-foreground">{mockTableDataState.length} rows generated</span>
+                            <div className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-medium uppercase tracking-tight italic">{t("pipelineResult")}</div>
+                            <span className="text-sm text-muted-foreground">{mockTableDataState.length} {t("rowsGenerated")}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1603,14 +1603,14 @@ export default function DatabaseManager() {
                             <DialogTrigger asChild>
                               <Button variant="outline" className="gap-2 h-9 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm">
                                 <Plus className="h-4 w-4" />
-                                Add New Row
+                                {t("addNewRow")}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
-                                <DialogTitle>Add New Row</DialogTitle>
+                                <DialogTitle>{t("addNewRow")}</DialogTitle>
                                 <DialogDescription>
-                                  Enter values for the new record.
+                                  {t("enterNewRowValues")}
                                 </DialogDescription>
                               </DialogHeader>
                               <div className="grid gap-4 py-4">
@@ -1663,14 +1663,14 @@ export default function DatabaseManager() {
                                 </div>
                               </div>
                               <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>Cancel</Button>
-                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>Add Row</Button>
+                                <Button variant="outline" onClick={() => setIsAddRowOpen(false)}>{t("cancel")}</Button>
+                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleAddRow}>{t("addRow")}</Button>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
                           <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 h-9 shadow-sm">
                             <Save className="h-4 w-4" />
-                            Save to Table
+                            {t("saveToTable")}
                           </Button>
                         </div>
                       </div>
@@ -1747,7 +1747,7 @@ export default function DatabaseManager() {
                           {/* Pagination - directly below table */}
                           <div className="flex items-center justify-between p-3 border-t bg-card/50">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>Rows per page:</span>
+                              <span>{t("rowsPerPage")}</span>
                               <Select value={rowsPerPage.toString()} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
                                 <SelectTrigger className="h-8 w-[70px]">
                                   <SelectValue />
@@ -1828,7 +1828,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Manage and organize your data assets here. Use **Original** tables for raw source data and **Custom** tables for processed results from your pipelines. You can create new table structures manually or import them from external sources.
+                                {t("tableDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -1840,8 +1840,8 @@ export default function DatabaseManager() {
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-2">
                                 <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Tables</h3>
-                                <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedTables")}</h3>
+                                <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("storage")}</Badge>
                               </div>
                               <div className="flex items-center gap-2">
                                 {isEditMode ? (
@@ -1855,7 +1855,7 @@ export default function DatabaseManager() {
                                       }}
                                       className="h-8 text-xs px-3"
                                     >
-                                      Cancel
+                                      {t("cancel")}
                                     </Button>
                                     <Button 
                                       variant="outline" 
@@ -1865,7 +1865,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Copy className="w-3.5 h-3.5" />
-                                      Make Copy
+                                      {t("makeCopy")}
                                     </Button>
                                     <Button 
                                       variant="destructive" 
@@ -1875,7 +1875,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Trash2 className="w-3.5 h-3.5" />
-                                      Delete ({selectedTablesForEdit.length})
+                                      {t("delete")} ({selectedTablesForEdit.length})
                                     </Button>
                                   </>
                                 ) : (
@@ -1887,7 +1887,7 @@ export default function DatabaseManager() {
                                       className="h-8 text-xs px-3 gap-2"
                                     >
                                       <Edit3 className="w-3.5 h-3.5" />
-                                      Edit
+                                      {t("edit")}
                                     </Button>
                                     <Button 
                                       size="sm" 
@@ -1895,7 +1895,7 @@ export default function DatabaseManager() {
                                       onClick={() => setIsCreateTableOpen(true)}
                                     >
                                       <Plus className="w-4 h-4" />
-                                      Create New Table
+                                      {t("createNewTable")}
                                     </Button>
                                   </>
                                 )}
@@ -1907,7 +1907,7 @@ export default function DatabaseManager() {
                                     <div className="space-y-3">
                                       <div className="flex items-center gap-2 px-1">
                                         <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Original</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">{t("original")}</span>
                                         <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-slate-100 text-slate-500 border-slate-200">SOURCE</Badge>
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
@@ -1957,7 +1957,7 @@ export default function DatabaseManager() {
                                     <div className="space-y-3">
                                       <div className="flex items-center gap-2 px-1">
                                         <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Custom</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">{t("custom")}</span>
                                         <Badge variant="secondary" className="text-[9px] px-1.5 h-3.5 rounded-sm bg-indigo-50 text-indigo-500 border-indigo-100 uppercase font-bold tracking-tighter">Processed</Badge>
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
@@ -2027,7 +2027,7 @@ export default function DatabaseManager() {
                                 <X className="w-4 h-4" />
                               </button>
                               <p className="text-sm text-indigo-900/70 leading-relaxed pr-8">
-                                Write and save SQL queries to extract specific insights from your repository. Access your library of saved queries for rapid data exploration.
+                                {t("queryDescInfo")}
                               </p>
                             </div>
                           </div>
@@ -2036,8 +2036,8 @@ export default function DatabaseManager() {
                                 <div className="flex items-center justify-between mb-6">
                                   <div className="flex items-center gap-2">
                                     <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">Saved Queries</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">Repository</Badge>
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/70">{t("savedQueries")}</h3>
+                                    <Badge variant="outline" className="ml-2 text-[10px] py-0 h-4 uppercase bg-indigo-500/10 text-indigo-600 border-indigo-200">{t("storage")}</Badge>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {isEditMode ? (
@@ -2051,7 +2051,7 @@ export default function DatabaseManager() {
                                           }}
                                           className="h-8 text-xs px-3"
                                         >
-                                          Cancel
+                                          {t("cancel")}
                                         </Button>
                                         <Button 
                                           variant="outline" 
@@ -2061,7 +2061,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Copy className="w-3.5 h-3.5" />
-                                          Make Copy
+                                          {t("makeCopy")}
                                         </Button>
                                         <Button 
                                           variant="destructive" 
@@ -2071,7 +2071,7 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
-                                          Delete ({selectedItemsForEdit.length})
+                                          {t("delete")} ({selectedItemsForEdit.length})
                                         </Button>
                                       </>
                                     ) : (
@@ -2083,11 +2083,11 @@ export default function DatabaseManager() {
                                           className="h-8 text-xs px-3 gap-2"
                                         >
                                           <Edit3 className="w-3.5 h-3.5" />
-                                          Edit
+                                          {t("edit")}
                                         </Button>
                                         <Button size="sm" className="bg-primary hover:bg-primary/90 text-white gap-2" onClick={() => createNew('query')}>
                                           <Plus className="w-4 h-4" />
-                                          Create New Query
+                                          {t("createNewQuery")}
                                         </Button>
                                       </>
                                     )}
@@ -2144,7 +2144,7 @@ export default function DatabaseManager() {
                             >
                               <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                 <Plus className="w-5 h-5" />
-                                <span className="text-xs font-medium">New Query</span>
+                                <span className="text-xs font-medium">{t("newQuery")}</span>
                               </div>
                             </Card>
                           </div>
@@ -2156,28 +2156,28 @@ export default function DatabaseManager() {
                       {/* Query Editor Toolbar */}
                       <div className="h-12 border-b border-border bg-background/50 flex items-center justify-between px-4">
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-mono text-[10px] bg-secondary/50">Read-Write</Badge>
-                          <span className="text-xs text-muted-foreground">Last synced: Just now</span>
+                          <Badge variant="outline" className="font-mono text-[10px] bg-secondary/50">{t("readWrite")}</Badge>
+                          <span className="text-xs text-muted-foreground">{t("lastSyncedJustNow")}</span>
                         </div>
                         
                         <div className="flex items-center gap-2">
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mr-2" onClick={() => {
                             const isExistingQuery = sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId);
                             if (isExistingQuery) {
-                              toast({ title: "Changes Saved", description: "Query changes have been saved successfully.", duration: 2000 });
+                              toast({ title: t("changesSaved"), description: t("savedSuccessfully"), duration: 2000 });
                             } else {
                               setIsSaveDialogOpen(true);
                             }
                           }}>
                             <Save className="w-3 h-3" />
-                            {sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId) ? "Save Changes" : "Save"}
+                            {sidebarItems.find(c => c.category === 'Query')?.items?.some(i => i.id === activeTabId) ? t("saveChanges") : t("save")}
                           </Button>
                           <QueryTemplateDialog 
                             onSelectQuery={handleTemplateQuery} 
                             trigger={
                               <Button size="sm" className="h-7 text-xs gap-1 bg-indigo-600 hover:bg-indigo-700 text-white">
                                 <LayoutTemplate className="w-3 h-3" />
-                                Template
+                                {t("template")}
                               </Button>
                             }
                           />
@@ -2197,13 +2197,13 @@ export default function DatabaseManager() {
                                   <div className="flex items-center justify-between px-3 py-1.5 bg-[#181825] border-b border-[#313244]">
                                     <div className="flex items-center gap-2">
                                       <FileCode className="w-3.5 h-3.5 text-indigo-400" />
-                                      <span className="text-xs font-medium text-[#cdd6f4]">Query Editor</span>
+                                      <span className="text-xs font-medium text-[#cdd6f4]">{t("queryEditor")}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                       {block.isConverting && (
                                         <div className="flex items-center gap-1.5 mr-2">
                                           <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
-                                          <span className="text-[10px] text-[#a6adc8]">Converting...</span>
+                                          <span className="text-[10px] text-[#a6adc8]">{t("converting")}</span>
                                         </div>
                                       )}
                                       <Button
@@ -2219,7 +2219,7 @@ export default function DatabaseManager() {
                                         ) : (
                                           <ArrowLeft className="w-3 h-3 rotate-[270deg]" />
                                         )}
-                                        Convert to SQL
+                                        {t("convertToSql")}
                                       </Button>
                                       <div className="w-px h-3 bg-[#313244] mx-0.5" />
                                       <Button
@@ -2272,7 +2272,7 @@ export default function DatabaseManager() {
                                           className="w-full py-2 px-3 bg-transparent font-mono text-[13px] leading-[20px] resize-none focus:outline-none text-[#cdd6f4] min-h-0"
                                           style={{ height: `${lines.length * 20 + 16}px` }}
                                           spellCheck={false}
-                                          placeholder="Enter natural language queries, one per line..."
+                                          placeholder={t("enterNaturalLanguage")}
                                           data-testid={`textarea-query-${block.id}`}
                                         />
                                         {block.generatedSql && !block.isConverting && (
@@ -2304,10 +2304,10 @@ export default function DatabaseManager() {
                             <div className="px-4 py-2 border-b border-border bg-secondary/10 flex flex-col gap-1">
                               <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
-                                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Query Results</div>
+                                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("queryResults")}</div>
                                 </div>
                                 <div className="text-xs text-muted-foreground">
-                                  {queryData.length > 0 ? `${queryData.length} rows found` : ''}
+                                  {queryData.length > 0 ? `${queryData.length} ${t("rowsFound")}` : ''}
                                 </div>
                               </div>
                               {executedQuerySql && (
@@ -2407,7 +2407,7 @@ export default function DatabaseManager() {
                                 {/* Query Results Pagination */}
                                 <div className="flex items-center justify-between p-3 border-t bg-card/50">
                                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <span>Rows per page:</span>
+                                    <span>{t("rowsPerPage")}</span>
                                     <Select value={queryRowsPerPage.toString()} onValueChange={(v) => { setQueryRowsPerPage(Number(v)); setQueryCurrentPage(1); }}>
                                       <SelectTrigger className="h-8 w-[70px]">
                                         <SelectValue />
@@ -2482,7 +2482,7 @@ export default function DatabaseManager() {
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center">
                     <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                    <p>Select an item from the sidebar or create a new one</p>
+                    <p>{t("selectItemOrCreate")}</p>
                   </div>
                 </div>
               )
@@ -2490,7 +2490,7 @@ export default function DatabaseManager() {
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <div className="text-center">
                   <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p>Select an item from the sidebar or create a new one</p>
+                  <p>{t("selectItemOrCreate")}</p>
                 </div>
               </div>
             )}
@@ -2502,11 +2502,11 @@ export default function DatabaseManager() {
       <Dialog open={isSaveResultDialogOpen} onOpenChange={setIsSaveResultDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save Result Table</DialogTitle>
+            <DialogTitle>{t("saveResultTable")}</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-               <Label>Table Name</Label>
+               <Label>{t("tableName")}</Label>
                <Input 
                  placeholder="e.g. processed_crime_data_v1" 
                  value={newTableName}
@@ -2514,27 +2514,27 @@ export default function DatabaseManager() {
                  autoFocus
                />
                <p className="text-xs text-muted-foreground">
-                 This table will be saved to the "Table &gt; Custom" category.
+                 {t("saveTableCustomDesc")}
                </p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>Save Table</Button>
+            <Button variant="outline" onClick={() => setIsSaveResultDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleSaveResult} disabled={!newTableName.trim()}>{t("saveTable")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={isCreateCategoryOpen} onOpenChange={setIsCreateCategoryOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>Create Category</DialogTitle>
+            <DialogTitle>{t("createCategory")}</DialogTitle>
             <DialogDescription>
               Add a new subcategory under "{createCategoryParent}".
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="category-name">Category Name</Label>
+              <Label htmlFor="category-name">{t("categoryName")}</Label>
               <Input
                 id="category-name"
                 placeholder="Enter category name..."
@@ -2562,7 +2562,7 @@ export default function DatabaseManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsCreateCategoryOpen(false)}>{t("cancel")}</Button>
             <Button
               disabled={!newCategoryName.trim()}
               onClick={() => {
@@ -2581,7 +2581,7 @@ export default function DatabaseManager() {
               }}
               data-testid="button-create-category-confirm"
             >
-              Create
+              {t("create")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2590,14 +2590,14 @@ export default function DatabaseManager() {
       <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>Save Query</DialogTitle>
+            <DialogTitle>{t("saveQuery")}</DialogTitle>
             <DialogDescription>
-              Enter a name for your query to save it to the project.
+              {t("saveQueryDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Query Name</Label>
+              <Label>{t("queryName")}</Label>
               <Input
                 value={newQueryName}
                 onChange={(e) => setNewQueryName(e.target.value)}
@@ -2608,14 +2608,14 @@ export default function DatabaseManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setIsSaveDialogOpen(false); setNewQueryName(""); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setIsSaveDialogOpen(false); setNewQueryName(""); }}>{t("cancel")}</Button>
             <Button
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
               disabled={!newQueryName.trim()}
               onClick={handleSaveQuery}
               data-testid="button-save-query-confirm"
             >
-              Save
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2624,21 +2624,21 @@ export default function DatabaseManager() {
       <Dialog open={isDeleteCategoryOpen} onOpenChange={setIsDeleteCategoryOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle>{t("deleteCategory")}</DialogTitle>
             <DialogDescription>
               Select a subcategory to delete from "{deleteCategoryParent}". Items inside will also be removed.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label>{t("categoryName")}</Label>
               <select
                 value={deleteCategoryTarget}
                 onChange={(e) => setDeleteCategoryTarget(e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 data-testid="select-delete-category"
               >
-                <option value="">Select category...</option>
+                <option value="">{t("selectCategory")}</option>
                 {(sidebarItems.find(c => c.category === deleteCategoryParent)?.subcategories || []).map(sub => (
                   <option key={sub.name} value={sub.name}>{sub.name} ({sub.items.length} items)</option>
                 ))}
@@ -2651,7 +2651,7 @@ export default function DatabaseManager() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsDeleteCategoryOpen(false)}>{t("cancel")}</Button>
             <Button
               variant="destructive"
               disabled={!deleteCategoryTarget}
@@ -2670,7 +2670,7 @@ export default function DatabaseManager() {
               }}
               data-testid="button-delete-category-confirm"
             >
-              Delete
+              {t("delete")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2679,11 +2679,11 @@ export default function DatabaseManager() {
       <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
+                <DialogTitle>{t("createNewProject")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                    <Label htmlFor="project-name">Project Name</Label>
+                    <Label htmlFor="project-name">{t("projectName")}</Label>
                     <Input 
                         id="project-name" 
                         placeholder="Enter project name..." 
@@ -2695,27 +2695,27 @@ export default function DatabaseManager() {
                         autoFocus
                     />
                     <p className="text-xs text-muted-foreground">
-                        Create a new project workspace to organize your data and analysis.
+                        {t("createProjectDesc")}
                     </p>
                 </div>
             </div>
             <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>Create Project</Button>
+                <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>{t("cancel")}</Button>
+                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>{t("createProject")}</Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={isCreateGraphDialogOpen} onOpenChange={setIsCreateGraphDialogOpen}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle>Create New Graph</DialogTitle>
+            <DialogTitle>{t("createNewGraph")}</DialogTitle>
             <DialogDescription>
-              Set up a new graph to visualize relationships in your data.
+              {t("createGraphDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="graph-name">Graph Name</Label>
+              <Label htmlFor="graph-name">{t("graphName")}</Label>
               <Input
                 id="graph-name"
                 placeholder="e.g. Crime Network 2024"
@@ -2730,8 +2730,8 @@ export default function DatabaseManager() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreateGraph} disabled={!newGraphName.trim()} data-testid="button-confirm-create-graph">Create Graph</Button>
+            <Button variant="outline" onClick={() => setIsCreateGraphDialogOpen(false)}>{t("cancel")}</Button>
+            <Button onClick={handleCreateGraph} disabled={!newGraphName.trim()} data-testid="button-confirm-create-graph">{t("createGraph")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -2749,15 +2749,15 @@ export default function DatabaseManager() {
         <DialogContent className="sm:max-w-[780px]">
           <DialogHeader>
             <DialogTitle>
-              {createTableStep === 'source' && 'Create New Table'}
-              {createTableStep === 'upload' && `Upload ${createTableFileType === 'csv' ? 'CSV' : createTableFileType === 'excel' ? 'Excel' : 'JSON'} File`}
-              {createTableStep === 'preview' && 'Field Configuration'}
-              {createTableStep === 'confirm' && 'Confirm Table Creation'}
+              {createTableStep === 'source' && t("createNewTable")}
+              {createTableStep === 'upload' && `${t("upload")} ${createTableFileType === 'csv' ? 'CSV' : createTableFileType === 'excel' ? 'Excel' : 'JSON'}`}
+              {createTableStep === 'preview' && t("fieldConfiguration")}
+              {createTableStep === 'confirm' && t("confirmTableCreation")}
             </DialogTitle>
             <DialogDescription>
-              {createTableStep === 'source' && 'Select a file format to import data from.'}
-              {createTableStep === 'upload' && `Upload your ${createTableFileType === 'csv' ? '.csv' : createTableFileType === 'excel' ? '.xlsx / .xls' : '.json'} file to detect fields and create a table.`}
-              {createTableStep === 'preview' && (createTableFileName ? `Review detected fields from "${createTableFileName}". You can set aliases for each field.` : 'Parsing file...')}
+              {createTableStep === 'source' && t("selectFileFormat")}
+              {createTableStep === 'upload' && `${t("upload")} ${createTableFileType === 'csv' ? '.csv' : createTableFileType === 'excel' ? '.xlsx / .xls' : '.json'}`}
+              {createTableStep === 'preview' && (createTableFileName ? `Review detected fields from "${createTableFileName}".` : t("parsingFile"))}
               {createTableStep === 'confirm' && `Table "${createTableName}" will be created in Original tables.`}
             </DialogDescription>
           </DialogHeader>
@@ -2774,7 +2774,7 @@ export default function DatabaseManager() {
                 </div>
                 <div className="text-center">
                   <div className="text-sm font-medium">CSV</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">Comma-separated</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{t("commaSeparated")}</div>
                 </div>
               </button>
               <button
@@ -2800,7 +2800,7 @@ export default function DatabaseManager() {
                 </div>
                 <div className="text-center">
                   <div className="text-sm font-medium">JSON</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">Structured data</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">{t("structuredData")}</div>
                 </div>
               </button>
             </div>
@@ -2817,7 +2817,7 @@ export default function DatabaseManager() {
                   <Upload className="w-7 h-7 text-muted-foreground" />
                 </div>
                 <div className="text-center">
-                  <div className="text-sm font-medium">Click to upload or drag and drop</div>
+                  <div className="text-sm font-medium">{t("clickToUpload")}</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     {createTableFileType === 'csv' && 'Supports .csv files up to 50MB'}
                     {createTableFileType === 'excel' && 'Supports .xlsx and .xls files up to 50MB'}
@@ -2838,13 +2838,13 @@ export default function DatabaseManager() {
                 {isParsingFile ? (
                   <div className="flex items-center gap-1.5 ml-auto">
                     <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">Detecting fields...</span>
+                    <span className="text-[10px] text-muted-foreground">{t("detectingFields")}</span>
                   </div>
                 ) : (
                   <Badge variant="secondary" className="text-[10px] ml-auto">
                     {Object.keys(createTableSheets).length > 1 
-                      ? `${Object.keys(createTableSheets).length} sheets · ${createTableFields.length} fields`
-                      : `${createTableFields.length} fields detected`
+                      ? `${Object.keys(createTableSheets).length} sheets · ${createTableFields.length} ${t("fields")}`
+                      : `${createTableFields.length} ${t("fieldsDetected")}`
                     }
                   </Badge>
                 )}
@@ -2853,7 +2853,7 @@ export default function DatabaseManager() {
               {isParsingFile ? (
                 <div className="flex flex-col items-center gap-3 py-8 border border-border rounded-md bg-secondary/5">
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                  <span className="text-sm text-muted-foreground">Parsing file and detecting fields...</span>
+                  <span className="text-sm text-muted-foreground">{t("parsingFile")}</span>
                 </div>
               ) : (
               <>
@@ -2884,7 +2884,7 @@ export default function DatabaseManager() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label>Table Name</Label>
+                    <Label>{t("tableName")}</Label>
                     <Input
                       value={createTableName}
                       onChange={(e) => setCreateTableName(e.target.value)}
@@ -2893,7 +2893,7 @@ export default function DatabaseManager() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Destination</Label>
+                    <Label>{t("destination")}</Label>
                     <select
                       value={createTableDestination}
                       onChange={(e) => setCreateTableDestination(e.target.value as 'None' | 'Original' | 'Custom')}
@@ -2909,15 +2909,15 @@ export default function DatabaseManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Fields</Label>
+                  <Label>{t("fields")}</Label>
                   <div className="rounded-md border border-border overflow-hidden max-h-[300px] overflow-y-auto">
                     <Table>
                       <TableHeader className="sticky top-0 z-10">
                         <TableRow className="bg-secondary/20">
                           <TableHead className="text-[11px] w-[30px]">#</TableHead>
-                          <TableHead className="text-[11px]">Field Name</TableHead>
-                          <TableHead className="text-[11px]">Type</TableHead>
-                          <TableHead className="text-[11px]">Alias</TableHead>
+                          <TableHead className="text-[11px]">{t("fieldName")}</TableHead>
+                          <TableHead className="text-[11px]">{t("fieldType")}</TableHead>
+                          <TableHead className="text-[11px]">{t("alias")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -2984,26 +2984,26 @@ export default function DatabaseManager() {
             <div className="space-y-4 py-2">
               <div className="rounded-lg border border-border bg-secondary/10 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Table Name</span>
+                  <span className="text-xs text-muted-foreground">{t("tableName")}</span>
                   <span className="text-sm font-medium font-mono">{createTableName}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Source File</span>
+                  <span className="text-xs text-muted-foreground">{t("sourceFile")}</span>
                   <span className="text-sm">{createTableFileName}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Fields</span>
-                  <span className="text-sm">{createTableFields.length} columns</span>
+                  <span className="text-xs text-muted-foreground">{t("fields")}</span>
+                  <span className="text-sm">{createTableFields.length} {t("columns")}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Destination</span>
+                  <span className="text-xs text-muted-foreground">{t("destination")}</span>
                   <Badge variant="secondary" className="text-[10px]">{createTableDestination}</Badge>
                 </div>
               </div>
               <div className="text-xs text-muted-foreground">
                 {createTableFields.filter(f => f.alias.trim()).length > 0 && (
                   <div className="space-y-1">
-                    <span className="font-medium">Aliases configured:</span>
+                    <span className="font-medium">{t("aliasesConfigured")}</span>
                     {createTableFields.filter(f => f.alias.trim()).map((f, i) => (
                       <div key={i} className="flex items-center gap-1 pl-2">
                         <span className="font-mono">{f.name}</span>
@@ -3019,27 +3019,27 @@ export default function DatabaseManager() {
 
           <DialogFooter>
             {createTableStep === 'source' && (
-              <Button variant="outline" onClick={() => setIsCreateTableOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsCreateTableOpen(false)}>{t("cancel")}</Button>
             )}
             {createTableStep === 'upload' && (
               <>
-                <Button variant="outline" onClick={() => setCreateTableStep('source')}>Back</Button>
+                <Button variant="outline" onClick={() => setCreateTableStep('source')}>{t("back")}</Button>
               </>
             )}
             {createTableStep === 'preview' && (
               <>
-                <Button variant="outline" onClick={() => setCreateTableStep('upload')}>Back</Button>
+                <Button variant="outline" onClick={() => setCreateTableStep('upload')}>{t("back")}</Button>
                 <Button onClick={() => setCreateTableStep('confirm')} disabled={!createTableName.trim() || isParsingFile} data-testid="button-next-confirm">
-                  Next
+                  {t("next")}
                 </Button>
               </>
             )}
             {createTableStep === 'confirm' && (
               <>
-                <Button variant="outline" onClick={() => setCreateTableStep('preview')}>Back</Button>
+                <Button variant="outline" onClick={() => setCreateTableStep('preview')}>{t("back")}</Button>
                 <Button onClick={handleCreateTableConfirm} data-testid="button-create-table-confirm">
                   <Check className="w-4 h-4 mr-1" />
-                  Create Table
+                  {t("createTable")}
                 </Button>
               </>
             )}

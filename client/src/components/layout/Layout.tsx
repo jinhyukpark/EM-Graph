@@ -29,7 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 // Mock Organizations (duplicated for mockup)
 const MOCK_ORGS = [
-  { id: "org-1", name: "Acme Corp", members: 12, role: "Admin", plan: "Enterprise" },
+  { id: "org-1", name: "코오롱베니트", members: 12, role: "Admin", plan: "Enterprise" },
   { id: "org-2", name: "CyberSec Team", members: 5, role: "Member", plan: "Pro" },
   { id: "org-3", name: "Data Lab", members: 3, role: "Viewer", plan: "Free" }
 ];
@@ -464,6 +464,15 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
               <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
+              <NavItem href="/business-glossary" icon={BookOpen} label={t("businessGlossary")} />
+            </div>
+          )}
+
+          {!isProjectView && (
+            <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("intelligence")}</div>}
+              <NavItem href="/intelligence/search" icon={Search} label={t("intelliSearch")} />
+              <NavItem href="/intelligence/chatbot" icon={MessageSquare} label={t("intelliChatbot")} />
             </div>
           )}
         </nav>
@@ -528,14 +537,46 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               )}
             </div>
             {!isCollapsed && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                onClick={handleLogoutClick}
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      onClick={() => setLanguage(language === "en" ? "ko" : "en")}
+                      data-testid="button-language-toggle"
+                    >
+                      <Globe className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
+                </Tooltip>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  onClick={handleLogoutClick}
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+            {isCollapsed && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    onClick={() => setLanguage(language === "en" ? "ko" : "en")}
+                    data-testid="button-language-toggle-collapsed"
+                  >
+                    <Globe className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>
