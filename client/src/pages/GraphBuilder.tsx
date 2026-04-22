@@ -2,14 +2,12 @@ import { useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, X, Plus, GripVertical, Trash2, Settings, Circle, Info } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Circle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/lib/i18n";
+import { generateId, removeItemById } from "@/lib/arrayUtils";
 
 interface Link {
   id: string;
@@ -45,7 +43,6 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
         <div
           className="text-muted-foreground/40 cursor-grab active:cursor-grabbing hover:text-muted-foreground/70 transition-colors"
           onPointerDown={(e) => dragControls.start(e)}
-          data-testid={`drag-handle-node-${node.id}`}
         >
           <GripVertical className="w-4 h-4" />
         </div>
@@ -53,23 +50,18 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
       <div className="col-span-3 space-y-2">
         <Label className="text-xs font-medium text-muted-foreground">{t("tableSource")}</Label>
         <Select defaultValue={node.table}>
-          <SelectTrigger>
-            <SelectValue placeholder={t("selectTable")} />
-          </SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("selectTable")} /></SelectTrigger>
           <SelectContent>
             <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
             <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
           </SelectContent>
         </Select>
       </div>
-      
       <div className="col-span-7">
         <div className="space-y-2">
           <Label className="text-xs font-medium text-muted-foreground">{t("nodeField")}</Label>
           <Select defaultValue={node.labelField}>
-            <SelectTrigger>
-              <SelectValue placeholder={t("selectField")} />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("selectField")} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="type">type</SelectItem>
               <SelectItem value="name">name</SelectItem>
@@ -78,7 +70,6 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
           </Select>
         </div>
       </div>
-
       <div className="col-span-1 flex justify-end">
         <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => onRemove(node.id)}>
           <Trash2 className="w-4 h-4" />
@@ -101,14 +92,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      <div
-        className="mr-4 text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
-        onPointerDown={(e) => dragControls.start(e)}
-        data-testid={`drag-handle-link-${link.id}`}
-      >
+      <div className="mr-4 text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors" onPointerDown={(e) => dragControls.start(e)}>
         <GripVertical className="w-4 h-4" />
       </div>
-      
       <div className="flex-1 flex items-center gap-4">
         <div className="flex-1">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">{t("source")}</div>
@@ -129,11 +115,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </Select>
           </div>
         </div>
-
-        <div className="pt-5 text-muted-foreground">
-          <ArrowRight className="w-4 h-4" />
-        </div>
-
+        <div className="pt-5 text-muted-foreground"><ArrowRight className="w-4 h-4" /></div>
         <div className="flex-1">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 ml-1">{t("target")}</div>
           <div className="flex gap-2">
@@ -154,7 +136,6 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
       </div>
-
       <div className="ml-4 pt-5">
         <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
           <Trash2 className="w-4 h-4" />
@@ -169,40 +150,15 @@ export default function GraphBuilder() {
   const [links, setLinks] = useState<Link[]>([
     { id: "1", sourceTable: "crime_incidents_2024", sourceColumn: "suspect_id", targetTable: "suspect_profiles", targetColumn: "id" }
   ]);
-
   const [nodes, setNodes] = useState<NodeConfig[]>([
     { id: "1", table: "crime_incidents_2024", labelField: "type", sizeField: "severity", colorField: "severity", icon: "Circle" },
     { id: "2", table: "suspect_profiles", labelField: "name", sizeField: "age", colorField: "age", icon: "User" }
   ]);
 
-  const addLink = () => {
-    setLinks([...links, { 
-      id: Date.now().toString(), 
-      sourceTable: "", 
-      sourceColumn: "", 
-      targetTable: "", 
-      targetColumn: "" 
-    }]);
-  };
-
-  const removeLink = (id: string) => {
-    setLinks(links.filter(l => l.id !== id));
-  };
-
-  const addNode = () => {
-    setNodes([...nodes, { 
-      id: Date.now().toString(), 
-      table: "", 
-      labelField: "", 
-      sizeField: "", 
-      colorField: "", 
-      icon: "Circle" 
-    }]);
-  };
-
-  const removeNode = (id: string) => {
-    setNodes(nodes.filter(n => n.id !== id));
-  };
+  const addLink = () => setLinks([...links, { id: generateId(), sourceTable: "", sourceColumn: "", targetTable: "", targetColumn: "" }]);
+  const removeLink = (id: string) => setLinks(removeItemById(links, id));
+  const addNode = () => setNodes([...nodes, { id: Date.now().toString(), table: "", labelField: "", sizeField: "", colorField: "", icon: "Circle" }]);
+  const removeNode = (id: string) => setNodes(nodes.filter(n => n.id !== id));
 
   return (
     <Layout>
@@ -210,9 +166,7 @@ export default function GraphBuilder() {
         <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full p-8 overflow-y-auto">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <Network className="w-6 h-6" />
-              </div>
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><Network className="w-6 h-6" /></div>
               <h1 className="text-2xl font-bold">{t("graphBuilder")}</h1>
             </div>
             <p className="text-muted-foreground">{t("graphBuilderDesc")}</p>
@@ -250,14 +204,12 @@ export default function GraphBuilder() {
                     <Plus className="w-4 h-4" /> {t("addLink")}
                   </Button>
                </div>
-               
                <div className="p-6 bg-secondary/5 min-h-[200px]">
                  <Reorder.Group axis="y" values={links} onReorder={setLinks} className="space-y-3">
                    {links.map((link) => (
                      <DraggableLinkItem key={link.id} link={link} onRemove={removeLink} />
                    ))}
                  </Reorder.Group>
-
                  {links.length === 0 && (
                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-background/50">
                       <Network className="w-8 h-8 mx-auto mb-2 opacity-20" />

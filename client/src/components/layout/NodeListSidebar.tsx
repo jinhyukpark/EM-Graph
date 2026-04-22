@@ -14,22 +14,22 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { cn } from "@/lib/utils";
 
 // Stock images for mock data
-import imgKang from '@assets/stock_images/asian_man_portrait_s_c2051204.jpg';
-import imgKim from '@assets/stock_images/asian_woman_portrait_8e05b02c.jpg';
-import imgPark from '@assets/stock_images/asian_man_portrait_s_8e97e0a5.jpg';
-import imgStation from '@assets/stock_images/subway_station_entra_fd329c94.jpg';
-import imgCar from '@assets/stock_images/hyundai_sonata_silve_5f184276.jpg';
-import imgLee from '@assets/stock_images/asian_man_portrait_s_874ea05d.jpg';
-import imgChoi from '@assets/stock_images/asian_woman_portrait_5bef3717.jpg';
-import imgWarehouse from '@assets/stock_images/warehouse_building_i_2038a214.jpg';
-import imgPhone from '@assets/stock_images/smartphone_generic_7f33ffa4.jpg';
+const imgKang = "/assets/generated_images/hacker_in_dark_hoodie_with_digital_code_overlay.png";
+const imgKim = "/assets/generated_images/scientist_with_test_tube.png";
+const imgPark = "/assets/generated_images/police_detectives_in_high-tech_room.png";
+const imgStation = "/assets/generated_images/subtle_graph_network_pattern_background.png";
+const imgCar = "/assets/generated_images/cargo_ship_at_harbor.png";
+const imgLee = "/assets/generated_images/ai_suggesting_connections_ui.png";
+const imgChoi = "/assets/generated_images/abstract_collaboration_network_illustration.png";
+const imgWarehouse = "/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png";
+const imgPhone = "/assets/generated_images/data_import_and_mapping_ui.png";
 
-import imgMugshot1 from '@assets/stock_images/mugshot_of_a_crimina_0401f1c6.jpg';
-import imgMugshot2 from '@assets/stock_images/mugshot_of_a_crimina_4136a6c1.jpg';
-import imgMugshot3 from '@assets/stock_images/mugshot_of_a_crimina_64a82a3e.jpg';
-import imgEvidence1 from '@assets/stock_images/evidence_photo_crime_bfceb691.jpg';
-import imgEvidence2 from '@assets/stock_images/evidence_photo_crime_5d2c2e54.jpg';
-import imgEvidence3 from '@assets/stock_images/evidence_photo_crime_dcf42457.jpg';
+const imgMugshot1 = "/assets/generated_images/dark_mode_graph_analysis_software_dashboard_for_investigation.png";
+const imgMugshot2 = "/assets/generated_images/digital_network_graph_connecting_suspects_and_evidence.png";
+const imgMugshot3 = "/assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png";
+const imgEvidence1 = "/assets/generated_images/drag_and_drop_node_interface_ui.png";
+const imgEvidence2 = "/assets/generated_images/abstract_graph_analytics_illustration.png";
+const imgEvidence3 = "/assets/generated_images/abstract_database_ontology_illustration.png";
 
 interface NodeData {
   id: string;
