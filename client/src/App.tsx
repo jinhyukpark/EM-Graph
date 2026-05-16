@@ -20,7 +20,6 @@ import SignUp from "@/pages/SignUp";
 import OrganizationSelect from "@/pages/OrganizationSelect";
 import KnowledgeGarden from "@/pages/KnowledgeGarden";
 import BrainMarket from "@/pages/BrainMarket";
-import BrainDetail from "@/pages/BrainDetail";
 import IntelliSearch from "@/pages/IntelliSearch";
 import Chatbot from "@/pages/Chatbot";
 import BusinessGlossary from "@/pages/BusinessGlossary";
@@ -53,7 +52,6 @@ function AppRouter() {
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
         <Route path="/brain-market" component={BrainMarket} />
-        <Route path="/brain-market/:id" component={BrainDetail} />
         <Route path="/business-glossary" component={BusinessGlossary} />
         <Route path="/create" component={CreateProject} />
         <Route path="/project/:id/setup" component={ProjectSetup} />
