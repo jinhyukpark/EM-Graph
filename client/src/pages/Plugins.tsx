@@ -803,11 +803,12 @@ export default function Plugins() {
                   이번 주 {PLUGINS.length}개의 새로운 리소스가 추가되었습니다
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight leading-tight">
-                  필요에 맞게 제작된{' '}
+                  나에게 필요한 모든 기능 지금 바로
+                  <br />
                   <span className="bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
                     강력한 도구
-                  </span>{' '}
-                  살펴보기
+                  </span>
+                  들을 살펴보세요
                 </h1>
 
                 {/* Gradient-bordered search */}
