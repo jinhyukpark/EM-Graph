@@ -803,8 +803,9 @@ export default function Plugins() {
                   이번 주 {PLUGINS.length}개의 새로운 리소스가 추가되었습니다
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight leading-tight">
-                  나에게 필요한 모든 기능 지금 바로
+                  나에게 필요한 모든 기능
                   <br />
+                  지금 바로{' '}
                   <span className="bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
                     강력한 도구
                   </span>
