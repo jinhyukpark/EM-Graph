@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
@@ -797,21 +797,34 @@ export default function Settings() {
                            </div>
                          </div>
                          {p.canceled ? (
-                           <Button variant="outline" size="sm" disabled className="shrink-0">
-                             {t("stPluginStatusCanceled")}
+                           <Button variant="ghost" size="icon" disabled className="shrink-0 h-8 w-8">
+                             <MoreHorizontal className="w-4 h-4" />
                            </Button>
                          ) : (
                            <AlertDialog>
-                             <AlertDialogTrigger asChild>
-                               <Button
-                                 variant="outline"
-                                 size="sm"
-                                 className="shrink-0 text-destructive hover:text-destructive"
-                                 data-testid={`button-cancel-plugin-${p.id}`}
-                               >
-                                 {t("stPluginCancel")}
-                               </Button>
-                             </AlertDialogTrigger>
+                             <DropdownMenu>
+                               <DropdownMenuTrigger asChild>
+                                 <Button
+                                   variant="ghost"
+                                   size="icon"
+                                   className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
+                                   data-testid={`button-plugin-menu-${p.id}`}
+                                 >
+                                   <MoreHorizontal className="w-4 h-4" />
+                                 </Button>
+                               </DropdownMenuTrigger>
+                               <DropdownMenuContent align="end">
+                                 <AlertDialogTrigger asChild>
+                                   <DropdownMenuItem
+                                     className="text-destructive focus:text-destructive gap-2"
+                                     onSelect={(e) => e.preventDefault()}
+                                     data-testid={`menuitem-cancel-plugin-${p.id}`}
+                                   >
+                                     <Trash2 className="w-4 h-4" /> {t("stPluginCancel")}
+                                   </DropdownMenuItem>
+                                 </AlertDialogTrigger>
+                               </DropdownMenuContent>
+                             </DropdownMenu>
                              <AlertDialogContent>
                                <AlertDialogHeader>
                                  <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
