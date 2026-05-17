@@ -13,7 +13,8 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
-  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon
+  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
+  Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -2081,6 +2082,61 @@ export default function KnowledgeGarden() {
                     </div>
                   </div>
                 ) : (
+                <>
+                <div className="shrink-0 border-b border-border bg-background/80 backdrop-blur-sm px-3 py-2 flex items-center gap-1 overflow-x-auto" data-testid="editor-toolbar">
+                  {[
+                    { Icon: Heading1, label: 'H1', testId: 'h1' },
+                    { Icon: Heading2, label: 'H2', testId: 'h2' },
+                    { Icon: Heading3, label: 'H3', testId: 'h3' },
+                  ].map(({ Icon, label, testId }) => (
+                    <button
+                      key={testId}
+                      data-testid={`editor-${testId}`}
+                      title={label}
+                      className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  ))}
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <button data-testid="editor-undo" title="실행 취소" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <Undo2 className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-redo" title="다시 실행" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <Redo2 className="w-4 h-4" />
+                  </button>
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <button data-testid="editor-bold" title="굵게" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <Bold className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-italic" title="기울임" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <Italic className="w-4 h-4" />
+                  </button>
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <button data-testid="editor-list" title="글머리 기호" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-ordered-list" title="번호 매기기" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <ListOrdered className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-checklist" title="체크리스트" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <CheckSquare className="w-4 h-4" />
+                  </button>
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <button data-testid="editor-link" title="링크" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <Link2 className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-table" title="표" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <TableIcon className="w-4 h-4" />
+                  </button>
+                  <button data-testid="editor-image" title="이미지" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    <ImagePlus className="w-4 h-4" />
+                  </button>
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <button data-testid="editor-more" className="h-8 px-2 inline-flex items-center gap-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
+                    더보기 <ChevronDown className="w-3 h-3" />
+                  </button>
+                </div>
                 <ScrollArea className="flex-1 bg-white">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                     <div className="space-y-6">
@@ -2470,6 +2526,7 @@ export default function KnowledgeGarden() {
                       </div>
                     </div>
                 </ScrollArea>
+                </>
                 )}
               </ResizablePanel>
                   )}
