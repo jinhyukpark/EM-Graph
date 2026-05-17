@@ -76,10 +76,11 @@ export default function Settings() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 lg:w-[900px]">
+          <TabsList className="grid w-full grid-cols-7 lg:w-[1000px]">
             <TabsTrigger value="account">{t("accountSecurity")}</TabsTrigger>
             <TabsTrigger value="team">{t("teamRoles")}</TabsTrigger>
-            <TabsTrigger value="billing">{t("billingLicense")}</TabsTrigger>
+            <TabsTrigger value="license">{t("billingLicense")}</TabsTrigger>
+            <TabsTrigger value="billing">{t("billingTab")}</TabsTrigger>
             <TabsTrigger value="usage">{t("usage")}</TabsTrigger>
             <TabsTrigger value="ai-settings">{t("aiSettings")}</TabsTrigger>
             <TabsTrigger value="mcp">{t("mcpIntegrations")}</TabsTrigger>
@@ -599,8 +600,8 @@ export default function Settings() {
             </Card>
           </TabsContent>
 
-          {/* Billing & License Tab */}
-          <TabsContent value="billing" className="space-y-6">
+          {/* License Tab */}
+          <TabsContent value="license" className="space-y-6">
              <div className="space-y-1">
                <h2 className="text-2xl font-bold tracking-tight" data-testid="text-license-title">{t("stLicenseTitle")}</h2>
                <p className="text-sm text-muted-foreground">{t("stLicenseSubtitle")}</p>
@@ -848,8 +849,10 @@ export default function Settings() {
                </CardContent>
              </Card>
 
-             <Separator className="my-6" />
+          </TabsContent>
 
+          {/* Billing Tab */}
+          <TabsContent value="billing" className="space-y-6">
              <div className="space-y-1 mb-4">
                <h2 className="text-2xl font-bold tracking-tight" data-testid="text-billing-info-title">{t("stBillingInfoTitle")}</h2>
                <p className="text-sm text-muted-foreground">{t("stBillingInfoSubtitle")}</p>
