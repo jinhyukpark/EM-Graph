@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import Layout, { useSidebar } from "@/components/layout/Layout";
+import Layout from "@/components/layout/Layout";
 import { PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,15 +49,14 @@ const CONNECTIONS = [
   { id: "outlook", name: "Outlook", icon: "O", color: "text-blue-500" },
 ];
 
-function SidebarToggleButton() {
-  const { toggle } = useSidebar();
+function SidebarToggleButton({ onToggle }: { onToggle: () => void }) {
   return (
     <button
-      onClick={toggle}
+      onClick={onToggle}
       className="p-1.5 -ml-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted"
-      title="사이드바 토글"
-      aria-label="Toggle sidebar"
-      data-testid="button-toggle-sidebar"
+      title="패널 토글"
+      aria-label="Toggle calendar panel"
+      data-testid="button-toggle-calendar-panel"
     >
       <PanelLeft className="w-4 h-4" />
     </button>
@@ -183,6 +182,8 @@ export default function CalendarPage() {
     }, {});
   }, []);
 
+  const [panelOpen, setPanelOpen] = useState(true);
+
   const monthLabel = `${cursor.getFullYear()}년 ${cursor.getMonth() + 1}월`;
   const shiftMonth = (delta: number) =>
     setCursor((c) => new Date(c.getFullYear(), c.getMonth() + delta, 1));
@@ -215,9 +216,9 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex-1 flex flex-col px-8 pb-6 min-h-0">
-          <div className="grid grid-cols-[280px_1fr] gap-0 flex-1 min-h-0">
+          <div className={`grid ${panelOpen ? "grid-cols-[280px_1fr]" : "grid-cols-[0px_1fr]"} gap-0 flex-1 min-h-0 transition-[grid-template-columns] duration-200`}>
             {/* Sidebar */}
-            <aside className="space-y-6 overflow-y-auto pt-6 pr-6 border-r border-border">
+            <aside className={`space-y-6 overflow-y-auto pt-6 pr-6 border-r border-border ${panelOpen ? "" : "hidden"}`}>
               {/* Mini calendar */}
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -312,7 +313,7 @@ export default function CalendarPage() {
             <section className="relative flex flex-col min-h-0 pt-6">
               <div className="flex items-center justify-between mb-4 shrink-0 pl-6">
                 <div className="flex items-center gap-2">
-                  <SidebarToggleButton />
+                  <SidebarToggleButton onToggle={() => setPanelOpen((v) => !v)} />
                   <div className="text-base font-semibold">{monthLabel}</div>
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
