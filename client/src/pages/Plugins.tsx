@@ -228,43 +228,78 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
       {/* Body Two-Col */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Main content */}
-        <div className="space-y-6 text-sm leading-relaxed">
-          <h2 className="text-lg font-bold text-foreground">{plugin.desc}</h2>
-          <p className="text-muted-foreground">
-            <span className="text-blue-600 font-medium">{plugin.vendor}</span>가 제공하는 {plugin.name}은(는) EM-Graph 워크스페이스의 데이터와 그래프 자산을
-            안전하게 자동화하고 풍부하게 만드는 솔루션입니다. 전 세계 수천 개의 팀이 일상적으로 사용 중이며,
-            <span className="text-blue-600 underline mx-1">데이터 손실, 보안 이슈, 자동화 오류</span>로부터 비즈니스를 보호합니다.
-          </p>
-          <div>
-            <p className="font-medium text-foreground mb-2">{plugin.name}을(를) 사용하면 다음을 얻을 수 있습니다:</p>
-            <ul className="space-y-2 list-disc pl-5 text-muted-foreground">
-              <li><span className="font-semibold text-foreground">자동화된 백업 & 동기화</span> — 워크스페이스, 보드, 항목 데이터를 365일 자동 백업합니다.</li>
-              <li><span className="font-semibold text-foreground">엔터프라이즈급 보안</span> — TLS 1.2 / AES-256 암호화, 사내 보안 팀 운영.</li>
-              <li><span className="font-semibold text-foreground">규정 준수</span> — ISO 27001, SOC 2, GDPR, HIPAA 요구사항 충족.</li>
-              <li><span className="font-semibold text-foreground">세밀한 복원 기능</span> — 단일 항목부터 전체 워크스페이스까지 원하는 시점으로 빠르게 복원합니다.</li>
-              <li><span className="font-semibold text-foreground">매끄러운 통합</span> — EM-Graph 워크플로우를 방해하지 않고 몇 분 안에 설정 완료.</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-medium text-foreground mb-2">누가 {plugin.name}을(를) 사용하나요?</p>
-            <ul className="space-y-2 list-disc pl-5 text-muted-foreground">
-              <li><span className="font-semibold text-foreground">IT & 보안 팀</span> — 비즈니스 연속성과 보안을 보장합니다.</li>
-              <li><span className="font-semibold text-foreground">프로젝트 매니저</span> — AI 기반 자동화로 일상 운영의 데이터 손실을 방지합니다.</li>
-              <li><span className="font-semibold text-foreground">리스크 & 컴플라이언스</span> — 감사 로그 유지 및 규제 대응을 손쉽게.</li>
-            </ul>
-          </div>
-          <p className="text-muted-foreground">지금 바로 {plugin.name}과 함께 EM-Graph 데이터를 보호하세요!</p>
+        <div className="space-y-8 text-sm leading-relaxed">
+          {/* 이 자료에 대하여 */}
+          <section>
+            <h3 className="text-base font-bold text-foreground mb-3">이 자료에 대하여</h3>
+            <p className="text-muted-foreground leading-7">
+              본 {plugin.name} 서비스는 EM-Graph 워크스페이스의 데이터를 종합적으로 분석하여 노드별·관계별 인사이트(연결 강도와 방향)를 정량화된 지표로 제공하는 서비스입니다.
+              단순 통계 정보가 아닌 일정 기간 동안의 추세 지속성, 변동성 대비 활동 강도, 트래픽 기반 신뢰도 등을 함께 반영하여 보다 정교한 비즈니스 판단을 지원하는 것이 특징이며,
+              실시간에 가까운 데이터를 기반으로 AI가 진단한 핵심 지표와 시장 대비 변화율을 제공하여 단기 운영부터 중장기 전략 수립까지 활용 가능한 구조로 설계된 {plugin.category} 서비스입니다.
+            </p>
+          </section>
 
-          <div className="pt-4 space-y-1 text-sm">
-            <a className="block text-blue-600 hover:underline" href="#">Overview</a>
-            <a className="block text-blue-600 hover:underline" href="#">데모 예약</a>
-            <a className="block text-blue-600 hover:underline" href="#">시작하기</a>
-            <a className="block text-blue-600 hover:underline" href="#">가이드</a>
-            <a className="block text-blue-600 hover:underline" href="#">FAQ</a>
-          </div>
+          {/* 주요 기능 */}
+          <section>
+            <h3 className="text-base font-bold text-foreground mb-3">주요 기능</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                '노드별 활동 지표 제공',
+                '기간별 추세 분석 (5일/10일/20일)',
+                '시계열 데이터 조회 API (최근 6개월)',
+                '실시간 알림 및 이벤트 트리거',
+              ].map(feature => (
+                <div
+                  key={feature}
+                  className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-emerald-50/70 border border-emerald-100"
+                  data-testid={`feature-${feature}`}
+                >
+                  <Star className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="text-sm text-emerald-900">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </section>
 
-          <div className="pt-4">
-            <h3 className="font-bold text-foreground mb-3">다음에서 앱(을)를 사용할 수 있습니다</h3>
+          {/* 사용 예시 */}
+          <section>
+            <h3 className="text-base font-bold text-foreground mb-3">사용 예시</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                {
+                  title: '핵심 노드 선별 전략 구축',
+                  desc: '활동 점수가 높은 노드를 선별하여 우선 분석 후보군으로 활용하는 전략입니다.',
+                },
+                {
+                  title: '자동화 워크플로우 연동',
+                  desc: '지표 임계값을 트리거 조건으로 활용하여 자동화 워크플로우를 구현하는 방식입니다.',
+                },
+                {
+                  title: '포트폴리오 리밸런싱 기준 활용',
+                  desc: '약화된 영역은 비중을 축소, 강화된 영역은 비중을 확대하는 방식으로 자원을 조정하는 기준입니다.',
+                },
+                {
+                  title: '인사이트 대시보드 구성',
+                  desc: 'API 형태로 제공되어 분석 시스템, 운영 대시보드, 리서치 플랫폼 등 다양한 환경에 쉽게 연동할 수 있습니다.',
+                },
+              ].map(item => (
+                <div
+                  key={item.title}
+                  className="px-4 py-3 rounded-lg bg-blue-50/60 border border-blue-100 space-y-1"
+                  data-testid={`usecase-${item.title}`}
+                >
+                  <div className="flex items-center gap-2 text-blue-900 font-semibold text-sm">
+                    <svg className="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 11 8 15 16 6" /></svg>
+                    {item.title}
+                  </div>
+                  <p className="text-xs text-blue-900/80 leading-relaxed pl-6">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="pt-2">
+            <h3 className="font-bold text-foreground mb-3">다음에서 앱을 사용할 수 있습니다</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="w-10 h-10 rounded-lg border border-border bg-secondary/40 flex items-center justify-center">
                 <Workflow className="w-5 h-5" />
