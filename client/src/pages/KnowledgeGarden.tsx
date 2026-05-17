@@ -1381,6 +1381,33 @@ export default function KnowledgeGarden() {
   const [activeTabId, setActiveTabId] = useState<string>('tab-1');
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
+  const tabScrollerRef = useRef<HTMLDivElement>(null);
+  const tabItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [hiddenTabIds, setHiddenTabIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const scroller = tabScrollerRef.current;
+    if (!scroller) return;
+    const compute = () => {
+      const w = scroller.clientWidth;
+      const next = new Set<string>();
+      tabs.forEach((t) => {
+        const el = tabItemRefs.current[t.id];
+        if (!el) return;
+        const right = el.offsetLeft + el.offsetWidth;
+        if (right > w + 1) next.add(t.id);
+      });
+      setHiddenTabIds((prev) => {
+        if (prev.size === next.size && [...prev].every((id) => next.has(id))) return prev;
+        return next;
+      });
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(scroller);
+    return () => ro.disconnect();
+  }, [tabs, showExplorer, showDocDetails, showGraph, showCopilot]);
+
   const handleAddTab = () => {
     const id = `tab-${Date.now()}`;
     setTabs(prev => [...prev, { id, title: 'New Workspace', kind: 'new' }]);
@@ -1806,7 +1833,7 @@ export default function KnowledgeGarden() {
               {showDocDetails && (
               <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
                 {/* Tab Bar */}
-                <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-x-auto">
+                <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
@@ -1816,42 +1843,93 @@ export default function KnowledgeGarden() {
                   >
                     {showExplorer ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
                   </button>
-                  {tabs.map((tab) => {
-                    const isActive = tab.id === activeTabId;
-                    return (
-                      <div
-                        key={tab.id}
-                        data-testid={`tab-${tab.id}`}
-                        onClick={() => setActiveTabId(tab.id)}
-                        className={cn(
-                          "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-sm transition-colors shrink-0",
-                          isActive
-                            ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px font-medium"
-                            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                        )}
-                      >
-                        {tab.kind === 'note' ? (
-                          <FileText className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                        ) : (
-                          <Sparkles className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                        )}
-                        <span className="truncate">{tab.title}</span>
-                        {tabs.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleCloseTab(tab.id, e)}
-                            data-testid={`button-close-tab-${tab.id}`}
-                            className={cn(
-                              "p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-opacity",
-                              isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
-                            )}
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
+                  <div ref={tabScrollerRef} className="flex-1 flex items-stretch overflow-hidden min-w-0">
+                    {tabs.map((tab) => {
+                      const isActive = tab.id === activeTabId;
+                      return (
+                        <div
+                          key={tab.id}
+                          ref={(el) => { tabItemRefs.current[tab.id] = el; }}
+                          data-testid={`tab-${tab.id}`}
+                          onClick={() => setActiveTabId(tab.id)}
+                          className={cn(
+                            "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-sm transition-colors shrink-0",
+                            isActive
+                              ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px font-medium"
+                              : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                          )}
+                        >
+                          {tab.kind === 'note' ? (
+                            <FileText className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          ) : (
+                            <Sparkles className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          )}
+                          <span className="truncate">{tab.title}</span>
+                          {tabs.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleCloseTab(tab.id, e)}
+                              data-testid={`button-close-tab-${tab.id}`}
+                              className={cn(
+                                "p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-opacity",
+                                isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
+                              )}
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {hiddenTabIds.size > 0 && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          type="button"
+                          data-testid="button-overflow-tabs"
+                          title={`숨겨진 탭 ${hiddenTabIds.size}개`}
+                          className="relative flex items-center justify-center w-12 border-l border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
+                            {hiddenTabIds.size}
+                          </span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64" data-testid="menu-overflow-tabs">
+                        <DropdownMenuLabel className="text-xs">숨겨진 탭</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {tabs.filter((t) => hiddenTabIds.has(t.id)).map((tab) => {
+                          const isActive = tab.id === activeTabId;
+                          return (
+                            <DropdownMenuItem
+                              key={tab.id}
+                              onClick={() => setActiveTabId(tab.id)}
+                              data-testid={`item-overflow-tab-${tab.id}`}
+                              className={cn("text-sm flex items-center gap-2", isActive && "bg-muted")}
+                            >
+                              {tab.kind === 'note' ? (
+                                <FileText className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                              ) : (
+                                <Sparkles className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                              )}
+                              <span className="truncate flex-1">{tab.title}</span>
+                              {tabs.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id, e); }}
+                                  className="p-0.5 rounded hover:bg-muted-foreground/10 text-muted-foreground hover:text-foreground"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              )}
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                   <button
                     type="button"
                     onClick={handleAddTab}
