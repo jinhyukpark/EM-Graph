@@ -2,7 +2,7 @@ import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { useOrgLogo } from "@/lib/orgLogo";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, BookOpen, Puzzle } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, BookOpen, Puzzle, ListTodo } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -481,6 +481,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
               <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
+              <NavItem href="/todo-list" icon={ListTodo} label={t("todoList")} />
+              <NavItem href="/calendar" icon={Calendar} label={t("calendar")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
               <NavItem href="/business-glossary" icon={BookOpen} label={t("businessGlossary")} />
             </div>

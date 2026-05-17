@@ -24,6 +24,8 @@ import IntelliSearch from "@/pages/IntelliSearch";
 import Chatbot from "@/pages/Chatbot";
 import Plugins from "@/pages/Plugins";
 import BusinessGlossary from "@/pages/BusinessGlossary";
+import TodoList from "@/pages/TodoList";
+import CalendarPage from "@/pages/CalendarPage";
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
 // but don't affect the actual functionality of the application.
@@ -52,6 +54,8 @@ function AppRouter() {
         <Route path="/dashboard" component={Home} />
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
+        <Route path="/todo-list" component={TodoList} />
+        <Route path="/calendar" component={CalendarPage} />
         <Route path="/brain-market" component={BrainMarket} />
         <Route path="/business-glossary" component={BusinessGlossary} />
         <Route path="/create" component={CreateProject} />

@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { useLanguage } from '@/lib/i18n';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -101,18 +99,6 @@ function PluginCard({ p, onClick }: { p: Plugin; onClick?: () => void }) {
         </div>
       </div>
     </Card>
-  );
-}
-
-function PluginSection({ title, plugins, onSelect }: { title: string; plugins: Plugin[]; onSelect: (p: Plugin) => void }) {
-  if (plugins.length === 0) return null;
-  return (
-    <div className="space-y-3">
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plugins.slice(0, 3).map(p => <PluginCard key={p.id} p={p} onClick={() => onSelect(p)} />)}
-      </div>
-    </div>
   );
 }
 
@@ -809,7 +795,6 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
 }
 
 export default function Plugins() {
-  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('Discover');
   const [selectedPlugin, setSelectedPlugin] = useState<Plugin | null>(null);
@@ -818,11 +803,6 @@ export default function Plugins() {
     (!query || p.name.toLowerCase().includes(query.toLowerCase()) || p.desc.toLowerCase().includes(query.toLowerCase())) &&
     (activeCat === 'Discover' || activeCat === 'Featured' || activeCat === 'For you' || activeCat === 'Trending' || activeCat === "Editor's choice" || activeCat === 'New' || activeCat === 'Favorites' || p.category === activeCat)
   );
-
-  const recentlyViewed = filtered.slice(0, 4);
-  const featured = filtered.filter(p => p.badge === 'Best' || p.badge === 'Editor');
-  const aiPlugins = filtered.filter(p => p.category === 'AI');
-  const integrations = filtered.filter(p => p.category === 'Integrations' || p.category === 'Data');
 
   return (
     <Layout>
