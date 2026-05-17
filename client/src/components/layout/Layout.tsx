@@ -1,7 +1,7 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
-import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, BookOpen } from "lucide-react";
+import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, BookOpen, Puzzle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -473,6 +473,13 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("intelligence")}</div>}
               <NavItem href="/intelligence/search" icon={Search} label={t("intelliSearch")} />
               <NavItem href="/intelligence/chatbot" icon={MessageSquare} label={t("intelliChatbot")} />
+            </div>
+          )}
+
+          {!isProjectView && (
+            <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("extensions")}</div>}
+              <NavItem href="/plugins" icon={Puzzle} label={t("plugins")} />
             </div>
           )}
         </nav>

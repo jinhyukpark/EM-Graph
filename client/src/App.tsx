@@ -22,6 +22,7 @@ import KnowledgeGarden from "@/pages/KnowledgeGarden";
 import BrainMarket from "@/pages/BrainMarket";
 import IntelliSearch from "@/pages/IntelliSearch";
 import Chatbot from "@/pages/Chatbot";
+import Plugins from "@/pages/Plugins";
 import BusinessGlossary from "@/pages/BusinessGlossary";
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
@@ -62,6 +63,7 @@ function AppRouter() {
         <Route path="/graph-builder" component={GraphBuilder} />
         <Route path="/intelligence/search" component={IntelliSearch} />
         <Route path="/intelligence/chatbot" component={Chatbot} />
+        <Route path="/plugins" component={Plugins} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>

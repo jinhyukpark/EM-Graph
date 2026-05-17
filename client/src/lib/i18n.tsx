@@ -405,6 +405,8 @@ const translations = {
     intelligence: "Intelligence",
     intelliSearch: "Intelligent Search",
     intelliChatbot: "Intelligent Chatbot",
+    extensions: "Extensions",
+    plugins: "Plugins",
     intelliSearchDesc: "Full-text and semantic search across all corporate documents with relationship graph visualization.",
     intelliSearchPlaceholder: "Search documents, materials, reports...",
     searchAction: "Search",
@@ -834,6 +836,8 @@ const translations = {
     fetched: "조회됨",
     operation: "연산",
 
+    extensions: "확장",
+    plugins: "플러그인",
     intelligence: "인텔리전스",
     intelliSearch: "지능형 검색",
     intelliChatbot: "지능형 챗봇",
