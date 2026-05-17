@@ -222,14 +222,7 @@ function ReviewsTab({ pluginId }: { pluginId: string }) {
           className="w-full px-4 py-3 text-sm rounded-xl border border-border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30 placeholder:text-muted-foreground/60"
           data-testid="input-review-content"
         />
-        <div className="flex items-center justify-between gap-3">
-          <Input
-            value={author}
-            onChange={e => setAuthor(e.target.value)}
-            placeholder="이름 (선택사항)"
-            className="h-9 text-sm max-w-[240px] rounded-lg"
-            data-testid="input-review-author"
-          />
+        <div className="flex items-center justify-end">
           <Button
             onClick={handleSubmit}
             disabled={!rating || !content.trim()}
