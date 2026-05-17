@@ -13,7 +13,9 @@ import { Calendar } from "@/components/ui/calendar";
 import type { DateRange } from "react-day-picker";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuSeparator,
+  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
+  DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
+  DropdownMenuRadioGroup, DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import {
   Sparkles, Filter, Search, Circle, CheckCircle2,
@@ -156,6 +158,20 @@ export default function TodoList() {
   const [activeShortcut, setActiveShortcut] = useState<string | null>(null);
   const [rangeOpen, setRangeOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [filterRepeat, setFilterRepeat] = useState(false);
+  const [filterFlag, setFilterFlag] = useState(false);
+  const [filterDone, setFilterDone] = useState(false);
+  const [filterDue, setFilterDue] = useState<"all" | "today" | "week" | "overdue">("all");
+  const [filterPriority, setFilterPriority] = useState<"all" | "high" | "medium" | "low">("all");
+  const [includeShared, setIncludeShared] = useState(true);
+  const [includeDone, setIncludeDone] = useState(true);
+
+  const filterActiveCount =
+    (filterRepeat ? 1 : 0) +
+    (filterFlag ? 1 : 0) +
+    (filterDone ? 1 : 0) +
+    (filterDue !== "all" ? 1 : 0) +
+    (filterPriority !== "all" ? 1 : 0);
 
   const applyShortcut = (s: RangeShortcut) => {
     const today = startOfDay(new Date());
@@ -349,10 +365,103 @@ export default function TodoList() {
                 data-testid="input-search-task"
               />
             </div>
-            <Button variant="outline" className="h-11 gap-2 px-4" data-testid="button-filter">
-              <Filter className="w-4 h-4" />
-              필터
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={`h-11 gap-2 px-4 ${filterActiveCount > 0 ? "border-violet-400 text-violet-700 bg-violet-50/50" : ""}`}
+                  data-testid="button-filter"
+                >
+                  <Filter className="w-4 h-4" />
+                  필터
+                  {filterActiveCount > 0 && (
+                    <span className="ml-0.5 h-5 min-w-5 px-1.5 rounded-full bg-violet-600 text-white text-[10px] font-semibold inline-flex items-center justify-center">
+                      {filterActiveCount}
+                    </span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 p-2">
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 pt-1 pb-2">
+                  필터 기준
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); setFilterRepeat((v) => !v); }}
+                  className={`gap-2.5 py-2 px-2 rounded-md ${filterRepeat ? "bg-violet-50 text-violet-700" : ""}`}
+                  data-testid="filter-repeat"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span className="flex-1">반복</span>
+                  {filterRepeat && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); setFilterFlag((v) => !v); }}
+                  className={`gap-2.5 py-2 px-2 rounded-md ${filterFlag ? "bg-violet-50 text-violet-700" : ""}`}
+                  data-testid="filter-flag"
+                >
+                  <Flag className="w-4 h-4" />
+                  <span className="flex-1">플래그</span>
+                  {filterFlag && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); setFilterDone((v) => !v); }}
+                  className={`gap-2.5 py-2 px-2 rounded-md ${filterDone ? "bg-violet-50 text-violet-700" : ""}`}
+                  data-testid="filter-done"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span className="flex-1">완료</span>
+                  {filterDone && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={`gap-2.5 py-2 px-2 rounded-md ${filterDue !== "all" ? "bg-violet-50 text-violet-700" : ""}`} data-testid="filter-due-trigger">
+                    <CalendarDays className="w-4 h-4" />
+                    <span className="flex-1">마감일</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="w-40">
+                    <DropdownMenuRadioGroup value={filterDue} onValueChange={(v) => setFilterDue(v as typeof filterDue)}>
+                      <DropdownMenuRadioItem value="all">전체</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="today">오늘 마감</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="week">이번 주</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="overdue">지연됨</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={`gap-2.5 py-2 px-2 rounded-md ${filterPriority !== "all" ? "bg-violet-50 text-violet-700" : ""}`} data-testid="filter-priority-trigger">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="flex-1">우선 순위</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="w-40">
+                    <DropdownMenuRadioGroup value={filterPriority} onValueChange={(v) => setFilterPriority(v as typeof filterPriority)}>
+                      <DropdownMenuRadioItem value="all">전체</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="high">높음</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="medium">보통</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="low">낮음</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator className="my-2" />
+                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 pt-1 pb-2">
+                  포함
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); setIncludeShared((v) => !v); }}
+                  className="gap-2.5 py-2 px-2 rounded-md text-violet-600 font-medium focus:text-violet-700"
+                  data-testid="filter-include-shared"
+                >
+                  <span className="flex-1">내가 공유받은 노트</span>
+                  {includeShared && <CheckCircle2 className="w-4 h-4" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); setIncludeDone((v) => !v); }}
+                  className="gap-2.5 py-2 px-2 rounded-md text-violet-600 font-medium focus:text-violet-700"
+                  data-testid="filter-include-done"
+                >
+                  <span className="flex-1">완료됨</span>
+                  {includeDone && <CheckCircle2 className="w-4 h-4" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="flex items-center gap-1.5">
               {RANGE_SHORTCUTS.map((s) => (
                 <button
