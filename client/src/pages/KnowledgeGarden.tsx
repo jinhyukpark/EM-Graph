@@ -1268,6 +1268,56 @@ export default function KnowledgeGarden() {
 
   const [showManageSubsDialog, setShowManageSubsDialog] = useState(false);
 
+  const [treeSearchQuery, setTreeSearchQuery] = useState("");
+
+  const filterTree = useCallback((nodes: any[], query: string): any[] => {
+    if (!query.trim()) return nodes;
+    const q = query.toLowerCase();
+    const walk = (node: any): any | null => {
+      const nameMatches = (node.name || "").toLowerCase().includes(q);
+      const filteredChildren = (node.children || [])
+        .map(walk)
+        .filter(Boolean);
+      if (nameMatches || filteredChildren.length > 0) {
+        if (node.type === 'note') {
+          return { ...node };
+        }
+        return { ...node, children: filteredChildren };
+      }
+      return null;
+    };
+    return nodes.map(walk).filter(Boolean);
+  }, []);
+
+  const visibleTree = filterTree(fileTree, treeSearchQuery);
+
+  type WorkTab = { id: string; title: string; kind: 'note' | 'new' };
+  const [tabs, setTabs] = useState<WorkTab[]>([
+    { id: 'tab-1', title: 'LG Energy Solution & SK Innovation', kind: 'note' },
+  ]);
+  const [activeTabId, setActiveTabId] = useState<string>('tab-1');
+  const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
+
+  const handleAddTab = () => {
+    const id = `tab-${Date.now()}`;
+    setTabs(prev => [...prev, { id, title: 'New Workspace', kind: 'new' }]);
+    setActiveTabId(id);
+  };
+
+  const handleCloseTab = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTabs(prev => {
+      if (prev.length <= 1) return prev;
+      const next = prev.filter(t => t.id !== id);
+      if (id === activeTabId) {
+        const idx = prev.findIndex(t => t.id === id);
+        const fallback = next[Math.max(0, idx - 1)] || next[0];
+        setActiveTabId(fallback.id);
+      }
+      return next;
+    });
+  };
+
   const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -1319,18 +1369,46 @@ export default function KnowledgeGarden() {
                       </Button>
                   </div>
                 </div>
+                <div className="px-3 pt-2 pb-2 border-b border-border/60 shrink-0">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70 pointer-events-none" />
+                    <Input
+                      data-testid="input-tree-search"
+                      value={treeSearchQuery}
+                      onChange={(e) => setTreeSearchQuery(e.target.value)}
+                      placeholder="노트 검색..."
+                      className="h-8 pl-8 pr-7 text-xs bg-background"
+                    />
+                    {treeSearchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setTreeSearchQuery("")}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted text-muted-foreground"
+                        data-testid="button-clear-tree-search"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                </div>
                 <ScrollArea className="flex-1">
                    <div className="p-2">
-                     {fileTree.map(node => (
-                       <FileTreeNode
-                         key={node.id}
-                         node={node}
-                         onRemoveSubscription={handleRemoveSubscription}
-                         onAddSubscription={handleAddSubscription}
-                         existingSubscriptionIds={existingSubscriptionIds}
-                         onOpenManageDialog={() => setShowManageSubsDialog(true)}
-                       />
-                     ))}
+                     {visibleTree.length === 0 ? (
+                       <div className="text-center text-xs text-muted-foreground py-8 px-2">
+                         "{treeSearchQuery}" 에 대한 검색 결과가 없습니다.
+                       </div>
+                     ) : (
+                       visibleTree.map((node: any) => (
+                         <FileTreeNode
+                           key={node.id}
+                           node={node}
+                           onRemoveSubscription={handleRemoveSubscription}
+                           onAddSubscription={handleAddSubscription}
+                           existingSubscriptionIds={existingSubscriptionIds}
+                           onOpenManageDialog={() => setShowManageSubsDialog(true)}
+                         />
+                       ))
+                     )}
                    </div>
                 </ScrollArea>
                 
@@ -1401,6 +1479,55 @@ export default function KnowledgeGarden() {
               {/* 2. Document Details */}
               {showDocDetails && (
               <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
+                {/* Tab Bar */}
+                <div className="flex items-stretch h-9 border-b border-border bg-muted/30 shrink-0 overflow-x-auto">
+                  {tabs.map((tab) => {
+                    const isActive = tab.id === activeTabId;
+                    return (
+                      <div
+                        key={tab.id}
+                        data-testid={`tab-${tab.id}`}
+                        onClick={() => setActiveTabId(tab.id)}
+                        className={cn(
+                          "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-xs transition-colors shrink-0",
+                          isActive
+                            ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px"
+                            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                        )}
+                      >
+                        {tab.kind === 'note' ? (
+                          <FileText className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                        ) : (
+                          <Sparkles className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                        )}
+                        <span className="truncate">{tab.title}</span>
+                        {tabs.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleCloseTab(tab.id, e)}
+                            data-testid={`button-close-tab-${tab.id}`}
+                            className={cn(
+                              "p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-opacity",
+                              isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
+                            )}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={handleAddTab}
+                    data-testid="button-add-tab"
+                    className="flex items-center justify-center w-9 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                    title="새 탭"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
                 <div className="h-16 border-b border-border flex items-center justify-between px-6 shrink-0 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
                   <div className="flex items-center gap-3">
                      {!showExplorer && (
@@ -1411,13 +1538,17 @@ export default function KnowledgeGarden() {
                      <div className="p-1.5 bg-blue-50 rounded-lg">
                         <FileText className="w-4 h-4 text-blue-600" />
                      </div>
-                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="hover:text-foreground cursor-pointer transition-colors">Knowledge Garden</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="hover:text-foreground cursor-pointer transition-colors">2024 Analysis</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                        <span className="font-medium text-foreground">LG Energy Solution & SK Innovation</span>
-                     </div>
+                     {activeTab?.kind === 'note' ? (
+                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="hover:text-foreground cursor-pointer transition-colors">Knowledge Garden</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                          <span className="hover:text-foreground cursor-pointer transition-colors">2024 Analysis</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                          <span className="font-medium text-foreground">{activeTab.title}</span>
+                       </div>
+                     ) : (
+                       <div className="text-sm font-medium text-foreground">{activeTab?.title || 'New Workspace'}</div>
+                     )}
                   </div>
                   
                   <div className="flex items-center gap-2">
@@ -1432,6 +1563,27 @@ export default function KnowledgeGarden() {
                   </div>
                 </div>
 
+                {activeTab?.kind === 'new' ? (
+                  <div className="flex-1 flex items-center justify-center bg-white">
+                    <div className="text-center max-w-md px-8 py-16">
+                      <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                        <Plus className="w-8 h-8 text-blue-500" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">새로운 작업 공간</h3>
+                      <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+                        왼쪽 탐색기에서 노트를 선택하거나 새 노트를 만들어 이 탭에서 작업을 시작하세요.
+                      </p>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button variant="outline" size="sm" onClick={handleAddNewFile} data-testid="button-newtab-create-note">
+                          <Plus className="w-3.5 h-3.5 mr-1.5" /> 새 노트 만들기
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setTreeSearchQuery("")} data-testid="button-newtab-browse">
+                          <Search className="w-3.5 h-3.5 mr-1.5" /> 노트 찾아보기
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
                 <ScrollArea className="flex-1 bg-white">
                   <div className="max-w-3xl mx-auto p-8 space-y-8">
                     <div className="space-y-6">
@@ -1821,6 +1973,7 @@ export default function KnowledgeGarden() {
                       </div>
                     </div>
                 </ScrollArea>
+                )}
               </ResizablePanel>
                   )}
 
