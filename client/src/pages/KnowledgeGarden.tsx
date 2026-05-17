@@ -1688,27 +1688,8 @@ export default function KnowledgeGarden() {
                           <DropdownMenuItem onClick={handleAddNewFile} data-testid="item-add-note" className="text-sm">
                             새 노트 추가
                           </DropdownMenuItem>
-                          <DropdownMenuItem data-testid="item-add-note-template" className="text-sm">
-                            템플릿에서 새 노트 추가
-                          </DropdownMenuItem>
-                          <DropdownMenuItem disabled className="text-sm">
-                            공간으로 이동
-                          </DropdownMenuItem>
                           <DropdownMenuItem data-testid="item-share-notebook" className="text-sm">
                             노트북 공유
-                          </DropdownMenuItem>
-                          <DropdownMenuItem data-testid="item-rename-notebook" className="text-sm">
-                            노트북 이름 바꾸기
-                          </DropdownMenuItem>
-                          <DropdownMenuItem disabled className="text-sm">
-                            노트북 삭제
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem data-testid="item-add-shortcut" className="text-sm">
-                            바로가기에 추가
-                          </DropdownMenuItem>
-                          <DropdownMenuItem data-testid="item-remove-stack" className="text-sm">
-                            스택에서 제거
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
