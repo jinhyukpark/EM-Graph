@@ -127,52 +127,52 @@ export default function CalendarPage() {
   return (
     <Layout>
       <div className="h-full overflow-y-auto bg-background">
-        <div className="max-w-[1500px] mx-auto px-8 pt-8 pb-16">
+        <div className="max-w-[1600px] mx-auto px-10 pt-10 pb-16">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold tracking-tight" data-testid="text-calendar-title">캘린더</h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold tracking-tight" data-testid="text-calendar-title">캘린더</h1>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="h-8 rounded-full text-xs gap-1.5 border-violet-200 text-violet-700 hover:bg-violet-50" data-testid="button-new-recording">
-                <Mic className="w-3.5 h-3.5" />새 녹음
+              <Button variant="outline" size="sm" className="h-10 rounded-full text-sm gap-2 border-violet-200 text-violet-700 hover:bg-violet-50" data-testid="button-new-recording">
+                <Mic className="w-4 h-4" />새 녹음
               </Button>
-              <Button variant="outline" size="sm" className="h-8 rounded-full text-xs gap-1.5 border-rose-200 text-rose-700 hover:bg-rose-50" data-testid="button-new-event">
-                <CalendarPlus className="w-3.5 h-3.5" />새 이벤트
+              <Button variant="outline" size="sm" className="h-10 rounded-full text-sm gap-2 border-rose-200 text-rose-700 hover:bg-rose-50" data-testid="button-new-event">
+                <CalendarPlus className="w-4 h-4" />새 이벤트
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-violet-600" data-testid="button-ai">
-                <Sparkles className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-violet-600" data-testid="button-ai">
+                <Sparkles className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground" data-testid="button-sort">
-                <ArrowUpDown className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" data-testid="button-sort">
+                <ArrowUpDown className="w-5 h-5" />
               </Button>
-              <button className="h-8 px-3 inline-flex items-center gap-1.5 rounded-md border border-border text-xs text-foreground hover:bg-muted" data-testid="button-view">
-                월 <ChevronDown className="w-3.5 h-3.5" />
+              <button className="h-10 px-4 inline-flex items-center gap-1.5 rounded-md border border-border text-sm text-foreground hover:bg-muted" data-testid="button-view">
+                월 <ChevronDown className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-[240px_1fr] gap-6">
+          <div className="grid grid-cols-[280px_1fr] gap-8">
             {/* Sidebar */}
             <aside className="space-y-6">
               {/* Mini calendar */}
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-semibold">{monthLabel}</div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-base font-semibold">{monthLabel}</div>
                   <div className="flex items-center gap-1 text-muted-foreground">
-                    <button onClick={() => shiftMonth(-1)} className="p-1 hover:text-foreground" data-testid="mini-prev"><ChevronLeft className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => shiftMonth(1)} className="p-1 hover:text-foreground" data-testid="mini-next"><ChevronRight className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => shiftMonth(-1)} className="p-1.5 hover:text-foreground" data-testid="mini-prev"><ChevronLeft className="w-4 h-4" /></button>
+                    <button onClick={() => shiftMonth(1)} className="p-1.5 hover:text-foreground" data-testid="mini-next"><ChevronRight className="w-4 h-4" /></button>
                   </div>
                 </div>
-                <div className="grid grid-cols-7 gap-y-1 text-[10px] text-center">
+                <div className="grid grid-cols-7 gap-y-1 text-xs text-center">
                   {KO_MINI_DAYS.map((d) => (
-                    <div key={d} className="text-muted-foreground/70 pb-1">{d}</div>
+                    <div key={d} className="text-muted-foreground/70 pb-1.5 font-medium">{d}</div>
                   ))}
                   {miniCells.map((d, i) => {
                     const isOther = d.getMonth() !== cursor.getMonth();
                     const isToday = toKey(d) === toKey(today);
                     return (
-                      <div key={i} className="flex items-center justify-center h-6">
+                      <div key={i} className="flex items-center justify-center h-8">
                         <span
-                          className={`w-6 h-6 inline-flex items-center justify-center rounded-full text-[10px] ${
+                          className={`w-8 h-8 inline-flex items-center justify-center rounded-full text-xs ${
                             isToday
                               ? "bg-violet-600 text-white font-semibold"
                               : isOther
@@ -190,11 +190,11 @@ export default function CalendarPage() {
 
               {/* Evernote calendars */}
               <div>
-                <div className="text-[11px] text-muted-foreground mb-2">Evernote 캘린더</div>
-                <ul className="space-y-1.5">
+                <div className="text-xs text-muted-foreground mb-3 font-medium">Evernote 캘린더</div>
+                <ul className="space-y-2">
                   {CALENDAR_ACCOUNTS.map((c) => (
-                    <li key={c.id} className="flex items-center gap-2 text-xs text-foreground/80">
-                      <span className={`w-2.5 h-2.5 rounded-full ${c.color}`} />
+                    <li key={c.id} className="flex items-center gap-2.5 text-sm text-foreground/80">
+                      <span className={`w-3 h-3 rounded-full ${c.color}`} />
                       {c.name}
                     </li>
                   ))}
@@ -203,12 +203,12 @@ export default function CalendarPage() {
 
               {/* Accounts */}
               <div>
-                <div className="text-[11px] text-muted-foreground mb-2">jh.park@illunex.com</div>
-                <ul className="space-y-1.5">
+                <div className="text-xs text-muted-foreground mb-3 font-medium">jh.park@illunex.com</div>
+                <ul className="space-y-2">
                   {accounts.map((a) => (
-                    <li key={a.id} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-2 text-foreground/80 truncate">
-                        <span className={`w-2.5 h-2.5 rounded-full ${a.color}`} />
+                    <li key={a.id} className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2.5 text-foreground/80 truncate">
+                        <span className={`w-3 h-3 rounded-full ${a.color}`} />
                         <span className="truncate">{a.email}</span>
                       </span>
                       <button
@@ -217,7 +217,7 @@ export default function CalendarPage() {
                         data-testid={`toggle-account-${a.id}`}
                         aria-label="가시성 토글"
                       >
-                        {a.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                        {a.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
                     </li>
                   ))}
@@ -226,16 +226,16 @@ export default function CalendarPage() {
 
               {/* Connections */}
               <div>
-                <div className="text-[11px] text-muted-foreground mb-2">캘린더 연결</div>
-                <ul className="space-y-1.5">
+                <div className="text-xs text-muted-foreground mb-3 font-medium">캘린더 연결</div>
+                <ul className="space-y-2">
                   {CONNECTIONS.map((c) => (
-                    <li key={c.id} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-2 text-foreground/80">
-                        <span className={`w-5 h-5 inline-flex items-center justify-center rounded font-bold text-xs ${c.color}`}>{c.icon}</span>
+                    <li key={c.id} className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2.5 text-foreground/80">
+                        <span className={`w-6 h-6 inline-flex items-center justify-center rounded font-bold text-sm ${c.color}`}>{c.icon}</span>
                         {c.name}
                       </span>
                       <button className="p-1 text-muted-foreground hover:text-foreground" data-testid={`connect-${c.id}`} aria-label="연결">
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-4 h-4" />
                       </button>
                     </li>
                   ))}
@@ -245,20 +245,20 @@ export default function CalendarPage() {
 
             {/* Main calendar */}
             <section className="relative">
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-sm font-semibold">{monthLabel}</div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <button onClick={() => setCursor(new Date())} className="px-2 py-1 hover:text-foreground" data-testid="button-today-main">오늘</button>
-                  <button onClick={() => shiftMonth(-1)} className="p-1 hover:text-foreground" data-testid="main-prev"><ChevronLeft className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => shiftMonth(1)} className="p-1 hover:text-foreground" data-testid="main-next"><ChevronRight className="w-3.5 h-3.5" /></button>
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-base font-semibold">{monthLabel}</div>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 hover:text-foreground" data-testid="button-today-main">오늘</button>
+                  <button onClick={() => shiftMonth(-1)} className="p-1.5 hover:text-foreground" data-testid="main-prev"><ChevronLeft className="w-4 h-4" /></button>
+                  <button onClick={() => shiftMonth(1)} className="p-1.5 hover:text-foreground" data-testid="main-next"><ChevronRight className="w-4 h-4" /></button>
                 </div>
               </div>
 
               {/* Day headers */}
-              <div className="grid grid-cols-[36px_repeat(7,1fr)] border-b border-border/60">
+              <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/60">
                 <div />
                 {KO_DAYS.map((d) => (
-                  <div key={d} className="px-2 py-2 text-[11px] font-medium text-muted-foreground">{d}</div>
+                  <div key={d} className="px-3 py-3 text-sm font-medium text-muted-foreground">{d}</div>
                 ))}
               </div>
 
@@ -267,8 +267,8 @@ export default function CalendarPage() {
                 {weeks.map((week, wi) => {
                   const wk = isoWeek(week[0]);
                   return (
-                    <div key={wi} className="grid grid-cols-[36px_repeat(7,1fr)] border-b border-border/40 min-h-[110px]">
-                      <div className="text-[10px] text-muted-foreground/60 flex items-center justify-center border-r border-border/40">
+                    <div key={wi} className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/40 min-h-[140px]">
+                      <div className="text-xs text-muted-foreground/60 flex items-center justify-center border-r border-border/40">
                         주 {wk}
                       </div>
                       {week.map((d) => {
@@ -279,29 +279,29 @@ export default function CalendarPage() {
                         return (
                           <div
                             key={key}
-                            className={`px-2 py-2 border-r border-border/40 last:border-r-0 ${
+                            className={`px-2.5 py-2.5 border-r border-border/40 last:border-r-0 ${
                               isOther ? "bg-muted/20" : ""
                             }`}
                           >
-                            <div className="flex items-center justify-end mb-1">
+                            <div className="flex items-center justify-end mb-2">
                               <span
-                                className={`text-[11px] inline-flex items-center justify-center ${
+                                className={`text-sm inline-flex items-center justify-center ${
                                   isToday
-                                    ? "w-6 h-6 rounded-full bg-violet-600 text-white font-semibold"
+                                    ? "w-7 h-7 rounded-full bg-violet-600 text-white font-semibold"
                                     : isOther
                                     ? "text-muted-foreground/40"
                                     : "text-foreground/70"
                                 }`}
                               >
                                 {d.getDate()}
-                                {!isToday && <span className="ml-0.5 text-muted-foreground/50">일</span>}
+                                {!isToday && <span className="ml-0.5 text-muted-foreground/50 text-xs">일</span>}
                               </span>
                             </div>
                             <div className="space-y-1">
                               {dayEvents.slice(0, 3).map((ev) => (
                                 <div
                                   key={ev.id}
-                                  className={`text-[10px] px-1.5 py-0.5 rounded-sm border-l-2 truncate ${ev.color}`}
+                                  className={`text-xs px-2 py-1 rounded border-l-2 truncate ${ev.color}`}
                                   title={`${ev.start} ${ev.title}`}
                                   data-testid={`event-${ev.id}`}
                                 >
@@ -310,7 +310,7 @@ export default function CalendarPage() {
                                 </div>
                               ))}
                               {dayEvents.length > 3 && (
-                                <div className="text-[10px] text-muted-foreground">+{dayEvents.length - 3}건</div>
+                                <div className="text-xs text-muted-foreground pl-1">+{dayEvents.length - 3}건</div>
                               )}
                             </div>
                           </div>
@@ -323,11 +323,11 @@ export default function CalendarPage() {
 
               {/* Floating add button */}
               <button
-                className="absolute bottom-2 right-2 w-11 h-11 rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform inline-flex items-center justify-center"
+                className="absolute bottom-3 right-3 w-14 h-14 rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform inline-flex items-center justify-center"
                 data-testid="button-fab-add"
                 aria-label="새 이벤트"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-6 h-6" />
               </button>
             </section>
           </div>
