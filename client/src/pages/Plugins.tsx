@@ -260,6 +260,72 @@ function ReviewsTab({ pluginId }: { pluginId: string }) {
   );
 }
 
+type SecurityQA = { q: string; a?: string; answer?: '예' | '아니오'; more?: boolean };
+
+const SECURITY_QAS: SecurityQA[] = [
+  { q: '개발자가 정기적으로 침투 테스트(Penetration Testing)를 수행합니까?', answer: '예' },
+  { q: '관련 이슈나 문의를 위한 전담 보안 및 개인정보 보호 담당자가 있습니까?', a: 'infosec@em-graphlabs.com', answer: '예' },
+  { q: '앱이 리디렉션 및 포워딩을 승인된 대상으로만 제한하거나, 신뢰할 수 없는 콘텐츠로 이동할 때 경고를 표시합니까?', a: '모든 리디렉션은 내부 링크, em-graph.com 및 Microsoft 365 URL의 허용 목록에서 확인됩니다.', answer: '예' },
+  { q: '앱이 대량 매개변수 할당 공격(Mass Parameter Assignment)으로부터 보호됩니까?', a: '데이터 업데이트 시 허용 목록과 강력하게 타입이 지정된 모델을 사용합니다. 강타입 속성으로 전달되는 그 외의 모든 것은 무시됩니다.', answer: '예' },
+  { q: '앱이 사용자 입력에 대해 인코딩과 살균(Sanitization) 처리를 하여 크로스 사이트 스크립팅(XSS) 공격으로부터 보호합니까?', a: '매우 제한적인 CSP(Content Security Policy)를 사용하여 XSS 공격 위험을 크게 줄입니다. 모든 사용자 입력을 살균합니다…', answer: '예', more: true },
+  { q: '개발자가 모든 상태 변경 작업을 크로스 사이트 요청 위조(CSRF)로부터 보호합니까?', a: '모든 상태 변경 작업은 앱의 시크릿 키로 서명된 JWT 토큰을 동반해야 합니다. JWT 토큰이 검증되지 않는 경우…', answer: '예', more: true },
+  { q: '보안 침해 발생 시 EM-Graph에 알릴 수 있는 메커니즘이 있습니까?', answer: '예' },
+  { q: '개발자가 SOC 2, ISO 27001 등 산업 표준 보안 인증을 보유하고 있습니까?', answer: '예' },
+  { q: '데이터가 저장 및 전송 중에 암호화됩니까?', a: '저장 데이터는 AES-256으로, 전송 데이터는 TLS 1.3으로 암호화됩니다.', answer: '예' },
+];
+
+function SecurityTab() {
+  return (
+    <section className="space-y-5" data-testid="security-tab">
+      {/* Note callout */}
+      <div className="flex items-start gap-3 p-4 rounded-xl border border-blue-200/70 bg-blue-50/70">
+        <svg className="w-4 h-4 mt-0.5 shrink-0 text-blue-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+        <div className="text-xs text-blue-950/85 leading-relaxed">
+          <div className="font-semibold mb-1">Note</div>
+          우리 마켓플레이스의 모든 앱은 기능과 기본 보안에 대해 팀에서 검토하지만, 어떤 앱도 보증하거나 인증하지 않습니다.
+          아래 정보는 이 앱의 보안과 규정 준수 수준을 더 잘 이해할 수 있도록 앱 개발자가 제공한 것입니다.{' '}
+          <span className="font-semibold">해당 정보는 EM-Graph에서 별도로 검증하지 않았습니다.</span>{' '}
+          <a href="#" className="text-blue-700 hover:underline">더 알아보기</a> 앱의 고급 보안 프로그램에 대한 내용입니다.
+        </div>
+      </div>
+
+      {/* Security heading */}
+      <div className="flex items-center gap-2 pt-1">
+        <Shield className="w-5 h-5 text-foreground" />
+        <h3 className="text-lg font-bold text-foreground">Security</h3>
+      </div>
+
+      {/* Q&A list */}
+      <div className="divide-y divide-border/60">
+        {SECURITY_QAS.map((item, i) => (
+          <div key={i} className="py-3.5 flex items-start justify-between gap-4" data-testid={`security-qa-${i}`}>
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="text-sm text-foreground leading-relaxed">
+                <span className="font-semibold mr-1">Q:</span>
+                {item.q}
+              </div>
+              {item.a && (
+                <p className="text-xs text-muted-foreground leading-relaxed">{item.a}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-3 shrink-0 pt-0.5">
+              {item.more && (
+                <button className="text-xs text-indigo-600 hover:underline flex items-center gap-0.5">
+                  더 알아보기 <ChevronRight className="w-3 h-3 rotate-90" />
+                </button>
+              )}
+              <div className="flex items-center gap-1 text-sm text-foreground">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>{item.answer}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }) {
   const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'reviews' | 'security' | 'permissions'>('overview');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
@@ -389,7 +455,7 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             { key: 'overview', label: '개요' },
             { key: 'pricing', label: '가격' },
             { key: 'reviews', label: '리뷰' },
-            { key: 'security', label: '보안 및 규정 준수' },
+            { key: 'security', label: '이용약관' },
             { key: 'permissions', label: '권한' },
           ].map(tab => (
             <button
@@ -580,7 +646,9 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
 
           {activeTab === 'reviews' && <ReviewsTab pluginId={plugin.id} />}
 
-          {(activeTab === 'security' || activeTab === 'permissions') && (
+          {activeTab === 'security' && <SecurityTab />}
+
+          {activeTab === 'permissions' && (
             <div className="py-16 text-center text-sm text-muted-foreground">
               해당 탭의 콘텐츠는 곧 제공될 예정입니다.
             </div>
