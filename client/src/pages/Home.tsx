@@ -242,11 +242,11 @@ export default function Home() {
         </RoleBasedWrapper>
 
         {/* ===== 2-2 & 2-3: TIMELINE + ISSUE FEED (side by side) ===== */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* 2-2: TIMELINE VIEW */}
           <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-            <Card className="lg:col-span-3 bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
+            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -317,7 +317,7 @@ export default function Home() {
           </RoleBasedWrapper>
 
           {/* 2-3: ISSUE FEED */}
-          <Card className={`${role === "viewer" ? "lg:col-span-5" : "lg:col-span-2"} bg-card/80 backdrop-blur border-border shadow-sm`} data-testid="card-issue-feed">
+          <Card className={`${role === "viewer" ? "lg:col-span-2" : ""} bg-card/80 backdrop-blur border-border shadow-sm`} data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
