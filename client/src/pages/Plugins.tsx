@@ -101,12 +101,7 @@ function PluginSection({ title, plugins, onSelect }: { title: string; plugins: P
   if (plugins.length === 0) return null;
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-foreground">{title}</h2>
-        <button className="text-xs text-primary hover:underline flex items-center gap-1" data-testid={`link-more-${title}`}>
-          자세히 보기 <ArrowRight className="w-3 h-3" />
-        </button>
-      </div>
+      <h2 className="text-base font-semibold text-foreground">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {plugins.slice(0, 3).map(p => <PluginCard key={p.id} p={p} onClick={() => onSelect(p)} />)}
       </div>
