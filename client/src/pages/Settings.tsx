@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
@@ -45,6 +46,16 @@ export default function Settings() {
   };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
+  const [subscribedPlugins, setSubscribedPlugins] = useState([
+    { id: "p1", name: "Graph AI Copilot", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답 AI 어시스턴트", price: 29, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", canceled: false },
+    { id: "p2", name: "Snowflake Connector", desc: "Snowflake 웨어하우스 실시간 데이터 동기화", price: 49, Icon: Database, iconColor: "text-sky-600 bg-sky-50", canceled: false },
+    { id: "p6", name: "Slack Alerts", desc: "그래프 변동을 실시간으로 슬랙 채널에 알림", price: 9, Icon: Zap, iconColor: "text-fuchsia-600 bg-fuchsia-50", canceled: false },
+    { id: "p10", name: "Audit & Compliance", desc: "그래프 변경 이력 추적 및 감사 보고서 생성", price: 39, Icon: Shield, iconColor: "text-red-600 bg-red-50", canceled: false },
+  ]);
+  const cancelPluginSub = (id: string) => {
+    setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: true } : p)));
+    toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") });
+  };
   
   const copyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -746,6 +757,83 @@ export default function Settings() {
                <h2 className="text-2xl font-bold tracking-tight" data-testid="text-plugin-license-title">{t("stPluginLicenseTitle")}</h2>
                <p className="text-sm text-muted-foreground">{t("stPluginLicenseSubtitle")}</p>
              </div>
+
+             <Card className="mb-6">
+               <CardHeader>
+                 <CardTitle className="text-lg" data-testid="text-active-plugins-title">{t("stActivePlugins")}</CardTitle>
+                 <CardDescription>{t("stActivePluginsDesc")}</CardDescription>
+               </CardHeader>
+               <CardContent>
+                 {subscribedPlugins.length === 0 ? (
+                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
+                 ) : (
+                   <div className="space-y-3">
+                     {subscribedPlugins.map((p) => (
+                       <div
+                         key={p.id}
+                         className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                         data-testid={`card-plugin-sub-${p.id}`}
+                       >
+                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                           <p.Icon className="w-5 h-5" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <div className="flex items-center gap-2 flex-wrap">
+                             <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                             {p.canceled ? (
+                               <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+                             ) : (
+                               <Badge className="text-xs bg-emerald-500 hover:bg-emerald-500 text-white">{t("stPluginStatusActive")}</Badge>
+                             )}
+                           </div>
+                           <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                         </div>
+                         <div className="text-right shrink-0">
+                           <div className="font-semibold">
+                             ${p.price}
+                             <span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span>
+                           </div>
+                         </div>
+                         {p.canceled ? (
+                           <Button variant="outline" size="sm" disabled className="shrink-0">
+                             {t("stPluginStatusCanceled")}
+                           </Button>
+                         ) : (
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 className="shrink-0 text-destructive hover:text-destructive"
+                                 data-testid={`button-cancel-plugin-${p.id}`}
+                               >
+                                 {t("stPluginCancel")}
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent>
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
+                                 <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
+                                 <AlertDialogAction
+                                   onClick={() => cancelPluginSub(p.id)}
+                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                   data-testid={`button-confirm-cancel-plugin-${p.id}`}
+                                 >
+                                   {t("stPluginCancelConfirm")}
+                                 </AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         )}
+                       </div>
+                     ))}
+                   </div>
+                 )}
+               </CardContent>
+             </Card>
 
              <div className="grid gap-6 md:grid-cols-2">
                <Card>
