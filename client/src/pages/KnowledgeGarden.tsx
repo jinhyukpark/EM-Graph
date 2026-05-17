@@ -11,7 +11,7 @@ import {
   FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
-  Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User,
+  Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut
 } from "lucide-react";
@@ -127,6 +127,37 @@ const INITIAL_FILE_TREE = [
       { id: "f6", name: "2024 Analysis", type: "folder", children: [
          { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true }
       ]}
+    ]
+  },
+  {
+    id: "shared-root",
+    name: "Shared with me",
+    type: "shared-root",
+    subscribed: true,
+    children: [
+      {
+        id: "sf1",
+        name: "주식 투자 인사이트",
+        type: "folder",
+        subscribed: true,
+        owner: "박투자",
+        children: [
+          { id: "sn1", name: "2024 코스피 반도체 섹터 전망", type: "note", subscribed: true, owner: "박투자" },
+          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자" },
+          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자" },
+        ]
+      },
+      {
+        id: "sf2",
+        name: "글로벌 매크로 리포트",
+        type: "folder",
+        subscribed: true,
+        owner: "김애널",
+        children: [
+          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널" },
+          { id: "sn5", name: "원/달러 환율 주간 노트", type: "note", subscribed: true, owner: "김애널" },
+        ]
+      }
     ]
   }
 ];
@@ -470,11 +501,21 @@ function GraphLegend() {
 
 const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
   const [expanded, setExpanded] = useState(true);
+  const isSubscribed = !!node.subscribed;
+  const isSharedRoot = node.type === 'shared-root';
+
+  const folderIconColor = isSubscribed ? 'text-indigo-400' : 'text-blue-400/80';
+  const fileIconColor = isSubscribed ? 'text-indigo-500' : 'text-muted-foreground';
 
   return (
     <div className="select-none">
       <div
-        className={`flex items-center gap-1 py-1 px-2 hover:bg-secondary/50 cursor-pointer text-sm ${node.active ? 'bg-secondary text-primary font-medium' : 'text-muted-foreground'}`}
+        className={cn(
+          "flex items-center gap-1 py-1 px-2 hover:bg-secondary/50 cursor-pointer text-sm group/treeitem",
+          node.active ? 'bg-secondary text-primary font-medium' : 'text-muted-foreground',
+          isSubscribed && !node.active && 'text-indigo-700 dark:text-indigo-300',
+          isSharedRoot && 'mt-2 border-t border-dashed border-indigo-300/60 dark:border-indigo-700/60 pt-2'
+        )}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -484,16 +525,30 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
           </span>
         ) : <span className="w-4" />}
 
-        {node.type === 'folder' || node.type === 'root' ? (
-          expanded ? <FolderOpen className="w-4 h-4 text-blue-400/80" /> : <Folder className="w-4 h-4 text-blue-400/80" />
+        {isSharedRoot ? (
+          <Users className="w-4 h-4 text-indigo-500" />
+        ) : node.type === 'folder' || node.type === 'root' ? (
+          expanded ? <FolderOpen className={cn("w-4 h-4", folderIconColor)} /> : <Folder className={cn("w-4 h-4", folderIconColor)} />
         ) : (
-          <FileText className="w-4 h-4 text-muted-foreground" />
+          <FileText className={cn("w-4 h-4", fileIconColor)} />
         )}
-        <span className="truncate">{node.name}</span>
+        <span className={cn("truncate", isSharedRoot && "font-semibold text-indigo-600 dark:text-indigo-300 uppercase tracking-wide text-xs")}>
+          {node.name}
+        </span>
+
+        {isSubscribed && !isSharedRoot && node.owner && (
+          <span
+            className="ml-auto flex items-center gap-1 text-[10px] font-medium text-indigo-500/90 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/60 rounded-full px-1.5 py-0.5 shrink-0 opacity-80 group-hover/treeitem:opacity-100"
+            title={`${node.owner} 님이 공유`}
+          >
+            <Share2 className="w-2.5 h-2.5" />
+            {node.owner}
+          </span>
+        )}
       </div>
 
       {expanded && node.children && (
-        <div>
+        <div className={cn(isSubscribed && !isSharedRoot && "border-l border-dashed border-indigo-200/60 dark:border-indigo-800/40 ml-4")}>
           {node.children.map((child: any) => (
             <FileTreeNode key={child.id} node={child} level={level + 1} />
           ))}
