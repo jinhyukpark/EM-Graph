@@ -69,6 +69,26 @@ function colorFor(name: string) {
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
 }
 
+function avatarUrl(name: string) {
+  const seed = encodeURIComponent(name);
+  return `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=c0aede,b6e3f4,ffd5dc,d1d4f9,ffdfbf,c1f0c6&radius=50`;
+}
+
+function ProfileAvatar({ name, size = 28, ring = false }: { name: string; size?: number; ring?: boolean }) {
+  return (
+    <img
+      src={avatarUrl(name)}
+      alt={name}
+      title={name}
+      width={size}
+      height={size}
+      className={`rounded-full bg-muted object-cover ${ring ? "ring-2 ring-card" : ""}`}
+      style={{ width: size, height: size }}
+      data-testid={`avatar-${name}`}
+    />
+  );
+}
+
 function AvatarStack({ names, max = 3 }: { names: string[]; max?: number }) {
   if (names.length === 0) return <span className="text-muted-foreground/60">-</span>;
   const shown = names.slice(0, max);
@@ -78,11 +98,10 @@ function AvatarStack({ names, max = 3 }: { names: string[]; max?: number }) {
       {shown.map((n, i) => (
         <span
           key={`${n}-${i}`}
-          title={n}
-          className={`w-7 h-7 rounded-full inline-flex items-center justify-center text-[11px] font-semibold ring-2 ring-card ${colorFor(n)}`}
+          className="inline-block"
           style={{ marginLeft: i === 0 ? 0 : -8 }}
         >
-          {n.charAt(0)}
+          <ProfileAvatar name={n} size={28} ring />
         </span>
       ))}
       {overflow > 0 && (
@@ -688,9 +707,7 @@ export default function TodoList() {
                     <div className="text-sm">
                       {t.assignee ? (
                         <span className="inline-flex items-center gap-2">
-                          <span className={`w-7 h-7 rounded-full text-[11px] font-semibold inline-flex items-center justify-center ${colorFor(t.assignee)}`}>
-                            {t.assignee.charAt(0)}
-                          </span>
+                          <ProfileAvatar name={t.assignee} size={28} />
                           <span className="text-foreground/90">{t.assignee}</span>
                         </span>
                       ) : (
@@ -911,9 +928,7 @@ function TaskDetailDialog({
             <Row icon={UserRound} label="Assignee">
               {task.assignee ? (
                 <span className="inline-flex items-center gap-2 text-sm">
-                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-[11px] font-semibold inline-flex items-center justify-center">
-                    {task.assignee.charAt(0)}
-                  </span>
+                  <ProfileAvatar name={task.assignee} size={24} />
                   {task.assignee}
                 </span>
               ) : (
@@ -1067,9 +1082,7 @@ function CreateTaskDialog({
                   className="inline-flex items-center gap-2 text-sm"
                   data-testid="button-create-assignee"
                 >
-                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-[11px] font-semibold inline-flex items-center justify-center">
-                    {assignee.charAt(0)}
-                  </span>
+                  <ProfileAvatar name={assignee} size={24} />
                   {assignee}
                 </button>
               ) : (
