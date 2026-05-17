@@ -58,11 +58,25 @@ export default function Settings() {
   };
 
   const [coupons, setCoupons] = useState([
-    { id: "c1", code: "WELCOME10", discount: 10, expiresAt: "2026-12-31" },
-    { id: "c2", code: "KOLON2026", discount: 15, expiresAt: "2026-08-15" },
-    { id: "c3", code: "ANNIVERSARY20", discount: 20, expiresAt: "2026-06-30" },
+    { id: "c1", code: "WELCOME10", discount: 10, expiresAt: "2026-05-22", used: false },
+    { id: "c2", code: "FLASH5", discount: 5, expiresAt: "2026-05-20", used: true },
+    { id: "c3", code: "SPRING15", discount: 15, expiresAt: "2026-06-10", used: false },
+    { id: "c4", code: "KOLON2026", discount: 15, expiresAt: "2026-08-15", used: false },
+    { id: "c5", code: "ANNIVERSARY20", discount: 20, expiresAt: "2026-06-30", used: true },
+    { id: "c6", code: "LOYAL25", discount: 25, expiresAt: "2026-12-31", used: false },
+    { id: "c7", code: "VIP30", discount: 30, expiresAt: "2027-03-15", used: false },
   ]);
   const [couponInput, setCouponInput] = useState("");
+  const [couponFilter, setCouponFilter] = useState<"1w" | "1m" | "6m" | "1y">("1y");
+  const filteredCoupons = (() => {
+    const now = new Date();
+    const days = { "1w": 7, "1m": 30, "6m": 180, "1y": 365 }[couponFilter];
+    const cutoff = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+    return coupons.filter((c) => {
+      const exp = new Date(c.expiresAt);
+      return exp >= now && exp <= cutoff;
+    });
+  })();
   const registerCoupon = () => {
     const code = couponInput.trim().toUpperCase();
     if (!code) return;
@@ -75,6 +89,7 @@ export default function Settings() {
       code,
       discount: 10,
       expiresAt: "2026-12-31",
+      used: false,
     };
     setCoupons((prev) => [newCoupon, ...prev]);
     setCouponInput("");
@@ -949,36 +964,69 @@ export default function Settings() {
                      </div>
                    </div>
 
-                   <div className="space-y-2">
-                     <div className="text-sm font-medium">{t("stRegisteredCoupons")}</div>
-                     {coupons.length === 0 ? (
+                   <div className="space-y-3">
+                     <div className="flex items-center justify-between gap-2 flex-wrap">
+                       <div className="text-sm font-medium">{t("stRegisteredCoupons")}</div>
+                       <div className="inline-flex rounded-md border bg-muted/40 p-0.5">
+                         {([
+                           { key: "1w", label: t("stFilter1w") },
+                           { key: "1m", label: t("stFilter1m") },
+                           { key: "6m", label: t("stFilter6m") },
+                           { key: "1y", label: t("stFilter1y") },
+                         ] as const).map((opt) => (
+                           <button
+                             key={opt.key}
+                             type="button"
+                             onClick={() => setCouponFilter(opt.key)}
+                             className={`px-2.5 py-1 text-xs rounded transition-colors ${
+                               couponFilter === opt.key
+                                 ? "bg-background shadow-sm font-medium"
+                                 : "text-muted-foreground hover:text-foreground"
+                             }`}
+                             data-testid={`filter-coupon-${opt.key}`}
+                           >
+                             {opt.label}
+                           </button>
+                         ))}
+                       </div>
+                     </div>
+                     {filteredCoupons.length === 0 ? (
                        <div className="text-xs text-muted-foreground py-4 text-center border rounded-lg">
                          {t("stNoCoupons")}
                        </div>
                      ) : (
                        <div className="space-y-2">
-                         {coupons.map((coupon) => (
+                         {filteredCoupons.map((coupon) => (
                            <div
                              key={coupon.id}
-                             className="flex items-center justify-between p-3 border rounded-lg"
+                             className={`flex items-center justify-between p-3 border rounded-lg ${coupon.used ? "opacity-60" : ""}`}
                              data-testid={`coupon-${coupon.id}`}
                            >
                              <div className="flex items-center gap-3 min-w-0">
                                <Badge variant="secondary" className="font-mono text-xs shrink-0">{coupon.code}</Badge>
                                <div className="flex flex-col min-w-0">
-                                 <span className="text-sm font-medium text-emerald-600">{coupon.discount}% {t("stDiscount")}</span>
+                                 <span className={`text-sm font-medium ${coupon.used ? "text-muted-foreground line-through" : "text-emerald-600"}`}>
+                                   {coupon.discount}% {t("stDiscount")}
+                                 </span>
                                  <span className="text-xs text-muted-foreground">~ {coupon.expiresAt}</span>
                                </div>
                              </div>
-                             <Button
-                               variant="ghost"
-                               size="icon"
-                               className="h-8 w-8 shrink-0"
-                               onClick={() => removeCoupon(coupon.id)}
-                               data-testid={`button-remove-coupon-${coupon.id}`}
-                             >
-                               <Trash2 className="w-4 h-4 text-muted-foreground" />
-                             </Button>
+                             <div className="flex items-center gap-1 shrink-0">
+                               {coupon.used && (
+                                 <Badge variant="outline" className="bg-muted text-muted-foreground border-muted-foreground/20 text-[10px]">
+                                   {t("stCouponUsed")}
+                                 </Badge>
+                               )}
+                               <Button
+                                 variant="ghost"
+                                 size="icon"
+                                 className="h-8 w-8"
+                                 onClick={() => removeCoupon(coupon.id)}
+                                 data-testid={`button-remove-coupon-${coupon.id}`}
+                               >
+                                 <Trash2 className="w-4 h-4 text-muted-foreground" />
+                               </Button>
+                             </div>
                            </div>
                          ))}
                        </div>
