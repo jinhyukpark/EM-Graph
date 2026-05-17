@@ -1503,11 +1503,11 @@ export default function KnowledgeGarden() {
             )}
          </AnimatePresence>
 
-        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
+        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-outer">
           {/* 1. File Explorer */}
           {showExplorer && (
             <>
-              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="bg-muted/10 border-r border-border flex flex-col h-full">
+              <ResizablePanel id="kg-explorer" order={1} defaultSize={20} minSize={15} maxSize={30} className="bg-muted/10 border-r border-border flex flex-col h-full">
                 <div className="h-16 border-b border-border flex items-center px-4 shrink-0 justify-between">
                   <div className="flex items-center gap-2 text-foreground/80">
                      <Folder className="w-5 h-5 text-blue-500" />
@@ -1851,12 +1851,12 @@ export default function KnowledgeGarden() {
           )}
 
           {/* Main Content Area */}
-          <ResizablePanel defaultSize={80} className="h-full">
-            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
+          <ResizablePanel id="kg-main" order={2} defaultSize={80} className="h-full">
+            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-inner">
               
               {/* 2. Document Details */}
               {showDocDetails && (
-              <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
+              <ResizablePanel id="kg-docdetails" order={1} defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
                 {/* Tab Bar */}
                 <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-hidden">
                   <button
@@ -2385,7 +2385,7 @@ export default function KnowledgeGarden() {
                   {showGraph && (
                     <>
                       {showDocDetails && <ResizableHandle />}
-                      <ResizablePanel defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col h-full">
+                      <ResizablePanel id="kg-graph" order={2} defaultSize={30} minSize={20} className="bg-background border-r border-border relative flex flex-col h-full">
                          {/* Graph Header - Empty but height aligned */}
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
@@ -2416,7 +2416,7 @@ export default function KnowledgeGarden() {
                   {showCopilot && (
                     <>
                       {(showDocDetails || showGraph) && <ResizableHandle />}
-                      <ResizablePanel defaultSize={30} minSize={15} className="bg-background flex flex-col h-full">
+                      <ResizablePanel id="kg-copilot" order={3} defaultSize={30} minSize={15} className="bg-background flex flex-col h-full">
                         <div className="h-16 border-b border-border flex items-center px-3 justify-between shrink-0 bg-background">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-500" />
