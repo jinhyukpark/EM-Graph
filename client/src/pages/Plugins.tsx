@@ -10,7 +10,7 @@ import {
   Database, FileText, BarChart3, Mail, Calendar, Bot, Link2, Shield,
   Workflow, GitBranch, FileSpreadsheet, Bell, Cloud, Lock, Users, Zap,
   Globe, ImageIcon, PieChart, Slack, ArrowRight, Star, ChevronLeft, ChevronRight,
-  CheckCircle2, Flag, ExternalLink, User, Send, Share2, ListTodo, FileSignature, Contact, MessagesSquare, Wand2
+  CheckCircle2, Flag, ExternalLink, User, Send, Share2, ListTodo, FileSignature, Contact, MessagesSquare, Wand2, FileCheck2
 } from 'lucide-react';
 import aiBannerImg from '@assets/generated_images/modern_office_team_collaboration_416f.png';
 
@@ -40,6 +40,7 @@ const PLUGINS: Plugin[] = [
   { id: 'pn4', name: 'Business Card Manager', vendor: 'EM-Graph', desc: '명함을 OCR로 스캔해 자동 등록하고 인맥 네트워크 그래프에 연결합니다.', category: 'Collaboration', Icon: Contact, iconColor: 'text-amber-600 bg-amber-50', rating: 4.6, reviews: 112, downloads: '5.8K', badge: 'Best' },
   { id: 'pn5', name: 'Team Chat', vendor: 'EM-Graph', desc: '노트·문서·그래프 엔티티를 바로 공유할 수 있는 1:1·그룹 채팅. 멘션과 스레드 지원.', category: 'Collaboration', Icon: MessagesSquare, iconColor: 'text-sky-600 bg-sky-50', rating: 4.8, reviews: 234, downloads: '11.7K', badge: 'Editor' },
   { id: 'pn6', name: 'Data Preprocessing', vendor: 'EM-Graph', desc: '결측치 보정·중복 제거·형식 통일까지 한 번에 처리하는 노코드 데이터 정제 도구.', category: 'Data', Icon: Wand2, iconColor: 'text-fuchsia-600 bg-fuchsia-50', rating: 4.7, reviews: 176, downloads: '8.9K', badge: 'Best' },
+  { id: 'pn7', name: 'Document Approval', vendor: 'EM-Graph', desc: '다수의 관리자에게 순차/병렬로 문서 결재를 요청하고 승인 흐름을 실시간 추적.', category: 'Workflow', Icon: FileCheck2, iconColor: 'text-blue-600 bg-blue-50', rating: 4.8, reviews: 142, downloads: '6.4K', badge: 'Editor' },
   { id: 'p1', name: 'Graph AI Copilot', vendor: 'EM-Graph Labs', desc: '그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.', category: 'AI', Icon: Bot, iconColor: 'text-violet-600 bg-violet-50', rating: 5.0, reviews: 312, downloads: '12.4K', badge: 'Editor' },
   { id: 'p2', name: 'Snowflake Connector', vendor: 'EM-Graph', desc: 'Snowflake 웨어하우스에서 실시간으로 데이터를 동기화합니다.', category: 'Data', Icon: Database, iconColor: 'text-sky-600 bg-sky-50', rating: 4.8, reviews: 145, downloads: '8.2K', badge: 'Best' },
   { id: 'p3', name: 'PDF Knowledge Extractor', vendor: 'DocuMind', desc: 'PDF/문서에서 엔티티와 관계를 자동 추출하여 그래프로 변환.', category: 'AI', Icon: FileText, iconColor: 'text-rose-600 bg-rose-50', rating: 4.7, reviews: 88, downloads: '5.1K', badge: 'Editor' },
