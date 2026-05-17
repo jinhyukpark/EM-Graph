@@ -20,6 +20,8 @@ type CalEvent = {
   title: string;
   color: string;
   calendar: string;
+  type?: "event" | "todo";
+  done?: boolean;
 };
 
 const INITIAL_EVENTS: CalEvent[] = [
@@ -27,10 +29,12 @@ const INITIAL_EVENTS: CalEvent[] = [
   { id: "e2", date: "2026-04-30", start: "13:45", title: "(주)일루넥스 주간 점검", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
   { id: "e3", date: "2026-04-30", start: "14:45", title: "(주)일루넥스 마케팅 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
   { id: "e4", date: "2026-05-04", start: "10:30", title: "PET필름 주간 운영회의", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
-  { id: "e5", date: "2026-05-12", start: "14:00", title: "아라미드 단가 협상 미팅", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업" },
+  { id: "e5", date: "2026-05-12", start: "14:00", title: "아라미드 단가 협상 미팅", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
   { id: "e6", date: "2026-05-16", start: "11:00", title: "편광필름 품질 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트" },
-  { id: "e7", date: "2026-05-19", start: "16:00", title: "MOQ 정책 사내 공유", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
+  { id: "e7", date: "2026-05-19", start: "16:00", title: "MOQ 정책 사내 공유", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo" },
   { id: "e8", date: "2026-05-25", start: "09:00", title: "흥대 외주사 미팅", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
+  { id: "e9", date: "2026-05-13", start: "10:00", title: "PET필름 단가 검토 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo", done: true },
+  { id: "e10", date: "2026-05-21", start: "09:30", title: "월간 안전점검 체크리스트", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
 ];
 
 const CALENDAR_ACCOUNTS = [
@@ -410,15 +414,34 @@ export default function CalendarPage() {
                             <div className="space-y-1 flex-1 overflow-hidden">
                               {dayEvents.slice(0, 3).map((ev) => {
                                 const lastDay = (ev.endDate ?? ev.date) === key;
+                                const isTodo = ev.type === "todo";
+                                const isDone = !!ev.done;
                                 return (
                                   <div
                                     key={ev.id}
-                                    className={`relative group text-xs px-2 py-1 rounded border-l-2 truncate ${ev.color}`}
+                                    className={`relative group text-xs pl-1.5 pr-2 py-1 rounded border-l-2 truncate flex items-center gap-1.5 ${ev.color} ${isDone ? "opacity-50" : ""}`}
                                     title={`${ev.start} ${ev.title}`}
                                     data-testid={`event-${ev.id}`}
                                   >
-                                    <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
-                                    {ev.title}
+                                    {isTodo && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x));
+                                        }}
+                                        className={`shrink-0 w-3.5 h-3.5 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/40 hover:border-current/70"}`}
+                                        aria-label={isDone ? "완료 해제" : "완료"}
+                                        data-testid={`todo-toggle-${ev.id}`}
+                                      >
+                                        {isDone && (
+                                          <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        )}
+                                      </button>
+                                    )}
+                                    <span className={`truncate ${isDone ? "line-through" : ""}`}>
+                                      <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
+                                      {ev.title}
+                                    </span>
                                     {lastDay && (
                                       <span
                                         onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
