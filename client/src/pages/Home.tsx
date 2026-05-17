@@ -15,7 +15,7 @@ import {
   Plus, ShieldAlert, Zap, Bot, Users, X,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
-  Film, FileBox, HardDrive, Link2
+  Film, FileBox, HardDrive, Link2, Check, CheckCheck
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -359,10 +359,11 @@ export default function Home() {
                           <span className="text-[10px] text-muted-foreground">{language === "ko" ? item.timeKo : item.time}</span>
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleSubscribe(item.id); }}
-                            className={`p-1 rounded-md transition-colors ${item.subscribed ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
-                            data-testid={`button-subscribe-${item.id}`}
+                            className={`p-1 rounded-md transition-colors ${item.subscribed ? "text-emerald-600 bg-emerald-500/10" : "text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/5"}`}
+                            data-testid={`button-mark-read-${item.id}`}
+                            title={item.subscribed ? t("ovMarkUnread") : t("ovMarkRead")}
                           >
-                            {item.subscribed ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
+                            {item.subscribed ? <CheckCheck className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
                           </button>
                         </div>
                       </div>
