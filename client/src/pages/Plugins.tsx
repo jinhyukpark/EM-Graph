@@ -116,6 +116,41 @@ function PluginSection({ title, plugins, onSelect }: { title: string; plugins: P
 
 function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }) {
   const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'reviews' | 'security' | 'permissions'>('overview');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const YEARLY_DISCOUNT = 0.2; // 20% off
+  const PRICING_TIERS = [
+    {
+      name: 'Starter',
+      description: '소규모 팀이 핵심 기능을 빠르게 체험해볼 수 있는 플랜.',
+      monthly: 29000,
+      seats: '최대 5명',
+      cta: '시작하기',
+      highlight: false,
+      features: ['핵심 지표 5종 제공', '월 10,000 API 호출', '기본 대시보드', '이메일 지원'],
+    },
+    {
+      name: 'Pro',
+      description: '성장하는 팀을 위한 가장 인기있는 플랜.',
+      monthly: 79000,
+      seats: '최대 20명',
+      cta: '14일 무료 체험',
+      highlight: true,
+      features: ['전체 지표 제공', '월 100,000 API 호출', '실시간 알림 & 트리거', '커스텀 대시보드', '우선 기술지원'],
+    },
+    {
+      name: 'Enterprise',
+      description: '대규모 조직과 엔터프라이즈 워크플로우에 최적화.',
+      monthly: 199000,
+      seats: '무제한',
+      cta: '영업팀 문의',
+      highlight: false,
+      features: ['Pro의 모든 기능', '무제한 API 호출', 'SSO / SAML 인증', '전담 매니저 지원', 'SLA 보장 (99.95%)'],
+    },
+  ];
+  const formatPrice = (monthly: number) => {
+    const value = billingCycle === 'yearly' ? Math.round(monthly * (1 - YEARLY_DISCOUNT)) : monthly;
+    return value.toLocaleString('ko-KR');
+  };
   const screenshots = [
     { title: '대시보드 미리보기', subtitle: '핵심 KPI를 한눈에', tint: 'from-violet-600 to-indigo-700' },
     { title: '실시간 분석', subtitle: '데이터 변화 추적', tint: 'from-emerald-600 to-teal-700' },
@@ -229,6 +264,7 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Main content */}
         <div className="space-y-8 text-sm leading-relaxed">
+          {activeTab === 'overview' && <>
           {/* 이 자료에 대하여 */}
           <section>
             <h3 className="text-base font-bold text-foreground mb-3">주요 기능 소개</h3>
@@ -297,6 +333,110 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
               ))}
             </div>
           </section>
+          </>}
+
+          {activeTab === 'pricing' && (
+            <section className="space-y-6">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">팀 규모에 맞는 요금제를 선택하세요</h3>
+                  <p className="text-xs text-muted-foreground mt-1">언제든지 업그레이드하거나 다운그레이드할 수 있습니다.</p>
+                </div>
+                <div className="inline-flex items-center bg-secondary/70 rounded-full p-1 text-xs font-medium">
+                  <button
+                    onClick={() => setBillingCycle('monthly')}
+                    className={`px-4 py-1.5 rounded-full transition-colors ${billingCycle === 'monthly' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                    data-testid="toggle-billing-monthly"
+                  >
+                    월간 결제
+                  </button>
+                  <button
+                    onClick={() => setBillingCycle('yearly')}
+                    className={`px-4 py-1.5 rounded-full transition-colors flex items-center gap-1.5 ${billingCycle === 'yearly' ? 'bg-white text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                    data-testid="toggle-billing-yearly"
+                  >
+                    연간 결제
+                    <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">-20%</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {PRICING_TIERS.map(tier => (
+                  <Card
+                    key={tier.name}
+                    className={`p-5 flex flex-col relative ${tier.highlight ? 'border-blue-500 border-2 shadow-md' : 'border-border/60'}`}
+                    data-testid={`pricing-tier-${tier.name}`}
+                  >
+                    {tier.highlight && (
+                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        인기
+                      </div>
+                    )}
+                    <div className="space-y-1 mb-4">
+                      <div className="text-base font-bold text-foreground">{tier.name}</div>
+                      <p className="text-xs text-muted-foreground leading-relaxed min-h-[2.5rem]">{tier.description}</p>
+                    </div>
+                    <div className="mb-1">
+                      {billingCycle === 'yearly' && (
+                        <div className="text-[11px] text-muted-foreground line-through">
+                          ₩{tier.monthly.toLocaleString('ko-KR')} / 월
+                        </div>
+                      )}
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold text-foreground">₩{formatPrice(tier.monthly)}</span>
+                        <span className="text-xs text-muted-foreground">/ 월</span>
+                      </div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5">
+                        {billingCycle === 'yearly'
+                          ? `연 ₩${(Math.round(tier.monthly * (1 - YEARLY_DISCOUNT)) * 12).toLocaleString('ko-KR')} 일시 결제`
+                          : '월 단위 결제'}
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mb-4 mt-2">사용자 {tier.seats}</div>
+                    <Button
+                      className={`w-full mb-4 ${tier.highlight ? '' : 'bg-secondary text-foreground hover:bg-secondary/80'}`}
+                      variant={tier.highlight ? 'default' : 'secondary'}
+                      data-testid={`button-tier-${tier.name}`}
+                    >
+                      {tier.cta}
+                    </Button>
+                    <ul className="space-y-2 text-xs text-muted-foreground">
+                      {tier.features.map(f => (
+                        <li key={f} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                ))}
+              </div>
+
+              <Card className="p-5 border-border/60 bg-secondary/30 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-foreground">맞춤형 엔터프라이즈 플랜이 필요하신가요?</div>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">대규모 사용량, 온프레미스 배포, 별도 SLA가 필요하신 경우 영업팀이 맞춤 견적을 도와드립니다.</p>
+                </div>
+                <Button variant="outline" size="sm" data-testid="button-contact-sales">영업팀 문의</Button>
+              </Card>
+
+              <div className="text-[11px] text-muted-foreground space-y-1">
+                <p>· 모든 가격은 VAT 별도이며 원화(KRW) 기준입니다.</p>
+                <p>· 연간 결제 시 20% 할인이 자동 적용되며, 1년 단위로 일시 결제됩니다.</p>
+                <p>· 14일 무료 체험 기간 동안 언제든지 해지 가능하며, 결제는 발생하지 않습니다.</p>
+              </div>
+            </section>
+          )}
+
+          {(activeTab === 'reviews' || activeTab === 'security' || activeTab === 'permissions') && (
+            <div className="py-16 text-center text-sm text-muted-foreground">
+              해당 탭의 콘텐츠는 곧 제공될 예정입니다.
+            </div>
+          )}
 
           <div className="pt-2">
             <h3 className="font-bold text-foreground mb-3">같이 사용하면 좋은 앱</h3>
