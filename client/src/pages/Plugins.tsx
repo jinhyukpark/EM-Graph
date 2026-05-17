@@ -921,12 +921,6 @@ export default function Plugins() {
               ))}
             </div>
 
-            {/* Sections */}
-            <PluginSection title="Recently viewed" plugins={recentlyViewed} onSelect={setSelectedPlugin} />
-            <PluginSection title="Featured" plugins={featured} onSelect={setSelectedPlugin} />
-            <PluginSection title="AI" plugins={aiPlugins} onSelect={setSelectedPlugin} />
-            <PluginSection title="Integrations & Data" plugins={integrations} onSelect={setSelectedPlugin} />
-
             {/* All */}
             <div className="space-y-3">
               <h2 className="text-base font-semibold text-foreground">전체 플러그인 ({filtered.length})</h2>
