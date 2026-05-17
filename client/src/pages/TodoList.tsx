@@ -317,6 +317,9 @@ export default function TodoList() {
 
   const openCount = tasks.filter((x) => !x.done).length;
   const doneCount = tasks.length - openCount;
+  const todayKey = localYmd(today);
+  const overdueCount = tasks.filter((t) => !!t.due && t.due < todayKey && !t.done).length;
+  const progressPct = tasks.length === 0 ? 0 : Math.round((doneCount / tasks.length) * 100);
 
   return (
     <Layout>
@@ -334,19 +337,35 @@ export default function TodoList() {
                 and quickly handle tasks linked to notes.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2 shadow-sm"
-                data-testid="button-completed"
+            <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-4 px-4 py-2.5 rounded-xl border border-border/60 bg-card shadow-sm"
+                data-testid="status-summary"
               >
-                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                Completed
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 h-5 min-w-[20px] text-xs bg-emerald-100 text-emerald-700 border-0">
-                  {doneCount}
-                </Badge>
-              </Button>
+                <div className="flex items-center gap-2" data-testid="status-overdue">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <span className="text-xs text-muted-foreground">Overdue</span>
+                  <span className="text-sm font-semibold text-rose-600 tabular-nums">{overdueCount}</span>
+                </div>
+                <div className="h-6 w-px bg-border/70" />
+                <div className="flex items-center gap-2" data-testid="status-done">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span className="text-xs text-muted-foreground">Done</span>
+                  <span className="text-sm font-semibold text-emerald-600 tabular-nums">
+                    {doneCount}<span className="text-muted-foreground/70 font-normal">/{tasks.length}</span>
+                  </span>
+                </div>
+                <div className="h-6 w-px bg-border/70" />
+                <div className="flex items-center gap-2 min-w-[140px]" data-testid="status-progress">
+                  <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full bg-violet-500 transition-all"
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-semibold text-foreground tabular-nums w-9 text-right">{progressPct}%</span>
+                </div>
+              </div>
               <Button
                 size="lg"
                 onClick={() => setCreateOpen(true)}
