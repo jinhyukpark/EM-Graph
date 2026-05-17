@@ -15,7 +15,7 @@ import {
   Plus, ShieldAlert, Zap, Bot, Users, X,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
-  Film, FileBox, HardDrive, Link2, Check, CheckCheck
+  Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -188,26 +188,9 @@ export default function Home() {
             <p className="text-muted-foreground text-sm">{t("systemStatusDesc")}</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 mr-2">
-              <span className="text-xs text-muted-foreground">{t("currentRole")}:</span>
-              <Select value={role} onValueChange={(v) => setRole(v as Role)}>
-                <SelectTrigger className="h-8 w-[120px] text-xs" data-testid="select-role">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">{t("admin")}</SelectItem>
-                  <SelectItem value="manager">{t("manager")}</SelectItem>
-                  <SelectItem value="viewer">{t("viewer")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button variant="outline" className="gap-2 h-9 text-sm" onClick={() => setLocation("/database")} data-testid="button-data-sources">
-              <Database className="w-4 h-4" />
-              {t("dataSources")}
-            </Button>
-            <Button className="gap-2 h-9 text-sm shadow-lg shadow-primary/20" onClick={() => setLocation("/create")} data-testid="button-new-analysis">
-              <Plus className="w-4 h-4" />
-              {t("newAnalysis")}
+            <Button className="gap-2 h-9 text-sm shadow-lg shadow-primary/20" onClick={() => setLocation("/settings")} data-testid="button-edit-template">
+              <LayoutGrid className="w-4 h-4" />
+              {t("ovEditTemplate")}
             </Button>
           </div>
         </div>
