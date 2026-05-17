@@ -1,6 +1,7 @@
 import { Link, useLocation, useRoute } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
+import { useOrgLogo } from "@/lib/orgLogo";
 import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle, Table as TableIcon, Play, ChevronRight, ArrowLeft, Plus, Circle, CircleDot, Network, FileText, GitBranch, Workflow, Library, Sprout, Menu, ChevronsUpDown, Check, Building2, MoreVertical, MoreHorizontal, Search, Brain, ShoppingBag, Hash, Calendar, Type, MapPin, AlignLeft, Activity, Globe, MessageSquare, BookOpen, Puzzle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -40,6 +41,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
   const [match, params] = useRoute("/project/:id/*?");
   const isProjectView = match;
   const projectId = params?.id;
+  const [orgLogo] = useOrgLogo();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [alertAction, setAlertAction] = useState<'switch-org' | 'logout' | null>(null);
@@ -237,9 +239,13 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         <div className={cn("h-16 flex items-center border-b border-border/50 gap-1", isCollapsed ? "justify-center px-0" : "px-4 justify-between")}>
           {!isCollapsed && !isProjectView && (
             <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
-                  <Share2 className="w-5 h-5" />
-                </div>
+                {orgLogo ? (
+                  <img src={orgLogo} alt="조직 로고" className="w-8 h-8 rounded-lg object-cover shadow-md shrink-0" />
+                ) : (
+                  <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md shrink-0">
+                    <Share2 className="w-5 h-5" />
+                  </div>
+                )}
                 <span className="text-lg font-bold tracking-tight">EM-Graph</span>
             </Link>
           )}
@@ -259,7 +265,19 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 </span>
              </div>
           )}
-          
+
+          {isCollapsed && !isProjectView && (
+            <Link href="/dashboard" className="hover:opacity-80 transition-opacity" aria-label="EM-Graph">
+              {orgLogo ? (
+                <img src={orgLogo} alt="조직 로고" className="w-8 h-8 rounded-lg object-cover shadow-md" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+                  <Share2 className="w-5 h-5" />
+                </div>
+              )}
+            </Link>
+          )}
+
           <Button 
             variant="ghost" 
             size="icon" 
@@ -595,9 +613,13 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         {/* Mobile Header (Visible only on small screens) */}
         <header className="md:hidden h-16 border-b border-border bg-background/90 backdrop-blur-md flex items-center px-4 justify-between sticky top-0 z-50">
            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
-                <Share2 className="w-5 h-5" />
-              </div>
+              {orgLogo ? (
+                <img src={orgLogo} alt="조직 로고" className="w-8 h-8 rounded-lg object-cover shadow-md" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+                  <Share2 className="w-5 h-5" />
+                </div>
+              )}
               <span className="text-lg font-bold tracking-tight">EM-Graph</span>
           </Link>
           <Button variant="ghost" size="icon">

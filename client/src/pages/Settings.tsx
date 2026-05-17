@@ -16,9 +16,33 @@ import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
+import { useOrgLogo } from "@/lib/orgLogo";
+import { useRef } from "react";
+import { Building2, Upload, X as XIcon } from "lucide-react";
 
 export default function Settings() {
   const { language, setLanguage, t } = useLanguage();
+  const [orgLogo, setOrgLogo] = useOrgLogo();
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: t("orgLogoInvalidType"), variant: "destructive" });
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: t("orgLogoTooLarge"), variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setOrgLogo(reader.result as string);
+      toast({ title: t("orgLogoUpdated") });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
   
@@ -196,6 +220,50 @@ export default function Settings() {
               <CardFooter className="border-t px-6 py-4">
                 <Button>{t("saveProfile")}</Button>
               </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="w-5 h-5" />
+                  {t("orgLogoTitle")}
+                </CardTitle>
+                <CardDescription>{t("orgLogoDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-xl border border-border bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0">
+                    {orgLogo ? (
+                      <img src={orgLogo} alt="조직 로고" className="w-full h-full object-cover" data-testid="img-org-logo-preview" />
+                    ) : (
+                      <Building2 className="w-8 h-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-muted-foreground mb-3">{t("orgLogoHint")}</p>
+                    <div className="flex gap-2 flex-wrap">
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleLogoUpload}
+                        data-testid="input-org-logo"
+                      />
+                      <Button variant="outline" size="sm" onClick={() => logoInputRef.current?.click()} data-testid="button-upload-org-logo">
+                        <Upload className="w-4 h-4 mr-2" />
+                        {orgLogo ? t("orgLogoChange") : t("orgLogoUpload")}
+                      </Button>
+                      {orgLogo && (
+                        <Button variant="outline" size="sm" onClick={() => { setOrgLogo(null); toast({ title: t("orgLogoRemoved") }); }} data-testid="button-remove-org-logo">
+                          <XIcon className="w-4 h-4 mr-2" />
+                          {t("orgLogoRemove")}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
 
             <Card>
