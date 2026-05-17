@@ -3,7 +3,8 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import {
   Mic, CalendarPlus, Sparkles, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight,
@@ -401,10 +402,17 @@ export default function CalendarPage() {
           </div>
         )}
 
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetContent side="left" className="w-[380px] p-0 flex flex-col gap-0">
+        <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
+          <DialogContent
+            className="sm:max-w-[440px] p-0 gap-0 rounded-2xl overflow-hidden max-h-[88vh] flex flex-col"
+            data-testid="dialog-new-event"
+          >
+            <VisuallyHidden>
+              <DialogTitle>New Event</DialogTitle>
+              <DialogDescription>Create a new calendar event</DialogDescription>
+            </VisuallyHidden>
             <div className="px-5 pt-5 pb-3 border-b border-border/40 flex items-center gap-3">
-              <button onClick={() => setSheetOpen(false)} className="text-muted-foreground hover:text-foreground" data-testid="button-close-event">
+              <button onClick={() => setSheetOpen(false)} className="text-muted-foreground hover:text-foreground" data-testid="button-close-event" aria-label="Close">
                 <X className="w-4 h-4" />
               </button>
               <span className="font-semibold">New Event</span>
@@ -536,8 +544,8 @@ export default function CalendarPage() {
                 Create
               </Button>
             </div>
-          </SheetContent>
-        </Sheet>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
