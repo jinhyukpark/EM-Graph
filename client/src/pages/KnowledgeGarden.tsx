@@ -13,7 +13,7 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
-  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter
+  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -129,12 +129,12 @@ const INITIAL_FILE_TREE = [
       { id: "f3", name: "New Folder", type: "folder", children: [] },
       { id: "f4", name: "Research", type: "folder", children: [
         { id: "n1", name: "Note 1", type: "note", tags: ["EM", "BOX"], createdAt: "2026-05-10" },
-        { id: "n2", name: "Note 2", type: "note", tags: ["CRM", "apply"], createdAt: "2026-05-12" },
+        { id: "n2", name: "Note 2", type: "note", sharedByMe: true, sharedWith: ["김대리", "이과장"], tags: ["CRM", "apply"], createdAt: "2026-05-12" },
         { id: "n3", name: "Note 3", type: "note", isNew: true, tags: ["EM 아이디어", "IR"], createdAt: "2026-05-17" }
       ]},
       { id: "f5", name: "Test", type: "folder", children: [] },
       { id: "f6", name: "2024 Analysis", type: "folder", children: [
-         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
+         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, sharedByMe: true, sharedWith: ["전략기획팀", "법무팀"], tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
       ]}
     ]
   },
@@ -559,6 +559,13 @@ const hasNewNote = (node: any): boolean => {
   return node.children.some((c: any) => hasNewNote(c));
 };
 
+const countSharedByMe = (node: any): number => {
+  if (!node) return 0;
+  if (node.type === 'note') return node.sharedByMe ? 1 : 0;
+  if (!Array.isArray(node.children)) return 0;
+  return node.children.reduce((sum: number, child: any) => sum + countSharedByMe(child), 0);
+};
+
 const FileTreeNode = ({
   node,
   level = 0,
@@ -582,6 +589,8 @@ const FileTreeNode = ({
   const noteCount = isFolderLike ? countNotes(node) : 0;
   const folderHasNew = isFolderLike && hasNewNote(node);
   const isNoteNew = node.type === 'note' && !!node.isNew;
+  const isSharedByMe = node.type === 'note' && !!node.sharedByMe;
+  const sharedByMeCount = isFolderLike && !isSharedRoot ? countSharedByMe(node) : 0;
 
   const folderIconColor = isSubscribed ? 'text-indigo-400' : 'text-blue-400/80';
   const fileIconColor = isSubscribed ? 'text-indigo-500' : 'text-muted-foreground';
@@ -641,6 +650,27 @@ const FileTreeNode = ({
             title="최근 추가됨"
           >
             New
+          </span>
+        )}
+
+        {isSharedByMe && (
+          <span
+            className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-gradient-to-br from-sky-400 to-violet-500 text-white shadow-sm"
+            title={`내가 공유한 노트${Array.isArray(node.sharedWith) && node.sharedWith.length ? ` · ${node.sharedWith.join(", ")}` : ""}`}
+            data-testid={`badge-shared-by-me-${node.id}`}
+          >
+            <InfinityIcon className="w-2.5 h-2.5" strokeWidth={3} />
+          </span>
+        )}
+
+        {sharedByMeCount > 0 && (
+          <span
+            className="shrink-0 inline-flex items-center gap-0.5 h-[16px] px-1 rounded-full bg-gradient-to-br from-sky-50 to-violet-50 dark:from-sky-950/40 dark:to-violet-950/40 border border-violet-200/70 dark:border-violet-800/60 text-violet-600 dark:text-violet-300 text-[10px] font-semibold"
+            title={`공유 중인 노트 ${sharedByMeCount}개`}
+            data-testid={`badge-folder-shared-${node.id}`}
+          >
+            <InfinityIcon className="w-2.5 h-2.5" strokeWidth={3} />
+            {sharedByMeCount}
           </span>
         )}
 
