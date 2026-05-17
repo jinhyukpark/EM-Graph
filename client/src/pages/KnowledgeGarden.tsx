@@ -605,8 +605,10 @@ const FileTreeNode = ({
     <div className="select-none">
       <div
         className={cn(
-          "flex items-center gap-1 py-1 px-2 hover:bg-secondary/50 cursor-pointer text-sm group/treeitem",
-          node.active ? 'bg-secondary text-primary font-medium' : 'text-muted-foreground',
+          "relative flex items-center gap-1 py-1 px-2 hover:bg-secondary/50 cursor-pointer text-sm group/treeitem",
+          node.active
+            ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-200 font-semibold before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] before:bg-blue-500 before:rounded-r'
+            : 'text-muted-foreground',
           isSubscribed && !node.active && 'text-indigo-700 dark:text-indigo-300',
           isSharedRoot && 'mt-2 border-t border-dashed border-indigo-300/60 dark:border-indigo-700/60 pt-2'
         )}
