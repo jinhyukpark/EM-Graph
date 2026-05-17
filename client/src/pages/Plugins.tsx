@@ -327,7 +327,7 @@ function SecurityTab() {
 }
 
 function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'reviews' | 'security' | 'permissions'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'reviews' | 'security'>('overview');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const YEARLY_DISCOUNT = 0.2; // 20% off
   const PRICING_TIERS = [
@@ -456,7 +456,6 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             { key: 'pricing', label: '가격' },
             { key: 'reviews', label: '리뷰' },
             { key: 'security', label: '이용약관' },
-            { key: 'permissions', label: '권한' },
           ].map(tab => (
             <button
               key={tab.key}
@@ -647,12 +646,6 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
           {activeTab === 'reviews' && <ReviewsTab pluginId={plugin.id} />}
 
           {activeTab === 'security' && <SecurityTab />}
-
-          {activeTab === 'permissions' && (
-            <div className="py-16 text-center text-sm text-muted-foreground">
-              해당 탭의 콘텐츠는 곧 제공될 예정입니다.
-            </div>
-          )}
 
           {activeTab === 'overview' && (
           <div className="pt-2">
