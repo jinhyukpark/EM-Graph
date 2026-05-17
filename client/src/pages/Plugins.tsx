@@ -360,31 +360,6 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             </div>
           </div>
 
-          <Card className="p-4 border-border/60">
-            <div className="text-xs text-muted-foreground mb-1">개발자:</div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-lg inline-flex items-center justify-center shrink-0 ${plugin.iconColor}`}>
-                <plugin.Icon className="w-5 h-5" />
-              </div>
-              <div className="font-bold text-sm text-foreground">{plugin.vendor}</div>
-            </div>
-            <div className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
-              <CheckCircle2 className="w-4 h-4 text-slate-500" />
-              Silver partner
-            </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Silver 마켓플레이스 파트너는 EM-Graph 파트너 프로그램에 참여하여 강화된 요건을 충족했습니다.
-              <a href="#" className="text-blue-600 hover:underline ml-1">마켓플레이스 파트너 프로그램에 대해 자세히 알아보기</a>
-            </p>
-          </Card>
-
-          <Card className="p-4 border-border/60 flex items-center justify-center">
-            <button className="text-xs text-rose-600 hover:underline flex items-center gap-1.5" data-testid="button-report-app">
-              <Flag className="w-3.5 h-3.5" />
-              이 앱 보고
-            </button>
-          </Card>
-
           {/* Provider detailed card (image 2 style) */}
           <Card className="p-5 border-border/60 space-y-4">
             <div className="flex items-start gap-3">
