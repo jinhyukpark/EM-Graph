@@ -521,26 +521,28 @@ export default function TodoList() {
                 </div>
               </PopoverContent>
             </Popover>
-            <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="h-11">
-              <TabsList className="h-11 bg-muted/50">
-                {TABS.map((label) => (
-                  <TabsTrigger key={label} value={label} className="h-9" data-testid={`tab-${label}`}>
-                    {label}
-                    {label === "내 작업" && (
-                      <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 h-4 min-w-[18px] text-[10px] bg-violet-100 text-violet-700 border-0">
-                        {openCount}
-                      </Badge>
-                    )}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
           </div>
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-[1400px] mx-auto">
+            <div className="mb-4 flex justify-center">
+              <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="h-11">
+                <TabsList className="h-11 bg-muted/50">
+                  {TABS.map((label) => (
+                    <TabsTrigger key={label} value={label} className="h-9" data-testid={`tab-${label}`}>
+                      {label}
+                      {label === "내 작업" && (
+                        <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 h-4 min-w-[18px] text-[10px] bg-violet-100 text-violet-700 border-0">
+                          {openCount}
+                        </Badge>
+                      )}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
             {selectedIds.size > 0 && (
               <div className="mb-3 flex items-center justify-between px-4 py-2.5 bg-violet-50 border border-violet-200 rounded-lg" data-testid="bulk-action-bar">
                 <div className="flex items-center gap-3 text-sm text-violet-900">
