@@ -1968,22 +1968,115 @@ export default function KnowledgeGarden() {
                 </div>
 
                 {activeTab?.kind === 'new' ? (
-                  <div className="flex-1 flex items-center justify-center bg-white">
-                    <div className="text-center max-w-md px-8 py-16">
-                      <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-                        <Plus className="w-8 h-8 text-blue-500" />
+                  <div className="flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-white to-blue-50/40 dark:from-slate-950 dark:via-background dark:to-indigo-950/20">
+                    <div className="max-w-3xl mx-auto px-8 py-14">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-foreground tracking-tight">새로운 작업 공간</h3>
+                          <p className="text-xs text-muted-foreground">무엇부터 시작할까요?</p>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">새로운 작업 공간</h3>
-                      <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                        왼쪽 탐색기에서 노트를 선택하거나 새 노트를 만들어 이 탭에서 작업을 시작하세요.
-                      </p>
-                      <div className="flex items-center justify-center gap-2">
-                        <Button variant="outline" size="sm" onClick={handleAddNewFile} data-testid="button-newtab-create-note">
-                          <Plus className="w-3.5 h-3.5 mr-1.5" /> 새 노트 만들기
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setTreeSearchQuery("")} data-testid="button-newtab-browse">
-                          <Search className="w-3.5 h-3.5 mr-1.5" /> 노트 찾아보기
-                        </Button>
+
+                      <div className="mt-8 relative">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                        <input
+                          type="text"
+                          placeholder="노트 검색 또는 명령어 입력..."
+                          data-testid="input-newtab-search"
+                          className="w-full h-12 pl-11 pr-20 rounded-xl border border-border bg-white dark:bg-background shadow-sm focus:shadow-md focus:border-blue-400 focus:outline-none text-sm transition"
+                        />
+                        <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground bg-muted/60 border border-border rounded px-1.5 py-0.5">⌘ K</kbd>
+                      </div>
+
+                      <div className="mt-8">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-1">빠른 시작</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={handleAddNewFile}
+                            data-testid="button-newtab-create-note"
+                            className="group text-left p-4 rounded-xl border border-border bg-white dark:bg-background hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                                <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-foreground">새 노트</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">빈 캔버스에서 바로 작성</div>
+                              </div>
+                            </div>
+                          </button>
+                          <button
+                            data-testid="button-newtab-template"
+                            className="group text-left p-4 rounded-xl border border-border bg-white dark:bg-background hover:border-violet-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-9 h-9 rounded-lg bg-violet-50 dark:bg-violet-950/40 flex items-center justify-center shrink-0 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/50 transition-colors">
+                                <FileText className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-foreground">템플릿에서 시작</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">분석, 리포트, 회의록 등</div>
+                              </div>
+                            </div>
+                          </button>
+                          <button
+                            data-testid="button-newtab-ai"
+                            className="group text-left p-4 rounded-xl border border-border bg-white dark:bg-background hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition-colors">
+                                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-foreground">AI로 작성</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">프롬프트로 노트 자동 생성</div>
+                              </div>
+                            </div>
+                          </button>
+                          <button
+                            onClick={() => setTreeSearchQuery("")}
+                            data-testid="button-newtab-browse"
+                            className="group text-left p-4 rounded-xl border border-border bg-white dark:bg-background hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center shrink-0 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 transition-colors">
+                                <Folder className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-foreground">노트 찾아보기</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">탐색기에서 기존 노트 열기</div>
+                              </div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-8">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-1">최근 노트</p>
+                        <div className="rounded-xl border border-border bg-white dark:bg-background overflow-hidden">
+                          {[
+                            { title: 'LG Energy Solution & SK Innovation', meta: '오늘 · Battery, EV' },
+                            { title: '2024 코스피 반도체 섹터 전망', meta: '어제 · 박투자' },
+                            { title: '글로벌 매크로 리포트', meta: '2일 전 · 김애널' },
+                          ].map((n, i) => (
+                            <button
+                              key={i}
+                              data-testid={`button-newtab-recent-${i}`}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors text-left border-b border-border last:border-b-0"
+                            >
+                              <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm font-medium text-foreground truncate">{n.title}</div>
+                                <div className="text-xs text-muted-foreground truncate">{n.meta}</div>
+                              </div>
+                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
