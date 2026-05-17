@@ -377,8 +377,30 @@ export default function CalendarPage() {
               <div className="flex-1 grid grid-rows-6 min-h-0">
                 {weeks.map((week, wi) => {
                   const wk = isoWeek(week[0]);
+                  const weekStartKey = toKey(week[0]);
+                  const weekEndKey = toKey(week[6]);
+                  type Seg = { ev: CalEvent; sIdx: number; eIdx: number; startsHere: boolean; endsHere: boolean; lane: number };
+                  const segs: Seg[] = [];
+                  for (const ev of events) {
+                    const s = ev.date;
+                    const e = ev.endDate ?? ev.date;
+                    if (e < weekStartKey || s > weekEndKey) continue;
+                    const sIdx = s < weekStartKey ? 0 : week.findIndex((d) => toKey(d) === s);
+                    const eIdx = e > weekEndKey ? 6 : week.findIndex((d) => toKey(d) === e);
+                    segs.push({ ev, sIdx, eIdx, startsHere: s >= weekStartKey, endsHere: e <= weekEndKey, lane: 0 });
+                  }
+                  segs.sort((a, b) => a.sIdx - b.sIdx || (b.eIdx - b.sIdx) - (a.eIdx - a.sIdx) || a.ev.start.localeCompare(b.ev.start));
+                  const laneEnds: number[] = [];
+                  for (const seg of segs) {
+                    let lane = laneEnds.findIndex((end) => end < seg.sIdx);
+                    if (lane === -1) { lane = laneEnds.length; laneEnds.push(seg.eIdx); }
+                    else laneEnds[lane] = seg.eIdx;
+                    seg.lane = lane;
+                  }
+                  const MAX_LANES = 3;
+                  const LANE_H = 24;
                   return (
-                    <div key={wi} className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/40 last:border-b-0 min-h-0">
+                    <div key={wi} className="relative grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/40 last:border-b-0 min-h-0 overflow-hidden">
                       <div className="text-xs text-muted-foreground/60 flex items-center justify-center border-r border-border/40">
                         주 {wk}
                       </div>
@@ -386,7 +408,7 @@ export default function CalendarPage() {
                         const key = toKey(d);
                         const isOther = d.getMonth() !== cursor.getMonth();
                         const isToday = toKey(d) === toKey(today);
-                        const dayEvents = eventsByDate[key] ?? [];
+                        const overflow = segs.filter((s) => s.lane >= MAX_LANES && s.sIdx <= week.findIndex((dd) => toKey(dd) === key) && s.eIdx >= week.findIndex((dd) => toKey(dd) === key)).length;
                         return (
                           <div
                             key={key}
@@ -411,55 +433,72 @@ export default function CalendarPage() {
                                 {!isToday && <span className="ml-0.5 text-muted-foreground/50 text-xs">일</span>}
                               </span>
                             </div>
-                            <div className="space-y-1 flex-1 overflow-hidden">
-                              {dayEvents.slice(0, 3).map((ev) => {
-                                const lastDay = (ev.endDate ?? ev.date) === key;
-                                const isTodo = ev.type === "todo";
-                                const isDone = !!ev.done;
-                                return (
-                                  <div
-                                    key={ev.id}
-                                    className={`relative group text-xs pl-1.5 pr-2 py-1 rounded border-l-2 truncate flex items-center gap-1.5 ${ev.color} ${isDone ? "opacity-50" : ""}`}
-                                    title={`${ev.start} ${ev.title}`}
-                                    data-testid={`event-${ev.id}`}
-                                  >
-                                    {isTodo && (
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x));
-                                        }}
-                                        className={`shrink-0 w-3.5 h-3.5 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/40 hover:border-current/70"}`}
-                                        aria-label={isDone ? "완료 해제" : "완료"}
-                                        data-testid={`todo-toggle-${ev.id}`}
-                                      >
-                                        {isDone && (
-                                          <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                        )}
-                                      </button>
-                                    )}
-                                    <span className={`truncate ${isDone ? "line-through" : ""}`}>
-                                      <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
-                                      {ev.title}
-                                    </span>
-                                    {lastDay && (
-                                      <span
-                                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
-                                        className="absolute right-0 top-0 h-full w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 bg-foreground/10 rounded-r"
-                                        title="드래그하여 기간 조정"
-                                        data-testid={`resize-${ev.id}`}
-                                      />
-                                    )}
-                                  </div>
-                                );
-                              })}
-                              {dayEvents.length > 3 && (
-                                <div className="text-xs text-muted-foreground pl-1">+{dayEvents.length - 3}건</div>
-                              )}
-                            </div>
+                            <div className="flex-1" />
+                            {overflow > 0 && (
+                              <div className="text-[10px] text-muted-foreground pl-1 shrink-0">+{overflow}건</div>
+                            )}
                           </div>
                         );
                       })}
+                      {/* Continuous event bars overlay */}
+                      <div className="absolute inset-y-0 left-12 right-0 pointer-events-none" style={{ paddingTop: 36 }}>
+                        <div className="relative grid grid-cols-7 h-full">
+                          {segs.filter((s) => s.lane < MAX_LANES).map((seg) => {
+                            const ev = seg.ev;
+                            const isTodo = ev.type === "todo";
+                            const isDone = !!ev.done;
+                            const leftPct = (seg.sIdx / 7) * 100;
+                            const widthPct = ((seg.eIdx - seg.sIdx + 1) / 7) * 100;
+                            const roundedL = seg.startsHere ? "rounded-l" : "rounded-l-none";
+                            const roundedR = seg.endsHere ? "rounded-r" : "rounded-r-none";
+                            const borderL = seg.startsHere ? "border-l-2" : "border-l-0";
+                            return (
+                              <div
+                                key={`${ev.id}-${wi}`}
+                                className={`absolute pointer-events-auto group flex items-center gap-1.5 text-xs px-2 py-1 truncate ${borderL} ${roundedL} ${roundedR} ${ev.color} ${isDone ? "opacity-50" : ""}`}
+                                style={{
+                                  left: `calc(${leftPct}% + 2px)`,
+                                  width: `calc(${widthPct}% - 4px)`,
+                                  top: seg.lane * LANE_H,
+                                  height: LANE_H - 4,
+                                }}
+                                title={`${ev.start} ${ev.title}`}
+                                data-testid={`event-${ev.id}-w${wi}`}
+                              >
+                                {isTodo && seg.startsHere && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x));
+                                    }}
+                                    className={`shrink-0 w-3.5 h-3.5 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/40 hover:border-current/70"}`}
+                                    aria-label={isDone ? "완료 해제" : "완료"}
+                                    data-testid={`todo-toggle-${ev.id}`}
+                                  >
+                                    {isDone && (
+                                      <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    )}
+                                  </button>
+                                )}
+                                {seg.startsHere && (
+                                  <span className={`truncate ${isDone ? "line-through" : ""}`}>
+                                    <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
+                                    {ev.title}
+                                  </span>
+                                )}
+                                {seg.endsHere && (
+                                  <span
+                                    onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
+                                    className="absolute right-0 top-0 h-full w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 bg-foreground/10 rounded-r"
+                                    title="드래그하여 기간 조정"
+                                    data-testid={`resize-${ev.id}`}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
