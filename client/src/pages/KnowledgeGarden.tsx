@@ -1756,40 +1756,13 @@ export default function KnowledgeGarden() {
                   </button>
                 </div>
 
-                <div className="h-16 border-b border-border flex items-center justify-between px-6 shrink-0 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
-                  <div className="flex items-center gap-3">
-                     {!showExplorer && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 -ml-2 mr-1" onClick={() => setShowExplorer(true)}>
-                           <PanelLeft className="w-4 h-4 text-muted-foreground" />
-                        </Button>
-                     )}
-                     <div className="p-1.5 bg-blue-50 rounded-lg">
-                        <FileText className="w-4 h-4 text-blue-600" />
-                     </div>
-                     {activeTab?.kind === 'note' ? (
-                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span className="hover:text-foreground cursor-pointer transition-colors">Knowledge Garden</span>
-                          <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                          <span className="hover:text-foreground cursor-pointer transition-colors">2024 Analysis</span>
-                          <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                          <span className="font-medium text-foreground">{activeTab.title}</span>
-                       </div>
-                     ) : (
-                       <div className="text-sm font-medium text-foreground">{activeTab?.title || 'New Workspace'}</div>
-                     )}
+                {!showExplorer && (
+                  <div className="absolute top-9 left-2 z-20">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowExplorer(true)}>
+                      <PanelLeft className="w-4 h-4 text-muted-foreground" />
+                    </Button>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                     <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8" 
-                        onClick={() => toggleView(showDocDetails, setShowDocDetails, [showExplorer, showGraph, showCopilot])}
-                     >
-                        <X className="w-4 h-4 text-muted-foreground" />
-                     </Button>
-                  </div>
-                </div>
+                )}
 
                 {activeTab?.kind === 'new' ? (
                   <div className="flex-1 flex items-center justify-center bg-white">
