@@ -17,6 +17,15 @@ import {
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState, BackgroundVariant, ReactFlowProvider, MarkerType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -542,12 +551,14 @@ const FileTreeNode = ({
   onRemoveSubscription,
   onAddSubscription,
   existingSubscriptionIds,
+  onOpenManageDialog,
 }: {
   node: any;
   level?: number;
   onRemoveSubscription?: (id: string) => void;
   onAddSubscription?: (item: any) => void;
   existingSubscriptionIds?: Set<string>;
+  onOpenManageDialog?: () => void;
 }) => {
   const [expanded, setExpanded] = useState(true);
   const isSubscribed = !!node.subscribed;
@@ -615,43 +626,16 @@ const FileTreeNode = ({
                   <MoreHorizontal className="w-3.5 h-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel className="text-xs">구독 관리</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="text-xs">공유 지식</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="text-sm">
-                    <Plus className="w-3.5 h-3.5 mr-2 text-indigo-500" />
-                    구독 추가
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="w-72">
-                    {addableSubscriptions.length === 0 ? (
-                      <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                        추가 가능한 구독이 없습니다
-                      </DropdownMenuItem>
-                    ) : (
-                      addableSubscriptions.map((sub) => (
-                        <DropdownMenuItem
-                          key={sub.id}
-                          onClick={() => onAddSubscription?.(sub)}
-                          data-testid={`item-add-sub-${sub.id}`}
-                          className="flex items-start gap-2 py-2"
-                        >
-                          <Folder className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-sm font-medium truncate">{sub.name}</span>
-                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                              <Share2 className="w-2.5 h-2.5" />
-                              {sub.owner} · {sub.children?.length ?? 0} notes
-                            </span>
-                          </div>
-                        </DropdownMenuItem>
-                      ))
-                    )}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled className="text-[11px] text-muted-foreground">
-                  개별 구독은 폴더의 ··· 메뉴에서 삭제할 수 있습니다.
+                <DropdownMenuItem
+                  onClick={() => onOpenManageDialog?.()}
+                  data-testid="item-open-manage-subscriptions"
+                  className="text-sm"
+                >
+                  <Sparkles className="w-3.5 h-3.5 mr-2 text-indigo-500" />
+                  구독 관리
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -698,6 +682,7 @@ const FileTreeNode = ({
               onRemoveSubscription={onRemoveSubscription}
               onAddSubscription={onAddSubscription}
               existingSubscriptionIds={existingSubscriptionIds}
+              onOpenManageDialog={onOpenManageDialog}
             />
           ))}
         </div>
@@ -1233,6 +1218,8 @@ export default function KnowledgeGarden() {
     });
   };
 
+  const [showManageSubsDialog, setShowManageSubsDialog] = useState(false);
+
   const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -1293,6 +1280,7 @@ export default function KnowledgeGarden() {
                          onRemoveSubscription={handleRemoveSubscription}
                          onAddSubscription={handleAddSubscription}
                          existingSubscriptionIds={existingSubscriptionIds}
+                         onOpenManageDialog={() => setShowManageSubsDialog(true)}
                        />
                      ))}
                    </div>
@@ -2112,6 +2100,14 @@ export default function KnowledgeGarden() {
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
+          <SubscriptionManageDialog
+            open={showManageSubsDialog}
+            onOpenChange={setShowManageSubsDialog}
+            currentSubscriptions={(fileTree.find((n: any) => n.type === 'shared-root')?.children) || []}
+            availableSubscriptions={AVAILABLE_SUBSCRIPTIONS.filter((s) => !existingSubscriptionIds.has(s.id))}
+            onAdd={handleAddSubscription}
+            onRemove={handleRemoveSubscription}
+          />
           <DeleteSessionDialog 
             open={showDeleteDialog} 
             onOpenChange={setShowDeleteDialog} 
@@ -2120,6 +2116,134 @@ export default function KnowledgeGarden() {
         </Layout>
       );
     }
+
+function SubscriptionManageDialog({
+  open,
+  onOpenChange,
+  currentSubscriptions,
+  availableSubscriptions,
+  onAdd,
+  onRemove,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  currentSubscriptions: any[];
+  availableSubscriptions: any[];
+  onAdd: (item: any) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-indigo-500" />
+            구독 관리
+          </DialogTitle>
+          <DialogDescription>
+            현재 구독중인 지식과 추가로 구독할 수 있는 지식을 한눈에 확인하고, 트리에 표시할지 직접 선택하세요.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          {/* Current subscriptions */}
+          <div className="border border-border rounded-lg overflow-hidden flex flex-col bg-card">
+            <div className="px-4 py-3 bg-indigo-50/60 dark:bg-indigo-950/30 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BadgeCheck className="w-4 h-4 text-indigo-500" />
+                <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                  현재 구독중
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {currentSubscriptions.length}개
+              </span>
+            </div>
+            <ScrollArea className="max-h-[360px]">
+              <div className="divide-y divide-border">
+                {currentSubscriptions.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-muted-foreground">
+                    아직 구독한 지식이 없습니다
+                  </div>
+                ) : (
+                  currentSubscriptions.map((sub) => (
+                    <div key={sub.id} className="flex items-start gap-3 p-3 hover:bg-muted/30 transition-colors">
+                      <Folder className="w-4 h-4 text-indigo-400 mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">{sub.name}</div>
+                        <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                          <Share2 className="w-2.5 h-2.5" />
+                          {sub.owner} · {sub.children?.length ?? 0} notes
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0" title="트리에 표시">
+                        <Switch
+                          checked
+                          onCheckedChange={(v) => { if (!v) onRemove(sub.id); }}
+                          data-testid={`switch-current-${sub.id}`}
+                        />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Available subscriptions */}
+          <div className="border border-border rounded-lg overflow-hidden flex flex-col bg-card">
+            <div className="px-4 py-3 bg-muted/40 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-semibold text-foreground">
+                  추가 가능
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {availableSubscriptions.length}개
+              </span>
+            </div>
+            <ScrollArea className="max-h-[360px]">
+              <div className="divide-y divide-border">
+                {availableSubscriptions.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-muted-foreground">
+                    추가 가능한 구독이 없습니다
+                  </div>
+                ) : (
+                  availableSubscriptions.map((sub) => (
+                    <div key={sub.id} className="flex items-start gap-3 p-3 hover:bg-muted/30 transition-colors">
+                      <Folder className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">{sub.name}</div>
+                        <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                          <Share2 className="w-2.5 h-2.5" />
+                          {sub.owner} · {sub.children?.length ?? 0} notes
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0" title="트리에 추가">
+                        <Switch
+                          checked={false}
+                          onCheckedChange={(v) => { if (v) onAdd(sub); }}
+                          data-testid={`switch-available-${sub.id}`}
+                        />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-close-manage-subs">
+            닫기
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function DeleteSessionDialog({ 
   open, 
