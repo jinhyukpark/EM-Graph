@@ -11,6 +11,7 @@ import {
   Sparkles, Filter, ArrowUpDown, Search, Circle, CheckCircle2,
   FileText, Flag, ChevronDown, Pencil, CalendarDays, Bell, UserRound,
   AlertTriangle, Flag as FlagIcon, RotateCcw, ListTodo,
+  ChevronUp, ChevronsUpDown,
 } from "lucide-react";
 
 type Priority = "high" | "medium" | "low" | null;
@@ -108,13 +109,31 @@ function formatDate(d: string | null, overdue = false) {
 
 const GRID_COLS = "grid-cols-[1.7fr_0.95fr_0.95fr_1.2fr_0.85fr_0.95fr_0.7fr]";
 
+type SortKey = "title" | "due" | "start" | "note" | "assignee" | "assignees" | "priority";
+type SortDir = "asc" | "desc";
+const PRIORITY_RANK: Record<NonNullable<Priority>, number> = { high: 3, medium: 2, low: 1 };
+
 export default function TodoList() {
   const [tasks, setTasks] = useState<Task[]>(SEED);
   const [tab, setTab] = useState<Tab>("내 작업");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
   const today = new Date();
   const selected = tasks.find((t) => t.id === selectedId) ?? null;
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDir("asc");
+    } else if (sortDir === "asc") {
+      setSortDir("desc");
+    } else {
+      setSortKey(null);
+      setSortDir("asc");
+    }
+  };
 
   const updateTask = (id: string, patch: Partial<Task>) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
@@ -142,8 +161,32 @@ export default function TodoList() {
           (t.assignee ?? "").toLowerCase().includes(q)
       );
     }
+    if (sortKey) {
+      const dir = sortDir === "asc" ? 1 : -1;
+      const cmp = (a: Task, b: Task): number => {
+        const empty = (v: unknown) => v === null || v === undefined || v === "";
+        const get = (t: Task): string | number | null => {
+          switch (sortKey) {
+            case "title": return t.title;
+            case "due": return t.due ?? null;
+            case "start": return t.start ?? null;
+            case "note": return t.note ?? null;
+            case "assignee": return t.assignee ?? null;
+            case "assignees": return t.assignees.length === 0 ? null : t.assignees.length;
+            case "priority": return t.priority ? PRIORITY_RANK[t.priority] : null;
+          }
+        };
+        const va = get(a);
+        const vb = get(b);
+        if (empty(va) && !empty(vb)) return 1;
+        if (!empty(va) && empty(vb)) return -1;
+        if (typeof va === "number" && typeof vb === "number") return (va - vb) * dir;
+        return String(va).localeCompare(String(vb), "ko") * dir;
+      };
+      list = [...list].sort(cmp);
+    }
     return list;
-  }, [tasks, tab, search]);
+  }, [tasks, tab, search, sortKey, sortDir]);
 
   const toggle = (id: string) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
@@ -233,13 +276,13 @@ export default function TodoList() {
           <div className="max-w-[1400px] mx-auto">
             <div className="border border-border/60 rounded-xl overflow-hidden bg-card">
             <div className={`grid ${GRID_COLS} px-6 py-3 text-xs font-semibold text-muted-foreground bg-muted/30 border-b border-border/60`}>
-              <div>제목</div>
-              <div>마감일</div>
-              <div>시작일</div>
-              <div>지정된 노트</div>
-              <div>작성자</div>
-              <div>지정된 사람</div>
-              <div>중요도</div>
+              <SortHeader label="제목" sortKey="title" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="마감일" sortKey="due" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="시작일" sortKey="start" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="지정된 노트" sortKey="note" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="작성자" sortKey="assignee" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="지정된 사람" sortKey="assignees" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="중요도" sortKey="priority" current={sortKey} dir={sortDir} onClick={toggleSort} />
             </div>
 
             <ul>
@@ -345,6 +388,38 @@ export default function TodoList() {
         onDelete={() => selected && deleteTask(selected.id)}
       />
     </Layout>
+  );
+}
+
+function SortHeader({
+  label, sortKey, current, dir, onClick,
+}: {
+  label: string;
+  sortKey: SortKey;
+  current: SortKey | null;
+  dir: SortDir;
+  onClick: (k: SortKey) => void;
+}) {
+  const active = current === sortKey;
+  return (
+    <button
+      onClick={() => onClick(sortKey)}
+      className={`inline-flex items-center gap-1 text-left hover:text-foreground transition-colors ${
+        active ? "text-foreground" : ""
+      }`}
+      data-testid={`sort-${sortKey}`}
+    >
+      {label}
+      {active ? (
+        dir === "asc" ? (
+          <ChevronUp className="w-3.5 h-3.5" />
+        ) : (
+          <ChevronDown className="w-3.5 h-3.5" />
+        )
+      ) : (
+        <ChevronsUpDown className="w-3.5 h-3.5 opacity-40" />
+      )}
+    </button>
   );
 }
 
