@@ -783,36 +783,15 @@ export default function Plugins() {
   return (
     <Layout>
       <div className="h-full flex flex-col bg-background overflow-hidden">
-        {/* Top Bar */}
-        <div className="border-b border-border bg-card/40 px-8 py-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setSelectedPlugin(null)} className="flex items-center gap-3" data-testid="button-marketplace-home">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center text-white">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <span className="font-bold text-foreground">EM-Graph <span className="text-muted-foreground font-normal">marketplace</span></span>
-            </button>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/60 text-xs">
-            <Bot className="w-3.5 h-3.5 text-violet-500" />
-            AI 허브
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-xs"><Download className="w-3.5 h-3.5" />관리하기</Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8"><MessageCircle className="w-4 h-4" /></Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.history.back()} data-testid="button-close-plugins"><X className="w-4 h-4" /></Button>
-          </div>
-        </div>
-
         {/* Scroll Area */}
         <div className="flex-1 overflow-y-auto">
           {selectedPlugin ? (
             <PluginDetail plugin={selectedPlugin} onBack={() => setSelectedPlugin(null)} />
           ) : (
-          <div className="max-w-[1400px] mx-auto px-8 py-8 space-y-8">
+          <div className="max-w-[1400px] mx-auto px-8 pt-12 pb-8 space-y-8">
             {/* Heading + Search */}
-            <div className="text-center space-y-4">
-              <h1 className="text-2xl font-semibold text-foreground">필요에 맞게 제작된 강력한 도구 살펴보기</h1>
+            <div className="text-center space-y-5">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">필요에 맞게 제작된 <span className="bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">강력한 도구</span> 살펴보기</h1>
               <div className="relative max-w-xl mx-auto">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
