@@ -612,6 +612,9 @@ export default function Settings() {
                      <div className="flex items-start gap-2 text-sm">
                        <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature6")}</span>
                      </div>
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature8")}</span>
+                     </div>
                      <div className="flex items-start gap-2 text-sm pt-3 mt-3 border-t border-border/60">
                        <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature5")}</span>
                      </div>
@@ -657,6 +660,9 @@ export default function Settings() {
                      </div>
                      <div className="flex items-start gap-2 text-sm">
                        <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature7")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature8")}</span>
                      </div>
                      <div className="flex items-start gap-2 text-sm pt-3 mt-3 border-t border-primary/20">
                        <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature6")}</span>
