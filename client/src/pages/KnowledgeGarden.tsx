@@ -130,11 +130,11 @@ const INITIAL_FILE_TREE = [
       { id: "f4", name: "Research", type: "folder", children: [
         { id: "n1", name: "Note 1", type: "note" },
         { id: "n2", name: "Note 2", type: "note" },
-        { id: "n3", name: "Note 3", type: "note" }
+        { id: "n3", name: "Note 3", type: "note", isNew: true }
       ]},
       { id: "f5", name: "Test", type: "folder", children: [] },
       { id: "f6", name: "2024 Analysis", type: "folder", children: [
-         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true }
+         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true }
       ]}
     ]
   },
@@ -152,8 +152,8 @@ const INITIAL_FILE_TREE = [
         owner: "박투자",
         children: [
           { id: "sn1", name: "2024 코스피 반도체 섹터 전망", type: "note", subscribed: true, owner: "박투자" },
-          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자" },
-          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자" },
+          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자", isNew: true },
+          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자", isNew: true },
         ]
       },
       {
@@ -163,7 +163,7 @@ const INITIAL_FILE_TREE = [
         subscribed: true,
         owner: "김애널",
         children: [
-          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널" },
+          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널", isNew: true },
           { id: "sn5", name: "원/달러 환율 주간 노트", type: "note", subscribed: true, owner: "김애널" },
         ]
       }
@@ -545,6 +545,20 @@ const AVAILABLE_SUBSCRIPTIONS: any[] = [
   },
 ];
 
+const countNotes = (node: any): number => {
+  if (!node) return 0;
+  if (node.type === 'note') return 1;
+  if (!Array.isArray(node.children)) return 0;
+  return node.children.reduce((sum: number, child: any) => sum + countNotes(child), 0);
+};
+
+const hasNewNote = (node: any): boolean => {
+  if (!node) return false;
+  if (node.type === 'note') return !!node.isNew;
+  if (!Array.isArray(node.children)) return false;
+  return node.children.some((c: any) => hasNewNote(c));
+};
+
 const FileTreeNode = ({
   node,
   level = 0,
@@ -564,6 +578,10 @@ const FileTreeNode = ({
   const isSubscribed = !!node.subscribed;
   const isSharedRoot = node.type === 'shared-root';
   const isSubscribedFolder = isSubscribed && !isSharedRoot && node.type === 'folder';
+  const isFolderLike = node.type === 'folder' || node.type === 'root' || isSharedRoot;
+  const noteCount = isFolderLike ? countNotes(node) : 0;
+  const folderHasNew = isFolderLike && hasNewNote(node);
+  const isNoteNew = node.type === 'note' && !!node.isNew;
 
   const folderIconColor = isSubscribed ? 'text-indigo-400' : 'text-blue-400/80';
   const fileIconColor = isSubscribed ? 'text-indigo-500' : 'text-muted-foreground';
@@ -602,6 +620,36 @@ const FileTreeNode = ({
         <span className={cn("truncate", isSharedRoot && "font-semibold text-indigo-600 dark:text-indigo-300 uppercase tracking-wide text-xs")}>
           {node.name}
         </span>
+
+        {isFolderLike && (
+          <span
+            className={cn(
+              "shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[10px] font-semibold tabular-nums",
+              isSubscribed
+                ? "bg-indigo-100/80 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
+                : "bg-secondary text-muted-foreground"
+            )}
+            title={`${noteCount} notes`}
+          >
+            {noteCount}
+          </span>
+        )}
+
+        {isNoteNew && (
+          <span
+            className="shrink-0 inline-flex items-center gap-0.5 px-1.5 h-[16px] rounded-sm text-[9px] font-bold uppercase tracking-wide bg-emerald-500 text-white shadow-sm"
+            title="최근 추가됨"
+          >
+            New
+          </span>
+        )}
+
+        {!expanded && folderHasNew && isFolderLike && (
+          <span
+            className="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500"
+            title="새 노트 포함"
+          />
+        )}
 
         {isSubscribed && !isSharedRoot && node.owner && (
           <span
