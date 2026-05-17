@@ -98,13 +98,13 @@ function AvatarStack({ names, max = 3 }: { names: string[]; max?: number }) {
   );
 }
 
-const TABS = ["내 작업", "노트북별", "노트", "오늘", "할당됨"] as const;
+const TABS = ["My Tasks", "By Notebook", "Notes", "Today", "Assigned", "Overdue"] as const;
 type Tab = (typeof TABS)[number];
 
 const PRIORITY_STYLE: Record<NonNullable<Priority>, { dot: string; label: string; text: string }> = {
-  high: { dot: "bg-rose-500", label: "높음", text: "text-rose-600" },
-  medium: { dot: "bg-amber-500", label: "보통", text: "text-amber-600" },
-  low: { dot: "bg-slate-400", label: "낮음", text: "text-slate-500" },
+  high: { dot: "bg-rose-500", label: "High", text: "text-rose-600" },
+  medium: { dot: "bg-amber-500", label: "Medium", text: "text-amber-600" },
+  low: { dot: "bg-slate-400", label: "Low", text: "text-slate-500" },
 };
 
 function formatDate(d: string | null, overdue = false) {
@@ -113,7 +113,8 @@ function formatDate(d: string | null, overdue = false) {
   const y = date.getFullYear();
   const m = date.getMonth() + 1;
   const day = date.getDate();
-  const label = `${y}년 ${m}월 ${day}일`;
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const label = `${MONTHS[m - 1]} ${day}, ${y}`;
   return <span className={overdue ? "text-rose-500" : "text-foreground/90"}>{label}</span>;
 }
 
@@ -125,11 +126,11 @@ const PRIORITY_RANK: Record<NonNullable<Priority>, number> = { high: 3, medium: 
 
 type RangeShortcut = { key: string; label: string; days: number };
 const RANGE_SHORTCUTS: RangeShortcut[] = [
-  { key: "today", label: "오늘", days: 0 },
-  { key: "7d", label: "7일", days: 7 },
-  { key: "2w", label: "2주", days: 14 },
-  { key: "1m", label: "1달", days: 30 },
-  { key: "6m", label: "6개월", days: 180 },
+  { key: "today", label: "Today", days: 0 },
+  { key: "7d", label: "7d", days: 7 },
+  { key: "2w", label: "2w", days: 14 },
+  { key: "1m", label: "1m", days: 30 },
+  { key: "6m", label: "6m", days: 180 },
 ];
 
 function fmtDateShort(d: Date) {
@@ -148,7 +149,7 @@ function endOfDay(d: Date) {
 
 export default function TodoList() {
   const [tasks, setTasks] = useState<Task[]>(SEED);
-  const [tab, setTab] = useState<Tab>("내 작업");
+  const [tab, setTab] = useState<Tab>("My Tasks");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
@@ -238,13 +239,16 @@ export default function TodoList() {
 
   const filtered = useMemo(() => {
     let list = tasks;
-    if (tab === "오늘") {
+    if (tab === "Today") {
       const k = today.toISOString().slice(0, 10);
       list = list.filter((t) => t.due === k || t.start === k);
-    } else if (tab === "할당됨") {
+    } else if (tab === "Assigned") {
       list = list.filter((t) => !!t.assignee);
-    } else if (tab === "노트") {
+    } else if (tab === "Notes") {
       list = list.filter((t) => !!t.note);
+    } else if (tab === "Overdue") {
+      const k = today.toISOString().slice(0, 10);
+      list = list.filter((t) => !!t.due && t.due < k && !t.done);
     }
     if (range?.from) {
       const from = startOfDay(range.from);
@@ -321,11 +325,11 @@ export default function TodoList() {
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3" data-testid="text-todo-title">
                 <ListTodo className="w-8 h-8 text-violet-600" />
-                할 일 목록
+                To-Do List
               </h1>
               <p className="text-muted-foreground mt-2 max-w-2xl text-base">
-                팀의 모든 작업을 한 곳에서 추적하세요. 마감일, 담당자, 우선순위를 한눈에 확인하고,
-                노트와 연결된 작업을 신속하게 처리할 수 있습니다.
+                Track all your team's tasks in one place. See due dates, assignees, and priorities at a glance,
+                and quickly handle tasks linked to notes.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -336,7 +340,7 @@ export default function TodoList() {
                 data-testid="button-completed"
               >
                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                완료된 작업
+                Completed
                 <Badge variant="secondary" className="ml-1 px-1.5 py-0 h-5 min-w-[20px] text-xs bg-emerald-100 text-emerald-700 border-0">
                   {doneCount}
                 </Badge>
@@ -348,7 +352,7 @@ export default function TodoList() {
                 data-testid="button-new-task"
               >
                 <Sparkles className="w-5 h-5" />
-                새 작업
+                New Task
               </Button>
             </div>
           </div>
@@ -358,7 +362,7 @@ export default function TodoList() {
             <div className="relative flex-1 max-w-2xl">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="작업을 찾으세요..."
+                placeholder="Search tasks..."
                 className="pl-10 h-11 bg-background shadow-sm border-muted-foreground/20"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -373,7 +377,7 @@ export default function TodoList() {
                   data-testid="button-filter"
                 >
                   <Filter className="w-4 h-4" />
-                  필터
+                  Filter
                   {filterActiveCount > 0 && (
                     <span className="ml-0.5 h-5 min-w-5 px-1.5 rounded-full bg-violet-600 text-white text-[10px] font-semibold inline-flex items-center justify-center">
                       {filterActiveCount}
@@ -383,7 +387,7 @@ export default function TodoList() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64 p-2">
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 pt-1 pb-2">
-                  필터 기준
+                  Filter by
                 </DropdownMenuLabel>
                 <DropdownMenuItem
                   onSelect={(e) => { e.preventDefault(); setFilterRepeat((v) => !v); }}
@@ -391,7 +395,7 @@ export default function TodoList() {
                   data-testid="filter-repeat"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span className="flex-1">반복</span>
+                  <span className="flex-1">Repeat</span>
                   {filterRepeat && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -400,7 +404,7 @@ export default function TodoList() {
                   data-testid="filter-flag"
                 >
                   <Flag className="w-4 h-4" />
-                  <span className="flex-1">플래그</span>
+                  <span className="flex-1">Flag</span>
                   {filterFlag && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -409,47 +413,47 @@ export default function TodoList() {
                   data-testid="filter-done"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span className="flex-1">완료</span>
+                  <span className="flex-1">Done</span>
                   {filterDone && <CheckCircle2 className="w-4 h-4 text-violet-600" />}
                 </DropdownMenuItem>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger className={`gap-2.5 py-2 px-2 rounded-md ${filterDue !== "all" ? "bg-violet-50 text-violet-700" : ""}`} data-testid="filter-due-trigger">
                     <CalendarDays className="w-4 h-4" />
-                    <span className="flex-1">마감일</span>
+                    <span className="flex-1">Due Date</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent className="w-40">
                     <DropdownMenuRadioGroup value={filterDue} onValueChange={(v) => setFilterDue(v as typeof filterDue)}>
-                      <DropdownMenuRadioItem value="all">전체</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="today">오늘 마감</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="week">이번 주</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="overdue">지연됨</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="today">Due Today</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="week">This Week</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="overdue">Overdue</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger className={`gap-2.5 py-2 px-2 rounded-md ${filterPriority !== "all" ? "bg-violet-50 text-violet-700" : ""}`} data-testid="filter-priority-trigger">
                     <AlertTriangle className="w-4 h-4" />
-                    <span className="flex-1">우선 순위</span>
+                    <span className="flex-1">Priority</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent className="w-40">
                     <DropdownMenuRadioGroup value={filterPriority} onValueChange={(v) => setFilterPriority(v as typeof filterPriority)}>
-                      <DropdownMenuRadioItem value="all">전체</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="high">높음</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="medium">보통</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="low">낮음</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="high">High</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="medium">Medium</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="low">Low</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuSeparator className="my-2" />
                 <DropdownMenuLabel className="text-xs font-normal text-muted-foreground px-2 pt-1 pb-2">
-                  포함
+                  Include
                 </DropdownMenuLabel>
                 <DropdownMenuItem
                   onSelect={(e) => { e.preventDefault(); setIncludeShared((v) => !v); }}
                   className="gap-2.5 py-2 px-2 rounded-md text-violet-600 font-medium focus:text-violet-700"
                   data-testid="filter-include-shared"
                 >
-                  <span className="flex-1">내가 공유받은 노트</span>
+                  <span className="flex-1">Notes Shared With Me</span>
                   {includeShared && <CheckCircle2 className="w-4 h-4" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -457,7 +461,7 @@ export default function TodoList() {
                   className="gap-2.5 py-2 px-2 rounded-md text-violet-600 font-medium focus:text-violet-700"
                   data-testid="filter-include-done"
                 >
-                  <span className="flex-1">완료됨</span>
+                  <span className="flex-1">Completed</span>
                   {includeDone && <CheckCircle2 className="w-4 h-4" />}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -491,7 +495,7 @@ export default function TodoList() {
                       ? `${fmtDateShort(range.from)} - ${fmtDateShort(range.to)}`
                       : fmtDateShort(range.from)
                   ) : (
-                    "전체 기간"
+                    "All time"
                   )}
                   <ChevronDown className="w-3.5 h-3.5 opacity-60" />
                 </Button>
@@ -513,10 +517,10 @@ export default function TodoList() {
                     className="text-xs text-muted-foreground hover:text-foreground"
                     data-testid="button-clear-range"
                   >
-                    초기화
+                    Reset
                   </button>
                   <Button size="sm" onClick={() => setRangeOpen(false)} data-testid="button-apply-range">
-                    적용
+                    Apply
                   </Button>
                 </div>
               </PopoverContent>
@@ -533,7 +537,7 @@ export default function TodoList() {
                   {TABS.map((label) => (
                     <TabsTrigger key={label} value={label} className="h-9" data-testid={`tab-${label}`}>
                       {label}
-                      {label === "내 작업" && (
+                      {label === "My Tasks" && (
                         <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 h-4 min-w-[18px] text-[10px] bg-violet-100 text-violet-700 border-0">
                           {openCount}
                         </Badge>
@@ -546,14 +550,14 @@ export default function TodoList() {
             {selectedIds.size > 0 && (
               <div className="mb-3 flex items-center justify-between px-4 py-2.5 bg-violet-50 border border-violet-200 rounded-lg" data-testid="bulk-action-bar">
                 <div className="flex items-center gap-3 text-sm text-violet-900">
-                  <span className="font-semibold">{selectedIds.size}개 선택됨</span>
+                  <span className="font-semibold">{selectedIds.size} selected</span>
                   <button
                     onClick={clearSelection}
                     className="inline-flex items-center gap-1 text-xs text-violet-700 hover:text-violet-900"
                     data-testid="button-clear-selection"
                   >
                     <X className="w-3.5 h-3.5" />
-                    선택 해제
+                    Clear selection
                   </button>
                 </div>
                 <Button
@@ -564,7 +568,7 @@ export default function TodoList() {
                   data-testid="button-bulk-delete"
                 >
                   <Trash2 className="w-4 h-4" />
-                  선택 삭제
+                  Delete selected
                 </Button>
               </div>
             )}
@@ -575,16 +579,16 @@ export default function TodoList() {
                   checked={allVisibleSelected ? true : (someVisibleSelected ? "indeterminate" : false)}
                   onCheckedChange={toggleSelectAllVisible}
                   data-testid="checkbox-select-all"
-                  aria-label="전체 선택"
+                  aria-label="Select all"
                 />
               </div>
-              <SortHeader label="제목" sortKey="title" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="마감일" sortKey="due" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="시작일" sortKey="start" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="지정된 노트" sortKey="note" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="작성자" sortKey="assignee" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="지정된 사람" sortKey="assignees" current={sortKey} dir={sortDir} onClick={toggleSort} />
-              <SortHeader label="중요도" sortKey="priority" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Title" sortKey="title" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Due Date" sortKey="due" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Start Date" sortKey="start" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Linked Note" sortKey="note" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Author" sortKey="assignee" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Assignees" sortKey="assignees" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <SortHeader label="Priority" sortKey="priority" current={sortKey} dir={sortDir} onClick={toggleSort} />
               <div />
             </div>
 
@@ -610,7 +614,7 @@ export default function TodoList() {
                         checked={selectedIds.has(t.id)}
                         onCheckedChange={() => toggleSelected(t.id)}
                         data-testid={`checkbox-task-${t.id}`}
-                        aria-label="작업 선택"
+                        aria-label="Select task"
                       />
                     </div>
                     {/* 제목 */}
@@ -619,7 +623,7 @@ export default function TodoList() {
                         onClick={(e) => { e.stopPropagation(); toggle(t.id); }}
                         className="shrink-0"
                         data-testid={`toggle-task-${t.id}`}
-                        aria-label="완료 토글"
+                        aria-label="Toggle done"
                       >
                         {t.done ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-500" />
@@ -695,7 +699,7 @@ export default function TodoList() {
                           <button
                             className="h-7 w-7 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 transition-opacity"
                             data-testid={`button-row-menu-${t.id}`}
-                            aria-label="작업 메뉴"
+                            aria-label="Task menu"
                           >
                             <MoreHorizontal className="w-4 h-4" />
                           </button>
@@ -706,7 +710,7 @@ export default function TodoList() {
                             data-testid={`menu-edit-${t.id}`}
                           >
                             <Pencil className="w-4 h-4 mr-2" />
-                            편집
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -715,7 +719,7 @@ export default function TodoList() {
                             data-testid={`menu-delete-${t.id}`}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            삭제
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -725,7 +729,7 @@ export default function TodoList() {
               })}
               {filtered.length === 0 && (
                 <li className="px-5 py-10 text-center text-sm text-muted-foreground">
-                  표시할 작업이 없습니다.
+                  No tasks to show.
                 </li>
               )}
             </ul>
@@ -820,7 +824,7 @@ function TaskDetailDialog({
           {/* Notebook chip */}
           <button className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-5" data-testid="button-notebook">
             <FileText className="w-3.5 h-3.5" />
-            {task.note ?? "해야 할 일"}
+            {task.note ?? "To-Do"}
             <ChevronDown className="w-3 h-3" />
           </button>
 
@@ -830,7 +834,7 @@ function TaskDetailDialog({
               onClick={() => onChange({ done: !task.done })}
               className="shrink-0"
               data-testid="button-toggle-done"
-              aria-label="완료 토글"
+              aria-label="Toggle done"
             >
               {task.done ? (
                 <CheckCircle2 className="w-6 h-6 text-emerald-500" />
@@ -849,36 +853,36 @@ function TaskDetailDialog({
           </div>
 
           <div className="space-y-5">
-            {/* 설명 */}
-            <Row icon={Pencil} label="설명">
+            {/* Description */}
+            <Row icon={Pencil} label="Description">
               <Textarea
-                placeholder="이 작업은 무엇에 관한 것인가요?"
+                placeholder="What is this task about?"
                 className="resize-none min-h-[72px] text-sm rounded-lg"
                 data-testid="textarea-description"
               />
             </Row>
 
-            {/* 마감일 */}
-            <Row icon={CalendarDays} label="마감일">
+            {/* Due Date */}
+            <Row icon={CalendarDays} label="Due Date">
               <div className="flex flex-wrap gap-2">
-                <Chip active={task.due === todayKey} onClick={() => onChange({ due: todayKey })}>오늘</Chip>
-                <Chip active={task.due === tomorrowKey} onClick={() => onChange({ due: tomorrowKey })}>내일</Chip>
-                <Chip icon={Pencil}>사용자 지정</Chip>
-                <Chip icon={RotateCcw}>반복</Chip>
+                <Chip active={task.due === todayKey} onClick={() => onChange({ due: todayKey })}>Today</Chip>
+                <Chip active={task.due === tomorrowKey} onClick={() => onChange({ due: tomorrowKey })}>Tomorrow</Chip>
+                <Chip icon={Pencil}>Custom</Chip>
+                <Chip icon={RotateCcw}>Repeat</Chip>
               </div>
             </Row>
 
-            {/* 알림 */}
-            <Row icon={Bell} label="알림">
+            {/* Alert */}
+            <Row icon={Bell} label="Alert">
               <div className="flex flex-wrap gap-2">
-                <Chip>1시간 후</Chip>
-                <Chip>4시간 후에</Chip>
-                <Chip icon={Pencil}>사용자 지정</Chip>
+                <Chip>In 1 hour</Chip>
+                <Chip>In 4 hours</Chip>
+                <Chip icon={Pencil}>Custom</Chip>
               </div>
             </Row>
 
-            {/* 담당자 */}
-            <Row icon={UserRound} label="담당자">
+            {/* Assignee */}
+            <Row icon={UserRound} label="Assignee">
               {task.assignee ? (
                 <span className="inline-flex items-center gap-2 text-sm">
                   <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-[11px] font-semibold inline-flex items-center justify-center">
@@ -888,22 +892,22 @@ function TaskDetailDialog({
                 </span>
               ) : (
                 <button className="text-sm text-muted-foreground hover:text-foreground" data-testid="button-assign">
-                  할당
+                  Assign
                 </button>
               )}
             </Row>
 
-            {/* 우선 순위 */}
-            <Row icon={AlertTriangle} label="우선 순위">
+            {/* Priority */}
+            <Row icon={AlertTriangle} label="Priority">
               <div className="flex flex-wrap gap-2">
-                <Chip active={task.priority === "low"} onClick={() => onChange({ priority: "low" })}>낮음</Chip>
-                <Chip active={task.priority === "medium"} onClick={() => onChange({ priority: "medium" })}>중간</Chip>
-                <Chip active={task.priority === "high"} onClick={() => onChange({ priority: "high" })}>높음</Chip>
+                <Chip active={task.priority === "low"} onClick={() => onChange({ priority: "low" })}>Low</Chip>
+                <Chip active={task.priority === "medium"} onClick={() => onChange({ priority: "medium" })}>Medium</Chip>
+                <Chip active={task.priority === "high"} onClick={() => onChange({ priority: "high" })}>High</Chip>
               </div>
             </Row>
 
-            {/* 플래그 */}
-            <Row icon={FlagIcon} label="플래그">
+            {/* Flag */}
+            <Row icon={FlagIcon} label="Flag">
               <Switch
                 checked={isFlagged}
                 onCheckedChange={(v) => onChange({ priority: v ? "high" : (task.priority === "high" ? null : task.priority) })}
@@ -913,7 +917,7 @@ function TaskDetailDialog({
           </div>
 
           <div className="mt-7 text-xs text-muted-foreground">
-            만든 사람: jh.park@illunex.com
+            Created by: jh.park@illunex.com
           </div>
         </div>
 
@@ -924,14 +928,14 @@ function TaskDetailDialog({
             className="text-sm text-rose-600 hover:text-rose-700"
             data-testid="button-delete-task"
           >
-            작업 삭제
+            Delete task
           </button>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={onClose} className="rounded-lg" data-testid="button-cancel">
-              취소
+              Cancel
             </Button>
             <Button onClick={onClose} className="rounded-lg bg-violet-600 hover:bg-violet-700 text-white" data-testid="button-save">
-              저장
+              Save
             </Button>
           </div>
         </div>
@@ -970,7 +974,7 @@ function CreateTaskDialog({
       title: title.trim(),
       due,
       start: null,
-      note: "해야 할 일",
+      note: "To-Do",
       assignee,
       assignees: assignee ? [assignee] : [],
       priority: flagged ? "high" : priority,
@@ -985,7 +989,7 @@ function CreateTaskDialog({
           {/* Notebook chip */}
           <button className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-5" data-testid="button-create-notebook">
             <FileText className="w-3.5 h-3.5" />
-            해야 할 일
+            To-Do
             <ChevronDown className="w-3 h-3" />
           </button>
 
@@ -996,41 +1000,41 @@ function CreateTaskDialog({
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="작업을 입력하세요"
+              placeholder="Enter a task"
               className="flex-1 text-xl font-semibold bg-transparent outline-none placeholder:text-muted-foreground/60"
               data-testid="input-create-title"
             />
           </div>
 
           <div className="space-y-5">
-            <Row icon={Pencil} label="설명">
+            <Row icon={Pencil} label="Description">
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="이 작업은 무엇에 관한 것인가요?"
+                placeholder="What is this task about?"
                 className="resize-none min-h-[72px] text-sm rounded-lg"
                 data-testid="textarea-create-description"
               />
             </Row>
 
-            <Row icon={CalendarDays} label="마감일">
+            <Row icon={CalendarDays} label="Due Date">
               <div className="flex flex-wrap gap-2">
-                <Chip active={due === todayKey} onClick={() => setDue(due === todayKey ? null : todayKey)}>오늘</Chip>
-                <Chip active={due === tomorrowKey} onClick={() => setDue(due === tomorrowKey ? null : tomorrowKey)}>내일</Chip>
-                <Chip icon={Pencil}>사용자 지정</Chip>
-                <Chip icon={RotateCcw}>반복</Chip>
+                <Chip active={due === todayKey} onClick={() => setDue(due === todayKey ? null : todayKey)}>Today</Chip>
+                <Chip active={due === tomorrowKey} onClick={() => setDue(due === tomorrowKey ? null : tomorrowKey)}>Tomorrow</Chip>
+                <Chip icon={Pencil}>Custom</Chip>
+                <Chip icon={RotateCcw}>Repeat</Chip>
               </div>
             </Row>
 
-            <Row icon={Bell} label="알림">
+            <Row icon={Bell} label="Alert">
               <div className="flex flex-wrap gap-2">
-                <Chip>1시간 후</Chip>
-                <Chip>4시간 후에</Chip>
-                <Chip icon={Pencil}>사용자 지정</Chip>
+                <Chip>In 1 hour</Chip>
+                <Chip>In 4 hours</Chip>
+                <Chip icon={Pencil}>Custom</Chip>
               </div>
             </Row>
 
-            <Row icon={UserRound} label="담당자">
+            <Row icon={UserRound} label="Assignee">
               {assignee ? (
                 <button
                   onClick={() => setAssignee(null)}
@@ -1048,20 +1052,20 @@ function CreateTaskDialog({
                   className="text-sm text-muted-foreground hover:text-foreground"
                   data-testid="button-create-assign"
                 >
-                  할당
+                  Assign
                 </button>
               )}
             </Row>
 
-            <Row icon={AlertTriangle} label="우선 순위">
+            <Row icon={AlertTriangle} label="Priority">
               <div className="flex flex-wrap gap-2">
-                <Chip active={priority === "low"} onClick={() => setPriority(priority === "low" ? null : "low")}>낮음</Chip>
-                <Chip active={priority === "medium"} onClick={() => setPriority(priority === "medium" ? null : "medium")}>중간</Chip>
-                <Chip active={priority === "high"} onClick={() => setPriority(priority === "high" ? null : "high")}>높음</Chip>
+                <Chip active={priority === "low"} onClick={() => setPriority(priority === "low" ? null : "low")}>Low</Chip>
+                <Chip active={priority === "medium"} onClick={() => setPriority(priority === "medium" ? null : "medium")}>Medium</Chip>
+                <Chip active={priority === "high"} onClick={() => setPriority(priority === "high" ? null : "high")}>High</Chip>
               </div>
             </Row>
 
-            <Row icon={FlagIcon} label="플래그">
+            <Row icon={FlagIcon} label="Flag">
               <Switch
                 checked={flagged}
                 onCheckedChange={setFlagged}
@@ -1073,7 +1077,7 @@ function CreateTaskDialog({
 
         <div className="px-7 py-4 border-t border-border/60 flex items-center justify-end gap-2">
           <Button variant="outline" onClick={handleClose} className="rounded-lg" data-testid="button-create-cancel">
-            취소
+            Cancel
           </Button>
           <Button
             onClick={handleCreate}
@@ -1081,7 +1085,7 @@ function CreateTaskDialog({
             className="rounded-lg bg-violet-600 hover:bg-violet-700 text-white disabled:opacity-50"
             data-testid="button-create-confirm"
           >
-            작업 만들기
+            Create Task
           </Button>
         </div>
       </DialogContent>
