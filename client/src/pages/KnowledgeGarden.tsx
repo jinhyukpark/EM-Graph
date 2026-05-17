@@ -642,9 +642,7 @@ const FileTreeNode = ({
           <span
             className={cn(
               "shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[10px] font-semibold tabular-nums",
-              isSubscribed
-                ? "bg-indigo-100/80 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
-                : "bg-secondary text-muted-foreground"
+              "bg-indigo-100/80 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300"
             )}
             title={`${noteCount} notes`}
           >
