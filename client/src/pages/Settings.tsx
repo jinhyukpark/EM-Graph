@@ -67,6 +67,8 @@ export default function Settings() {
 
   return (
     <Layout>
+      <div className="h-full flex flex-col bg-background overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
       <div className="container mx-auto px-6 py-8 max-w-5xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("myPage")}</h1>
@@ -1148,6 +1150,8 @@ export default function Settings() {
             </div>
           </TabsContent>
         </Tabs>
+      </div>
+        </div>
       </div>
     </Layout>
   );
