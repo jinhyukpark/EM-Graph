@@ -742,6 +742,11 @@ export default function Settings() {
 
              <Separator className="my-6" />
 
+             <div className="space-y-1 mb-4">
+               <h2 className="text-2xl font-bold tracking-tight" data-testid="text-plugin-license-title">{t("stPluginLicenseTitle")}</h2>
+               <p className="text-sm text-muted-foreground">{t("stPluginLicenseSubtitle")}</p>
+             </div>
+
              <div className="grid gap-6 md:grid-cols-2">
                <Card>
                  <CardHeader>
