@@ -1374,9 +1374,9 @@ export default function KnowledgeGarden() {
     );
   };
 
-  type WorkTab = { id: string; title: string; kind: 'note' | 'new'; noteId?: string };
+  type WorkTab = { id: string; title: string; kind: 'note' | 'new' };
   const [tabs, setTabs] = useState<WorkTab[]>([
-    { id: 'tab-1', title: 'LG Energy Solution & SK Innovation', kind: 'note', noteId: 'n4' },
+    { id: 'tab-1', title: 'LG Energy Solution & SK Innovation', kind: 'note' },
   ]);
   const [activeTabId, setActiveTabId] = useState<string>('tab-1');
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
@@ -1492,116 +1492,7 @@ export default function KnowledgeGarden() {
             )}
          </AnimatePresence>
 
-        {/* Global Tab Bar */}
-        <div className="flex items-stretch h-10 border-b border-border bg-muted/30 shrink-0 overflow-hidden">
-          <button
-            type="button"
-            onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
-            data-testid="button-toggle-explorer-from-tabs"
-            title={showExplorer ? "탐색기 숨기기" : "탐색기 표시"}
-            className="flex items-center justify-center w-10 border-r border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
-          >
-            {showExplorer ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
-          </button>
-          <div ref={tabScrollerRef} className="relative flex-1 flex items-stretch overflow-hidden min-w-0">
-            {tabs.map((tab) => {
-              const isActive = tab.id === activeTabId;
-              return (
-                <div
-                  key={tab.id}
-                  ref={(el) => { tabItemRefs.current[tab.id] = el; }}
-                  data-testid={`tab-${tab.id}`}
-                  onClick={() => setActiveTabId(tab.id)}
-                  className={cn(
-                    "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-sm transition-colors shrink-0",
-                    isActive
-                      ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px font-medium"
-                      : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                  )}
-                >
-                  {tab.kind === 'note' ? (
-                    <FileText className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                  ) : (
-                    <Sparkles className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                  )}
-                  <span className="truncate">{tab.title}</span>
-                  {tabs.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={(e) => handleCloseTab(tab.id, e)}
-                      data-testid={`button-close-tab-${tab.id}`}
-                      className={cn(
-                        "p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-opacity",
-                        isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
-                      )}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          {hiddenTabIds.size > 0 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  data-testid="button-overflow-tabs"
-                  title={`숨겨진 탭 ${hiddenTabIds.size}개`}
-                  className="relative flex items-center justify-center w-12 border-l border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
-                >
-                  <ChevronDown className="w-4 h-4" />
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
-                    {hiddenTabIds.size}
-                  </span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64" data-testid="menu-overflow-tabs">
-                <DropdownMenuLabel className="text-xs">숨겨진 탭</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {tabs.filter((t) => hiddenTabIds.has(t.id)).map((tab) => {
-                  const isActive = tab.id === activeTabId;
-                  return (
-                    <DropdownMenuItem
-                      key={tab.id}
-                      onClick={() => setActiveTabId(tab.id)}
-                      data-testid={`item-overflow-tab-${tab.id}`}
-                      className={cn("text-sm flex items-center gap-2", isActive && "bg-muted")}
-                    >
-                      {tab.kind === 'note' ? (
-                        <FileText className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                      ) : (
-                        <Sparkles className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
-                      )}
-                      <span className="truncate flex-1">{tab.title}</span>
-                      {tabs.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id, e); }}
-                          className="p-0.5 rounded hover:bg-muted-foreground/10 text-muted-foreground hover:text-foreground"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          <button
-            type="button"
-            onClick={handleAddTab}
-            data-testid="button-add-tab"
-            className="flex items-center justify-center w-12 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
-            title="새 탭"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
-
-        <ResizablePanelGroup direction="horizontal" className="flex-1 items-stretch">
+        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
           {/* 1. File Explorer */}
           {showExplorer && (
             <>
@@ -1941,45 +1832,114 @@ export default function KnowledgeGarden() {
               {/* 2. Document Details */}
               {showDocDetails && (
               <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
-                {/* Breadcrumb */}
-                {(() => {
-                  const activeNoteInfo = activeTab && activeTab.kind === 'note'
-                    ? (activeTab.noteId
-                        ? allNotesFlat.find((n) => n.id === activeTab.noteId)
-                        : allNotesFlat.find((n) => n.name === activeTab.title))
-                    : null;
-                  const segments = activeNoteInfo
-                    ? [...activeNoteInfo.path, activeNoteInfo.name]
-                    : activeTab ? [activeTab.title] : [];
-                  return (
-                    <div className="h-16 border-b border-border flex items-center px-4 shrink-0 gap-1.5 text-sm overflow-hidden" data-testid="note-breadcrumb">
-                      {activeTab?.kind === 'note' ? (
-                        <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-                      ) : (
-                        <Sparkles className="w-4 h-4 text-blue-500 shrink-0" />
-                      )}
-                      {segments.map((seg, i) => {
-                        const isLast = i === segments.length - 1;
-                        return (
-                          <div key={i} className="flex items-center gap-1.5 min-w-0">
-                            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />}
-                            <span
+                {/* Tab Bar */}
+                <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
+                    data-testid="button-toggle-explorer-from-tabs"
+                    title={showExplorer ? "탐색기 숨기기" : "탐색기 표시"}
+                    className="flex items-center justify-center w-10 border-r border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                  >
+                    {showExplorer ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+                  </button>
+                  <div ref={tabScrollerRef} className="relative flex-1 flex items-stretch overflow-hidden min-w-0">
+                    {tabs.map((tab) => {
+                      const isActive = tab.id === activeTabId;
+                      return (
+                        <div
+                          key={tab.id}
+                          ref={(el) => { tabItemRefs.current[tab.id] = el; }}
+                          data-testid={`tab-${tab.id}`}
+                          onClick={() => setActiveTabId(tab.id)}
+                          className={cn(
+                            "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-sm transition-colors shrink-0",
+                            isActive
+                              ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px font-medium"
+                              : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                          )}
+                        >
+                          {tab.kind === 'note' ? (
+                            <FileText className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          ) : (
+                            <Sparkles className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          )}
+                          <span className="truncate">{tab.title}</span>
+                          {tabs.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleCloseTab(tab.id, e)}
+                              data-testid={`button-close-tab-${tab.id}`}
                               className={cn(
-                                "truncate",
-                                isLast
-                                  ? "font-semibold text-foreground"
-                                  : "text-muted-foreground hover:text-foreground cursor-pointer"
+                                "p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-opacity",
+                                isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
                               )}
-                              title={seg}
                             >
-                              {seg}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {hiddenTabIds.size > 0 && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          type="button"
+                          data-testid="button-overflow-tabs"
+                          title={`숨겨진 탭 ${hiddenTabIds.size}개`}
+                          className="relative flex items-center justify-center w-12 border-l border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
+                            {hiddenTabIds.size}
+                          </span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64" data-testid="menu-overflow-tabs">
+                        <DropdownMenuLabel className="text-xs">숨겨진 탭</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {tabs.filter((t) => hiddenTabIds.has(t.id)).map((tab) => {
+                          const isActive = tab.id === activeTabId;
+                          return (
+                            <DropdownMenuItem
+                              key={tab.id}
+                              onClick={() => setActiveTabId(tab.id)}
+                              data-testid={`item-overflow-tab-${tab.id}`}
+                              className={cn("text-sm flex items-center gap-2", isActive && "bg-muted")}
+                            >
+                              {tab.kind === 'note' ? (
+                                <FileText className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                              ) : (
+                                <Sparkles className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                              )}
+                              <span className="truncate flex-1">{tab.title}</span>
+                              {tabs.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id, e); }}
+                                  className="p-0.5 rounded hover:bg-muted-foreground/10 text-muted-foreground hover:text-foreground"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              )}
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleAddTab}
+                    data-testid="button-add-tab"
+                    className="flex items-center justify-center w-12 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                    title="새 탭"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
 
                 {activeTab?.kind === 'new' ? (
                   <div className="flex-1 flex items-center justify-center bg-white">
