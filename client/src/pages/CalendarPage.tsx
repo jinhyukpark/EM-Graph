@@ -423,7 +423,7 @@ export default function CalendarPage() {
 
         <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
           <DialogContent
-            className="sm:max-w-[440px] p-0 gap-0 rounded-2xl overflow-hidden max-h-[88vh] flex flex-col"
+            className="sm:max-w-[640px] w-[640px] p-0 gap-0 rounded-2xl overflow-hidden max-h-[88vh] flex flex-col"
             data-testid="dialog-new-event"
           >
             <VisuallyHidden>
