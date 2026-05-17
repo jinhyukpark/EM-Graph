@@ -1,9 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import {
   Mic, CalendarPlus, Sparkles, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight,
-  Eye, EyeOff, Plus,
+  Eye, EyeOff, Plus, X, Video, Users, MapPin, FileText,
 } from "lucide-react";
 
 type CalEvent = {
@@ -98,10 +102,54 @@ function buildMiniMonth(year: number, month: number) {
   return cells;
 }
 
+function formatDateLong(d: Date) {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${days[d.getDay()]}, ${months[d.getMonth()]}, ${d.getDate()}`;
+}
+
+type ContextMenuState = { x: number; y: number; date: Date } | null;
+
 export default function CalendarPage() {
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(2026, 4, 1));
   const [accounts, setAccounts] = useState(ACCOUNT_LIST);
+
+  const [ctxMenu, setCtxMenu] = useState<ContextMenuState>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [evDate, setEvDate] = useState<Date>(new Date());
+  const [evTitle, setEvTitle] = useState("");
+  const [evAllDay, setEvAllDay] = useState(false);
+  const [evStartTime, setEvStartTime] = useState("14:15");
+  const [evEndTime, setEvEndTime] = useState("15:15");
+  const [evRepeat, setEvRepeat] = useState("none");
+  const [evAlert, setEvAlert] = useState("10");
+  const [evOccupancy, setEvOccupancy] = useState("busy");
+  const [evVisibility, setEvVisibility] = useState("default");
+
+  const openCreateAt = (date: Date) => {
+    setEvDate(date);
+    setEvTitle("");
+    setEvAllDay(false);
+    setSheetOpen(true);
+    setCtxMenu(null);
+  };
+
+  const handleCellContext = (e: React.MouseEvent, date: Date) => {
+    e.preventDefault();
+    setCtxMenu({ x: e.clientX, y: e.clientY, date });
+  };
+
+  useEffect(() => {
+    if (!ctxMenu) return;
+    const close = () => setCtxMenu(null);
+    window.addEventListener("click", close);
+    window.addEventListener("scroll", close, true);
+    return () => {
+      window.removeEventListener("click", close);
+      window.removeEventListener("scroll", close, true);
+    };
+  }, [ctxMenu]);
 
   const weeks = useMemo(
     () => buildMonthGrid(cursor.getFullYear(), cursor.getMonth()),
@@ -279,9 +327,11 @@ export default function CalendarPage() {
                         return (
                           <div
                             key={key}
+                            onContextMenu={(e) => handleCellContext(e, d)}
                             className={`px-2.5 py-2.5 border-r border-border/40 last:border-r-0 overflow-hidden flex flex-col ${
                               isOther ? "bg-muted/20" : ""
                             }`}
+                            data-testid={`day-cell-${key}`}
                           >
                             <div className="flex items-center justify-end mb-2 shrink-0">
                               <span
@@ -323,6 +373,7 @@ export default function CalendarPage() {
 
               {/* Floating add button */}
               <button
+                onClick={() => openCreateAt(today)}
                 className="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform inline-flex items-center justify-center z-10"
                 data-testid="button-fab-add"
                 aria-label="새 이벤트"
@@ -332,6 +383,161 @@ export default function CalendarPage() {
             </section>
           </div>
         </div>
+
+        {ctxMenu && (
+          <div
+            className="fixed z-50 bg-background border border-border/60 rounded-full shadow-lg px-1 py-1"
+            style={{ left: ctxMenu.x, top: ctxMenu.y }}
+            onClick={(e) => e.stopPropagation()}
+            data-testid="calendar-context-menu"
+          >
+            <button
+              onClick={() => openCreateAt(ctxMenu.date)}
+              className="px-5 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded-full transition-colors"
+              data-testid="button-create-new-event"
+            >
+              Create New Event
+            </button>
+          </div>
+        )}
+
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetContent side="left" className="w-[380px] p-0 flex flex-col gap-0">
+            <div className="px-5 pt-5 pb-3 border-b border-border/40 flex items-center gap-3">
+              <button onClick={() => setSheetOpen(false)} className="text-muted-foreground hover:text-foreground" data-testid="button-close-event">
+                <X className="w-4 h-4" />
+              </button>
+              <span className="font-semibold">New Event</span>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                <span>jh.park@illunex.com</span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+              </div>
+
+              <Input
+                value={evTitle}
+                onChange={(e) => setEvTitle(e.target.value)}
+                placeholder="New Event"
+                className="border-0 border-b border-border/60 rounded-none px-0 text-base h-9 focus-visible:ring-0 shadow-none"
+                data-testid="input-event-title"
+              />
+
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-sm">
+                  <Checkbox checked={evAllDay} onCheckedChange={(v) => setEvAllDay(!!v)} data-testid="checkbox-all-day" />
+                  All day
+                </label>
+                <span className="text-xs text-muted-foreground">GMT+9</span>
+              </div>
+
+              <div className="space-y-2">
+                <div className="grid grid-cols-[60px_1fr_1fr] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Start:</span>
+                  {!evAllDay && (
+                    <Input value={evStartTime} onChange={(e) => setEvStartTime(e.target.value)} className="h-8 text-sm" data-testid="input-start-time" />
+                  )}
+                  <button className={`h-8 px-2 text-sm border border-border/60 rounded-md inline-flex items-center justify-between bg-background ${evAllDay ? "col-span-2" : ""}`} data-testid="button-start-date">
+                    <span>{formatDateLong(evDate)}</span>
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-[60px_1fr_1fr] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">End:</span>
+                  {!evAllDay && (
+                    <Input value={evEndTime} onChange={(e) => setEvEndTime(e.target.value)} className="h-8 text-sm" data-testid="input-end-time" />
+                  )}
+                  <button className={`h-8 px-2 text-sm border border-border/60 rounded-md inline-flex items-center justify-between bg-background ${evAllDay ? "col-span-2" : ""}`} data-testid="button-end-date">
+                    <span>{formatDateLong(evDate)}</span>
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="border-t border-border/40 pt-3 space-y-2">
+                <div className="grid grid-cols-[90px_1fr] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Repeat:</span>
+                  <Select value={evRepeat} onValueChange={setEvRepeat}>
+                    <SelectTrigger className="h-8 text-sm" data-testid="select-repeat"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-[90px_1fr_28px] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Alert:</span>
+                  <Select value={evAlert} onValueChange={setEvAlert}>
+                    <SelectTrigger className="h-8 text-sm" data-testid="select-alert"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">At time of event</SelectItem>
+                      <SelectItem value="5">5 minutes before</SelectItem>
+                      <SelectItem value="10">10 minutes before</SelectItem>
+                      <SelectItem value="30">30 minutes before</SelectItem>
+                      <SelectItem value="60">1 hour before</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <button className="w-7 h-7 rounded-full border border-border/60 inline-flex items-center justify-center text-muted-foreground hover:text-foreground" data-testid="button-add-alert">
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-[90px_1fr] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Occupancy:</span>
+                  <Select value={evOccupancy} onValueChange={setEvOccupancy}>
+                    <SelectTrigger className="h-8 text-sm" data-testid="select-occupancy"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="busy">Busy</SelectItem>
+                      <SelectItem value="free">Free</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-[90px_1fr] items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Visibility:</span>
+                  <Select value={evVisibility} onValueChange={setEvVisibility}>
+                    <SelectTrigger className="h-8 text-sm" data-testid="select-visibility"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Default</SelectItem>
+                      <SelectItem value="public">Public</SelectItem>
+                      <SelectItem value="private">Private</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <button className="w-full h-10 px-3 border border-border/60 rounded-md flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30" data-testid="button-add-video">
+                  <Video className="w-4 h-4" />
+                  Add Video Conference
+                  <ChevronDown className="w-3 h-3 ml-auto" />
+                </button>
+                <button className="w-full h-10 px-3 border border-border/60 rounded-md flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30" data-testid="button-add-attendee">
+                  <Users className="w-4 h-4" />
+                  Add Attendee
+                </button>
+                <button className="w-full h-10 px-3 border border-border/60 rounded-md flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30" data-testid="button-add-location">
+                  <MapPin className="w-4 h-4" />
+                  Add Location
+                </button>
+                <button className="w-full min-h-[160px] p-3 border border-border/60 rounded-md flex items-start gap-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/30" data-testid="button-add-note">
+                  <FileText className="w-4 h-4 mt-0.5" />
+                  Add Note
+                </button>
+              </div>
+            </div>
+            <div className="p-4 border-t border-border/40">
+              <Button
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => setSheetOpen(false)}
+                data-testid="button-create-event"
+              >
+                Create
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </Layout>
   );
