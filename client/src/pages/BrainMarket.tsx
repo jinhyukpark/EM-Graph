@@ -58,6 +58,7 @@ import biotechOntologyImg from '@/assets/generated_images/abstract_database_onto
 const BRAINS = [
     {
         id: 'b1',
+        subscribed: true,
         title: 'Global Semiconductor Supply Chain',
         description: 'A comprehensive knowledge graph covering the entire semiconductor supply chain, from raw materials (silicon, neon gas) to manufacturing nodes (TSMC, Samsung, Intel) and end-user markets. Includes 5000+ entities and 12000+ relationships.',
         price: 49.99,
@@ -229,6 +230,7 @@ const BRAINS = [
     },
     {
         id: 'b5',
+        subscribed: true,
         title: 'Biotech & Pharma Innovation Graph',
         description: 'Tracks emerging biotech startups, patent landscapes, and clinical trial results in mRNA technology and gene editing (CRISPR).',
         price: 75.00,
@@ -319,11 +321,14 @@ export default function BrainMarket() {
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedBrain, setSelectedBrain] = useState<typeof BRAINS[0] | null>(null);
 
+    const subscribedCount = BRAINS.filter(b => (b as any).subscribed).length;
+
     const filteredBrains = BRAINS.filter(brain => {
         const matchesSearch = brain.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               brain.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                               brain.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-        return matchesSearch;
+        const matchesTab = selectedTab === 'subscribed' ? !!(brain as any).subscribed : true;
+        return matchesSearch && matchesTab;
     });
 
     return (
@@ -342,9 +347,18 @@ export default function BrainMarket() {
                                 Accelerate your analysis with expert-curated ontologies and datasets.
                             </p>
                         </div>
-                        <Button size="lg" className="gap-2 shadow-lg">
+                        <Button
+                            size="lg"
+                            variant={selectedTab === 'subscribed' ? 'default' : 'outline'}
+                            className="gap-2 shadow-lg"
+                            onClick={() => setSelectedTab(selectedTab === 'subscribed' ? 'all' : 'subscribed')}
+                            data-testid="button-my-subscriptions"
+                        >
                             <ShoppingCart className="w-5 h-5" />
-                            My Subscriptions
+                            {t("mySubscriptions")}
+                            <Badge variant="secondary" className="ml-1 bg-white/20 text-current border-0 px-1.5 py-0 h-5 min-w-[20px] text-xs">
+                                {subscribedCount}
+                            </Badge>
                         </Button>
                     </div>
 
@@ -366,6 +380,13 @@ export default function BrainMarket() {
                         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="h-11">
                             <TabsList className="h-11 bg-muted/50">
                                 <TabsTrigger value="all" className="h-9">{t("allBrains")}</TabsTrigger>
+                                <TabsTrigger value="subscribed" className="h-9 gap-1.5" data-testid="tab-subscribed">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                    {t("subscribedOnly")}
+                                    <Badge variant="secondary" className="ml-0.5 px-1.5 py-0 h-4 min-w-[18px] text-[10px] bg-emerald-100 text-emerald-700 border-0">
+                                        {subscribedCount}
+                                    </Badge>
+                                </TabsTrigger>
                                 <TabsTrigger value="popular" className="h-9">{t("trending")}</TabsTrigger>
                                 <TabsTrigger value="new" className="h-9">{t("newest")}</TabsTrigger>
                                 <TabsTrigger value="free" className="h-9">{t("topRated")}</TabsTrigger>
@@ -377,8 +398,18 @@ export default function BrainMarket() {
                 {/* Content Grid */}
                 <div className="flex-1 overflow-y-auto p-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
-                        {filteredBrains.map(brain => (
-                            <Card key={brain.id} className="group hover:shadow-lg transition-all duration-300 border-border/60 hover:border-primary/50 flex flex-col overflow-hidden">
+                        {filteredBrains.map(brain => {
+                            const isSubscribed = !!(brain as any).subscribed;
+                            return (
+                            <Card key={brain.id} data-testid={`card-brain-${brain.id}`} className={`group hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden relative ${isSubscribed ? 'border-emerald-400/60 ring-1 ring-emerald-400/30 hover:border-emerald-500' : 'border-border/60 hover:border-primary/50'}`}>
+                                {isSubscribed && (
+                                    <div className="absolute top-3 left-3 z-20">
+                                        <Badge className="bg-emerald-500 hover:bg-emerald-500 text-white border-0 shadow-md gap-1 px-2 py-0.5">
+                                            <CheckCircle2 className="w-3 h-3" />
+                                            {t("subscribed")}
+                                        </Badge>
+                                    </div>
+                                )}
                                 {/* Card Header Image Area */}
                                 <div className="h-32 relative overflow-hidden bg-muted">
                                     {brain.imageSrc ? (
@@ -453,13 +484,25 @@ export default function BrainMarket() {
                                     >
                                         {t("preview")}
                                     </Button>
-                                    <Button className="flex-1 text-xs h-9 gap-2 shadow-sm">
-                                        Subscribe
-                                        <ArrowRight className="w-3 h-3" />
-                                    </Button>
+                                    {isSubscribed ? (
+                                        <Button
+                                            variant="outline"
+                                            className="flex-1 text-xs h-9 gap-2 shadow-sm border-emerald-400/60 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700 cursor-default"
+                                            data-testid={`button-subscribed-${brain.id}`}
+                                        >
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            {t("subscribed")}
+                                        </Button>
+                                    ) : (
+                                        <Button className="flex-1 text-xs h-9 gap-2 shadow-sm" data-testid={`button-subscribe-${brain.id}`}>
+                                            {t("subscribe")}
+                                            <ArrowRight className="w-3 h-3" />
+                                        </Button>
+                                    )}
                                 </CardFooter>
                             </Card>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Empty State */}
