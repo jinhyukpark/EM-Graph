@@ -10,7 +10,7 @@ import {
   Database, FileText, BarChart3, Mail, Calendar, Bot, Link2, Shield,
   Workflow, GitBranch, FileSpreadsheet, Bell, Cloud, Lock, Users, Zap,
   Globe, ImageIcon, PieChart, Slack, ArrowRight, Star, ChevronLeft, ChevronRight,
-  CheckCircle2, Flag, ExternalLink
+  CheckCircle2, Flag, ExternalLink, User, Send
 } from 'lucide-react';
 import aiBannerImg from '@assets/generated_images/modern_office_team_collaboration_416f.png';
 
@@ -198,34 +198,45 @@ function ReviewsTab({ pluginId }: { pluginId: string }) {
       </div>
 
       {/* Write review */}
-      <Card className="p-5 border-border/60 space-y-3">
-        <h3 className="text-base font-bold text-foreground">리뷰 작성</h3>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground w-12">평점</span>
-          <StarRating value={rating} onChange={setRating} size="md" />
-          {rating > 0 && <span className="text-xs text-muted-foreground">{rating}점</span>}
+      <Card className="p-6 border-border/60 rounded-2xl space-y-5 shadow-sm">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-indigo-100 inline-flex items-center justify-center shrink-0">
+              <User className="w-5 h-5 text-indigo-500" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-foreground">첫 리뷰를 작성해 주세요</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">이 서비스에 대한 경험을 공유해 주세요</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <StarRating value={rating} onChange={setRating} size="md" />
+            <span className="text-[11px] text-muted-foreground">{rating > 0 ? `${rating}점` : '클릭하여 평가'}</span>
+          </div>
         </div>
-        <Input
-          value={author}
-          onChange={e => setAuthor(e.target.value)}
-          placeholder="이름 (선택사항)"
-          className="h-9 text-sm"
-          data-testid="input-review-author"
-        />
         <textarea
           value={content}
           onChange={e => setContent(e.target.value)}
-          placeholder="이 앱에 대한 솔직한 의견을 남겨주세요."
-          rows={3}
-          className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          placeholder="리뷰를 작성해 주세요..."
+          rows={4}
+          className="w-full px-4 py-3 text-sm rounded-xl border border-border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/30 placeholder:text-muted-foreground/60"
           data-testid="input-review-content"
         />
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between gap-3">
+          <Input
+            value={author}
+            onChange={e => setAuthor(e.target.value)}
+            placeholder="이름 (선택사항)"
+            className="h-9 text-sm max-w-[240px] rounded-lg"
+            data-testid="input-review-author"
+          />
           <Button
             onClick={handleSubmit}
             disabled={!rating || !content.trim()}
+            className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-5 h-10"
             data-testid="button-submit-review"
           >
+            <Send className="w-4 h-4" />
             리뷰 등록
           </Button>
         </div>
