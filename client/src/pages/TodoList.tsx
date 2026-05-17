@@ -7,11 +7,16 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import {
   Sparkles, Filter, ArrowUpDown, Search, Circle, CheckCircle2,
   FileText, Flag, ChevronDown, Pencil, CalendarDays, Bell, UserRound,
   AlertTriangle, Flag as FlagIcon, RotateCcw, ListTodo,
-  ChevronUp, ChevronsUpDown,
+  ChevronUp, ChevronsUpDown, MoreHorizontal, Trash2, CalendarRange, X,
 } from "lucide-react";
 
 type Priority = "high" | "medium" | "low" | null;
@@ -107,10 +112,18 @@ function formatDate(d: string | null, overdue = false) {
   return <span className={overdue ? "text-rose-500" : "text-foreground/90"}>{label}</span>;
 }
 
-const GRID_COLS = "grid-cols-[1.7fr_0.95fr_0.95fr_1.2fr_0.85fr_0.95fr_0.7fr]";
+const GRID_COLS = "grid-cols-[36px_1.7fr_0.95fr_0.95fr_1.2fr_0.85fr_0.95fr_0.7fr_36px]";
 
 type SortKey = "title" | "due" | "start" | "note" | "assignee" | "assignees" | "priority";
 type SortDir = "asc" | "desc";
+type DateRange = "all" | "today" | "week" | "month" | "overdue";
+const DATE_RANGE_LABELS: Record<DateRange, string> = {
+  all: "전체 기간",
+  today: "오늘",
+  week: "이번 주",
+  month: "이번 달",
+  overdue: "지연됨",
+};
 const PRIORITY_RANK: Record<NonNullable<Priority>, number> = { high: 3, medium: 2, low: 1 };
 
 export default function TodoList() {
@@ -121,6 +134,21 @@ export default function TodoList() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [createOpen, setCreateOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange>("all");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+  const bulkDelete = () => {
+    setTasks((prev) => prev.filter((t) => !selectedIds.has(t.id)));
+    clearSelection();
+  };
 
   const addTask = (t: Omit<Task, "id" | "done">) => {
     setTasks((prev) => [
@@ -147,7 +175,13 @@ export default function TodoList() {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
   const deleteTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id));
-    setSelectedId(null);
+    setSelectedId((cur) => (cur === id ? null : cur));
+    setSelectedIds((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   };
 
   const filtered = useMemo(() => {
@@ -159,6 +193,25 @@ export default function TodoList() {
       list = list.filter((t) => !!t.assignee);
     } else if (tab === "노트") {
       list = list.filter((t) => !!t.note);
+    }
+    if (dateRange !== "all") {
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const endOfToday = new Date(startOfToday.getTime() + 86400000 - 1);
+      const dayOfWeek = startOfToday.getDay();
+      const startOfWeek = new Date(startOfToday.getTime() - dayOfWeek * 86400000);
+      const endOfWeek = new Date(startOfWeek.getTime() + 7 * 86400000 - 1);
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+      list = list.filter((t) => {
+        if (!t.due) return false;
+        const d = new Date(t.due);
+        if (dateRange === "today") return d >= startOfToday && d <= endOfToday;
+        if (dateRange === "week") return d >= startOfWeek && d <= endOfWeek;
+        if (dateRange === "month") return d >= startOfMonth && d <= endOfMonth;
+        if (dateRange === "overdue") return d < startOfToday && !t.done;
+        return true;
+      });
     }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -194,7 +247,22 @@ export default function TodoList() {
       list = [...list].sort(cmp);
     }
     return list;
-  }, [tasks, tab, search, sortKey, sortDir]);
+  }, [tasks, tab, search, sortKey, sortDir, dateRange]);
+
+  const visibleIds = filtered.map((t) => t.id);
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  const someVisibleSelected = visibleIds.some((id) => selectedIds.has(id));
+  const toggleSelectAllVisible = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        visibleIds.forEach((id) => next.delete(id));
+      } else {
+        visibleIds.forEach((id) => next.add(id));
+      }
+      return next;
+    });
+  };
 
   const toggle = (id: string) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
@@ -263,6 +331,33 @@ export default function TodoList() {
               <ArrowUpDown className="w-4 h-4" />
               정렬
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={`h-11 gap-2 px-4 ${dateRange !== "all" ? "border-violet-400 text-violet-700 bg-violet-50/50" : ""}`}
+                  data-testid="button-date-range"
+                >
+                  <CalendarRange className="w-4 h-4" />
+                  {DATE_RANGE_LABELS[dateRange]}
+                  <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44">
+                <DropdownMenuLabel className="text-xs text-muted-foreground">기간 선택</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((k) => (
+                  <DropdownMenuItem
+                    key={k}
+                    onSelect={() => setDateRange(k)}
+                    className={dateRange === k ? "bg-violet-50 text-violet-700 font-medium" : ""}
+                    data-testid={`date-range-${k}`}
+                  >
+                    {DATE_RANGE_LABELS[k]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="h-11">
               <TabsList className="h-11 bg-muted/50">
                 {TABS.map((label) => (
@@ -283,8 +378,41 @@ export default function TodoList() {
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-[1400px] mx-auto">
+            {selectedIds.size > 0 && (
+              <div className="mb-3 flex items-center justify-between px-4 py-2.5 bg-violet-50 border border-violet-200 rounded-lg" data-testid="bulk-action-bar">
+                <div className="flex items-center gap-3 text-sm text-violet-900">
+                  <span className="font-semibold">{selectedIds.size}개 선택됨</span>
+                  <button
+                    onClick={clearSelection}
+                    className="inline-flex items-center gap-1 text-xs text-violet-700 hover:text-violet-900"
+                    data-testid="button-clear-selection"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    선택 해제
+                  </button>
+                </div>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={bulkDelete}
+                  className="gap-1.5"
+                  data-testid="button-bulk-delete"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  선택 삭제
+                </Button>
+              </div>
+            )}
             <div className="border border-border/60 rounded-xl overflow-hidden bg-card">
-            <div className={`grid ${GRID_COLS} px-6 py-3 text-xs font-semibold text-muted-foreground bg-muted/30 border-b border-border/60`}>
+            <div className={`grid ${GRID_COLS} gap-x-2 px-6 py-3 text-xs font-semibold text-muted-foreground bg-muted/30 border-b border-border/60 items-center`}>
+              <div className="flex items-center justify-center">
+                <Checkbox
+                  checked={allVisibleSelected ? true : (someVisibleSelected ? "indeterminate" : false)}
+                  onCheckedChange={toggleSelectAllVisible}
+                  data-testid="checkbox-select-all"
+                  aria-label="전체 선택"
+                />
+              </div>
               <SortHeader label="제목" sortKey="title" current={sortKey} dir={sortDir} onClick={toggleSort} />
               <SortHeader label="마감일" sortKey="due" current={sortKey} dir={sortDir} onClick={toggleSort} />
               <SortHeader label="시작일" sortKey="start" current={sortKey} dir={sortDir} onClick={toggleSort} />
@@ -292,6 +420,7 @@ export default function TodoList() {
               <SortHeader label="작성자" sortKey="assignee" current={sortKey} dir={sortDir} onClick={toggleSort} />
               <SortHeader label="지정된 사람" sortKey="assignees" current={sortKey} dir={sortDir} onClick={toggleSort} />
               <SortHeader label="중요도" sortKey="priority" current={sortKey} dir={sortDir} onClick={toggleSort} />
+              <div />
             </div>
 
             <ul>
@@ -302,9 +431,23 @@ export default function TodoList() {
                   <li
                     key={t.id}
                     onClick={() => setSelectedId(t.id)}
-                    className={`grid ${GRID_COLS} items-center px-6 py-3.5 text-sm border-b border-border/40 last:border-0 hover:bg-muted/30 transition-colors group cursor-pointer`}
+                    className={`grid ${GRID_COLS} gap-x-2 items-center px-6 py-3.5 text-sm border-b border-border/40 last:border-0 hover:bg-muted/30 transition-colors group cursor-pointer ${
+                      selectedIds.has(t.id) ? "bg-violet-50/40" : ""
+                    }`}
                     data-testid={`row-task-${t.id}`}
                   >
+                    {/* Checkbox */}
+                    <div
+                      className="flex items-center justify-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Checkbox
+                        checked={selectedIds.has(t.id)}
+                        onCheckedChange={() => toggleSelected(t.id)}
+                        data-testid={`checkbox-task-${t.id}`}
+                        aria-label="작업 선택"
+                      />
+                    </div>
                     {/* 제목 */}
                     <div className="flex items-center gap-3 min-w-0">
                       <button
@@ -375,6 +518,42 @@ export default function TodoList() {
                       ) : (
                         <span className="text-muted-foreground/60">-</span>
                       )}
+                    </div>
+
+                    {/* Row actions */}
+                    <div
+                      className="flex items-center justify-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="h-7 w-7 rounded-md inline-flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 transition-opacity"
+                            data-testid={`button-row-menu-${t.id}`}
+                            aria-label="작업 메뉴"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-36">
+                          <DropdownMenuItem
+                            onSelect={() => setSelectedId(t.id)}
+                            data-testid={`menu-edit-${t.id}`}
+                          >
+                            <Pencil className="w-4 h-4 mr-2" />
+                            편집
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onSelect={() => deleteTask(t.id)}
+                            className="text-rose-600 focus:text-rose-700 focus:bg-rose-50"
+                            data-testid={`menu-delete-${t.id}`}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            삭제
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </li>
                 );
