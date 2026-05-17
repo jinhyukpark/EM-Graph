@@ -1863,14 +1863,6 @@ export default function KnowledgeGarden() {
                   </button>
                 </div>
 
-                {!showExplorer && (
-                  <div className="absolute top-9 left-2 z-20">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowExplorer(true)}>
-                      <PanelLeft className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                  </div>
-                )}
-
                 {activeTab?.kind === 'new' ? (
                   <div className="flex-1 flex items-center justify-center bg-white">
                     <div className="text-center max-w-md px-8 py-16">
