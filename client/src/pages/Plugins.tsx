@@ -290,7 +290,7 @@ function SecurityTab() {
       </div>
 
       {/* Terms summary sections */}
-      <div className="space-y-4">
+      <div className="p-4 rounded-2xl border border-border/60 bg-secondary/30 space-y-3">
         {[
           {
             title: '제1조 (목적 및 서비스 이용)',
@@ -313,7 +313,7 @@ function SecurityTab() {
             body: '회사는 천재지변, 통신 장애, 제3자의 불법 행위 등 회사의 합리적인 통제를 벗어난 사유로 인한 서비스 중단에 대해 책임을 지지 않습니다. 회사의 손해배상 책임은 관련 법령이 허용하는 최대 범위 내에서 직전 12개월간 이용자가 실제로 지급한 금액을 한도로 합니다. 본 약관과 관련된 분쟁은 대한민국 법령에 따르며, 회사 본사 소재지 관할 법원을 1심 전속관할로 합니다.',
           },
         ].map((sec, i) => (
-          <div key={i} className="p-5 rounded-xl border border-border/60 bg-card" data-testid={`terms-section-${i}`}>
+          <div key={i} className="p-5 rounded-xl bg-white dark:bg-card border border-border/40 shadow-sm" data-testid={`terms-section-${i}`}>
             <h4 className="text-sm font-bold text-foreground mb-2">{sec.title}</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">{sec.body}</p>
           </div>
