@@ -10,7 +10,7 @@ import {
   Database, FileText, BarChart3, Mail, Calendar, Bot, Link2, Shield,
   Workflow, GitBranch, FileSpreadsheet, Bell, Cloud, Lock, Users, Zap,
   Globe, ImageIcon, PieChart, Slack, ArrowRight, Star, ChevronLeft, ChevronRight,
-  CheckCircle2, Flag, ExternalLink, User, Send
+  CheckCircle2, Flag, ExternalLink, User, Send, Share2, ListTodo, FileSignature, Contact
 } from 'lucide-react';
 import aiBannerImg from '@assets/generated_images/modern_office_team_collaboration_416f.png';
 
@@ -34,6 +34,10 @@ const CATEGORIES = [
 ];
 
 const PLUGINS: Plugin[] = [
+  { id: 'pn1', name: 'Graph Network', vendor: 'EM-Graph', desc: '사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.', category: 'Collaboration', Icon: Share2, iconColor: 'text-indigo-600 bg-indigo-50', rating: 4.9, reviews: 287, downloads: '14.2K', badge: 'Editor' },
+  { id: 'pn2', name: 'ToDo-List', vendor: 'EM-Graph', desc: '노트·그래프 엔티티와 연결되는 협업 할 일 관리. 담당자/마감일/우선순위 지원.', category: 'Workflow', Icon: ListTodo, iconColor: 'text-emerald-600 bg-emerald-50', rating: 4.7, reviews: 198, downloads: '9.6K', badge: 'Best' },
+  { id: 'pn3', name: 'EM-Sign', vendor: 'EM-Graph', desc: '문서에 전자 서명을 요청하고 결재 흐름을 추적하는 워크플로우 기반 e-사인 솔루션.', category: 'Workflow', Icon: FileSignature, iconColor: 'text-rose-600 bg-rose-50', rating: 4.8, reviews: 156, downloads: '7.3K', badge: 'Editor' },
+  { id: 'pn4', name: 'Business Card Manager', vendor: 'EM-Graph', desc: '명함을 OCR로 스캔해 자동 등록하고 인맥 네트워크 그래프에 연결합니다.', category: 'Collaboration', Icon: Contact, iconColor: 'text-amber-600 bg-amber-50', rating: 4.6, reviews: 112, downloads: '5.8K', badge: 'Best' },
   { id: 'p1', name: 'Graph AI Copilot', vendor: 'EM-Graph Labs', desc: '그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.', category: 'AI', Icon: Bot, iconColor: 'text-violet-600 bg-violet-50', rating: 5.0, reviews: 312, downloads: '12.4K', badge: 'Editor' },
   { id: 'p2', name: 'Snowflake Connector', vendor: 'EM-Graph', desc: 'Snowflake 웨어하우스에서 실시간으로 데이터를 동기화합니다.', category: 'Data', Icon: Database, iconColor: 'text-sky-600 bg-sky-50', rating: 4.8, reviews: 145, downloads: '8.2K', badge: 'Best' },
   { id: 'p3', name: 'PDF Knowledge Extractor', vendor: 'DocuMind', desc: 'PDF/문서에서 엔티티와 관계를 자동 추출하여 그래프로 변환.', category: 'AI', Icon: FileText, iconColor: 'text-rose-600 bg-rose-50', rating: 4.7, reviews: 88, downloads: '5.1K', badge: 'Editor' },
