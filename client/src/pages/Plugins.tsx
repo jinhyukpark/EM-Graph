@@ -289,8 +289,39 @@ function SecurityTab() {
         </div>
       </div>
 
+      {/* Terms summary sections */}
+      <div className="space-y-4">
+        {[
+          {
+            title: '제1조 (목적 및 서비스 이용)',
+            body: '본 약관은 이용자가 EM-Graph 마켓플레이스에서 제공하는 플러그인, AI 에이전트, 데이터 API 등 디지털 콘텐츠를 이용함에 있어 회사와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. 이용자는 본 약관에 동의함으로써 서비스를 이용할 수 있으며, 회사는 안정적인 운영을 위해 합리적인 범위 내에서 서비스의 내용을 변경할 수 있습니다.',
+          },
+          {
+            title: '제2조 (계정 및 이용자의 의무)',
+            body: '이용자는 정확한 정보로 계정을 등록해야 하며, 계정 정보의 비밀유지 책임은 본인에게 있습니다. 타인의 계정을 무단으로 사용하거나 서비스의 정상적인 운영을 방해하는 행위, 관계 법령에 위반되는 행위, 지적재산권을 침해하는 행위는 엄격히 금지됩니다. 위반 시 회사는 사전 통지 없이 이용을 제한하거나 계약을 해지할 수 있습니다.',
+          },
+          {
+            title: '제3조 (결제, 환불 및 구독 갱신)',
+            body: '유료 플러그인은 월간 또는 연간 구독 형태로 제공되며, 결제는 사전 등록된 결제수단으로 자동 갱신됩니다. 결제일로부터 7일 이내 사용 이력이 없는 경우 전액 환불이 가능하며, 부분 사용 시 잔여 기간에 비례하여 환불됩니다. 연간 결제 시 적용된 할인은 환불 금액 산정 시 차감될 수 있으며, 갱신 중단은 다음 결제일 24시간 전까지 가능합니다.',
+          },
+          {
+            title: '제4조 (지적재산권 및 라이선스)',
+            body: '플러그인의 모든 저작권 및 지적재산권은 해당 개발사 또는 회사에 귀속됩니다. 이용자에게는 약관에서 정한 범위 내에서 비독점적, 양도불가의 사용권만이 부여되며, 무단 복제·재배포·역공학·소스코드 분석은 금지됩니다. 오픈소스 라이선스가 포함된 경우 해당 라이선스가 우선 적용됩니다.',
+          },
+          {
+            title: '제5조 (책임의 제한 및 분쟁 해결)',
+            body: '회사는 천재지변, 통신 장애, 제3자의 불법 행위 등 회사의 합리적인 통제를 벗어난 사유로 인한 서비스 중단에 대해 책임을 지지 않습니다. 회사의 손해배상 책임은 관련 법령이 허용하는 최대 범위 내에서 직전 12개월간 이용자가 실제로 지급한 금액을 한도로 합니다. 본 약관과 관련된 분쟁은 대한민국 법령에 따르며, 회사 본사 소재지 관할 법원을 1심 전속관할로 합니다.',
+          },
+        ].map((sec, i) => (
+          <div key={i} className="p-5 rounded-xl border border-border/60 bg-card" data-testid={`terms-section-${i}`}>
+            <h4 className="text-sm font-bold text-foreground mb-2">{sec.title}</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">{sec.body}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Security heading */}
-      <div className="flex items-center gap-2 pt-1">
+      <div className="flex items-center gap-2 pt-3">
         <Shield className="w-5 h-5 text-foreground" />
         <h3 className="text-lg font-bold text-foreground">Security</h3>
       </div>
