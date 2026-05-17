@@ -2586,53 +2586,53 @@ export default function KnowledgeGarden() {
                         {/* ... Copilot Content ... */}
                         <ScrollArea className="flex-1">
                            <div className="p-4 space-y-4">
-                           {/* New Chat Tabs */}
-                           <div className="relative flex items-center mb-4 px-1 w-full min-w-0 h-10">
-                             <div className="absolute inset-y-0 left-0 right-10 overflow-x-auto scrollbar-hide flex items-center gap-2 pr-2">
-                               {chatSessions.map(session => (
-                                 <div key={session.id} className="relative group/tab shrink-0">
-                                   <Button 
-                                     variant="ghost"
-                                     size="sm" 
-                                     className={cn(
-                                       "h-8 text-xs whitespace-nowrap px-3.5 rounded-lg transition-all duration-200 border pr-7",
-                                       activeSessionId === session.id 
-                                         ? "bg-blue-600 text-white font-medium shadow-md border-blue-600 hover:bg-blue-700 hover:text-white" 
-                                         : "bg-background border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-blue-500 hover:text-blue-600"
-                                     )}
+                           {/* Conversation Tabs */}
+                           <div className="relative flex items-stretch -mx-4 -mt-4 mb-4 h-10 border-b border-border bg-muted/20">
+                             <div className="flex-1 flex items-stretch overflow-x-auto scrollbar-hide min-w-0">
+                               {chatSessions.map(session => {
+                                 const isActive = activeSessionId === session.id;
+                                 return (
+                                   <div
+                                     key={session.id}
                                      onClick={() => setActiveSessionId(session.id)}
+                                     data-testid={`tab-copilot-${session.id}`}
+                                     className={cn(
+                                       "group/tab relative flex items-center gap-2 pl-3 pr-2 h-full text-xs whitespace-nowrap cursor-pointer transition-colors border-r border-border shrink-0",
+                                       isActive
+                                         ? "bg-background text-foreground font-medium"
+                                         : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                                     )}
                                    >
-                                     {session.title}
-                                   </Button>
-                                   <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className={cn(
-                                          "absolute right-0.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md opacity-0 group-hover/tab:opacity-100 transition-all",
-                                          activeSessionId === session.id 
-                                            ? "text-white/70 hover:text-white hover:bg-white/20" 
-                                            : "text-muted-foreground hover:text-red-500 hover:bg-red-100/50"
-                                      )}
-                                      onClick={(e) => handleDeleteSession(session.id, e)}
-                                   >
-                                      <X className="w-3 h-3" />
-                                   </Button>
-                                 </div>
-                               ))}
+                                     <MessageSquare className={cn("w-3.5 h-3.5", isActive ? "text-blue-500" : "text-muted-foreground")} />
+                                     <span className="max-w-[120px] truncate">{session.title}</span>
+                                     <button
+                                       type="button"
+                                       onClick={(e) => handleDeleteSession(session.id, e)}
+                                       className={cn(
+                                         "w-4 h-4 inline-flex items-center justify-center rounded transition-opacity",
+                                         isActive
+                                           ? "opacity-60 hover:opacity-100 hover:bg-muted"
+                                           : "opacity-0 group-hover/tab:opacity-60 hover:!opacity-100 hover:bg-muted"
+                                       )}
+                                     >
+                                       <X className="w-3 h-3" />
+                                     </button>
+                                     {isActive && (
+                                       <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-blue-500" />
+                                     )}
+                                   </div>
+                                 );
+                               })}
                              </div>
-                             
-                             {/* Fixed + Button with gradient mask on the left */}
-                             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center bg-background pl-2 z-10">
-                                 <div className="absolute left-0 top-0 bottom-0 w-4 -translate-x-full bg-gradient-to-l from-background to-transparent pointer-events-none" />
-                                 <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-7 w-7 text-blue-600 hover:bg-blue-50 rounded-full shrink-0"
-                                    onClick={handleAddSession}
-                                 >
-                                   <Plus className="w-4 h-4" />
-                                 </Button>
-                             </div>
+                             <button
+                               type="button"
+                               onClick={handleAddSession}
+                               data-testid="button-add-copilot-tab"
+                               title="새 대화"
+                               className="flex items-center justify-center w-10 text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors border-l border-border shrink-0"
+                             >
+                               <Plus className="w-4 h-4" />
+                             </button>
                            </div>
             
                            {/* Chat Messages */}
