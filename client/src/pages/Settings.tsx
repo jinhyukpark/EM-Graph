@@ -598,7 +598,7 @@ export default function Settings() {
                    <CardDescription>{t("stFreeDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold mb-2">$0<span className="text-base font-normal text-muted-foreground">/mo</span></div>
+                   <div className="text-3xl font-bold mb-2">$0<span className="text-base font-normal text-muted-foreground">/user/mo</span></div>
                    <div className="space-y-3 mt-6">
                      <div className="flex items-start gap-2 text-sm">
                        <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature1")}</span>
@@ -641,7 +641,7 @@ export default function Settings() {
                    <CardDescription>{t("stProDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold mb-2">$49<span className="text-base font-normal text-muted-foreground">/mo</span></div>
+                   <div className="text-3xl font-bold mb-2">$5<span className="text-base font-normal text-muted-foreground">/user/mo</span></div>
                    <div className="space-y-3 mt-6">
                      <div className="flex items-start gap-2 text-sm">
                        <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature1")}</span>
@@ -679,7 +679,7 @@ export default function Settings() {
                    <CardDescription className="text-slate-400">{t("stPremiumDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold mb-2">$299<span className="text-base font-normal text-slate-400">/mo</span></div>
+                   <div className="text-3xl font-bold mb-2">$11<span className="text-base font-normal text-slate-400">/user/mo</span></div>
                    <div className="space-y-3 mt-6 text-slate-300">
                      <div className="flex items-start gap-2 text-sm">
                        <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature1")}</span>
