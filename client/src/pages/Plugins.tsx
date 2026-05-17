@@ -290,7 +290,12 @@ function SecurityTab() {
       </div>
 
       {/* Terms summary sections */}
-      <div className="p-4 rounded-2xl border border-border/60 bg-secondary/30 space-y-3">
+      <div className="p-5 rounded-2xl border border-border/60 bg-secondary/30">
+        <div className="flex items-center gap-2 mb-3">
+          <FileText className="w-5 h-5 text-foreground" />
+          <h3 className="text-lg font-bold text-foreground">이용조항</h3>
+        </div>
+        <div className="space-y-3">
         {[
           {
             title: '제1조 (목적 및 서비스 이용)',
@@ -318,6 +323,7 @@ function SecurityTab() {
             <p className="text-xs text-muted-foreground leading-relaxed">{sec.body}</p>
           </div>
         ))}
+        </div>
       </div>
 
       {/* Security container */}
