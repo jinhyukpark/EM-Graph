@@ -12,7 +12,9 @@ import {
   BarChart3, Bell, BellOff, Calendar, ChevronDown,
   Clock, Database, FileText, Newspaper, Building2,
   Plus, ShieldAlert, Zap, Bot, Users, X,
-  TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles
+  TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
+  StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
+  Film, FileBox, HardDrive, Link2
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -26,7 +28,7 @@ type Role = "admin" | "manager" | "viewer";
 type TimelineEvent = {
   id: string;
   date: string;
-  type: "issue" | "news" | "performance";
+  type: "note" | "garden" | "comment";
   title: string;
   titleKo: string;
   summary: string;
@@ -39,7 +41,7 @@ type TimelineEvent = {
 
 type IssueFeedItem = {
   id: string;
-  source: "news" | "disclosure" | "internal";
+  source: "comment" | "mention" | "share" | "system";
   title: string;
   titleKo: string;
   aiSummary: string;
@@ -50,46 +52,47 @@ type IssueFeedItem = {
 };
 
 const TIMELINE_EVENTS: TimelineEvent[] = [
-  { id: "t1", date: "2024-03-28", type: "issue", title: "Steel Raw Material Supply Disruption", titleKo: "철강 원자재 수급 차질", summary: "POSCO Gwangyang plant utilization rate dropped to 80%. Impact on HRC delivery expected for 2-3 weeks.", summaryKo: "포스코 광양 공장 가동률 80%로 하락. HRC 납품 2~3주 영향 예상.", severity: "high", relatedEntity: "Steel/HRC", businessUnit: "steel", material: "hrc" },
-  { id: "t2", date: "2024-03-25", type: "news", title: "Semiconductor Production Expansion Plan", titleKo: "반도체 생산 확대 계획 발표", summary: "Samsung Electronics announced a $10B investment in Pyeongtaek P4 fab expansion, targeting Q3 2025 completion.", summaryKo: "삼성전자 평택 P4 팹 확장에 100억 달러 투자 발표. 2025년 3분기 완공 목표.", severity: "medium", relatedEntity: "Electronics/DRAM", businessUnit: "electronics", material: "dram" },
-  { id: "t3", date: "2024-03-22", type: "performance", title: "Q1 Chemical Division Results Preview", titleKo: "1분기 화학 사업부 실적 프리뷰", summary: "Chemical division expected to report 15% YoY revenue growth driven by ethylene price recovery.", summaryKo: "에틸렌 가격 회복에 힘입어 화학 사업부 전년 대비 15% 매출 성장 전망.", severity: "low", relatedEntity: "Chemicals/Ethylene", businessUnit: "chemicals", material: "ethylene" },
-  { id: "t4", date: "2024-03-18", type: "issue", title: "Battery Material Price Surge Alert", titleKo: "배터리 소재 가격 급등 경보", summary: "Lithium carbonate prices surged 12% in one week. Multiple EV manufacturers pausing procurement.", summaryKo: "탄산리튬 가격 1주일 만에 12% 급등. 다수 EV 제조사 조달 중단.", severity: "high", relatedEntity: "Energy/Lithium", businessUnit: "energy", material: "lithium" },
-  { id: "t5", date: "2024-03-15", type: "news", title: "New Trade Agreement Impact Assessment", titleKo: "신규 무역 협정 영향 평가", summary: "Korea-Indonesia CEPA ratified. Expected tariff reduction on automotive parts and steel imports.", summaryKo: "한-인도네시아 CEPA 비준. 자동차 부품 및 철강 수입 관세 인하 예상.", severity: "medium", relatedEntity: "Automotive/Parts", businessUnit: "automotive", material: "parts" },
-  { id: "t6", date: "2024-03-10", type: "performance", title: "Energy Division Monthly KPI Report", titleKo: "에너지 사업부 월간 KPI 보고", summary: "Renewable energy portfolio reached 32% of total capacity. Solar panel efficiency up 2.1% MoM.", summaryKo: "재생에너지 포트폴리오 전체 용량의 32% 달성. 태양광 패널 효율 전월 대비 2.1% 상승.", severity: "low", relatedEntity: "Energy/Solar", businessUnit: "energy", material: "solar" },
+  { id: "t1", date: "2026-05-17", type: "note", title: "PET필름 라인 생산성 분석 노트", titleKo: "PET필름 라인 생산성 분석 노트", summary: "구미공장 PET필름 #3 라인 가동률 92% 도달. 전월 대비 4.2%p 개선, 주요 원인은 압출 온도 최적화.", summaryKo: "구미공장 PET필름 #3 라인 가동률 92% 도달. 전월 대비 4.2%p 개선, 주요 원인은 압출 온도 최적화.", severity: "low", relatedEntity: "필름사업본부", businessUnit: "steel", material: "hrc" },
+  { id: "t2", date: "2026-05-17", type: "comment", title: "아라미드 단가 협상 노트에 댓글 3건", titleKo: "아라미드 단가 협상 노트에 댓글 3건", summary: "박지훈 매니저 외 2명이 '아라미드 단가 협상 전략 Q3' 노트에 코멘트 추가. 검토 요청 항목 포함.", summaryKo: "박지훈 매니저 외 2명이 '아라미드 단가 협상 전략 Q3' 노트에 코멘트 추가. 검토 요청 항목 포함.", severity: "medium", relatedEntity: "산업자재", businessUnit: "electronics", material: "dram" },
+  { id: "t3", date: "2026-05-16", type: "note", title: "MOQ 정책 개정 초안", titleKo: "MOQ 정책 개정 초안", summary: "PET필름 MOQ 기존 5톤에서 3톤으로 인하 검토. 중소형 고객사 매출 확대 전략 일환.", summaryKo: "PET필름 MOQ 기존 5톤에서 3톤으로 인하 검토. 중소형 고객사 매출 확대 전략 일환.", severity: "low", relatedEntity: "영업본부", businessUnit: "chemicals", material: "ethylene" },
+  { id: "t4", date: "2026-05-15", type: "garden", title: "공급망 지식정원 신규 노드 18개 추가", titleKo: "공급망 지식정원 신규 노드 18개 추가", summary: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", summaryKo: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", severity: "high", relatedEntity: "공급망 지식정원", businessUnit: "energy", material: "lithium" },
+  { id: "t5", date: "2026-05-14", type: "note", title: "열연코일 BOM 구조 정리", titleKo: "열연코일 BOM 구조 정리", summary: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", summaryKo: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", severity: "medium", relatedEntity: "철강사업본부", businessUnit: "automotive", material: "parts" },
+  { id: "t6", date: "2026-05-12", type: "comment", title: "편광필름 품질 이슈 노트 토론", titleKo: "편광필름 품질 이슈 노트 토론", summary: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", summaryKo: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", severity: "low", relatedEntity: "필름사업본부", businessUnit: "energy", material: "solar" },
 ];
 
 const ISSUE_FEED_DATA: IssueFeedItem[] = [
-  { id: "f1", source: "news", title: "POSCO HRC Price Increase 5.2% This Week", titleKo: "포스코 HRC 가격 금주 5.2% 인상", aiSummary: "POSCO raised HRC base price by 5.2% effective this week due to rising iron ore costs and increased demand from automotive sector. Export prices also adjusted upward by 3.8%.", aiSummaryKo: "포스코가 철광석 원가 상승과 자동차 부문 수요 증가로 금주부터 HRC 기준가를 5.2% 인상. 수출 가격도 3.8% 상향 조정됨.", time: "15m ago", timeKo: "15분 전", subscribed: false },
-  { id: "f2", source: "disclosure", title: "Samsung Electronics Q4 Earnings Announcement", titleKo: "삼성전자 4분기 실적 발표", aiSummary: "Samsung Electronics reported Q4 operating profit of ₩6.5T, up 35% YoY. Memory division led recovery with DRAM prices stabilizing above $3.20 per unit.", aiSummaryKo: "삼성전자 4분기 영업이익 6.5조원, 전년 대비 35% 증가. DRAM 가격 개당 3.20달러 이상 안정화로 메모리 사업부 회복 주도.", time: "1h ago", timeKo: "1시간 전", subscribed: true },
-  { id: "f3", source: "internal", title: "Supply Chain Alert - Tier 2 Supplier Delay", titleKo: "공급망 경보 - Tier 2 공급사 지연", aiSummary: "Tier 2 supplier KChem reported 7-day delivery delay on specialty chemicals. Affects 3 downstream production lines. Contingency procurement initiated.", aiSummaryKo: "Tier 2 공급사 KChem, 특수화학물질 7일 납품 지연 보고. 3개 하류 생산라인 영향. 비상 조달 개시됨.", time: "2h ago", timeKo: "2시간 전", subscribed: false },
-  { id: "f4", source: "news", title: "Global Copper Demand Forecast Upgraded", titleKo: "글로벌 구리 수요 전망 상향", aiSummary: "Goldman Sachs upgraded global copper demand forecast by 8% for 2024, citing accelerating EV adoption and grid infrastructure investments across Asia.", aiSummaryKo: "골드만삭스, EV 보급 가속화와 아시아 전력망 인프라 투자 확대를 이유로 2024년 글로벌 구리 수요 전망 8% 상향.", time: "3h ago", timeKo: "3시간 전", subscribed: false },
-  { id: "f5", source: "disclosure", title: "LG Energy Solution ESS Patent Filing", titleKo: "LG에너지솔루션 ESS 특허 출원", aiSummary: "LG Energy Solution filed 12 new patents for next-gen solid-state ESS technology. Expected commercial deployment by 2026 with 40% higher energy density.", aiSummaryKo: "LG에너지솔루션, 차세대 전고체 ESS 기술 관련 12건 신규 특허 출원. 2026년 상용화 목표, 에너지 밀도 40% 향상 전망.", time: "5h ago", timeKo: "5시간 전", subscribed: true },
-  { id: "f6", source: "internal", title: "Monthly Data Quality Audit Complete", titleKo: "월간 데이터 품질 감사 완료", aiSummary: "March data quality audit scored 94.2%, up from 91.8% last month. 3 data sources flagged for schema drift requiring manual review.", aiSummaryKo: "3월 데이터 품질 감사 점수 94.2%, 지난달 91.8%에서 상승. 3개 데이터 소스 스키마 드리프트 발생으로 수동 검토 필요.", time: "6h ago", timeKo: "6시간 전", subscribed: false },
+  { id: "f1", source: "comment", title: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", titleKo: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", aiSummary: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", aiSummaryKo: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", time: "15m ago", timeKo: "15분 전", subscribed: true },
+  { id: "f2", source: "mention", title: "김민서 책임이 회의록에서 나를 멘션했습니다", titleKo: "김민서 책임이 회의록에서 나를 멘션했습니다", aiSummary: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", aiSummaryKo: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", time: "1h ago", timeKo: "1시간 전", subscribed: true },
+  { id: "f3", source: "share", title: "최수정 책임이 지식정원을 공유했습니다", titleKo: "최수정 책임이 지식정원을 공유했습니다", aiSummary: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", aiSummaryKo: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", time: "2h ago", timeKo: "2시간 전", subscribed: false },
+  { id: "f4", source: "system", title: "AI 토큰 사용량 80% 도달", titleKo: "AI 토큰 사용량 80% 도달", aiSummary: "이번 달 AI 토큰 사용량이 한도의 80%(40만 / 50만 토큰)에 도달했습니다. 다음 결제 주기는 6월 1일입니다.", aiSummaryKo: "이번 달 AI 토큰 사용량이 한도의 80%(40만 / 50만 토큰)에 도달했습니다. 다음 결제 주기는 6월 1일입니다.", time: "3h ago", timeKo: "3시간 전", subscribed: false },
+  { id: "f5", source: "share", title: "브레인마켓에서 새 온톨로지가 공개되었습니다", titleKo: "브레인마켓에서 새 온톨로지가 공개되었습니다", aiSummary: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", aiSummaryKo: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", time: "5h ago", timeKo: "5시간 전", subscribed: true },
+  { id: "f6", source: "comment", title: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", titleKo: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", aiSummary: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", aiSummaryKo: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", time: "6h ago", timeKo: "6시간 전", subscribed: false },
 ];
 
-const DOC_REGISTRATION_DATA = [
-  { dept: "hrDept" as TranslationKey, count: 142 },
-  { dept: "devDept" as TranslationKey, count: 287 },
-  { dept: "salesDept" as TranslationKey, count: 198 },
-  { dept: "marketingDept" as TranslationKey, count: 156 },
-  { dept: "financeDept" as TranslationKey, count: 213 },
-  { dept: "legalDept" as TranslationKey, count: 94 },
+const NOTE_GROWTH_BY_PROJECT = [
+  { proj: "ovProjFilm" as TranslationKey, count: 142 },
+  { proj: "ovProjIndustrial" as TranslationKey, count: 287 },
+  { proj: "ovProjSteel" as TranslationKey, count: 198 },
+  { proj: "ovProjChem" as TranslationKey, count: 156 },
+  { proj: "ovProjEnergy" as TranslationKey, count: 213 },
+  { proj: "ovProjESG" as TranslationKey, count: 94 },
 ];
 
-const CHATBOT_USAGE_DATA = [
-  { date: "03/01", sessions: 120 },
-  { date: "03/05", sessions: 185 },
-  { date: "03/10", sessions: 210 },
-  { date: "03/15", sessions: 168 },
-  { date: "03/20", sessions: 245 },
-  { date: "03/25", sessions: 312 },
-  { date: "03/28", sessions: 289 },
+const AI_TOKEN_USAGE_DATA = [
+  { date: "05/01", tokens: 22000 },
+  { date: "05/05", tokens: 38500 },
+  { date: "05/10", tokens: 61200 },
+  { date: "05/15", tokens: 84300 },
+  { date: "05/20", tokens: 142000 },
+  { date: "05/25", tokens: 268000 },
+  { date: "05/28", tokens: 401000 },
 ];
 
-const PARTNER_STATUS_DATA = [
-  { name: "normalStatus" as TranslationKey, value: 18, color: "hsl(142, 71%, 45%)" },
-  { name: "delayedStatus" as TranslationKey, value: 4, color: "hsl(45, 93%, 47%)" },
-  { name: "errorStatus" as TranslationKey, value: 2, color: "hsl(0, 84%, 60%)" },
+const RESOURCE_COMPOSITION_DATA = [
+  { name: "ovResNotes" as TranslationKey, value: 1247, color: "hsl(217, 91%, 60%)" },
+  { name: "ovResImages" as TranslationKey, value: 532, color: "hsl(142, 71%, 45%)" },
+  { name: "ovResDocs" as TranslationKey, value: 318, color: "hsl(38, 92%, 50%)" },
+  { name: "ovResVideos" as TranslationKey, value: 47, color: "hsl(280, 65%, 60%)" },
 ];
 
 const BUSINESS_UNITS: { value: string; labelKey: TranslationKey }[] = [
@@ -113,21 +116,22 @@ function RoleBasedWrapper({ role, allowedRoles, children, masked = false }: {
   return <>{children}</>;
 }
 
-function EventTypeTag({ type, t }: { type: "issue" | "news" | "performance"; t: (key: TranslationKey) => string }) {
+function EventTypeTag({ type, t }: { type: "note" | "garden" | "comment"; t: (key: TranslationKey) => string }) {
   const config = {
-    issue: { label: t("issueType"), className: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400" },
-    news: { label: t("newsType"), className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-400" },
-    performance: { label: t("performanceType"), className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" },
+    note: { label: t("ovTypeNote"), className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400" },
+    garden: { label: t("ovTypeGarden"), className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" },
+    comment: { label: t("ovTypeComment"), className: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400" },
   };
   const c = config[type];
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.className}`}>{c.label}</span>;
 }
 
-function FeedBadge({ source, t }: { source: "news" | "disclosure" | "internal"; t: (key: TranslationKey) => string }) {
+function FeedBadge({ source, t }: { source: "comment" | "mention" | "share" | "system"; t: (key: TranslationKey) => string }) {
   const config = {
-    news: { label: t("newsSource"), className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: Newspaper },
-    disclosure: { label: t("disclosureSource"), className: "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400", icon: FileText },
-    internal: { label: t("internalSource"), className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400", icon: Building2 },
+    comment: { label: t("ovSrcComment"), className: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400", icon: MessageSquare },
+    mention: { label: t("ovSrcMention"), className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400", icon: AtSign },
+    share: { label: t("ovSrcShare"), className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400", icon: Share2 },
+    system: { label: t("ovSrcSystem"), className: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400", icon: Bell },
   };
   const c = config[source];
   return (
@@ -143,7 +147,7 @@ export default function Home() {
   const { t, language } = useLanguage();
   const [role, setRole] = useState<Role>("admin");
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [feedFilter, setFeedFilter] = useState<"all" | "news" | "disclosure" | "internal">("all");
+  const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
   const [chartPeriod, setChartPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
@@ -163,10 +167,10 @@ export default function Home() {
   };
 
   const kpiCards = [
-    { labelKey: "totalActiveNodes" as TranslationKey, value: "3,420", change: "+12%", changeDir: "up" as const, icon: Activity, color: "text-primary" },
-    { labelKey: "relationshipsMapped" as TranslationKey, value: "12,850", change: "+8%", changeDir: "up" as const, icon: Zap, color: "text-accent" },
-    { labelKey: "resourceUsage" as TranslationKey, value: "3.2 GB", change: "64%", changeDir: "neutral" as const, icon: Database, color: "text-muted-foreground" },
-    { labelKey: "anomaliesDetected" as TranslationKey, value: "24", change: "+2", changeDir: "up" as const, icon: ShieldAlert, color: "text-destructive" },
+    { labelKey: "ovKpiNotes" as TranslationKey, value: "1,247", change: "+24", changeDir: "up" as const, icon: StickyNote, color: "text-primary" },
+    { labelKey: "ovKpiLinks" as TranslationKey, value: "8,432", change: "+156", changeDir: "up" as const, icon: Link2, color: "text-accent" },
+    { labelKey: "ovKpiDbUsage" as TranslationKey, value: "2.4 / 5 GB", change: "48%", changeDir: "neutral" as const, icon: Database, color: "text-emerald-500" },
+    { labelKey: "ovKpiResourceUsage" as TranslationKey, value: "3.2 / 5 GB", change: "64%", changeDir: "neutral" as const, icon: HardDrive, color: "text-muted-foreground" },
   ];
 
   return (
@@ -216,16 +220,13 @@ export default function Home() {
                     <Badge
                       variant={stat.changeDir === "up" ? "default" : "secondary"}
                       className={`font-mono text-xs px-2 py-0.5 gap-1 ${
-                        stat.labelKey === "anomaliesDetected"
-                          ? "bg-destructive/10 text-destructive border-destructive/20"
-                          : stat.changeDir === "up"
+                        stat.changeDir === "up"
                           ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                           : ""
                       }`}
                     >
-                      {stat.changeDir === "up" && stat.labelKey !== "anomaliesDetected" && <ArrowUpRight className="w-3.5 h-3.5" />}
-                      {stat.labelKey === "anomaliesDetected" && <AlertTriangle className="w-3.5 h-3.5" />}
-                      {stat.change} {t("vsYesterday")}
+                      {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
+                      {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
                     </Badge>
                   </div>
                   <div className="text-2xl font-bold mb-1">{stat.value}</div>
@@ -247,9 +248,9 @@ export default function Home() {
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Calendar className="w-5 h-5 text-primary" />
-                      {t("timelineView")}
+                      {t("ovTimelineTitle")}
                     </CardTitle>
-                    <CardDescription className="text-xs mt-1">{t("timelineViewDesc")}</CardDescription>
+                    <CardDescription className="text-xs mt-1">{t("ovTimelineDesc")}</CardDescription>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-3">
@@ -279,8 +280,8 @@ export default function Home() {
                           data-testid={`timeline-event-${event.id}`}
                         >
                           <div className={`absolute -left-6 top-1.5 w-[10px] h-[10px] rounded-full ring-2 ring-background z-10 ${
-                            event.type === "issue" ? "bg-red-500" :
-                            event.type === "news" ? "bg-yellow-500" : "bg-emerald-500"
+                            event.type === "note" ? "bg-blue-500" :
+                            event.type === "comment" ? "bg-violet-500" : "bg-emerald-500"
                           }`} />
                           <div className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/50 transition-colors">
                             <div className="flex items-center justify-between mb-1.5">
@@ -315,17 +316,18 @@ export default function Home() {
           <Card className={`${role === "viewer" ? "lg:col-span-5" : "lg:col-span-2"} bg-card/80 backdrop-blur border-border shadow-sm`} data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Newspaper className="w-5 h-5 text-primary" />
-                {t("latestIssueFeed")}
+                <Bell className="w-5 h-5 text-primary" />
+                {t("ovActivityFeed")}
               </CardTitle>
-              <CardDescription className="text-xs">{t("latestIssueFeedDesc")}</CardDescription>
-              <div className="flex gap-1 mt-2">
-                {(["all", "news", "disclosure", "internal"] as const).map(filter => {
+              <CardDescription className="text-xs">{t("ovActivityFeedDesc")}</CardDescription>
+              <div className="flex gap-1 mt-2 flex-wrap">
+                {(["all", "comment", "mention", "share", "system"] as const).map(filter => {
                   const filterLabelMap: Record<string, TranslationKey> = {
                     all: "allSources",
-                    news: "newsSource",
-                    disclosure: "disclosureSource",
-                    internal: "internalSource",
+                    comment: "ovSrcComment",
+                    mention: "ovSrcMention",
+                    share: "ovSrcShare",
+                    system: "ovSrcSystem",
                   };
                   return (
                     <Button
@@ -416,9 +418,9 @@ export default function Home() {
 
               <div className="grid grid-cols-3 gap-4 mt-4">
                 {[
-                  { labelKey: "totalDocs" as TranslationKey, value: "1,090", icon: FileText, color: "text-primary" },
-                  { labelKey: "monthlyChatbotSessions" as TranslationKey, value: "1,529", icon: Bot, color: "text-accent" },
-                  { labelKey: "connectedPartners" as TranslationKey, value: "24", icon: Users, color: "text-emerald-500" },
+                  { labelKey: "ovStatAiTokens" as TranslationKey, value: "401K / 500K", icon: Sparkles, color: "text-primary" },
+                  { labelKey: "ovStatNewNotes" as TranslationKey, value: "+24", icon: StickyNote, color: "text-accent" },
+                  { labelKey: "ovStatActiveUsers" as TranslationKey, value: "12", icon: Users, color: "text-emerald-500" },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border" data-testid={`stat-summary-${i}`}>
                     <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
@@ -435,19 +437,75 @@ export default function Home() {
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">{t("docRegistrationByDept")}</h3>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartResourceComposition")}</h3>
+                  <div className="h-[220px] flex items-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={RESOURCE_COMPOSITION_DATA.map(d => ({ ...d, name: t(d.name) }))}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={4}
+                          dataKey="value"
+                        >
+                          {RESOURCE_COMPOSITION_DATA.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
+                        />
+                        <Legend
+                          verticalAlign="bottom"
+                          height={36}
+                          formatter={(value) => <span className="text-[11px] text-foreground">{value}</span>}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartAiTokenTrend")}</h3>
                   <div className="h-[220px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={DOC_REGISTRATION_DATA.map(d => ({ dept: t(d.dept), count: d.count }))}>
+                      <LineChart data={AI_TOKEN_USAGE_DATA}>
+                        <defs>
+                          <linearGradient id="tokenGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                        <XAxis dataKey="dept" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
+                        <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
+                        <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
+                          itemStyle={{ color: 'hsl(var(--foreground))' }}
+                          formatter={(value: number) => [`${value.toLocaleString()} ${t("ovTokens")}`, t("ovTokens")]}
+                        />
+                        <Line type="monotone" dataKey="tokens" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: 'hsl(var(--accent))', strokeWidth: 0, r: 3 }} name={t("ovTokens")} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartNoteGrowth")}</h3>
+                  <div className="h-[220px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                        <XAxis dataKey="proj" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <Tooltip
                           contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
                           itemStyle={{ color: 'hsl(var(--foreground))' }}
                         />
-                        <Bar dataKey="count" radius={[4, 4, 0, 0]} name={t("registrations")}>
-                          {DOC_REGISTRATION_DATA.map((_, index) => (
+                        <Bar dataKey="count" radius={[4, 4, 0, 0]} name={t("ovStatNewNotes")}>
+                          {NOTE_GROWTH_BY_PROJECT.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${0.4 + (index * 0.1)})`} />
                           ))}
                         </Bar>
@@ -455,63 +513,6 @@ export default function Home() {
                     </ResponsiveContainer>
                   </div>
                 </div>
-
-                <div>
-                  <h3 className="text-sm font-semibold mb-3">{t("chatbotUsageTrend")}</h3>
-                  <div className="h-[220px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={CHATBOT_USAGE_DATA}>
-                        <defs>
-                          <linearGradient id="chatbotGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                        <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
-                        <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
-                          itemStyle={{ color: 'hsl(var(--foreground))' }}
-                        />
-                        <Line type="monotone" dataKey="sessions" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: 'hsl(var(--accent))', strokeWidth: 0, r: 3 }} name={t("sessions")} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <RoleBasedWrapper role={role} allowedRoles={["admin"]}>
-                  <div>
-                    <h3 className="text-sm font-semibold mb-3">{t("partnerDataStatus")}</h3>
-                    <div className="h-[220px] flex items-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={PARTNER_STATUS_DATA.map(d => ({ ...d, name: t(d.name) }))}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={75}
-                            paddingAngle={4}
-                            dataKey="value"
-                          >
-                            {PARTNER_STATUS_DATA.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }}
-                          />
-                          <Legend
-                            verticalAlign="bottom"
-                            height={36}
-                            formatter={(value) => <span className="text-[11px] text-foreground">{value}</span>}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                </RoleBasedWrapper>
               </div>
             </CardContent>
           </Card>
