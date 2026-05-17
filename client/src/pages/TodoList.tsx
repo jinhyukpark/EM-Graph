@@ -120,6 +120,14 @@ export default function TodoList() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const addTask = (t: Omit<Task, "id" | "done">) => {
+    setTasks((prev) => [
+      { ...t, id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, done: false },
+      ...prev,
+    ]);
+  };
   const today = new Date();
   const selected = tasks.find((t) => t.id === selectedId) ?? null;
 
@@ -225,6 +233,7 @@ export default function TodoList() {
               </Button>
               <Button
                 size="lg"
+                onClick={() => setCreateOpen(true)}
                 className="gap-2 shadow-lg bg-violet-600 hover:bg-violet-700 text-white"
                 data-testid="button-new-task"
               >
@@ -386,6 +395,12 @@ export default function TodoList() {
         onClose={() => setSelectedId(null)}
         onChange={(patch) => selected && updateTask(selected.id, patch)}
         onDelete={() => selected && deleteTask(selected.id)}
+      />
+
+      <CreateTaskDialog
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreate={(t) => { addTask(t); setCreateOpen(false); }}
       />
     </Layout>
   );
@@ -575,6 +590,155 @@ function TaskDetailDialog({
               저장
             </Button>
           </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function CreateTaskDialog({
+  open, onClose, onCreate,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreate: (t: Omit<Task, "id" | "done">) => void;
+}) {
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const tomorrowKey = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [due, setDue] = useState<string | null>(null);
+  const [assignee, setAssignee] = useState<string | null>(null);
+  const [priority, setPriority] = useState<Priority>(null);
+  const [flagged, setFlagged] = useState(false);
+
+  const reset = () => {
+    setTitle(""); setDescription(""); setDue(null);
+    setAssignee(null); setPriority(null); setFlagged(false);
+  };
+
+  const handleClose = () => { reset(); onClose(); };
+
+  const handleCreate = () => {
+    if (!title.trim()) return;
+    onCreate({
+      title: title.trim(),
+      due,
+      start: null,
+      note: "해야 할 일",
+      assignee,
+      assignees: assignee ? [assignee] : [],
+      priority: flagged ? "high" : priority,
+    });
+    reset();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent className="max-w-[640px] p-0 gap-0 rounded-2xl overflow-hidden" data-testid="dialog-create-task">
+        <div className="p-7">
+          {/* Notebook chip */}
+          <button className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-5" data-testid="button-create-notebook">
+            <FileText className="w-3.5 h-3.5" />
+            해야 할 일
+            <ChevronDown className="w-3 h-3" />
+          </button>
+
+          {/* Title row */}
+          <div className="flex items-center gap-3 mb-7">
+            <Circle className="w-6 h-6 text-muted-foreground/40 shrink-0" />
+            <input
+              autoFocus
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="작업을 입력하세요"
+              className="flex-1 text-xl font-semibold bg-transparent outline-none placeholder:text-muted-foreground/60"
+              data-testid="input-create-title"
+            />
+          </div>
+
+          <div className="space-y-5">
+            <Row icon={Pencil} label="설명">
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="이 작업은 무엇에 관한 것인가요?"
+                className="resize-none min-h-[72px] text-sm rounded-lg"
+                data-testid="textarea-create-description"
+              />
+            </Row>
+
+            <Row icon={CalendarDays} label="마감일">
+              <div className="flex flex-wrap gap-2">
+                <Chip active={due === todayKey} onClick={() => setDue(due === todayKey ? null : todayKey)}>오늘</Chip>
+                <Chip active={due === tomorrowKey} onClick={() => setDue(due === tomorrowKey ? null : tomorrowKey)}>내일</Chip>
+                <Chip icon={Pencil}>사용자 지정</Chip>
+                <Chip icon={RotateCcw}>반복</Chip>
+              </div>
+            </Row>
+
+            <Row icon={Bell} label="알림">
+              <div className="flex flex-wrap gap-2">
+                <Chip>1시간 후</Chip>
+                <Chip>4시간 후에</Chip>
+                <Chip icon={Pencil}>사용자 지정</Chip>
+              </div>
+            </Row>
+
+            <Row icon={UserRound} label="담당자">
+              {assignee ? (
+                <button
+                  onClick={() => setAssignee(null)}
+                  className="inline-flex items-center gap-2 text-sm"
+                  data-testid="button-create-assignee"
+                >
+                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-[11px] font-semibold inline-flex items-center justify-center">
+                    {assignee.charAt(0)}
+                  </span>
+                  {assignee}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setAssignee("박지훈")}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                  data-testid="button-create-assign"
+                >
+                  할당
+                </button>
+              )}
+            </Row>
+
+            <Row icon={AlertTriangle} label="우선 순위">
+              <div className="flex flex-wrap gap-2">
+                <Chip active={priority === "low"} onClick={() => setPriority(priority === "low" ? null : "low")}>낮음</Chip>
+                <Chip active={priority === "medium"} onClick={() => setPriority(priority === "medium" ? null : "medium")}>중간</Chip>
+                <Chip active={priority === "high"} onClick={() => setPriority(priority === "high" ? null : "high")}>높음</Chip>
+              </div>
+            </Row>
+
+            <Row icon={FlagIcon} label="플래그">
+              <Switch
+                checked={flagged}
+                onCheckedChange={setFlagged}
+                data-testid="switch-create-flag"
+              />
+            </Row>
+          </div>
+        </div>
+
+        <div className="px-7 py-4 border-t border-border/60 flex items-center justify-end gap-2">
+          <Button variant="outline" onClick={handleClose} className="rounded-lg" data-testid="button-create-cancel">
+            취소
+          </Button>
+          <Button
+            onClick={handleCreate}
+            disabled={!title.trim()}
+            className="rounded-lg bg-violet-600 hover:bg-violet-700 text-white disabled:opacity-50"
+            data-testid="button-create-confirm"
+          >
+            작업 만들기
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
