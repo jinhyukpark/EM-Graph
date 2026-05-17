@@ -756,7 +756,14 @@ export default function BrainMarket() {
                                                         {isSubscribed ? (
                                                             <div className="p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3" data-testid="form-review">
                                                                 <div className="flex items-center justify-between gap-2">
-                                                                    <div className="font-medium text-sm">{t('bmWriteReview')}</div>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Avatar className="w-8 h-8 rounded-full">
+                                                                            <AvatarFallback className="text-xs bg-primary/10 text-primary rounded-full">
+                                                                                {t('bmReviewYou').substring(0, 1)}
+                                                                            </AvatarFallback>
+                                                                        </Avatar>
+                                                                        <div className="font-medium text-sm">{t('bmWriteReview')}</div>
+                                                                    </div>
                                                                     <div className="flex items-center gap-1">
                                                                         {[1, 2, 3, 4, 5].map((n) => (
                                                                             <button
