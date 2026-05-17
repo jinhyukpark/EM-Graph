@@ -8,12 +8,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import type { DateRange } from "react-day-picker";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
+  DropdownMenuItem, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  Sparkles, Filter, ArrowUpDown, Search, Circle, CheckCircle2,
+  Sparkles, Filter, Search, Circle, CheckCircle2,
   FileText, Flag, ChevronDown, Pencil, CalendarDays, Bell, UserRound,
   AlertTriangle, Flag as FlagIcon, RotateCcw, ListTodo,
   ChevronUp, ChevronsUpDown, MoreHorizontal, Trash2, CalendarRange, X,
@@ -116,15 +119,30 @@ const GRID_COLS = "grid-cols-[36px_1.7fr_0.95fr_0.95fr_1.2fr_0.85fr_0.95fr_0.7fr
 
 type SortKey = "title" | "due" | "start" | "note" | "assignee" | "assignees" | "priority";
 type SortDir = "asc" | "desc";
-type DateRange = "all" | "today" | "week" | "month" | "overdue";
-const DATE_RANGE_LABELS: Record<DateRange, string> = {
-  all: "전체 기간",
-  today: "오늘",
-  week: "이번 주",
-  month: "이번 달",
-  overdue: "지연됨",
-};
 const PRIORITY_RANK: Record<NonNullable<Priority>, number> = { high: 3, medium: 2, low: 1 };
+
+type RangeShortcut = { key: string; label: string; days: number };
+const RANGE_SHORTCUTS: RangeShortcut[] = [
+  { key: "today", label: "오늘", days: 0 },
+  { key: "7d", label: "7일", days: 7 },
+  { key: "2w", label: "2주", days: 14 },
+  { key: "1m", label: "1달", days: 30 },
+  { key: "6m", label: "6개월", days: 180 },
+];
+
+function fmtDateShort(d: Date) {
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+function startOfDay(d: Date) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+function endOfDay(d: Date) {
+  const x = new Date(d);
+  x.setHours(23, 59, 59, 999);
+  return x;
+}
 
 export default function TodoList() {
   const [tasks, setTasks] = useState<Task[]>(SEED);
@@ -134,8 +152,26 @@ export default function TodoList() {
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [createOpen, setCreateOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange>("all");
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [activeShortcut, setActiveShortcut] = useState<string | null>(null);
+  const [rangeOpen, setRangeOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const applyShortcut = (s: RangeShortcut) => {
+    const today = startOfDay(new Date());
+    if (s.days === 0) {
+      setRange({ from: today, to: today });
+    } else {
+      const to = new Date(today);
+      to.setDate(to.getDate() + s.days);
+      setRange({ from: today, to });
+    }
+    setActiveShortcut(s.key);
+  };
+  const clearRange = () => {
+    setRange(undefined);
+    setActiveShortcut(null);
+  };
 
   const toggleSelected = (id: string) => {
     setSelectedIds((prev) => {
@@ -194,23 +230,13 @@ export default function TodoList() {
     } else if (tab === "노트") {
       list = list.filter((t) => !!t.note);
     }
-    if (dateRange !== "all") {
-      const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const endOfToday = new Date(startOfToday.getTime() + 86400000 - 1);
-      const dayOfWeek = startOfToday.getDay();
-      const startOfWeek = new Date(startOfToday.getTime() - dayOfWeek * 86400000);
-      const endOfWeek = new Date(startOfWeek.getTime() + 7 * 86400000 - 1);
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    if (range?.from) {
+      const from = startOfDay(range.from);
+      const to = endOfDay(range.to ?? range.from);
       list = list.filter((t) => {
         if (!t.due) return false;
         const d = new Date(t.due);
-        if (dateRange === "today") return d >= startOfToday && d <= endOfToday;
-        if (dateRange === "week") return d >= startOfWeek && d <= endOfWeek;
-        if (dateRange === "month") return d >= startOfMonth && d <= endOfMonth;
-        if (dateRange === "overdue") return d < startOfToday && !t.done;
-        return true;
+        return d >= from && d <= to;
       });
     }
     if (search.trim()) {
@@ -247,7 +273,7 @@ export default function TodoList() {
       list = [...list].sort(cmp);
     }
     return list;
-  }, [tasks, tab, search, sortKey, sortDir, dateRange]);
+  }, [tasks, tab, search, sortKey, sortDir, range]);
 
   const visibleIds = filtered.map((t) => t.id);
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
@@ -327,37 +353,65 @@ export default function TodoList() {
               <Filter className="w-4 h-4" />
               필터
             </Button>
-            <Button variant="outline" className="h-11 gap-2 px-4" data-testid="button-sort">
-              <ArrowUpDown className="w-4 h-4" />
-              정렬
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <div className="flex items-center gap-1.5">
+              {RANGE_SHORTCUTS.map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => applyShortcut(s)}
+                  className={`h-9 px-3 rounded-md text-xs font-medium transition-colors ${
+                    activeShortcut === s.key
+                      ? "bg-violet-600 text-white shadow-sm"
+                      : "bg-muted/50 text-foreground/70 hover:bg-muted"
+                  }`}
+                  data-testid={`shortcut-${s.key}`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+            <Popover open={rangeOpen} onOpenChange={setRangeOpen}>
+              <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={`h-11 gap-2 px-4 ${dateRange !== "all" ? "border-violet-400 text-violet-700 bg-violet-50/50" : ""}`}
+                  className={`h-11 gap-2 px-4 ${range?.from ? "border-violet-400 text-violet-700 bg-violet-50/50" : ""}`}
                   data-testid="button-date-range"
                 >
                   <CalendarRange className="w-4 h-4" />
-                  {DATE_RANGE_LABELS[dateRange]}
+                  {range?.from ? (
+                    range.to && range.to.getTime() !== range.from.getTime()
+                      ? `${fmtDateShort(range.from)} - ${fmtDateShort(range.to)}`
+                      : fmtDateShort(range.from)
+                  ) : (
+                    "전체 기간"
+                  )}
                   <ChevronDown className="w-3.5 h-3.5 opacity-60" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-44">
-                <DropdownMenuLabel className="text-xs text-muted-foreground">기간 선택</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {(Object.keys(DATE_RANGE_LABELS) as DateRange[]).map((k) => (
-                  <DropdownMenuItem
-                    key={k}
-                    onSelect={() => setDateRange(k)}
-                    className={dateRange === k ? "bg-violet-50 text-violet-700 font-medium" : ""}
-                    data-testid={`date-range-${k}`}
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  defaultMonth={range?.from ?? new Date()}
+                  selected={range}
+                  onSelect={(r) => {
+                    setRange(r);
+                    setActiveShortcut(null);
+                  }}
+                  numberOfMonths={2}
+                />
+                <div className="border-t border-border/60 px-3 py-2 flex items-center justify-between">
+                  <button
+                    onClick={clearRange}
+                    className="text-xs text-muted-foreground hover:text-foreground"
+                    data-testid="button-clear-range"
                   >
-                    {DATE_RANGE_LABELS[k]}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    초기화
+                  </button>
+                  <Button size="sm" onClick={() => setRangeOpen(false)} data-testid="button-apply-range">
+                    적용
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="h-11">
               <TabsList className="h-11 bg-muted/50">
                 {TABS.map((label) => (
