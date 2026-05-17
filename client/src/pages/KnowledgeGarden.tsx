@@ -2111,10 +2111,10 @@ export default function KnowledgeGarden() {
                         </div>
                       </div>
                       <div className="px-3 pb-2">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-1 mb-1">새로운 기능</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-1 mb-1">AI 기능</p>
                         {[
                           { Icon: Sparkles, label: '리액티브 다이어그램', desc: 'AI가 자동으로 다이어그램 생성', color: 'text-violet-600 bg-violet-50' },
-                          { Icon: TableIcon, label: '데이터베이스 뷰', desc: '구조화된 데이터 표시', color: 'text-emerald-600 bg-emerald-50' },
+                          { Icon: Sparkles, label: '데이터베이스 뷰', desc: 'AI가 구조화된 데이터 표시', color: 'text-emerald-600 bg-emerald-50' },
                         ].map(({ Icon, label, desc, color }) => (
                           <button
                             key={label}
