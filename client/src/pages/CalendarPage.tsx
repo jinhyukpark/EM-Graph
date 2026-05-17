@@ -126,10 +126,10 @@ export default function CalendarPage() {
 
   return (
     <Layout>
-      <div className="h-full overflow-y-auto bg-background">
-        <div className="max-w-[1600px] mx-auto px-10 pt-10 pb-16">
+      <div className="h-full flex flex-col bg-background overflow-hidden">
+        <div className="flex-1 flex flex-col px-8 pt-6 pb-6 min-h-0">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6 shrink-0">
             <h1 className="text-3xl font-bold tracking-tight" data-testid="text-calendar-title">캘린더</h1>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="h-10 rounded-full text-sm gap-2 border-violet-200 text-violet-700 hover:bg-violet-50" data-testid="button-new-recording">
@@ -150,9 +150,9 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-[280px_1fr] gap-8">
+          <div className="grid grid-cols-[280px_1fr] gap-8 flex-1 min-h-0">
             {/* Sidebar */}
-            <aside className="space-y-6">
+            <aside className="space-y-6 overflow-y-auto pr-1">
               {/* Mini calendar */}
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -244,8 +244,8 @@ export default function CalendarPage() {
             </aside>
 
             {/* Main calendar */}
-            <section className="relative">
-              <div className="flex items-center justify-between mb-4">
+            <section className="relative flex flex-col min-h-0">
+              <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="text-base font-semibold">{monthLabel}</div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 hover:text-foreground" data-testid="button-today-main">오늘</button>
@@ -255,7 +255,7 @@ export default function CalendarPage() {
               </div>
 
               {/* Day headers */}
-              <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/60">
+              <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/60 shrink-0">
                 <div />
                 {KO_DAYS.map((d) => (
                   <div key={d} className="px-3 py-3 text-sm font-medium text-muted-foreground">{d}</div>
@@ -263,11 +263,11 @@ export default function CalendarPage() {
               </div>
 
               {/* Weeks */}
-              <div>
+              <div className="flex-1 grid grid-rows-6 min-h-0">
                 {weeks.map((week, wi) => {
                   const wk = isoWeek(week[0]);
                   return (
-                    <div key={wi} className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/40 min-h-[140px]">
+                    <div key={wi} className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-border/40 last:border-b-0 min-h-0">
                       <div className="text-xs text-muted-foreground/60 flex items-center justify-center border-r border-border/40">
                         주 {wk}
                       </div>
@@ -279,11 +279,11 @@ export default function CalendarPage() {
                         return (
                           <div
                             key={key}
-                            className={`px-2.5 py-2.5 border-r border-border/40 last:border-r-0 ${
+                            className={`px-2.5 py-2.5 border-r border-border/40 last:border-r-0 overflow-hidden flex flex-col ${
                               isOther ? "bg-muted/20" : ""
                             }`}
                           >
-                            <div className="flex items-center justify-end mb-2">
+                            <div className="flex items-center justify-end mb-2 shrink-0">
                               <span
                                 className={`text-sm inline-flex items-center justify-center ${
                                   isToday
@@ -297,7 +297,7 @@ export default function CalendarPage() {
                                 {!isToday && <span className="ml-0.5 text-muted-foreground/50 text-xs">일</span>}
                               </span>
                             </div>
-                            <div className="space-y-1">
+                            <div className="space-y-1 flex-1 overflow-hidden">
                               {dayEvents.slice(0, 3).map((ev) => (
                                 <div
                                   key={ev.id}
@@ -323,7 +323,7 @@ export default function CalendarPage() {
 
               {/* Floating add button */}
               <button
-                className="absolute bottom-3 right-3 w-14 h-14 rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform inline-flex items-center justify-center"
+                className="absolute bottom-4 right-4 w-14 h-14 rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform inline-flex items-center justify-center z-10"
                 data-testid="button-fab-add"
                 aria-label="새 이벤트"
               >
