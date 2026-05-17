@@ -176,29 +176,29 @@ export default function CalendarPage() {
   return (
     <Layout>
       <div className="h-full flex flex-col bg-background overflow-hidden">
-        <div className="flex-1 flex flex-col px-8 pt-6 pb-6 min-h-0">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6 pb-4 shrink-0 border-b border-border -mx-8 px-8">
-            <h1 className="text-3xl font-bold tracking-tight" data-testid="text-calendar-title">캘린더</h1>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="h-10 rounded-full text-sm gap-2 border-violet-200 text-violet-700 hover:bg-violet-50" data-testid="button-new-recording">
-                <Mic className="w-4 h-4" />새 녹음
-              </Button>
-              <Button variant="outline" size="sm" className="h-10 rounded-full text-sm gap-2 border-rose-200 text-rose-700 hover:bg-rose-50" data-testid="button-new-event">
-                <CalendarPlus className="w-4 h-4" />새 이벤트
-              </Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-violet-600" data-testid="button-ai">
-                <Sparkles className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" data-testid="button-sort">
-                <ArrowUpDown className="w-5 h-5" />
-              </Button>
-              <button className="h-10 px-4 inline-flex items-center gap-1.5 rounded-md border border-border text-sm text-foreground hover:bg-muted" data-testid="button-view">
-                월 <ChevronDown className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Header */}
+        <div className="h-16 px-8 flex items-center justify-between shrink-0 border-b border-border">
+          <h1 className="text-2xl font-bold tracking-tight" data-testid="text-calendar-title">캘린더</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="h-9 rounded-full text-sm gap-2 border-violet-200 text-violet-700 hover:bg-violet-50" data-testid="button-new-recording">
+              <Mic className="w-4 h-4" />새 녹음
+            </Button>
+            <Button variant="outline" size="sm" className="h-9 rounded-full text-sm gap-2 border-rose-200 text-rose-700 hover:bg-rose-50" data-testid="button-new-event">
+              <CalendarPlus className="w-4 h-4" />새 이벤트
+            </Button>
+            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-violet-600" data-testid="button-ai">
+              <Sparkles className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground" data-testid="button-sort">
+              <ArrowUpDown className="w-5 h-5" />
+            </Button>
+            <button className="h-9 px-4 inline-flex items-center gap-1.5 rounded-md border border-border text-sm text-foreground hover:bg-muted" data-testid="button-view">
+              월 <ChevronDown className="w-4 h-4" />
+            </button>
           </div>
+        </div>
 
+        <div className="flex-1 flex flex-col px-8 pt-6 pb-6 min-h-0">
           <div className="grid grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
             {/* Sidebar */}
             <aside className="space-y-6 overflow-y-auto pr-6 border-r border-border">
