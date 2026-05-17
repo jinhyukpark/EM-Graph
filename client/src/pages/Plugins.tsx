@@ -299,12 +299,23 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
           </section>
 
           <div className="pt-2">
-            <h3 className="font-bold text-foreground mb-3">다음에서 앱을 사용할 수 있습니다</h3>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="w-10 h-10 rounded-lg border border-border bg-secondary/40 flex items-center justify-center">
-                <Workflow className="w-5 h-5" />
-              </div>
-              <span>워크스페이스</span>
+            <h3 className="font-bold text-foreground mb-3">같이 사용하면 좋은 앱</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {PLUGINS.filter(x => x.id !== plugin.id).slice(0, 4).map(rec => (
+                <Card
+                  key={rec.id}
+                  className="p-3 flex items-start gap-3 hover-elevate cursor-pointer border-border/60"
+                  data-testid={`recommend-${rec.id}`}
+                >
+                  <div className={`w-10 h-10 rounded-lg inline-flex items-center justify-center shrink-0 ${rec.iconColor}`}>
+                    <rec.Icon className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-foreground truncate">{rec.name}</div>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 leading-relaxed">{rec.desc}</p>
+                  </div>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
