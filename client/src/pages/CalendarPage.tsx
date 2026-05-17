@@ -349,6 +349,52 @@ export default function CalendarPage() {
                   ))}
                 </ul>
               </div>
+
+              {/* This month's To-Do List */}
+              <div>
+                <div className="text-xs text-muted-foreground mb-3 font-medium">이달의 To-Do List</div>
+                {(() => {
+                  const ym = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`;
+                  const monthTodos = events
+                    .filter((ev) => ev.type === "todo" && ev.date.startsWith(ym))
+                    .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+                  if (monthTodos.length === 0) {
+                    return <div className="text-xs text-muted-foreground/70">등록된 할 일이 없습니다.</div>;
+                  }
+                  return (
+                    <ul className="space-y-2">
+                      {monthTodos.map((ev) => {
+                        const isDone = !!ev.done;
+                        const dot = ev.color.split(" ").find((c) => c.startsWith("border-l-"))?.replace("border-l-", "bg-") ?? "bg-violet-500";
+                        const md = ev.date.slice(5).replace("-", "/");
+                        return (
+                          <li key={ev.id} className="flex items-start gap-2 text-sm" data-testid={`sidebar-todo-${ev.id}`}>
+                            <button
+                              onClick={() => setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x))}
+                              className={`mt-0.5 shrink-0 w-4 h-4 rounded-[4px] border inline-flex items-center justify-center ${isDone ? "bg-foreground border-foreground" : "border-muted-foreground/40 hover:border-foreground"}`}
+                              aria-label={isDone ? "완료 해제" : "완료"}
+                              data-testid={`sidebar-todo-toggle-${ev.id}`}
+                            >
+                              {isDone && (
+                                <svg viewBox="0 0 12 12" className="w-3 h-3 text-background" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                              )}
+                            </button>
+                            <div className={`flex-1 min-w-0 ${isDone ? "opacity-50" : ""}`}>
+                              <div className={`flex items-center gap-1.5 text-sm leading-snug ${isDone ? "line-through" : ""}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
+                                <span className="truncate text-foreground/90">{ev.title}</span>
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">
+                                {md} · {Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  );
+                })()}
+              </div>
             </aside>
 
             {/* Main calendar */}
