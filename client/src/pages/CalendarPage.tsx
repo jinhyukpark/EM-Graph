@@ -225,6 +225,7 @@ export default function CalendarPage() {
   }, [resizingId]);
 
   const [panelOpen, setPanelOpen] = useState(true);
+  const [dayPopup, setDayPopup] = useState<string | null>(null);
 
   const monthLabel = `${cursor.getFullYear()}년 ${cursor.getMonth() + 1}월`;
   const shiftMonth = (delta: number) =>
@@ -469,7 +470,13 @@ export default function CalendarPage() {
                             </div>
                             <div className="flex-1" />
                             {overflow > 0 && (
-                              <div className="text-[10px] text-muted-foreground pl-1 shrink-0">+{overflow}건</div>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setDayPopup(key); }}
+                                className="self-start text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted px-1.5 py-0.5 rounded shrink-0 relative z-10"
+                                data-testid={`button-more-${key}`}
+                              >
+                                +{overflow}건 더보기
+                              </button>
                             )}
                           </div>
                         );
@@ -710,6 +717,58 @@ export default function CalendarPage() {
                 Create
               </Button>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={!!dayPopup} onOpenChange={(o) => !o && setDayPopup(null)}>
+          <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden" data-testid="dialog-day-events">
+            <VisuallyHidden>
+              <DialogTitle>Day events</DialogTitle>
+              <DialogDescription>All events for the selected day</DialogDescription>
+            </VisuallyHidden>
+            {dayPopup && (() => {
+              const d = new Date(dayPopup + "T00:00:00");
+              const dayList = eventsByDate[dayPopup] ?? [];
+              const sorted = [...dayList].sort((a, b) => a.start.localeCompare(b.start));
+              const label = `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${KO_DAYS[(d.getDay() + 6) % 7]})`;
+              return (
+                <div>
+                  <div className="px-5 pt-5 pb-3 border-b border-border">
+                    <div className="text-xs text-muted-foreground">{label}</div>
+                    <div className="text-base font-semibold mt-0.5">전체 일정 {sorted.length}건</div>
+                  </div>
+                  <div className="max-h-[420px] overflow-y-auto px-3 py-3 space-y-1.5">
+                    {sorted.map((ev) => {
+                      const isTodo = ev.type === "todo";
+                      const isDone = !!ev.done;
+                      return (
+                        <div
+                          key={ev.id}
+                          className={`flex items-center gap-2 px-3 py-2 rounded border-l-2 ${ev.color} ${isDone ? "opacity-50" : ""}`}
+                          data-testid={`day-popup-event-${ev.id}`}
+                        >
+                          {isTodo && (
+                            <button
+                              onClick={() => setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x))}
+                              className={`shrink-0 w-4 h-4 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/50 hover:border-current/80"}`}
+                              aria-label={isDone ? "완료 해제" : "완료"}
+                            >
+                              {isDone && (
+                                <svg viewBox="0 0 12 12" className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                              )}
+                            </button>
+                          )}
+                          <div className={`flex-1 min-w-0 text-sm ${isDone ? "line-through" : ""}`}>
+                            <span className="opacity-80 mr-1">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>
+                            {ev.title}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </DialogContent>
         </Dialog>
       </div>
