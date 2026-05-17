@@ -373,6 +373,52 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
               이 앱 보고
             </button>
           </Card>
+
+          {/* Provider detailed card (image 2 style) */}
+          <Card className="p-5 border-border/60 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className={`w-12 h-12 rounded-xl inline-flex items-center justify-center shrink-0 ${plugin.iconColor}`}>
+                <plugin.Icon className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <div className="font-bold text-base text-foreground">{plugin.vendor}</div>
+                <div className="flex items-center gap-1 mt-0.5 text-xs text-emerald-700">
+                  <Shield className="w-3.5 h-3.5" />
+                  인증된 제공자
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              ㈜{plugin.vendor}는 인공지능/데이터 분석 분야에 특화된 기술을 확보하여 2018년부터 특허·논문·기업·산업 데이터 분석 사업을 수행하며, 온톨로지 알고리즘 기반 분석 솔루션 및 산업분석 특화 LLM 모델을 제공합니다.
+            </p>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center gap-2 text-foreground">
+                <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                <a href="#" className="hover:underline">{plugin.vendor.toLowerCase().replace(/\s+/g, '')}.com</a>
+              </div>
+              <div className="flex items-center gap-2 text-foreground">
+                <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                <a href="#" className="hover:underline">manager@{plugin.vendor.toLowerCase().replace(/\s+/g, '')}.com</a>
+              </div>
+            </div>
+            <Button variant="outline" className="w-full gap-2" data-testid="button-visit-website">
+              <ExternalLink className="w-3.5 h-3.5" />
+              웹사이트 방문
+            </Button>
+          </Card>
+
+          {/* Help CTA card (image 2 style) */}
+          <Card className="p-5 border-0 bg-indigo-600 text-white space-y-3">
+            <h4 className="font-bold text-base">도움이 필요하신가요?</h4>
+            <p className="text-xs text-white/85 leading-relaxed">
+              기술적 문의사항이 있으시면 언제든지 문의해주세요.<br />
+              빠르게 답변해 드리겠습니다.
+            </p>
+            <Button variant="secondary" className="w-full gap-2 bg-white text-indigo-700 hover:bg-white/90" data-testid="button-contact-support">
+              <MessageCircle className="w-4 h-4" />
+              문의하기
+            </Button>
+          </Card>
         </aside>
       </div>
     </div>
