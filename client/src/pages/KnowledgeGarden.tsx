@@ -1643,14 +1643,46 @@ export default function KnowledgeGarden() {
                       >
                         <Plus className="w-4 h-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
-                      >
-                         <PanelLeft className="w-4 h-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            data-testid="button-explorer-more"
+                            title="더 보기"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56" data-testid="menu-explorer-more">
+                          <DropdownMenuItem onClick={handleAddNewFile} data-testid="item-add-note" className="text-sm">
+                            새 노트 추가
+                          </DropdownMenuItem>
+                          <DropdownMenuItem data-testid="item-add-note-template" className="text-sm">
+                            템플릿에서 새 노트 추가
+                          </DropdownMenuItem>
+                          <DropdownMenuItem disabled className="text-sm">
+                            공간으로 이동
+                          </DropdownMenuItem>
+                          <DropdownMenuItem data-testid="item-share-notebook" className="text-sm">
+                            노트북 공유
+                          </DropdownMenuItem>
+                          <DropdownMenuItem data-testid="item-rename-notebook" className="text-sm">
+                            노트북 이름 바꾸기
+                          </DropdownMenuItem>
+                          <DropdownMenuItem disabled className="text-sm">
+                            노트북 삭제
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem data-testid="item-add-shortcut" className="text-sm">
+                            바로가기에 추가
+                          </DropdownMenuItem>
+                          <DropdownMenuItem data-testid="item-remove-stack" className="text-sm">
+                            스택에서 제거
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                   </div>
                 </div>
                 {(selectedTags.length > 0 || dateFilter !== 'all' || shareFilter !== 'all' || treeSearchQuery) && (
