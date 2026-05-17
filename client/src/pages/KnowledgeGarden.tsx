@@ -1775,6 +1775,15 @@ export default function KnowledgeGarden() {
               <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
                 {/* Tab Bar */}
                 <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-x-auto">
+                  <button
+                    type="button"
+                    onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
+                    data-testid="button-toggle-explorer-from-tabs"
+                    title={showExplorer ? "탐색기 숨기기" : "탐색기 표시"}
+                    className="flex items-center justify-center w-10 border-r border-border text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                  >
+                    {showExplorer ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+                  </button>
                   {tabs.map((tab) => {
                     const isActive = tab.id === activeTabId;
                     return (
