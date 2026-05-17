@@ -199,9 +199,9 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-[280px_1fr] gap-8 flex-1 min-h-0">
+          <div className="grid grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
             {/* Sidebar */}
-            <aside className="space-y-6 overflow-y-auto pr-1">
+            <aside className="space-y-6 overflow-y-auto pr-6 border-r border-border">
               {/* Mini calendar */}
               <div>
                 <div className="flex items-center justify-between mb-4">
