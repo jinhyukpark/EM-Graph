@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Sparkles, ListFilter, ArrowUpDown, Search, Circle, CheckCircle2,
+  Sparkles, Filter, ArrowUpDown, Search, Circle, CheckCircle2,
   FileText, Flag, ChevronDown, Pencil, CalendarDays, Bell, UserRound,
-  AlertTriangle, Flag as FlagIcon, RotateCcw,
+  AlertTriangle, Flag as FlagIcon, RotateCcw, ListTodo,
 } from "lucide-react";
 
 type Priority = "high" | "medium" | "low" | null;
@@ -146,67 +148,90 @@ export default function TodoList() {
   const toggle = (id: string) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
 
+  const openCount = tasks.filter((x) => !x.done).length;
+  const doneCount = tasks.length - openCount;
+
   return (
     <Layout>
-      <div className="h-full overflow-y-auto bg-background">
-        <div className="max-w-[1400px] mx-auto px-10 pt-10 pb-16">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-3xl font-bold tracking-tight" data-testid="text-todo-title">작업</h1>
-              <span className="text-base text-muted-foreground">{tasks.length}</span>
+      <div className="h-full flex flex-col bg-background">
+        {/* Page Header (Brain Market style) */}
+        <div className="border-b border-border bg-card/50 px-8 py-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-3" data-testid="text-todo-title">
+                <ListTodo className="w-8 h-8 text-violet-600" />
+                할 일 목록
+              </h1>
+              <p className="text-muted-foreground mt-2 max-w-2xl text-base">
+                팀의 모든 작업을 한 곳에서 추적하세요. 마감일, 담당자, 우선순위를 한눈에 확인하고,
+                노트와 연결된 작업을 신속하게 처리할 수 있습니다.
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <Button
+                size="lg"
                 variant="outline"
-                size="sm"
-                className="h-9 rounded-full text-sm gap-1.5 border-violet-200 text-violet-700 hover:bg-violet-50"
+                className="gap-2 shadow-sm"
+                data-testid="button-completed"
+              >
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                완료된 작업
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 h-5 min-w-[20px] text-xs bg-emerald-100 text-emerald-700 border-0">
+                  {doneCount}
+                </Badge>
+              </Button>
+              <Button
+                size="lg"
+                className="gap-2 shadow-lg bg-violet-600 hover:bg-violet-700 text-white"
                 data-testid="button-new-task"
               >
-                <Sparkles className="w-4 h-4" />새 작업
+                <Sparkles className="w-5 h-5" />
+                새 작업
               </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground" data-testid="button-filter">
-                <ListFilter className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground" data-testid="button-sort">
-                <ArrowUpDown className="w-4 h-4" />
-              </Button>
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="작업을 찾으세요..."
-                  className="h-9 w-64 pl-9 text-sm rounded-full border-violet-200 focus-visible:ring-violet-300"
-                  data-testid="input-search-task"
-                />
-              </div>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex items-center gap-1 mb-6 border-b border-border/60">
-            {TABS.map((label) => (
-              <button
-                key={label}
-                onClick={() => setTab(label)}
-                className={`relative px-3.5 py-2.5 text-sm font-medium transition-colors ${
-                  tab === label
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                data-testid={`tab-${label}`}
-              >
-                {label}
-                {tab === label && (
-                  <span className="absolute left-2 right-2 -bottom-px h-0.5 bg-foreground rounded-full" />
-                )}
-              </button>
-            ))}
+          {/* Search & Filter Bar */}
+          <div className="flex items-center gap-4 mt-2">
+            <div className="relative flex-1 max-w-2xl">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="작업을 찾으세요..."
+                className="pl-10 h-11 bg-background shadow-sm border-muted-foreground/20"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                data-testid="input-search-task"
+              />
+            </div>
+            <Button variant="outline" className="h-11 gap-2 px-4" data-testid="button-filter">
+              <Filter className="w-4 h-4" />
+              필터
+            </Button>
+            <Button variant="outline" className="h-11 gap-2 px-4" data-testid="button-sort">
+              <ArrowUpDown className="w-4 h-4" />
+              정렬
+            </Button>
+            <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="h-11">
+              <TabsList className="h-11 bg-muted/50">
+                {TABS.map((label) => (
+                  <TabsTrigger key={label} value={label} className="h-9" data-testid={`tab-${label}`}>
+                    {label}
+                    {label === "내 작업" && (
+                      <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 h-4 min-w-[18px] text-[10px] bg-violet-100 text-violet-700 border-0">
+                        {openCount}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
+        </div>
 
-          {/* Table */}
-          <div className="border border-border/60 rounded-xl overflow-hidden bg-card">
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="border border-border/60 rounded-xl overflow-hidden bg-card">
             <div className={`grid ${GRID_COLS} px-6 py-3 text-xs font-semibold text-muted-foreground bg-muted/30 border-b border-border/60`}>
               <div>제목</div>
               <div>마감일</div>
@@ -308,6 +333,7 @@ export default function TodoList() {
                 </li>
               )}
             </ul>
+            </div>
           </div>
         </div>
       </div>
