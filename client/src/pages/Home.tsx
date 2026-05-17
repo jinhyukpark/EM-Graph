@@ -7,12 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import avatarPark from "@assets/avatars/avatar_park.png";
+import avatarKim from "@assets/avatars/avatar_kim.png";
+import avatarChoi from "@assets/avatars/avatar_choi.png";
+import avatarJung from "@assets/avatars/avatar_jung.png";
+import avatarLee from "@assets/avatars/avatar_lee.png";
 import {
   Activity, ArrowRight, ArrowUpRight, ArrowDownRight,
-  BarChart3, Bell, BellOff, Calendar, ChevronDown,
+  BarChart3, Bell, Calendar, ChevronDown,
   Clock, Database, FileText, Newspaper, Building2,
-  Plus, ShieldAlert, Zap, Bot, Users, X,
+  ShieldAlert, Zap, Bot, Users, X,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
   Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid
@@ -46,6 +51,7 @@ type IssueFeedItem = {
   authorName: string;
   authorInitial: string;
   authorColor: string;
+  authorImage?: string;
   title: string;
   titleKo: string;
   aiSummary: string;
@@ -65,12 +71,12 @@ const TIMELINE_EVENTS: TimelineEvent[] = [
 ];
 
 const ISSUE_FEED_DATA: IssueFeedItem[] = [
-  { id: "f1", source: "comment", authorName: "박지훈", authorInitial: "박", authorColor: "bg-violet-500", title: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", titleKo: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", aiSummary: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", aiSummaryKo: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", time: "15m ago", timeKo: "15분 전", subscribed: true },
-  { id: "f2", source: "mention", authorName: "김민서", authorInitial: "김", authorColor: "bg-blue-500", title: "김민서 책임이 회의록에서 나를 멘션했습니다", titleKo: "김민서 책임이 회의록에서 나를 멘션했습니다", aiSummary: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", aiSummaryKo: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", time: "1h ago", timeKo: "1시간 전", subscribed: true },
-  { id: "f3", source: "share", authorName: "최수정", authorInitial: "최", authorColor: "bg-emerald-500", title: "최수정 책임이 지식정원을 공유했습니다", titleKo: "최수정 책임이 지식정원을 공유했습니다", aiSummary: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", aiSummaryKo: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", time: "2h ago", timeKo: "2시간 전", subscribed: false },
+  { id: "f1", source: "comment", authorName: "박지훈", authorInitial: "박", authorColor: "bg-violet-500", authorImage: avatarPark, title: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", titleKo: "박지훈 매니저가 내 노트에 댓글을 남겼습니다", aiSummary: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", aiSummaryKo: "'아라미드 단가 협상 전략 Q3' 노트: \"Q3 목표 단가 산정 근거를 한 번 더 검토해 주세요. 공급사별 원가 변동성이 큽니다.\"", time: "15m ago", timeKo: "15분 전", subscribed: true },
+  { id: "f2", source: "mention", authorName: "김민서", authorInitial: "김", authorColor: "bg-blue-500", authorImage: avatarKim, title: "김민서 책임이 회의록에서 나를 멘션했습니다", titleKo: "김민서 책임이 회의록에서 나를 멘션했습니다", aiSummary: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", aiSummaryKo: "'PET필름 주간 운영회의 W20' 노트에서 @나 가 언급되었습니다. PET필름 #3 라인 가동률 개선 보고 요청.", time: "1h ago", timeKo: "1시간 전", subscribed: true },
+  { id: "f3", source: "share", authorName: "최수정", authorInitial: "최", authorColor: "bg-emerald-500", authorImage: avatarChoi, title: "최수정 책임이 지식정원을 공유했습니다", titleKo: "최수정 책임이 지식정원을 공유했습니다", aiSummary: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", aiSummaryKo: "'편광필름 품질 분석 정원' 지식정원이 공유되었습니다. 노드 142개, 엣지 318개. 편집 권한이 부여되었습니다.", time: "2h ago", timeKo: "2시간 전", subscribed: false },
   { id: "f4", source: "system", authorName: "EM-Graph", authorInitial: "EM", authorColor: "bg-slate-500", title: "AI 토큰 사용량 80% 도달", titleKo: "AI 토큰 사용량 80% 도달", aiSummary: "이번 달 AI 토큰 사용량이 한도의 80%(40만 / 50만 토큰)에 도달했습니다. 다음 결제 주기는 6월 1일입니다.", aiSummaryKo: "이번 달 AI 토큰 사용량이 한도의 80%(40만 / 50만 토큰)에 도달했습니다. 다음 결제 주기는 6월 1일입니다.", time: "3h ago", timeKo: "3시간 전", subscribed: false },
-  { id: "f5", source: "share", authorName: "정해린", authorInitial: "정", authorColor: "bg-amber-500", title: "브레인마켓에서 새 온톨로지가 공개되었습니다", titleKo: "브레인마켓에서 새 온톨로지가 공개되었습니다", aiSummary: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", aiSummaryKo: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", time: "5h ago", timeKo: "5시간 전", subscribed: true },
-  { id: "f6", source: "comment", authorName: "이도현", authorInitial: "이", authorColor: "bg-rose-500", title: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", titleKo: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", aiSummary: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", aiSummaryKo: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", time: "6h ago", timeKo: "6시간 전", subscribed: false },
+  { id: "f5", source: "share", authorName: "정해린", authorInitial: "정", authorColor: "bg-amber-500", authorImage: avatarJung, title: "브레인마켓에서 새 온톨로지가 공개되었습니다", titleKo: "브레인마켓에서 새 온톨로지가 공개되었습니다", aiSummary: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", aiSummaryKo: "'Global Semiconductor Supply Chain v2' 온톨로지가 업데이트되었습니다. 구독 중인 항목으로 자동 동기화 예정.", time: "5h ago", timeKo: "5시간 전", subscribed: true },
+  { id: "f6", source: "comment", authorName: "이도현", authorInitial: "이", authorColor: "bg-rose-500", authorImage: avatarLee, title: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", titleKo: "이도현 차장이 '열연코일 BOM' 노트에 답글을 남겼습니다", aiSummary: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", aiSummaryKo: "\"4단 구조 좋습니다. 다만 자재 코드 매핑이 빠진 항목 4건 별도 정리 부탁드립니다.\"", time: "6h ago", timeKo: "6시간 전", subscribed: false },
 ];
 
 const NOTE_GROWTH_BY_PROJECT = [
@@ -149,7 +155,7 @@ function FeedBadge({ source, t }: { source: "comment" | "mention" | "share" | "s
 export default function Home() {
   const [, setLocation] = useLocation();
   const { t, language } = useLanguage();
-  const [role, setRole] = useState<Role>("admin");
+  const [role] = useState<Role>("admin");
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
@@ -352,6 +358,9 @@ export default function Home() {
                       </div>
                       <div className="flex items-start gap-2.5">
                         <Avatar className="w-8 h-8 rounded-full shrink-0">
+                          {item.authorImage && (
+                            <AvatarImage src={item.authorImage} alt={item.authorName} className="object-cover" />
+                          )}
                           <AvatarFallback className={`text-[11px] font-semibold text-white rounded-full ${item.authorColor}`}>
                             {item.authorInitial}
                           </AvatarFallback>

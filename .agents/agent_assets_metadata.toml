@@ -6,3 +6,33 @@ id = "d1czsJmUpmYkleTU1Yx5p"
 uri = "file://attached_assets/generated_images/modern_office_team_collaboration_416f.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "4fKlh0epV38NwQpS1hxk0"
+uri = "file://attached_assets/avatars/avatar_park.png"
+type = "image"
+title = "park headshot"
+
+[[generated]]
+id = "iW9JUj-KfO80-8hgA7Dk5"
+uri = "file://attached_assets/avatars/avatar_kim.png"
+type = "image"
+title = "kim headshot"
+
+[[generated]]
+id = "VMiC4xx6oAyNoWiwtZecs"
+uri = "file://attached_assets/avatars/avatar_choi.png"
+type = "image"
+title = "choi headshot"
+
+[[generated]]
+id = "T0THu6lQHShOe90KiXp6j"
+uri = "file://attached_assets/avatars/avatar_jung.png"
+type = "image"
+title = "jung headshot"
+
+[[generated]]
+id = "g8EnETemwX0Vm_FlnFDJc"
+uri = "file://attached_assets/avatars/avatar_lee.png"
+type = "image"
+title = "lee headshot"
