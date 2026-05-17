@@ -320,38 +320,38 @@ function SecurityTab() {
         ))}
       </div>
 
-      {/* Security heading */}
-      <div className="flex items-center gap-2 pt-3">
-        <Shield className="w-5 h-5 text-foreground" />
-        <h3 className="text-lg font-bold text-foreground">Security</h3>
-      </div>
-
-      {/* Q&A list */}
-      <div className="divide-y divide-border/60">
-        {SECURITY_QAS.map((item, i) => (
-          <div key={i} className="py-3.5 flex items-start justify-between gap-4" data-testid={`security-qa-${i}`}>
-            <div className="min-w-0 flex-1 space-y-1">
-              <div className="text-sm text-foreground leading-relaxed">
-                <span className="font-semibold mr-1">Q:</span>
-                {item.q}
+      {/* Security container */}
+      <div className="p-5 rounded-2xl border border-border/60 bg-secondary/30">
+        <div className="flex items-center gap-2 mb-2">
+          <Shield className="w-5 h-5 text-foreground" />
+          <h3 className="text-lg font-bold text-foreground">Security</h3>
+        </div>
+        <div className="rounded-xl bg-white dark:bg-card border border-border/40 shadow-sm px-5 divide-y divide-border/60">
+          {SECURITY_QAS.map((item, i) => (
+            <div key={i} className="py-3.5 flex items-start justify-between gap-4" data-testid={`security-qa-${i}`}>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="text-sm text-foreground leading-relaxed">
+                  <span className="font-semibold mr-1">Q:</span>
+                  {item.q}
+                </div>
+                {item.a && (
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.a}</p>
+                )}
               </div>
-              {item.a && (
-                <p className="text-xs text-muted-foreground leading-relaxed">{item.a}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-3 shrink-0 pt-0.5">
-              {item.more && (
-                <button className="text-xs text-indigo-600 hover:underline flex items-center gap-0.5">
-                  더 알아보기 <ChevronRight className="w-3 h-3 rotate-90" />
-                </button>
-              )}
-              <div className="flex items-center gap-1 text-sm text-foreground">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>{item.answer}</span>
+              <div className="flex items-center gap-3 shrink-0 pt-0.5">
+                {item.more && (
+                  <button className="text-xs text-indigo-600 hover:underline flex items-center gap-0.5">
+                    더 알아보기 <ChevronRight className="w-3 h-3 rotate-90" />
+                  </button>
+                )}
+                <div className="flex items-center gap-1 text-sm text-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>{item.answer}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
