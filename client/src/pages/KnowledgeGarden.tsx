@@ -499,13 +499,69 @@ function GraphLegend() {
     )
 }
 
-const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
+const AVAILABLE_SUBSCRIPTIONS: any[] = [
+  {
+    id: "sf-avail-1",
+    name: "ESG 투자 트렌드",
+    type: "folder",
+    subscribed: true,
+    owner: "이ESG",
+    children: [
+      { id: "sn-avail-1a", name: "탄소 배출권 시장 분석", type: "note", subscribed: true, owner: "이ESG" },
+      { id: "sn-avail-1b", name: "그린본드 발행 현황", type: "note", subscribed: true, owner: "이ESG" },
+    ],
+  },
+  {
+    id: "sf-avail-2",
+    name: "美 빅테크 실적 모음",
+    type: "folder",
+    subscribed: true,
+    owner: "정퀀트",
+    children: [
+      { id: "sn-avail-2a", name: "Apple Q4 실적 노트", type: "note", subscribed: true, owner: "정퀀트" },
+      { id: "sn-avail-2b", name: "NVIDIA 데이터센터 매출", type: "note", subscribed: true, owner: "정퀀트" },
+      { id: "sn-avail-2c", name: "Meta 광고 트렌드", type: "note", subscribed: true, owner: "정퀀트" },
+    ],
+  },
+  {
+    id: "sf-avail-3",
+    name: "암호화폐 온체인 분석",
+    type: "folder",
+    subscribed: true,
+    owner: "최체인",
+    children: [
+      { id: "sn-avail-3a", name: "비트코인 고래 지갑 추적", type: "note", subscribed: true, owner: "최체인" },
+      { id: "sn-avail-3b", name: "이더리움 스테이킹 리포트", type: "note", subscribed: true, owner: "최체인" },
+    ],
+  },
+];
+
+const FileTreeNode = ({
+  node,
+  level = 0,
+  onRemoveSubscription,
+  onAddSubscription,
+  existingSubscriptionIds,
+}: {
+  node: any;
+  level?: number;
+  onRemoveSubscription?: (id: string) => void;
+  onAddSubscription?: (item: any) => void;
+  existingSubscriptionIds?: Set<string>;
+}) => {
   const [expanded, setExpanded] = useState(true);
   const isSubscribed = !!node.subscribed;
   const isSharedRoot = node.type === 'shared-root';
+  const isSubscribedFolder = isSubscribed && !isSharedRoot && node.type === 'folder';
 
   const folderIconColor = isSubscribed ? 'text-indigo-400' : 'text-blue-400/80';
   const fileIconColor = isSubscribed ? 'text-indigo-500' : 'text-muted-foreground';
+
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  const addableSubscriptions = (AVAILABLE_SUBSCRIPTIONS || []).filter(
+    (s) => !existingSubscriptionIds?.has(s.id)
+  );
 
   return (
     <div className="select-none">
@@ -545,12 +601,104 @@ const FileTreeNode = ({ node, level = 0 }: { node: any, level?: number }) => {
             {node.owner}
           </span>
         )}
+
+        {isSharedRoot && (
+          <div className={cn("flex items-center", !isSubscribed && node.owner ? "" : "ml-auto")} onClick={stop}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 opacity-70 group-hover/treeitem:opacity-100"
+                  data-testid="button-shared-root-menu"
+                >
+                  <MoreHorizontal className="w-3.5 h-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel className="text-xs">구독 관리</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="text-sm">
+                    <Plus className="w-3.5 h-3.5 mr-2 text-indigo-500" />
+                    구독 추가
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="w-72">
+                    {addableSubscriptions.length === 0 ? (
+                      <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                        추가 가능한 구독이 없습니다
+                      </DropdownMenuItem>
+                    ) : (
+                      addableSubscriptions.map((sub) => (
+                        <DropdownMenuItem
+                          key={sub.id}
+                          onClick={() => onAddSubscription?.(sub)}
+                          data-testid={`item-add-sub-${sub.id}`}
+                          className="flex items-start gap-2 py-2"
+                        >
+                          <Folder className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-medium truncate">{sub.name}</span>
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Share2 className="w-2.5 h-2.5" />
+                              {sub.owner} · {sub.children?.length ?? 0} notes
+                            </span>
+                          </div>
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem disabled className="text-[11px] text-muted-foreground">
+                  개별 구독은 폴더의 ··· 메뉴에서 삭제할 수 있습니다.
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
+
+        {isSubscribedFolder && (
+          <div className="flex items-center ml-1" onClick={stop}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 opacity-0 group-hover/treeitem:opacity-100 transition-opacity"
+                  data-testid={`button-sub-item-menu-${node.id}`}
+                >
+                  <MoreHorizontal className="w-3.5 h-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel className="text-xs truncate">{node.name}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => onRemoveSubscription?.(node.id)}
+                  className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+                  data-testid={`item-remove-sub-${node.id}`}
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />
+                  구독 삭제
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
 
       {expanded && node.children && (
         <div className={cn(isSubscribed && !isSharedRoot && "border-l border-dashed border-indigo-200/60 dark:border-indigo-800/40 ml-4")}>
           {node.children.map((child: any) => (
-            <FileTreeNode key={child.id} node={child} level={level + 1} />
+            <FileTreeNode
+              key={child.id}
+              node={child}
+              level={level + 1}
+              onRemoveSubscription={onRemoveSubscription}
+              onAddSubscription={onAddSubscription}
+              existingSubscriptionIds={existingSubscriptionIds}
+            />
           ))}
         </div>
       )}
@@ -1045,6 +1193,46 @@ export default function KnowledgeGarden() {
     setFileTree(newTree);
   };
 
+  const existingSubscriptionIds = (() => {
+    const sharedRoot = fileTree.find((n: any) => n.type === 'shared-root');
+    const ids = new Set<string>();
+    sharedRoot?.children?.forEach((c: any) => ids.add(c.id));
+    return ids;
+  })();
+
+  const handleRemoveSubscription = (id: string) => {
+    setFileTree((prev: any) =>
+      prev.map((n: any) =>
+        n.type === 'shared-root'
+          ? { ...n, children: (n.children || []).filter((c: any) => c.id !== id) }
+          : n
+      )
+    );
+  };
+
+  const handleAddSubscription = (item: any) => {
+    setFileTree((prev: any) => {
+      const hasShared = prev.some((n: any) => n.type === 'shared-root');
+      if (hasShared) {
+        return prev.map((n: any) =>
+          n.type === 'shared-root'
+            ? { ...n, children: [...(n.children || []), item] }
+            : n
+        );
+      }
+      return [
+        ...prev,
+        {
+          id: 'shared-root',
+          name: 'Shared with me',
+          type: 'shared-root',
+          subscribed: true,
+          children: [item],
+        },
+      ];
+    });
+  };
+
   const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -1099,7 +1287,13 @@ export default function KnowledgeGarden() {
                 <ScrollArea className="flex-1">
                    <div className="p-2">
                      {fileTree.map(node => (
-                       <FileTreeNode key={node.id} node={node} />
+                       <FileTreeNode
+                         key={node.id}
+                         node={node}
+                         onRemoveSubscription={handleRemoveSubscription}
+                         onAddSubscription={handleAddSubscription}
+                         existingSubscriptionIds={existingSubscriptionIds}
+                       />
                      ))}
                    </div>
                 </ScrollArea>
