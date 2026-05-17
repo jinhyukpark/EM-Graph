@@ -63,6 +63,7 @@ const BRAINS = [
         price: 49.99,
         author: 'TechInsights Pro',
         authorInitials: 'TI',
+        authorAvatar: 'https://i.pravatar.cc/200?img=12',
         authorRole: 'Supply Chain Analytics Firm',
         authorBio: 'Leading provider of advanced technology analysis and intellectual property services, specializing in microelectronics.',
         authorHistory: [
@@ -106,6 +107,7 @@ const BRAINS = [
         price: 89.00,
         author: 'FinSec Lab',
         authorInitials: 'FS',
+        authorAvatar: 'https://i.pravatar.cc/200?img=33',
         authorRole: 'Financial Security Research Institute',
         authorBio: 'A collaborative research hub focusing on emerging threats in the digital finance space.',
         authorHistory: [
@@ -147,6 +149,7 @@ const BRAINS = [
         price: 29.99,
         author: 'GeoStrat Analyst',
         authorInitials: 'GS',
+        authorAvatar: 'https://i.pravatar.cc/200?img=15',
         authorRole: 'Geopolitical Risk Consultancy',
         authorBio: 'Specialists in resource scarcity and international trade conflicts.',
         authorHistory: [
@@ -188,6 +191,7 @@ const BRAINS = [
         price: 120.00,
         author: 'Cyber Threat Intel',
         authorInitials: 'CT',
+        authorAvatar: 'https://i.pravatar.cc/200?img=68',
         authorRole: 'Threat Intelligence Provider',
         authorBio: 'Curating actionable intelligence on state-sponsored and criminal hacking groups.',
         authorHistory: [
@@ -230,6 +234,7 @@ const BRAINS = [
         price: 75.00,
         author: 'BioTrend Watch',
         authorInitials: 'BT',
+        authorAvatar: 'https://i.pravatar.cc/200?img=47',
         authorRole: 'Life Sciences Market Research',
         authorBio: 'Tracking the pulse of innovation in pharmaceuticals and biotechnology.',
         authorHistory: [
@@ -271,6 +276,7 @@ const BRAINS = [
         price: 39.99,
         author: 'Clean Energy Data',
         authorInitials: 'CE',
+        authorAvatar: 'https://i.pravatar.cc/200?img=52',
         authorRole: 'Renewable Energy Analysts',
         authorBio: 'Data-driven insights into the transition to green energy.',
         authorHistory: [
@@ -623,6 +629,9 @@ export default function BrainMarket() {
                                         <TabsContent value="author" className="m-0 space-y-8 animate-in fade-in-50 duration-300">
                                             <div className="flex items-start gap-6">
                                                 <Avatar className="w-20 h-20 border-2 border-primary/20">
+                                                    {selectedBrain.authorAvatar && (
+                                                        <AvatarImage src={selectedBrain.authorAvatar} alt={selectedBrain.author} className="object-cover" />
+                                                    )}
                                                     <AvatarFallback className="text-2xl bg-primary/10 text-primary font-bold">
                                                         {selectedBrain.authorInitials}
                                                     </AvatarFallback>
