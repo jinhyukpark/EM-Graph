@@ -1371,6 +1371,43 @@ export default function KnowledgeGarden() {
     });
   };
 
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const RECENT_SEARCHES = ["LLM", "가수금", "아이디어"];
+
+  const allNotesFlat = (() => {
+    const out: Array<{ id: string; name: string; path: string[]; createdAt?: string; subscribed?: boolean }> = [];
+    const walk = (n: any, path: string[]) => {
+      if (n.type === 'note') {
+        out.push({ id: n.id, name: n.name, path, createdAt: n.createdAt, subscribed: n.subscribed });
+      }
+      (n.children || []).forEach((c: any) => walk(c, n.type === 'root' || n.type === 'shared-root' ? [n.name] : [...path, n.name]));
+    };
+    fileTree.forEach((n: any) => walk(n, []));
+    return out;
+  })();
+
+  const filteredSearchNotes = allNotesFlat.filter((n) =>
+    !treeSearchQuery.trim() || n.name.toLowerCase().includes(treeSearchQuery.trim().toLowerCase())
+  );
+
+  const groupSearchNotes = () => {
+    const now = Date.now();
+    const day = 24 * 60 * 60 * 1000;
+    const yesterday: typeof filteredSearchNotes = [];
+    const past7: typeof filteredSearchNotes = [];
+    const past30: typeof filteredSearchNotes = [];
+    const older: typeof filteredSearchNotes = [];
+    filteredSearchNotes.forEach((n) => {
+      if (!n.createdAt) { older.push(n); return; }
+      const diff = now - new Date(n.createdAt).getTime();
+      if (diff <= day * 2) yesterday.push(n);
+      else if (diff <= day * 7) past7.push(n);
+      else if (diff <= day * 30) past30.push(n);
+      else older.push(n);
+    });
+    return { yesterday, past7, past30, older };
+  };
+
   const [prompt, setPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -1408,43 +1445,18 @@ export default function KnowledgeGarden() {
                      <Folder className="w-5 h-5 text-blue-500" />
                      <span className="font-semibold text-sm">Explorer</span>
                   </div>
-                  <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleAddNewFile}>
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                  <div className="flex gap-1 items-center">
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
+                        onClick={() => setShowSearchDialog(true)}
+                        data-testid="button-open-search"
+                        title="노트 검색"
                       >
-                         <PanelLeft className="w-4 h-4" />
+                        <Search className="w-4 h-4" />
                       </Button>
-                  </div>
-                </div>
-                <div className="px-3 pt-2 pb-2 border-b border-border/60 shrink-0 space-y-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70 pointer-events-none" />
-                      <Input
-                        data-testid="input-tree-search"
-                        value={treeSearchQuery}
-                        onChange={(e) => setTreeSearchQuery(e.target.value)}
-                        placeholder="노트 검색..."
-                        className="h-8 pl-8 pr-7 text-xs bg-background"
-                      />
-                      {treeSearchQuery && (
-                        <button
-                          type="button"
-                          onClick={() => setTreeSearchQuery("")}
-                          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted text-muted-foreground"
-                          data-testid="button-clear-tree-search"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                    <Popover>
+                      <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -1590,35 +1602,59 @@ export default function KnowledgeGarden() {
                           </div>
                         </div>
                       </PopoverContent>
-                    </Popover>
+                      </Popover>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={handleAddNewFile}
+                        data-testid="button-add-file"
+                        title="새 노트"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleView(showExplorer, setShowExplorer, [showDocDetails, showGraph, showCopilot])}
+                      >
+                         <PanelLeft className="w-4 h-4" />
+                      </Button>
                   </div>
-
-                  {(selectedTags.length > 0 || dateFilter !== 'all' || shareFilter !== 'all') && (
-                    <div className="flex flex-wrap gap-1">
-                      {dateFilter !== 'all' && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-blue-50 text-blue-700 border border-blue-200">
-                          <CalendarIcon className="w-2.5 h-2.5" />
-                          {dateFilter === 'today' ? '오늘' : dateFilter === 'week' ? '이번 주' : '이번 달'}
-                          <button onClick={() => setDateFilter('all')} className="hover:text-blue-900"><X className="w-2.5 h-2.5" /></button>
-                        </span>
-                      )}
-                      {shareFilter !== 'all' && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200">
-                          <Share2 className="w-2.5 h-2.5" />
-                          {shareFilter === 'mine' ? '내 노트' : '공유받음'}
-                          <button onClick={() => setShareFilter('all')} className="hover:text-indigo-900"><X className="w-2.5 h-2.5" /></button>
-                        </span>
-                      )}
-                      {selectedTags.map((tag) => (
-                        <span key={tag} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-muted text-foreground border border-border">
-                          <Tag className="w-2.5 h-2.5" />
-                          {tag}
-                          <button onClick={() => toggleTag(tag)} className="hover:text-foreground"><X className="w-2.5 h-2.5" /></button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
+                {(selectedTags.length > 0 || dateFilter !== 'all' || shareFilter !== 'all' || treeSearchQuery) && (
+                  <div className="px-3 pt-2 pb-2 border-b border-border/60 shrink-0 flex flex-wrap gap-1">
+                    {treeSearchQuery && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-muted text-foreground border border-border">
+                        <Search className="w-2.5 h-2.5" />
+                        {treeSearchQuery}
+                        <button onClick={() => setTreeSearchQuery("")} className="hover:text-foreground"><X className="w-2.5 h-2.5" /></button>
+                      </span>
+                    )}
+                    {dateFilter !== 'all' && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-blue-50 text-blue-700 border border-blue-200">
+                        <CalendarIcon className="w-2.5 h-2.5" />
+                        {dateFilter === 'today' ? '오늘' : dateFilter === 'week' ? '이번 주' : '이번 달'}
+                        <button onClick={() => setDateFilter('all')} className="hover:text-blue-900"><X className="w-2.5 h-2.5" /></button>
+                      </span>
+                    )}
+                    {shareFilter !== 'all' && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        <Share2 className="w-2.5 h-2.5" />
+                        {shareFilter === 'mine' ? '내 노트' : '공유받음'}
+                        <button onClick={() => setShareFilter('all')} className="hover:text-indigo-900"><X className="w-2.5 h-2.5" /></button>
+                      </span>
+                    )}
+                    {selectedTags.map((tag) => (
+                      <span key={tag} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-muted text-foreground border border-border">
+                        <Tag className="w-2.5 h-2.5" />
+                        {tag}
+                        <button onClick={() => toggleTag(tag)} className="hover:text-foreground"><X className="w-2.5 h-2.5" /></button>
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <ScrollArea className="flex-1">
                    <div className="p-2">
                      {visibleTree.length === 0 ? (
@@ -2515,6 +2551,116 @@ export default function KnowledgeGarden() {
             onOpenChange={setShowDeleteDialog} 
             onConfirm={confirmDeleteSession} 
           />
+          <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
+            <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" data-testid="dialog-search">
+              <DialogHeader className="sr-only">
+                <DialogTitle>노트 검색</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center gap-2 px-4 h-12 border-b border-border">
+                <Search className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                <input
+                  autoFocus
+                  type="text"
+                  value={treeSearchQuery}
+                  onChange={(e) => setTreeSearchQuery(e.target.value)}
+                  placeholder="검색하거나 질문하세요..."
+                  className="flex-1 h-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                  data-testid="input-search-dialog"
+                />
+                {treeSearchQuery && (
+                  <button
+                    onClick={() => setTreeSearchQuery("")}
+                    className="p-1 rounded hover:bg-muted text-muted-foreground"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              <ScrollArea className="max-h-[60vh]">
+                <div className="p-3 space-y-5">
+                  {!treeSearchQuery && (
+                    <div>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground px-1 mb-1">
+                        <span>최근 검색</span>
+                        <ChevronDown className="w-3 h-3" />
+                      </div>
+                      <div className="space-y-0.5">
+                        {RECENT_SEARCHES.map((q) => (
+                          <button
+                            key={q}
+                            type="button"
+                            onClick={() => setTreeSearchQuery(q)}
+                            data-testid={`button-recent-${q}`}
+                            className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm"
+                          >
+                            <Search className="w-3.5 h-3.5 text-muted-foreground/70" />
+                            <span>{q}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(() => {
+                    const { yesterday, past7, past30, older } = groupSearchNotes();
+                    const sections = [
+                      { label: '어제', items: yesterday },
+                      { label: '지난 7일', items: past7 },
+                      { label: '지난 30일', items: past30 },
+                      { label: '이전', items: older },
+                    ].filter((s) => s.items.length > 0);
+
+                    if (sections.length === 0) {
+                      return (
+                        <div className="text-center text-sm text-muted-foreground py-10">
+                          검색 결과가 없습니다.
+                        </div>
+                      );
+                    }
+
+                    return sections.map((section) => (
+                      <div key={section.label}>
+                        <div className="text-xs text-muted-foreground px-1 mb-1">{section.label}</div>
+                        <div className="space-y-0.5">
+                          {section.items.map((note) => (
+                            <button
+                              key={note.id}
+                              type="button"
+                              onClick={() => setShowSearchDialog(false)}
+                              data-testid={`button-search-result-${note.id}`}
+                              className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm group/searchitem"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                              <span className="truncate">{note.name}</span>
+                              {note.path.length > 0 && (
+                                <span className="ml-auto flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
+                                  {note.path.map((p, i) => (
+                                    <span key={i} className="flex items-center gap-1">
+                                      <Folder className="w-3 h-3" />
+                                      <span>{p}</span>
+                                      {i < note.path.length - 1 && <ChevronRight className="w-2.5 h-2.5 opacity-50" />}
+                                    </span>
+                                  ))}
+                                </span>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </ScrollArea>
+              <div className="flex items-center justify-between px-4 h-9 border-t border-border bg-muted/20 text-[11px] text-muted-foreground">
+                <div className="flex items-center gap-3">
+                  <span>↑↓ 선택</span>
+                  <span>⏎ 열기</span>
+                  <span>⌘L 링크 복사</span>
+                </div>
+                <span>검색 피드백 제공</span>
+              </div>
+            </DialogContent>
+          </Dialog>
         </Layout>
       );
     }
