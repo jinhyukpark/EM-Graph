@@ -114,6 +114,153 @@ function PluginSection({ title, plugins, onSelect }: { title: string; plugins: P
   );
 }
 
+type Review = { id: string; author: string; rating: number; date: string; content: string };
+
+const INITIAL_REVIEWS: Review[] = [
+  { id: 'r1', author: '김지훈', rating: 5, date: '2026-05-12', content: '도입 후 일주일 만에 분석 시간이 절반으로 줄었습니다. 특히 실시간 알림이 정말 유용해요.' },
+  { id: 'r2', author: 'Sarah Kim', rating: 4, date: '2026-05-08', content: '전체적으로 만족스럽지만 한국어 문서가 조금 더 보강되면 좋겠습니다.' },
+  { id: 'r3', author: '박서연', rating: 5, date: '2026-04-29', content: 'API 응답 속도가 빠르고 안정적이라 운영 환경에 바로 적용할 수 있었습니다.' },
+];
+
+function StarRating({ value, onChange, size = 'md' }: { value: number; onChange?: (v: number) => void; size?: 'sm' | 'md' | 'lg' }) {
+  const [hover, setHover] = useState(0);
+  const sizeMap = { sm: 'w-3.5 h-3.5', md: 'w-5 h-5', lg: 'w-7 h-7' };
+  const cls = sizeMap[size];
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map(n => {
+        const active = (hover || value) >= n;
+        const interactive = !!onChange;
+        return (
+          <button
+            key={n}
+            type="button"
+            disabled={!interactive}
+            onClick={() => onChange?.(n)}
+            onMouseEnter={() => interactive && setHover(n)}
+            onMouseLeave={() => interactive && setHover(0)}
+            className={`${interactive ? 'cursor-pointer' : 'cursor-default'} transition-transform ${interactive ? 'hover:scale-110' : ''}`}
+            data-testid={`star-${n}`}
+          >
+            <Star className={`${cls} ${active ? 'fill-yellow-400 text-yellow-400' : 'fill-none text-muted-foreground/40'}`} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ReviewsTab({ pluginId }: { pluginId: string }) {
+  const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
+  const [rating, setRating] = useState(0);
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState('');
+
+  const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
+  const distribution = [5, 4, 3, 2, 1].map(star => ({
+    star,
+    count: reviews.filter(r => r.rating === star).length,
+  }));
+
+  const handleSubmit = () => {
+    if (!rating || !content.trim()) return;
+    const newReview: Review = {
+      id: `r${Date.now()}`,
+      author: author.trim() || '익명',
+      rating,
+      date: new Date().toISOString().slice(0, 10),
+      content: content.trim(),
+    };
+    setReviews([newReview, ...reviews]);
+    setRating(0);
+    setContent('');
+    setAuthor('');
+  };
+
+  return (
+    <section className="space-y-6" data-testid={`reviews-${pluginId}`}>
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-5 rounded-xl border border-border/60 bg-secondary/20">
+        <div className="text-center md:border-r md:border-border/60 md:pr-6 flex flex-col items-center justify-center">
+          <div className="text-4xl font-bold text-foreground">{avg.toFixed(1)}</div>
+          <StarRating value={Math.round(avg)} size="sm" />
+          <div className="text-xs text-muted-foreground mt-1">리뷰 {reviews.length}개</div>
+        </div>
+        <div className="space-y-1.5">
+          {distribution.map(d => {
+            const pct = reviews.length ? (d.count / reviews.length) * 100 : 0;
+            return (
+              <div key={d.star} className="flex items-center gap-3 text-xs">
+                <span className="w-6 text-muted-foreground">{d.star}점</span>
+                <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
+                  <div className="h-full bg-yellow-400 transition-all" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="w-8 text-right text-muted-foreground">{d.count}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Write review */}
+      <Card className="p-5 border-border/60 space-y-3">
+        <h3 className="text-base font-bold text-foreground">리뷰 작성</h3>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground w-12">평점</span>
+          <StarRating value={rating} onChange={setRating} size="md" />
+          {rating > 0 && <span className="text-xs text-muted-foreground">{rating}점</span>}
+        </div>
+        <Input
+          value={author}
+          onChange={e => setAuthor(e.target.value)}
+          placeholder="이름 (선택사항)"
+          className="h-9 text-sm"
+          data-testid="input-review-author"
+        />
+        <textarea
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          placeholder="이 앱에 대한 솔직한 의견을 남겨주세요."
+          rows={3}
+          className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          data-testid="input-review-content"
+        />
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSubmit}
+            disabled={!rating || !content.trim()}
+            data-testid="button-submit-review"
+          >
+            리뷰 등록
+          </Button>
+        </div>
+      </Card>
+
+      {/* List */}
+      <div className="space-y-3">
+        <h3 className="text-base font-bold text-foreground">전체 리뷰 ({reviews.length})</h3>
+        {reviews.map(r => (
+          <Card key={r.id} className="p-4 border-border/60 space-y-2" data-testid={`review-${r.id}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-pink-400 text-white text-xs font-semibold flex items-center justify-center">
+                  {r.author.slice(0, 1)}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">{r.author}</div>
+                  <div className="text-[11px] text-muted-foreground">{r.date}</div>
+                </div>
+              </div>
+              <StarRating value={r.rating} size="sm" />
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed pl-10">{r.content}</p>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }) {
   const [activeTab, setActiveTab] = useState<'overview' | 'pricing' | 'reviews' | 'security' | 'permissions'>('overview');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
@@ -432,7 +579,9 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             </section>
           )}
 
-          {(activeTab === 'reviews' || activeTab === 'security' || activeTab === 'permissions') && (
+          {activeTab === 'reviews' && <ReviewsTab pluginId={plugin.id} />}
+
+          {(activeTab === 'security' || activeTab === 'permissions') && (
             <div className="py-16 text-center text-sm text-muted-foreground">
               해당 탭의 콘텐츠는 곧 제공될 예정입니다.
             </div>
