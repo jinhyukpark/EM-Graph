@@ -489,18 +489,7 @@ export default function CalendarPage() {
                             data-date={key}
                           >
                             <Popover open={dayPopup === key} onOpenChange={(o) => setDayPopup(o ? key : null)}>
-                              <div className="flex items-center justify-between mb-2 shrink-0 gap-2">
-                                {overflow > 0 ? (
-                                  <PopoverTrigger asChild>
-                                    <button
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted px-1.5 py-0.5 rounded relative z-10"
-                                      data-testid={`button-more-${key}`}
-                                    >
-                                      +{overflow}건 더보기
-                                    </button>
-                                  </PopoverTrigger>
-                                ) : <span />}
+                              <div className="flex items-center justify-end mb-2 shrink-0">
                                 <span
                                   className={`text-sm inline-flex items-center justify-center ${
                                     isToday
@@ -515,10 +504,21 @@ export default function CalendarPage() {
                                 </span>
                               </div>
                               <div className="flex-1" />
+                              {overflow > 0 && (
+                                <PopoverTrigger asChild>
+                                  <button
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="self-start text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted px-1.5 py-0.5 rounded shrink-0 relative z-10"
+                                    data-testid={`button-more-${key}`}
+                                  >
+                                    +{overflow}건 더보기
+                                  </button>
+                                </PopoverTrigger>
+                              )}
                               <PopoverContent
                                 align="center"
-                                side="bottom"
-                                sideOffset={4}
+                                side="top"
+                                sideOffset={6}
                                 className="w-[360px] p-0 overflow-hidden"
                                 data-testid={`popover-day-${key}`}
                               >
