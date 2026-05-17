@@ -1489,16 +1489,16 @@ export default function KnowledgeGarden() {
                       <Popover>
                       <PopoverTrigger asChild>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
                           className={cn(
-                            "h-8 w-8 shrink-0 relative",
-                            activeFilterCount > 0 && "border-blue-500 text-blue-600 bg-blue-50/40 hover:bg-blue-50"
+                            "h-8 w-8 relative text-muted-foreground hover:text-foreground",
+                            activeFilterCount > 0 && "text-blue-600 hover:text-blue-700"
                           )}
                           data-testid="button-tree-filter"
                           title="필터"
                         >
-                          <Filter className="w-3.5 h-3.5" />
+                          <Filter className="w-4 h-4" />
                           {activeFilterCount > 0 && (
                             <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
                               {activeFilterCount}
