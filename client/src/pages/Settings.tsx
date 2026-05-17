@@ -782,10 +782,8 @@ export default function Settings() {
                          <div className="flex-1 min-w-0">
                            <div className="flex items-center gap-2 flex-wrap">
                              <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
-                             {p.canceled ? (
+                             {p.canceled && (
                                <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
-                             ) : (
-                               <Badge className="text-xs bg-emerald-500 hover:bg-emerald-500 text-white">{t("stPluginStatusActive")}</Badge>
                              )}
                            </div>
                            <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
