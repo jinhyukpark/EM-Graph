@@ -588,6 +588,10 @@ export default function Settings() {
 
           {/* Billing & License Tab */}
           <TabsContent value="billing" className="space-y-6">
+             <div className="space-y-1">
+               <h2 className="text-2xl font-bold tracking-tight" data-testid="text-license-title">{t("stLicenseTitle")}</h2>
+               <p className="text-sm text-muted-foreground">{t("stLicenseSubtitle")}</p>
+             </div>
              <div className="grid gap-6 lg:grid-cols-3">
                {/* Free Plan */}
                <Card className="border-border/50 relative overflow-hidden">
