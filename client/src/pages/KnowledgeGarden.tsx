@@ -1881,6 +1881,15 @@ export default function KnowledgeGarden() {
                         </div>
                       );
                     })}
+                    <button
+                      type="button"
+                      onClick={handleAddTab}
+                      data-testid="button-add-tab"
+                      className="flex items-center justify-center w-10 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                      title="새 탭"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
                   </div>
                   {hiddenTabIds.size > 0 && (
                     <DropdownMenu>
@@ -1930,15 +1939,6 @@ export default function KnowledgeGarden() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}
-                  <button
-                    type="button"
-                    onClick={handleAddTab}
-                    data-testid="button-add-tab"
-                    className="flex items-center justify-center w-12 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
-                    title="새 탭"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
                 </div>
 
                 {activeTab?.kind === 'new' ? (
