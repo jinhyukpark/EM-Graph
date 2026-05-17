@@ -1774,7 +1774,7 @@ export default function KnowledgeGarden() {
               {showDocDetails && (
               <ResizablePanel defaultSize={40} minSize={30} className="bg-background flex flex-col relative group h-full">
                 {/* Tab Bar */}
-                <div className="flex items-stretch h-9 border-b border-border bg-muted/30 shrink-0 overflow-x-auto">
+                <div className="flex items-stretch h-16 border-b border-border bg-muted/30 shrink-0 overflow-x-auto">
                   {tabs.map((tab) => {
                     const isActive = tab.id === activeTabId;
                     return (
@@ -1783,16 +1783,16 @@ export default function KnowledgeGarden() {
                         data-testid={`tab-${tab.id}`}
                         onClick={() => setActiveTabId(tab.id)}
                         className={cn(
-                          "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-xs transition-colors shrink-0",
+                          "group/tab flex items-center gap-2 pl-3 pr-2 max-w-[220px] border-r border-border cursor-pointer text-sm transition-colors shrink-0",
                           isActive
-                            ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px"
+                            ? "bg-background text-foreground border-b-2 border-b-blue-500 -mb-px font-medium"
                             : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
                         )}
                       >
                         {tab.kind === 'note' ? (
-                          <FileText className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          <FileText className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
                         ) : (
-                          <Sparkles className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
+                          <Sparkles className={cn("w-4 h-4 shrink-0", isActive ? "text-blue-500" : "text-muted-foreground/70")} />
                         )}
                         <span className="truncate">{tab.title}</span>
                         {tabs.length > 1 && (
@@ -1815,7 +1815,7 @@ export default function KnowledgeGarden() {
                     type="button"
                     onClick={handleAddTab}
                     data-testid="button-add-tab"
-                    className="flex items-center justify-center w-9 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
+                    className="flex items-center justify-center w-12 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors shrink-0"
                     title="새 탭"
                   >
                     <Plus className="w-4 h-4" />
