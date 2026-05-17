@@ -56,6 +56,73 @@ export default function Settings() {
     setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: true } : p)));
     toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") });
   };
+
+  const [coupons, setCoupons] = useState([
+    { id: "c1", code: "WELCOME10", discount: 10, expiresAt: "2026-12-31" },
+    { id: "c2", code: "KOLON2026", discount: 15, expiresAt: "2026-08-15" },
+    { id: "c3", code: "ANNIVERSARY20", discount: 20, expiresAt: "2026-06-30" },
+  ]);
+  const [couponInput, setCouponInput] = useState("");
+  const registerCoupon = () => {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+    if (coupons.some((c) => c.code === code)) {
+      toast({ title: t("stCouponDuplicate"), description: t("stCouponDuplicateDesc") });
+      return;
+    }
+    const newCoupon = {
+      id: `c${Date.now()}`,
+      code,
+      discount: 10,
+      expiresAt: "2026-12-31",
+    };
+    setCoupons((prev) => [newCoupon, ...prev]);
+    setCouponInput("");
+    toast({ title: t("stCouponRegistered"), description: t("stCouponRegisteredDesc") });
+  };
+  const removeCoupon = (id: string) => {
+    setCoupons((prev) => prev.filter((c) => c.id !== id));
+    toast({ title: t("stCouponRemoved") });
+  };
+
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: "pm1", brand: "VISA", last4: "4242", expires: "12/2027", isDefault: true },
+  ]);
+  const [addPmOpen, setAddPmOpen] = useState(false);
+  const [newCardBrand, setNewCardBrand] = useState("VISA");
+  const [newCardNumber, setNewCardNumber] = useState("");
+  const [newCardExpiry, setNewCardExpiry] = useState("");
+  const setDefaultPaymentMethod = (id: string) => {
+    setPaymentMethods((prev) => prev.map((p) => ({ ...p, isDefault: p.id === id })));
+    toast({ title: t("stDefaultPmUpdated") });
+  };
+  const removePaymentMethod = (id: string) => {
+    setPaymentMethods((prev) => {
+      const filtered = prev.filter((p) => p.id !== id);
+      if (filtered.length > 0 && !filtered.some((p) => p.isDefault)) {
+        filtered[0].isDefault = true;
+      }
+      return filtered;
+    });
+    toast({ title: t("stPmRemoved") });
+  };
+  const addPaymentMethod = () => {
+    const digits = newCardNumber.replace(/\s/g, "");
+    if (digits.length < 4 || !newCardExpiry) {
+      toast({ title: t("stPmInvalid"), description: t("stPmInvalidDesc") });
+      return;
+    }
+    const last4 = digits.slice(-4);
+    setPaymentMethods((prev) => [
+      ...prev,
+      { id: `pm${Date.now()}`, brand: newCardBrand, last4, expires: newCardExpiry, isDefault: prev.length === 0 },
+    ]);
+    setNewCardNumber("");
+    setNewCardExpiry("");
+    setNewCardBrand("VISA");
+    setAddPmOpen(false);
+    toast({ title: t("stPmAdded") });
+  };
   
   const copyLink = () => {
     navigator.clipboard.writeText(inviteLink);
@@ -861,16 +928,61 @@ export default function Settings() {
              <div className="grid gap-6 md:grid-cols-2">
                <Card>
                  <CardHeader>
-                   <CardTitle>{t("stLicenseManagement")}</CardTitle>
-                   <CardDescription>{t("stLicenseManagementDesc")}</CardDescription>
+                   <CardTitle>{t("stCouponRegistration")}</CardTitle>
+                   <CardDescription>{t("stCouponRegistrationDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent className="space-y-4">
                    <div className="space-y-2">
-                     <Label>{t("stLicenseKey")}</Label>
+                     <Label>{t("stCouponCode")}</Label>
                      <div className="flex gap-2">
-                       <Input className="font-mono" placeholder="XXXX-XXXX-XXXX-XXXX" defaultValue="" />
-                       <Button variant="secondary">{t("stVerify")}</Button>
+                       <Input
+                         className="font-mono uppercase"
+                         placeholder="XXXX-XXXX"
+                         value={couponInput}
+                         onChange={(e) => setCouponInput(e.target.value)}
+                         onKeyDown={(e) => { if (e.key === "Enter") registerCoupon(); }}
+                         data-testid="input-coupon-code"
+                       />
+                       <Button variant="secondary" onClick={registerCoupon} data-testid="button-register-coupon">
+                         {t("stRegister")}
+                       </Button>
                      </div>
+                   </div>
+
+                   <div className="space-y-2">
+                     <div className="text-sm font-medium">{t("stRegisteredCoupons")}</div>
+                     {coupons.length === 0 ? (
+                       <div className="text-xs text-muted-foreground py-4 text-center border rounded-lg">
+                         {t("stNoCoupons")}
+                       </div>
+                     ) : (
+                       <div className="space-y-2">
+                         {coupons.map((coupon) => (
+                           <div
+                             key={coupon.id}
+                             className="flex items-center justify-between p-3 border rounded-lg"
+                             data-testid={`coupon-${coupon.id}`}
+                           >
+                             <div className="flex items-center gap-3 min-w-0">
+                               <Badge variant="secondary" className="font-mono text-xs shrink-0">{coupon.code}</Badge>
+                               <div className="flex flex-col min-w-0">
+                                 <span className="text-sm font-medium text-emerald-600">{coupon.discount}% {t("stDiscount")}</span>
+                                 <span className="text-xs text-muted-foreground">~ {coupon.expiresAt}</span>
+                               </div>
+                             </div>
+                             <Button
+                               variant="ghost"
+                               size="icon"
+                               className="h-8 w-8 shrink-0"
+                               onClick={() => removeCoupon(coupon.id)}
+                               data-testid={`button-remove-coupon-${coupon.id}`}
+                             >
+                               <Trash2 className="w-4 h-4 text-muted-foreground" />
+                             </Button>
+                           </div>
+                         ))}
+                       </div>
+                     )}
                    </div>
                  </CardContent>
                </Card>
@@ -881,20 +993,108 @@ export default function Settings() {
                    <CardDescription>{t("stPaymentMethodsDesc")}</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="flex items-center justify-between p-4 border rounded-lg mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-6 bg-slate-800 rounded flex items-center justify-center text-white text-[10px] font-bold">VISA</div>
-                        <div>
-                          <div className="font-medium text-sm">{t("stVisaEnding")}</div>
-                          <div className="text-xs text-muted-foreground">{t("stExpires")}</div>
-                        </div>
-                      </div>
-                      <Badge variant="secondary">{t("stDefault")}</Badge>
+                   <div className="space-y-2 mb-4">
+                     {paymentMethods.map((pm) => (
+                       <div
+                         key={pm.id}
+                         className="flex items-center justify-between p-4 border rounded-lg"
+                         data-testid={`payment-method-${pm.id}`}
+                       >
+                         <div className="flex items-center gap-4 min-w-0">
+                           <div className="w-10 h-6 bg-slate-800 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                             {pm.brand}
+                           </div>
+                           <div className="min-w-0">
+                             <div className="font-medium text-sm">{t("stCardEnding")} {pm.last4}</div>
+                             <div className="text-xs text-muted-foreground">{t("stExpiresLabel")} {pm.expires}</div>
+                           </div>
+                         </div>
+                         <div className="flex items-center gap-2 shrink-0">
+                           {pm.isDefault ? (
+                             <Badge variant="secondary">{t("stDefault")}</Badge>
+                           ) : (
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => setDefaultPaymentMethod(pm.id)}
+                               data-testid={`button-set-default-${pm.id}`}
+                             >
+                               {t("stSetAsDefault")}
+                             </Button>
+                           )}
+                           {paymentMethods.length > 1 && (
+                             <Button
+                               variant="ghost"
+                               size="icon"
+                               className="h-8 w-8"
+                               onClick={() => removePaymentMethod(pm.id)}
+                               data-testid={`button-remove-pm-${pm.id}`}
+                             >
+                               <Trash2 className="w-4 h-4 text-muted-foreground" />
+                             </Button>
+                           )}
+                         </div>
+                       </div>
+                     ))}
                    </div>
-                   <Button variant="outline" className="w-full">
-                     <Plus className="w-4 h-4 mr-2" />
-                     {t("stAddPaymentMethod")}
-                   </Button>
+                   <Dialog open={addPmOpen} onOpenChange={setAddPmOpen}>
+                     <DialogTrigger asChild>
+                       <Button variant="outline" className="w-full" data-testid="button-open-add-pm">
+                         <Plus className="w-4 h-4 mr-2" />
+                         {t("stAddPaymentMethod")}
+                       </Button>
+                     </DialogTrigger>
+                     <DialogContent className="sm:max-w-[425px]">
+                       <DialogHeader>
+                         <DialogTitle>{t("stAddPaymentMethod")}</DialogTitle>
+                         <DialogDescription>{t("stAddPaymentMethodDesc")}</DialogDescription>
+                       </DialogHeader>
+                       <div className="space-y-4 py-2">
+                         <div className="space-y-2">
+                           <Label>{t("stCardBrand")}</Label>
+                           <Select value={newCardBrand} onValueChange={setNewCardBrand}>
+                             <SelectTrigger data-testid="select-card-brand">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="VISA">VISA</SelectItem>
+                               <SelectItem value="MC">Mastercard</SelectItem>
+                               <SelectItem value="AMEX">American Express</SelectItem>
+                               <SelectItem value="JCB">JCB</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                         <div className="space-y-2">
+                           <Label>{t("stCardNumber")}</Label>
+                           <Input
+                             className="font-mono"
+                             placeholder="0000 0000 0000 0000"
+                             value={newCardNumber}
+                             onChange={(e) => setNewCardNumber(e.target.value)}
+                             data-testid="input-card-number"
+                           />
+                         </div>
+                         <div className="space-y-2">
+                           <Label>{t("stCardExpiry")}</Label>
+                           <Input
+                             className="font-mono"
+                             placeholder="MM/YYYY"
+                             value={newCardExpiry}
+                             onChange={(e) => setNewCardExpiry(e.target.value)}
+                             data-testid="input-card-expiry"
+                           />
+                         </div>
+                       </div>
+                       <DialogFooter>
+                         <Button variant="outline" onClick={() => setAddPmOpen(false)} data-testid="button-cancel-pm">
+                           {t("stCancel")}
+                         </Button>
+                         <Button onClick={addPaymentMethod} data-testid="button-save-pm">
+                           {t("stRegister")}
+                         </Button>
+                       </DialogFooter>
+                     </DialogContent>
+                   </Dialog>
                  </CardContent>
                </Card>
              </div>
