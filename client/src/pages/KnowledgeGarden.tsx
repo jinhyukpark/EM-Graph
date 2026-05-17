@@ -44,6 +44,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -566,6 +567,8 @@ const countSharedByMe = (node: any): number => {
   return node.children.reduce((sum: number, child: any) => sum + countSharedByMe(child), 0);
 };
 
+type TreeViewMode = { showNoteCount: boolean; showSharedCount: boolean; showNew: boolean };
+
 const FileTreeNode = ({
   node,
   level = 0,
@@ -573,6 +576,7 @@ const FileTreeNode = ({
   onAddSubscription,
   existingSubscriptionIds,
   onOpenManageDialog,
+  viewMode,
 }: {
   node: any;
   level?: number;
@@ -580,6 +584,7 @@ const FileTreeNode = ({
   onAddSubscription?: (item: any) => void;
   existingSubscriptionIds?: Set<string>;
   onOpenManageDialog?: () => void;
+  viewMode: TreeViewMode;
 }) => {
   const [expanded, setExpanded] = useState(true);
   const isSubscribed = !!node.subscribed;
@@ -632,7 +637,7 @@ const FileTreeNode = ({
           {node.name}
         </span>
 
-        {isFolderLike && (
+        {isFolderLike && viewMode.showNoteCount && (
           <span
             className={cn(
               "shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[10px] font-semibold tabular-nums",
@@ -646,7 +651,7 @@ const FileTreeNode = ({
           </span>
         )}
 
-        {isNoteNew && (
+        {isNoteNew && viewMode.showNew && (
           <span
             className="shrink-0 inline-flex items-center gap-0.5 px-1.5 h-[16px] rounded-sm text-[9px] font-bold uppercase tracking-wide bg-emerald-500 text-white shadow-sm"
             title="최근 추가됨"
@@ -655,7 +660,7 @@ const FileTreeNode = ({
           </span>
         )}
 
-        {isSharedByMe && (
+        {isSharedByMe && viewMode.showSharedCount && (
           <span
             className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-gradient-to-br from-sky-400 to-violet-500 text-white shadow-sm"
             title={`내가 공유한 노트${Array.isArray(node.sharedWith) && node.sharedWith.length ? ` · ${node.sharedWith.join(", ")}` : ""}`}
@@ -665,7 +670,7 @@ const FileTreeNode = ({
           </span>
         )}
 
-        {sharedByMeCount > 0 && (
+        {sharedByMeCount > 0 && viewMode.showSharedCount && (
           <span
             className="shrink-0 inline-flex items-center gap-0.5 h-[16px] px-1 rounded-full bg-gradient-to-br from-sky-50 to-violet-50 dark:from-sky-950/40 dark:to-violet-950/40 border border-violet-200/70 dark:border-violet-800/60 text-violet-600 dark:text-violet-300 text-[10px] font-semibold"
             title={`공유 중인 노트 ${sharedByMeCount}개`}
@@ -676,7 +681,7 @@ const FileTreeNode = ({
           </span>
         )}
 
-        {!expanded && folderHasNew && isFolderLike && (
+        {!expanded && folderHasNew && isFolderLike && viewMode.showNew && (
           <span
             className="shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500"
             title="새 노트 포함"
@@ -763,6 +768,7 @@ const FileTreeNode = ({
               onAddSubscription={onAddSubscription}
               existingSubscriptionIds={existingSubscriptionIds}
               onOpenManageDialog={onOpenManageDialog}
+              viewMode={viewMode}
             />
           ))}
         </div>
@@ -1301,6 +1307,7 @@ export default function KnowledgeGarden() {
   const [showManageSubsDialog, setShowManageSubsDialog] = useState(false);
 
   const [treeSearchQuery, setTreeSearchQuery] = useState("");
+  const [treeViewMode, setTreeViewMode] = useState<TreeViewMode>({ showNoteCount: true, showSharedCount: true, showNew: true });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [shareFilter, setShareFilter] = useState<'all' | 'shared' | 'mine'>('all');
@@ -1385,13 +1392,15 @@ export default function KnowledgeGarden() {
 
   const tabScrollerRef = useRef<HTMLDivElement>(null);
   const tabItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const addTabBtnRef = useRef<HTMLButtonElement>(null);
   const [hiddenTabIds, setHiddenTabIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const scroller = tabScrollerRef.current;
     if (!scroller) return;
     const compute = () => {
-      const w = scroller.clientWidth;
+      const addBtnW = addTabBtnRef.current?.offsetWidth ?? 0;
+      const w = scroller.clientWidth - addBtnW;
       const next = new Set<string>();
       tabs.forEach((t) => {
         const el = tabItemRefs.current[t.id];
@@ -1691,6 +1700,38 @@ export default function KnowledgeGarden() {
                           <DropdownMenuItem data-testid="item-share-notebook" className="text-sm">
                             노트북 공유
                           </DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger data-testid="item-view-mode" className="text-sm">
+                              뷰모드
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent className="w-48">
+                              <DropdownMenuLabel className="text-xs text-muted-foreground">표시 항목</DropdownMenuLabel>
+                              <DropdownMenuCheckboxItem
+                                checked={treeViewMode.showNoteCount}
+                                onCheckedChange={(v) => setTreeViewMode((m) => ({ ...m, showNoteCount: !!v }))}
+                                data-testid="check-view-note-count"
+                                className="text-sm"
+                              >
+                                하위 노트수
+                              </DropdownMenuCheckboxItem>
+                              <DropdownMenuCheckboxItem
+                                checked={treeViewMode.showSharedCount}
+                                onCheckedChange={(v) => setTreeViewMode((m) => ({ ...m, showSharedCount: !!v }))}
+                                data-testid="check-view-shared-count"
+                                className="text-sm"
+                              >
+                                공유수
+                              </DropdownMenuCheckboxItem>
+                              <DropdownMenuCheckboxItem
+                                checked={treeViewMode.showNew}
+                                onCheckedChange={(v) => setTreeViewMode((m) => ({ ...m, showNew: !!v }))}
+                                data-testid="check-view-new"
+                                className="text-sm"
+                              >
+                                새노트 표시
+                              </DropdownMenuCheckboxItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
                         </DropdownMenuContent>
                       </DropdownMenu>
                   </div>
@@ -1742,6 +1783,7 @@ export default function KnowledgeGarden() {
                            onAddSubscription={handleAddSubscription}
                            existingSubscriptionIds={existingSubscriptionIds}
                            onOpenManageDialog={() => setShowManageSubsDialog(true)}
+                           viewMode={treeViewMode}
                          />
                        ))
                      )}
@@ -1865,6 +1907,7 @@ export default function KnowledgeGarden() {
                       );
                     })}
                     <button
+                      ref={addTabBtnRef}
                       type="button"
                       onClick={handleAddTab}
                       data-testid="button-add-tab"
