@@ -297,18 +297,6 @@ export default function CalendarPage() {
               </div>
 
               {/* Evernote calendars */}
-              <div>
-                <div className="text-xs text-muted-foreground mb-3 font-medium">Evernote 캘린더</div>
-                <ul className="space-y-2">
-                  {CALENDAR_ACCOUNTS.map((c) => (
-                    <li key={c.id} className="flex items-center gap-2.5 text-sm text-foreground/80">
-                      <span className={`w-3 h-3 rounded-full ${c.color}`} />
-                      {c.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
               {/* Accounts */}
               <div>
                 <div className="text-xs text-muted-foreground mb-3 font-medium">jh.park@illunex.com</div>
