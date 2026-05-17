@@ -469,11 +469,11 @@ export default function BrainMarket() {
 
             {/* Preview Dialog */}
             <Dialog open={!!selectedBrain} onOpenChange={(open) => !open && setSelectedBrain(null)}>
-                <DialogContent className="max-w-3xl p-0 overflow-hidden gap-0 h-[85vh] flex flex-col">
+                <DialogContent className="max-w-5xl p-0 overflow-hidden gap-0 h-[85vh] flex flex-col">
                     {selectedBrain && (
                         <>
                             {/* Hero Section */}
-                            <div className="h-48 shrink-0 relative bg-muted">
+                            <div className="h-64 shrink-0 relative bg-muted">
                                 {selectedBrain.imageSrc ? (
                                     <>
                                         <img 
