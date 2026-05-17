@@ -2,9 +2,13 @@ import { useMemo, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Sparkles, ListFilter, ArrowUpDown, Search, Circle, CheckCircle2,
-  FileText, Flag,
+  FileText, Flag, ChevronDown, Pencil, CalendarDays, Bell, UserRound,
+  AlertTriangle, Flag as FlagIcon, RotateCcw,
 } from "lucide-react";
 
 type Priority = "high" | "medium" | "low" | null;
@@ -59,7 +63,16 @@ export default function TodoList() {
   const [tasks, setTasks] = useState<Task[]>(SEED);
   const [tab, setTab] = useState<Tab>("내 작업");
   const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const today = new Date();
+  const selected = tasks.find((t) => t.id === selectedId) ?? null;
+
+  const updateTask = (id: string, patch: Partial<Task>) =>
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  const deleteTask = (id: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setSelectedId(null);
+  };
 
   const filtered = useMemo(() => {
     let list = tasks;
@@ -163,13 +176,14 @@ export default function TodoList() {
                 return (
                   <li
                     key={t.id}
-                    className="grid grid-cols-[1.6fr_0.9fr_0.9fr_1.2fr_0.7fr_0.7fr] items-center px-5 py-3 text-sm border-b border-border/40 last:border-0 hover:bg-muted/30 transition-colors group"
+                    onClick={() => setSelectedId(t.id)}
+                    className="grid grid-cols-[1.6fr_0.9fr_0.9fr_1.2fr_0.7fr_0.7fr] items-center px-5 py-3 text-sm border-b border-border/40 last:border-0 hover:bg-muted/30 transition-colors group cursor-pointer"
                     data-testid={`row-task-${t.id}`}
                   >
                     {/* 제목 */}
                     <div className="flex items-center gap-2.5 min-w-0">
                       <button
-                        onClick={() => toggle(t.id)}
+                        onClick={(e) => { e.stopPropagation(); toggle(t.id); }}
                         className="shrink-0"
                         data-testid={`toggle-task-${t.id}`}
                         aria-label="완료 토글"
@@ -244,6 +258,185 @@ export default function TodoList() {
           </div>
         </div>
       </div>
+
+      <TaskDetailDialog
+        task={selected}
+        onClose={() => setSelectedId(null)}
+        onChange={(patch) => selected && updateTask(selected.id, patch)}
+        onDelete={() => selected && deleteTask(selected.id)}
+      />
     </Layout>
+  );
+}
+
+function Chip({
+  active, onClick, children, icon: Icon,
+}: { active?: boolean; onClick?: () => void; children: React.ReactNode; icon?: React.ComponentType<{ className?: string }> }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`h-8 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors ${
+        active
+          ? "bg-violet-100 text-violet-700 border border-violet-200"
+          : "bg-muted/60 text-foreground/80 border border-transparent hover:bg-muted"
+      }`}
+    >
+      {Icon && <Icon className="w-3.5 h-3.5" />}
+      {children}
+    </button>
+  );
+}
+
+function TaskDetailDialog({
+  task, onClose, onChange, onDelete,
+}: {
+  task: Task | null;
+  onClose: () => void;
+  onChange: (patch: Partial<Task>) => void;
+  onDelete: () => void;
+}) {
+  if (!task) return null;
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const tomorrowKey = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  const isFlagged = task.priority === "high";
+
+  return (
+    <Dialog open={!!task} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-[640px] p-0 gap-0 rounded-2xl overflow-hidden" data-testid="dialog-task-detail">
+        <div className="p-7">
+          {/* Notebook chip */}
+          <button className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-5" data-testid="button-notebook">
+            <FileText className="w-3.5 h-3.5" />
+            {task.note ?? "해야 할 일"}
+            <ChevronDown className="w-3 h-3" />
+          </button>
+
+          {/* Title row */}
+          <div className="flex items-center gap-3 mb-7">
+            <button
+              onClick={() => onChange({ done: !task.done })}
+              className="shrink-0"
+              data-testid="button-toggle-done"
+              aria-label="완료 토글"
+            >
+              {task.done ? (
+                <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+              ) : (
+                <Circle className="w-6 h-6 text-muted-foreground/40 hover:text-muted-foreground" />
+              )}
+            </button>
+            <input
+              value={task.title}
+              onChange={(e) => onChange({ title: e.target.value })}
+              className={`flex-1 text-xl font-semibold bg-transparent outline-none ${
+                task.done ? "line-through text-muted-foreground" : "text-foreground"
+              }`}
+              data-testid="input-task-title"
+            />
+          </div>
+
+          <div className="space-y-5">
+            {/* 설명 */}
+            <Row icon={Pencil} label="설명">
+              <Textarea
+                placeholder="이 작업은 무엇에 관한 것인가요?"
+                className="resize-none min-h-[72px] text-sm rounded-lg"
+                data-testid="textarea-description"
+              />
+            </Row>
+
+            {/* 마감일 */}
+            <Row icon={CalendarDays} label="마감일">
+              <div className="flex flex-wrap gap-2">
+                <Chip active={task.due === todayKey} onClick={() => onChange({ due: todayKey })}>오늘</Chip>
+                <Chip active={task.due === tomorrowKey} onClick={() => onChange({ due: tomorrowKey })}>내일</Chip>
+                <Chip icon={Pencil}>사용자 지정</Chip>
+                <Chip icon={RotateCcw}>반복</Chip>
+              </div>
+            </Row>
+
+            {/* 알림 */}
+            <Row icon={Bell} label="알림">
+              <div className="flex flex-wrap gap-2">
+                <Chip>1시간 후</Chip>
+                <Chip>4시간 후에</Chip>
+                <Chip icon={Pencil}>사용자 지정</Chip>
+              </div>
+            </Row>
+
+            {/* 담당자 */}
+            <Row icon={UserRound} label="담당자">
+              {task.assignee ? (
+                <span className="inline-flex items-center gap-2 text-sm">
+                  <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-[11px] font-semibold inline-flex items-center justify-center">
+                    {task.assignee.charAt(0)}
+                  </span>
+                  {task.assignee}
+                </span>
+              ) : (
+                <button className="text-sm text-muted-foreground hover:text-foreground" data-testid="button-assign">
+                  할당
+                </button>
+              )}
+            </Row>
+
+            {/* 우선 순위 */}
+            <Row icon={AlertTriangle} label="우선 순위">
+              <div className="flex flex-wrap gap-2">
+                <Chip active={task.priority === "low"} onClick={() => onChange({ priority: "low" })}>낮음</Chip>
+                <Chip active={task.priority === "medium"} onClick={() => onChange({ priority: "medium" })}>중간</Chip>
+                <Chip active={task.priority === "high"} onClick={() => onChange({ priority: "high" })}>높음</Chip>
+              </div>
+            </Row>
+
+            {/* 플래그 */}
+            <Row icon={FlagIcon} label="플래그">
+              <Switch
+                checked={isFlagged}
+                onCheckedChange={(v) => onChange({ priority: v ? "high" : (task.priority === "high" ? null : task.priority) })}
+                data-testid="switch-flag"
+              />
+            </Row>
+          </div>
+
+          <div className="mt-7 text-xs text-muted-foreground">
+            만든 사람: jh.park@illunex.com
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-7 py-4 border-t border-border/60 flex items-center justify-between">
+          <button
+            onClick={onDelete}
+            className="text-sm text-rose-600 hover:text-rose-700"
+            data-testid="button-delete-task"
+          >
+            작업 삭제
+          </button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={onClose} className="rounded-lg" data-testid="button-cancel">
+              취소
+            </Button>
+            <Button onClick={onClose} className="rounded-lg bg-violet-600 hover:bg-violet-700 text-white" data-testid="button-save">
+              저장
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Row({
+  icon: Icon, label, children,
+}: { icon: React.ComponentType<{ className?: string }>; label: string; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[140px_1fr] items-start gap-4">
+      <div className="flex items-center gap-2 text-sm text-foreground/70 pt-1.5">
+        <Icon className="w-4 h-4 text-muted-foreground" />
+        {label}
+      </div>
+      <div>{children}</div>
+    </div>
   );
 }
