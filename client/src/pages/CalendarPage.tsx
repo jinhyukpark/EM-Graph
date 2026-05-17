@@ -242,6 +242,7 @@ export default function CalendarPage() {
 
   const [panelOpen, setPanelOpen] = useState(true);
   const [dayPopup, setDayPopup] = useState<string | null>(null);
+  const [eventPopup, setEventPopup] = useState<string | null>(null);
   const weekRowRef = useRef<HTMLDivElement | null>(null);
   const [maxLanes, setMaxLanes] = useState(3);
   useEffect(() => {
@@ -584,49 +585,132 @@ export default function CalendarPage() {
                             const roundedL = seg.startsHere ? "rounded-l" : "rounded-l-none";
                             const roundedR = seg.endsHere ? "rounded-r" : "rounded-r-none";
                             const borderL = seg.startsHere ? "border-l-2" : "border-l-0";
+                            const segKey = `${ev.id}-${wi}`;
                             return (
-                              <div
-                                key={`${ev.id}-${wi}`}
-                                className={`absolute pointer-events-auto group flex items-center gap-1.5 text-xs px-2 py-1 truncate ${borderL} ${roundedL} ${roundedR} ${ev.color} ${isDone ? "opacity-50" : ""}`}
-                                style={{
-                                  left: `calc(${leftPct}% + 2px)`,
-                                  width: `calc(${widthPct}% - 4px)`,
-                                  top: seg.lane * LANE_H,
-                                  height: LANE_H - 4,
-                                }}
-                                title={`${ev.start} ${ev.title}`}
-                                data-testid={`event-${ev.id}-w${wi}`}
+                              <Popover
+                                key={segKey}
+                                open={eventPopup === segKey}
+                                onOpenChange={(o) => setEventPopup(o ? segKey : null)}
                               >
-                                {isTodo && seg.startsHere && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x));
+                                <PopoverTrigger asChild>
+                                  <div
+                                    role="button"
+                                    onClick={(e) => { e.stopPropagation(); setEventPopup(segKey); }}
+                                    className={`absolute pointer-events-auto group flex items-center gap-1.5 text-xs px-2 py-1 truncate cursor-pointer ${borderL} ${roundedL} ${roundedR} ${ev.color} ${isDone ? "opacity-50" : ""}`}
+                                    style={{
+                                      left: `calc(${leftPct}% + 2px)`,
+                                      width: `calc(${widthPct}% - 4px)`,
+                                      top: seg.lane * LANE_H,
+                                      height: LANE_H - 4,
                                     }}
-                                    className={`shrink-0 w-3.5 h-3.5 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/40 hover:border-current/70"}`}
-                                    aria-label={isDone ? "완료 해제" : "완료"}
-                                    data-testid={`todo-toggle-${ev.id}`}
+                                    title={`${ev.start} ${ev.title}`}
+                                    data-testid={`event-${ev.id}-w${wi}`}
                                   >
-                                    {isDone && (
-                                      <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    {isTodo && seg.startsHere && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x));
+                                        }}
+                                        className={`shrink-0 w-3.5 h-3.5 rounded-[3px] border inline-flex items-center justify-center ${isDone ? "bg-current/80 border-current/60" : "bg-white/70 border-current/40 hover:border-current/70"}`}
+                                        aria-label={isDone ? "완료 해제" : "완료"}
+                                        data-testid={`todo-toggle-${ev.id}`}
+                                      >
+                                        {isDone && (
+                                          <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M2.5 6.5l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        )}
+                                      </button>
                                     )}
-                                  </button>
-                                )}
-                                {seg.startsHere && (
-                                  <span className={`truncate ${isDone ? "line-through" : ""}`}>
-                                    <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
-                                    {ev.title}
-                                  </span>
-                                )}
-                                {seg.endsHere && (
-                                  <span
-                                    onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
-                                    className="absolute right-0 top-0 h-full w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 bg-foreground/10 rounded-r"
-                                    title="드래그하여 기간 조정"
-                                    data-testid={`resize-${ev.id}`}
-                                  />
-                                )}
-                              </div>
+                                    {seg.startsHere && (
+                                      <span className={`truncate ${isDone ? "line-through" : ""}`}>
+                                        <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
+                                        {ev.title}
+                                      </span>
+                                    )}
+                                    {seg.endsHere && (
+                                      <span
+                                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
+                                        className="absolute right-0 top-0 h-full w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 bg-foreground/10 rounded-r"
+                                        title="드래그하여 기간 조정"
+                                        data-testid={`resize-${ev.id}`}
+                                      />
+                                    )}
+                                  </div>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  align="center"
+                                  side="top"
+                                  sideOffset={6}
+                                  className="w-[340px] p-0 overflow-hidden"
+                                  data-testid={`event-popover-${ev.id}`}
+                                >
+                                  {(() => {
+                                    const sd = new Date(ev.date + "T00:00:00");
+                                    const ed = new Date((ev.endDate ?? ev.date) + "T00:00:00");
+                                    const sLabel = `${sd.getMonth() + 1}월 ${sd.getDate()}일 (${KO_DAYS[(sd.getDay() + 6) % 7]})`;
+                                    const eLabel = `${ed.getMonth() + 1}월 ${ed.getDate()}일 (${KO_DAYS[(ed.getDay() + 6) % 7]})`;
+                                    const hh = Number(ev.start.split(":")[0]);
+                                    const ampm = hh >= 12 ? "오후" : "오전";
+                                    const sameDay = sLabel === eLabel;
+                                    return (
+                                      <div>
+                                        <div className={`h-1.5 w-full ${ev.color.split(" ").find((c) => c.startsWith("bg-")) ?? "bg-muted"}`} />
+                                        <div className="px-4 pt-3 pb-2 flex items-start justify-between gap-2 border-b border-border">
+                                          <div className="min-w-0">
+                                            <div className="text-sm font-semibold leading-snug">
+                                              {isTodo && <span className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground mr-1.5 align-middle">할 일</span>}
+                                              {ev.title}
+                                            </div>
+                                            <div className="text-[11px] text-muted-foreground mt-0.5">{ev.calendar}</div>
+                                          </div>
+                                          <button
+                                            onClick={() => setEventPopup(null)}
+                                            className="text-muted-foreground hover:text-foreground shrink-0"
+                                            aria-label="닫기"
+                                          >
+                                            <X className="w-4 h-4" />
+                                          </button>
+                                        </div>
+                                        <div className="px-4 py-3 space-y-2 text-xs">
+                                          <div className="flex items-start gap-2">
+                                            <CalendarPlus className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                                            <div className="leading-snug">
+                                              {sameDay ? (
+                                                <>{sLabel} · {ampm} {ev.start}</>
+                                              ) : (
+                                                <>{sLabel} {ampm} {ev.start} ~ {eLabel}</>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="flex items-start gap-2">
+                                            <MapPin className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                                            <div className="text-muted-foreground">위치 미지정</div>
+                                          </div>
+                                          <div className="flex items-start gap-2">
+                                            <Users className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                                            <div className="text-muted-foreground">참석자 미지정</div>
+                                          </div>
+                                          <div className="flex items-start gap-2">
+                                            <FileText className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
+                                            <div className="text-muted-foreground">메모 없음</div>
+                                          </div>
+                                        </div>
+                                        {isTodo && (
+                                          <div className="px-4 pb-3">
+                                            <button
+                                              onClick={() => setEvents((prev) => prev.map((x) => x.id === ev.id ? { ...x, done: !x.done } : x))}
+                                              className="w-full h-8 text-xs rounded-md border border-border hover:bg-muted"
+                                              data-testid={`button-toggle-done-${ev.id}`}
+                                            >
+                                              {isDone ? "완료 해제" : "완료로 표시"}
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })()}
+                                </PopoverContent>
+                              </Popover>
                             );
                           })}
                         </div>
