@@ -995,7 +995,7 @@ export default function Settings() {
                          {t("stNoCoupons")}
                        </div>
                      ) : (
-                       <div className="space-y-2">
+                       <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1" data-testid="list-coupons">
                          {filteredCoupons.map((coupon) => (
                            <div
                              key={coupon.id}
