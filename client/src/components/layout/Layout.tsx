@@ -6,8 +6,16 @@ import { LayoutGrid, Share2, Database, FolderOpen, Settings, LogOut, AlertCircle
 import { Progress } from "@/components/ui/progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, createContext, useContext } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+type SidebarContextValue = { isCollapsed: boolean; setIsCollapsed: (v: boolean) => void; toggle: () => void };
+const SidebarContext = createContext<SidebarContextValue | null>(null);
+export function useSidebar(): SidebarContextValue {
+  const ctx = useContext(SidebarContext);
+  if (!ctx) return { isCollapsed: false, setIsCollapsed: () => {}, toggle: () => {} };
+  return ctx;
+}
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -630,7 +638,9 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
         </header>
 
         <main className="flex-1 overflow-hidden relative">
-           {children}
+           <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggle: () => setIsCollapsed(!isCollapsed) }}>
+             {children}
+           </SidebarContext.Provider>
         </main>
       </div>
 

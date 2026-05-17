@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import Layout from "@/components/layout/Layout";
+import Layout, { useSidebar } from "@/components/layout/Layout";
+import { PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,6 +48,21 @@ const CONNECTIONS = [
   { id: "google", name: "Google", icon: "G", color: "text-rose-500" },
   { id: "outlook", name: "Outlook", icon: "O", color: "text-blue-500" },
 ];
+
+function SidebarToggleButton() {
+  const { toggle } = useSidebar();
+  return (
+    <button
+      onClick={toggle}
+      className="p-1.5 -ml-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted"
+      title="사이드바 토글"
+      aria-label="Toggle sidebar"
+      data-testid="button-toggle-sidebar"
+    >
+      <PanelLeft className="w-4 h-4" />
+    </button>
+  );
+}
 
 const KO_DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 const KO_MINI_DAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -198,10 +214,10 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col px-8 pt-6 pb-6 min-h-0">
+        <div className="flex-1 flex flex-col px-8 pb-6 min-h-0">
           <div className="grid grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
             {/* Sidebar */}
-            <aside className="space-y-6 overflow-y-auto pr-6 border-r border-border">
+            <aside className="space-y-6 overflow-y-auto pt-6 pr-6 border-r border-border">
               {/* Mini calendar */}
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -293,9 +309,12 @@ export default function CalendarPage() {
             </aside>
 
             {/* Main calendar */}
-            <section className="relative flex flex-col min-h-0">
+            <section className="relative flex flex-col min-h-0 pt-6">
               <div className="flex items-center justify-between mb-4 shrink-0">
-                <div className="text-base font-semibold">{monthLabel}</div>
+                <div className="flex items-center gap-2">
+                  <SidebarToggleButton />
+                  <div className="text-base font-semibold">{monthLabel}</div>
+                </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 hover:text-foreground" data-testid="button-today-main">오늘</button>
                   <button onClick={() => shiftMonth(-1)} className="p-1.5 hover:text-foreground" data-testid="main-prev"><ChevronLeft className="w-4 h-4" /></button>
