@@ -12,7 +12,9 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, HardDrive, Sprout, Share2 as Share2Icon } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
@@ -588,6 +590,132 @@ export default function Settings() {
 
           {/* Billing & License Tab */}
           <TabsContent value="billing" className="space-y-6">
+             {/* Current Usage Overview */}
+             <Card>
+               <CardHeader>
+                 <div className="flex items-start justify-between gap-4">
+                   <div>
+                     <CardTitle className="flex items-center gap-2">
+                       <Activity className="w-5 h-5" />
+                       {t("stCurrentUsage")}
+                     </CardTitle>
+                     <CardDescription>{t("stCurrentUsageDesc")}</CardDescription>
+                   </div>
+                   <Badge variant="secondary" className="shrink-0">
+                     <Zap className="w-3 h-3 mr-1" />
+                     {t("stPro")}
+                   </Badge>
+                 </div>
+               </CardHeader>
+               <CardContent>
+                 <div className="grid gap-4 md:grid-cols-2">
+                   {[
+                     {
+                       key: "resources",
+                       icon: HardDrive,
+                       label: t("stUsageResources"),
+                       desc: t("stUsageResourcesDesc"),
+                       used: 3.2,
+                       total: 5,
+                       unit: "GB",
+                       color: "bg-indigo-500",
+                     },
+                     {
+                       key: "garden",
+                       icon: Sprout,
+                       label: t("stUsageGarden"),
+                       desc: t("stUsageGardenDesc"),
+                       used: 128,
+                       total: 500,
+                       unit: t("stUsageNodes"),
+                       color: "bg-emerald-500",
+                     },
+                     {
+                       key: "invites",
+                       icon: UserPlus,
+                       label: t("stUsageInvites"),
+                       desc: t("stUsageInvitesDesc"),
+                       used: 7,
+                       total: 25,
+                       unit: t("stUsageMembers"),
+                       color: "bg-amber-500",
+                     },
+                     {
+                       key: "shares",
+                       icon: Share2Icon,
+                       label: t("stUsageShares"),
+                       desc: t("stUsageSharesDesc"),
+                       used: 14,
+                       total: 50,
+                       unit: t("stUsageNotes"),
+                       color: "bg-rose-500",
+                     },
+                     {
+                       key: "ai",
+                       icon: Bot,
+                       label: t("stUsageAiTokens"),
+                       desc: t("stUsageAiTokensDesc"),
+                       used: 142000,
+                       total: 500000,
+                       unit: t("stUsageTokens"),
+                       color: "bg-violet-500",
+                       fullWidth: true,
+                     },
+                   ].map((item) => {
+                     const Icon = item.icon;
+                     const pct = Math.min(100, Math.round((item.used / item.total) * 100));
+                     const formatNum = (n: number) =>
+                       n >= 1000 ? n.toLocaleString() : (Number.isInteger(n) ? n.toString() : n.toFixed(1));
+                     return (
+                       <div
+                         key={item.key}
+                         className={cn(
+                           "rounded-xl border border-border/60 bg-secondary/30 p-4 space-y-3",
+                           item.fullWidth && "md:col-span-2"
+                         )}
+                         data-testid={`usage-${item.key}`}
+                       >
+                         <div className="flex items-start justify-between gap-3">
+                           <div className="flex items-center gap-2 min-w-0">
+                             <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0", item.color)}>
+                               <Icon className="w-4 h-4" />
+                             </div>
+                             <div className="min-w-0">
+                               <div className="text-sm font-semibold text-foreground truncate">{item.label}</div>
+                               <div className="text-xs text-muted-foreground truncate">{item.desc}</div>
+                             </div>
+                           </div>
+                           <Badge
+                             variant="outline"
+                             className={cn(
+                               "shrink-0 text-xs",
+                               pct >= 90 ? "border-rose-300 text-rose-600 bg-rose-50 dark:bg-rose-950/30" :
+                               pct >= 70 ? "border-amber-300 text-amber-700 bg-amber-50 dark:bg-amber-950/30" :
+                               "border-emerald-300 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/30"
+                             )}
+                           >
+                             {pct}%
+                           </Badge>
+                         </div>
+                         <Progress value={pct} className="h-2" />
+                         <div className="flex items-center justify-between text-xs">
+                           <span className="text-muted-foreground">
+                             <span className="font-semibold text-foreground">{formatNum(item.used)}</span>
+                             {" / "}{formatNum(item.total)} {item.unit}
+                           </span>
+                           <span className="text-muted-foreground">
+                             {formatNum(item.total - item.used)} {item.unit} {t("stUsageRemaining")}
+                           </span>
+                         </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </CardContent>
+             </Card>
+
+             <Separator className="my-2" />
+
              <div className="grid gap-6 lg:grid-cols-3">
                {/* Free Plan */}
                <Card className="border-border/50 relative overflow-hidden">
