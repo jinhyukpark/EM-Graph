@@ -13,7 +13,7 @@ import {
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
-  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut
+  Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -128,13 +128,13 @@ const INITIAL_FILE_TREE = [
       { id: "f2", name: "New Folder 2", type: "folder", children: [] },
       { id: "f3", name: "New Folder", type: "folder", children: [] },
       { id: "f4", name: "Research", type: "folder", children: [
-        { id: "n1", name: "Note 1", type: "note" },
-        { id: "n2", name: "Note 2", type: "note" },
-        { id: "n3", name: "Note 3", type: "note", isNew: true }
+        { id: "n1", name: "Note 1", type: "note", tags: ["EM", "BOX"], createdAt: "2026-05-10" },
+        { id: "n2", name: "Note 2", type: "note", tags: ["CRM", "apply"], createdAt: "2026-05-12" },
+        { id: "n3", name: "Note 3", type: "note", isNew: true, tags: ["EM 아이디어", "IR"], createdAt: "2026-05-17" }
       ]},
       { id: "f5", name: "Test", type: "folder", children: [] },
       { id: "f6", name: "2024 Analysis", type: "folder", children: [
-         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true }
+         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
       ]}
     ]
   },
@@ -151,9 +151,9 @@ const INITIAL_FILE_TREE = [
         subscribed: true,
         owner: "박투자",
         children: [
-          { id: "sn1", name: "2024 코스피 반도체 섹터 전망", type: "note", subscribed: true, owner: "박투자" },
-          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자", isNew: true },
-          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자", isNew: true },
+          { id: "sn1", name: "2024 코스피 반도체 섹터 전망", type: "note", subscribed: true, owner: "박투자", tags: ["반도체", "코스피"], createdAt: "2026-04-22" },
+          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["반도체", "IR"], createdAt: "2026-05-14" },
+          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["Battery", "EV"], createdAt: "2026-05-16" },
         ]
       },
       {
@@ -163,8 +163,8 @@ const INITIAL_FILE_TREE = [
         subscribed: true,
         owner: "김애널",
         children: [
-          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널", isNew: true },
-          { id: "sn5", name: "원/달러 환율 주간 노트", type: "note", subscribed: true, owner: "김애널" },
+          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널", isNew: true, tags: ["매크로", "금리"], createdAt: "2026-05-17" },
+          { id: "sn5", name: "원/달러 환율 주간 노트", type: "note", subscribed: true, owner: "김애널", tags: ["매크로", "환율"], createdAt: "2026-04-05" },
         ]
       }
     ]
@@ -1269,27 +1269,80 @@ export default function KnowledgeGarden() {
   const [showManageSubsDialog, setShowManageSubsDialog] = useState(false);
 
   const [treeSearchQuery, setTreeSearchQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [shareFilter, setShareFilter] = useState<'all' | 'shared' | 'mine'>('all');
+  const [tagSearchInput, setTagSearchInput] = useState("");
+
+  const allTags = (() => {
+    const tags = new Set<string>();
+    const walk = (n: any) => {
+      if (n.type === 'note' && Array.isArray(n.tags)) {
+        n.tags.forEach((t: string) => tags.add(t));
+      }
+      (n.children || []).forEach(walk);
+    };
+    fileTree.forEach(walk);
+    return Array.from(tags).sort();
+  })();
+
+  const noteMatchesFilters = (note: any): boolean => {
+    if (selectedTags.length > 0) {
+      const noteTags: string[] = Array.isArray(note.tags) ? note.tags : [];
+      if (!selectedTags.some((t) => noteTags.includes(t))) return false;
+    }
+    if (dateFilter !== 'all') {
+      if (!note.createdAt) return false;
+      const created = new Date(note.createdAt).getTime();
+      const now = Date.now();
+      const day = 24 * 60 * 60 * 1000;
+      const cutoff = dateFilter === 'today' ? day : dateFilter === 'week' ? 7 * day : 30 * day;
+      if (now - created > cutoff) return false;
+    }
+    if (shareFilter === 'shared' && !note.subscribed) return false;
+    if (shareFilter === 'mine' && note.subscribed) return false;
+    return true;
+  };
 
   const filterTree = useCallback((nodes: any[], query: string): any[] => {
-    if (!query.trim()) return nodes;
-    const q = query.toLowerCase();
+    const q = query.trim().toLowerCase();
+    const noFilters = !q && selectedTags.length === 0 && dateFilter === 'all' && shareFilter === 'all';
+    if (noFilters) return nodes;
     const walk = (node: any): any | null => {
-      const nameMatches = (node.name || "").toLowerCase().includes(q);
-      const filteredChildren = (node.children || [])
-        .map(walk)
-        .filter(Boolean);
-      if (nameMatches || filteredChildren.length > 0) {
-        if (node.type === 'note') {
-          return { ...node };
-        }
+      if (node.type === 'note') {
+        const nameMatches = !q || (node.name || "").toLowerCase().includes(q);
+        if (nameMatches && noteMatchesFilters(node)) return { ...node };
+        return null;
+      }
+      const filteredChildren = (node.children || []).map(walk).filter(Boolean);
+      const selfNameMatches = !!q && (node.name || "").toLowerCase().includes(q);
+      if (filteredChildren.length > 0 || (selfNameMatches && selectedTags.length === 0 && dateFilter === 'all' && shareFilter === 'all')) {
         return { ...node, children: filteredChildren };
       }
       return null;
     };
     return nodes.map(walk).filter(Boolean);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTags, dateFilter, shareFilter]);
 
   const visibleTree = filterTree(fileTree, treeSearchQuery);
+
+  const activeFilterCount =
+    (selectedTags.length > 0 ? 1 : 0) +
+    (dateFilter !== 'all' ? 1 : 0) +
+    (shareFilter !== 'all' ? 1 : 0);
+
+  const clearAllFilters = () => {
+    setSelectedTags([]);
+    setDateFilter('all');
+    setShareFilter('all');
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
 
   type WorkTab = { id: string; title: string; kind: 'note' | 'new' };
   const [tabs, setTabs] = useState<WorkTab[]>([
@@ -1369,27 +1422,202 @@ export default function KnowledgeGarden() {
                       </Button>
                   </div>
                 </div>
-                <div className="px-3 pt-2 pb-2 border-b border-border/60 shrink-0">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70 pointer-events-none" />
-                    <Input
-                      data-testid="input-tree-search"
-                      value={treeSearchQuery}
-                      onChange={(e) => setTreeSearchQuery(e.target.value)}
-                      placeholder="노트 검색..."
-                      className="h-8 pl-8 pr-7 text-xs bg-background"
-                    />
-                    {treeSearchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setTreeSearchQuery("")}
-                        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted text-muted-foreground"
-                        data-testid="button-clear-tree-search"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
+                <div className="px-3 pt-2 pb-2 border-b border-border/60 shrink-0 space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70 pointer-events-none" />
+                      <Input
+                        data-testid="input-tree-search"
+                        value={treeSearchQuery}
+                        onChange={(e) => setTreeSearchQuery(e.target.value)}
+                        placeholder="노트 검색..."
+                        className="h-8 pl-8 pr-7 text-xs bg-background"
+                      />
+                      {treeSearchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setTreeSearchQuery("")}
+                          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted text-muted-foreground"
+                          data-testid="button-clear-tree-search"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={cn(
+                            "h-8 w-8 shrink-0 relative",
+                            activeFilterCount > 0 && "border-blue-500 text-blue-600 bg-blue-50/40 hover:bg-blue-50"
+                          )}
+                          data-testid="button-tree-filter"
+                          title="필터"
+                        >
+                          <Filter className="w-3.5 h-3.5" />
+                          {activeFilterCount > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold flex items-center justify-center">
+                              {activeFilterCount}
+                            </span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end" className="w-80 p-0" data-testid="popover-tree-filter">
+                        <div className="flex items-center justify-between px-3 py-2 border-b">
+                          <span className="text-sm font-semibold">필터</span>
+                          {activeFilterCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={clearAllFilters}
+                              className="text-xs text-blue-600 hover:underline"
+                              data-testid="button-clear-filters"
+                            >
+                              모두 지우기
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="p-3 space-y-4 max-h-[420px] overflow-y-auto">
+                          {/* Date filter */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                              <CalendarIcon className="w-3 h-3" /> 생성일
+                            </div>
+                            <div className="grid grid-cols-4 gap-1">
+                              {([
+                                { v: 'all', l: '전체' },
+                                { v: 'today', l: '오늘' },
+                                { v: 'week', l: '이번 주' },
+                                { v: 'month', l: '이번 달' },
+                              ] as const).map((opt) => (
+                                <button
+                                  key={opt.v}
+                                  type="button"
+                                  onClick={() => setDateFilter(opt.v)}
+                                  data-testid={`button-date-${opt.v}`}
+                                  className={cn(
+                                    "h-7 rounded-md text-xs font-medium border transition-colors",
+                                    dateFilter === opt.v
+                                      ? "bg-blue-500 text-white border-blue-500"
+                                      : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                                  )}
+                                >
+                                  {opt.l}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Share filter */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                              <Share2 className="w-3 h-3" /> 공유
+                            </div>
+                            <div className="grid grid-cols-3 gap-1">
+                              {([
+                                { v: 'all', l: '전체' },
+                                { v: 'mine', l: '내 노트' },
+                                { v: 'shared', l: '공유받음' },
+                              ] as const).map((opt) => (
+                                <button
+                                  key={opt.v}
+                                  type="button"
+                                  onClick={() => setShareFilter(opt.v)}
+                                  data-testid={`button-share-${opt.v}`}
+                                  className={cn(
+                                    "h-7 rounded-md text-xs font-medium border transition-colors",
+                                    shareFilter === opt.v
+                                      ? "bg-indigo-500 text-white border-indigo-500"
+                                      : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                                  )}
+                                >
+                                  {opt.l}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Tags */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                <Tag className="w-3 h-3" /> 태그
+                              </div>
+                              {selectedTags.length > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedTags([])}
+                                  className="text-[10px] text-muted-foreground hover:text-foreground"
+                                >
+                                  초기화
+                                </button>
+                              )}
+                            </div>
+                            <Input
+                              value={tagSearchInput}
+                              onChange={(e) => setTagSearchInput(e.target.value)}
+                              placeholder="태그 검색..."
+                              className="h-7 text-xs"
+                              data-testid="input-tag-search"
+                            />
+                            <div className="max-h-40 overflow-y-auto rounded-md border border-border/60 p-1.5 space-y-0.5 bg-muted/20">
+                              {allTags.filter(t => t.toLowerCase().includes(tagSearchInput.toLowerCase())).length === 0 ? (
+                                <div className="text-center text-[11px] text-muted-foreground py-3">태그 없음</div>
+                              ) : (
+                                allTags
+                                  .filter(t => t.toLowerCase().includes(tagSearchInput.toLowerCase()))
+                                  .map((tag) => {
+                                    const checked = selectedTags.includes(tag);
+                                    return (
+                                      <label
+                                        key={tag}
+                                        className="flex items-center gap-2 px-2 py-1 rounded cursor-pointer hover:bg-background transition-colors"
+                                        data-testid={`label-tag-${tag}`}
+                                      >
+                                        <Checkbox
+                                          checked={checked}
+                                          onCheckedChange={() => toggleTag(tag)}
+                                          className="h-3.5 w-3.5"
+                                        />
+                                        <span className="text-xs">{tag}</span>
+                                      </label>
+                                    );
+                                  })
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
+
+                  {(selectedTags.length > 0 || dateFilter !== 'all' || shareFilter !== 'all') && (
+                    <div className="flex flex-wrap gap-1">
+                      {dateFilter !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-blue-50 text-blue-700 border border-blue-200">
+                          <CalendarIcon className="w-2.5 h-2.5" />
+                          {dateFilter === 'today' ? '오늘' : dateFilter === 'week' ? '이번 주' : '이번 달'}
+                          <button onClick={() => setDateFilter('all')} className="hover:text-blue-900"><X className="w-2.5 h-2.5" /></button>
+                        </span>
+                      )}
+                      {shareFilter !== 'all' && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200">
+                          <Share2 className="w-2.5 h-2.5" />
+                          {shareFilter === 'mine' ? '내 노트' : '공유받음'}
+                          <button onClick={() => setShareFilter('all')} className="hover:text-indigo-900"><X className="w-2.5 h-2.5" /></button>
+                        </span>
+                      )}
+                      {selectedTags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-muted text-foreground border border-border">
+                          <Tag className="w-2.5 h-2.5" />
+                          {tag}
+                          <button onClick={() => toggleTag(tag)} className="hover:text-foreground"><X className="w-2.5 h-2.5" /></button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <ScrollArea className="flex-1">
                    <div className="p-2">
