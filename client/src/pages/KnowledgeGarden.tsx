@@ -1843,7 +1843,7 @@ export default function KnowledgeGarden() {
                   >
                     {showExplorer ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
                   </button>
-                  <div ref={tabScrollerRef} className="flex-1 flex items-stretch overflow-hidden min-w-0">
+                  <div ref={tabScrollerRef} className="relative flex-1 flex items-stretch overflow-hidden min-w-0">
                     {tabs.map((tab) => {
                       const isActive = tab.id === activeTabId;
                       return (
