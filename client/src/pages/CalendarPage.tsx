@@ -249,9 +249,10 @@ export default function CalendarPage() {
     if (!el) return;
     const LANE_H = 24;
     const HEADER = 36;
+    const MORE_BTN = 22;
     const recompute = () => {
       const h = el.clientHeight;
-      const n = Math.max(1, Math.floor((h - HEADER - 4) / LANE_H));
+      const n = Math.max(1, Math.floor((h - HEADER - MORE_BTN) / LANE_H));
       setMaxLanes(n);
     };
     recompute();
