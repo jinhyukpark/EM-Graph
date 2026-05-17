@@ -407,8 +407,8 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
         </div>
       </div>
 
-      {/* Body Two-Col */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      {/* Body Two-Col (sidebar only on overview tab) */}
+      <div className={`grid grid-cols-1 gap-8 ${activeTab === 'overview' ? 'lg:grid-cols-[1fr_320px]' : ''}`}>
         {/* Main content */}
         <div className="space-y-8 text-sm leading-relaxed">
           {activeTab === 'overview' && <>
@@ -587,6 +587,7 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             </div>
           )}
 
+          {activeTab === 'overview' && (
           <div className="pt-2">
             <h3 className="font-bold text-foreground mb-3">같이 사용하면 좋은 앱</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -607,9 +608,11 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
               ))}
             </div>
           </div>
+          )}
         </div>
 
         {/* Sidebar */}
+        {activeTab === 'overview' && (
         <aside className="space-y-4">
           <Card className="p-4 border-border/60">
             <div className="flex items-center gap-2 mb-2">
@@ -695,6 +698,7 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
             </Button>
           </Card>
         </aside>
+        )}
       </div>
     </div>
   );
