@@ -231,7 +231,7 @@ function PluginDetail({ plugin, onBack }: { plugin: Plugin; onBack: () => void }
         <div className="space-y-8 text-sm leading-relaxed">
           {/* 이 자료에 대하여 */}
           <section>
-            <h3 className="text-base font-bold text-foreground mb-3">이 자료에 대하여</h3>
+            <h3 className="text-base font-bold text-foreground mb-3">주요 기능 소개</h3>
             <p className="text-muted-foreground leading-7">
               본 {plugin.name} 서비스는 EM-Graph 워크스페이스의 데이터를 종합적으로 분석하여 노드별·관계별 인사이트(연결 강도와 방향)를 정량화된 지표로 제공하는 서비스입니다.
               단순 통계 정보가 아닌 일정 기간 동안의 추세 지속성, 변동성 대비 활동 강도, 트래픽 기반 신뢰도 등을 함께 반영하여 보다 정교한 비즈니스 판단을 지원하는 것이 특징이며,
