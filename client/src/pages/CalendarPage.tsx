@@ -18,39 +18,43 @@ type CalEvent = {
   date: string;
   endDate?: string;
   start: string;
+  end?: string;
   title: string;
   color: string;
   calendar: string;
   type?: "event" | "todo";
   done?: boolean;
+  location?: string;
+  attendees?: string[];
+  note?: string;
 };
 
 const INITIAL_EVENTS: CalEvent[] = [
-  { id: "e1", date: "2026-04-27", start: "15:00", title: "MATI 프로젝트 킥오프", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
-  { id: "e2", date: "2026-04-30", start: "13:45", title: "(주)일루넥스 주간 점검", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
-  { id: "e3", date: "2026-04-30", start: "14:45", title: "(주)일루넥스 마케팅 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
-  { id: "e4", date: "2026-05-04", start: "10:30", title: "PET필름 주간 운영회의", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
-  { id: "e5", date: "2026-05-12", start: "14:00", title: "아라미드 단가 협상 미팅", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
-  { id: "e6", date: "2026-05-16", start: "11:00", title: "편광필름 품질 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트" },
-  { id: "e7", date: "2026-05-19", start: "16:00", title: "MOQ 정책 사내 공유", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo" },
-  { id: "e8", date: "2026-05-25", start: "09:00", title: "흥대 외주사 미팅", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
-  { id: "e9", date: "2026-05-13", start: "10:00", title: "PET필름 단가 검토 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo", done: true },
-  { id: "e10", date: "2026-05-21", start: "09:30", title: "월간 안전점검 체크리스트", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
-  { id: "d1", date: "2026-05-19", start: "08:00", title: "조회 및 일일 안전교육", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
-  { id: "d2", date: "2026-05-19", start: "08:30", title: "원자재 입고 검수", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo" },
-  { id: "d3", date: "2026-05-19", start: "09:00", title: "PET필름 라인 점검 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
-  { id: "d4", date: "2026-05-19", start: "09:30", title: "주간 생산 실적 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
-  { id: "d5", date: "2026-05-19", start: "10:00", title: "구매팀 단가 협의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
-  { id: "d6", date: "2026-05-19", start: "10:30", title: "MOQ 정책 사내 공유 (본미팅)", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
-  { id: "d7", date: "2026-05-19", start: "11:00", title: "아라미드 신규 거래선 인터뷰", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
-  { id: "d8", date: "2026-05-19", start: "11:30", title: "편광필름 품질 이슈 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트" },
-  { id: "d9", date: "2026-05-19", start: "13:00", title: "점심 - 외주사 환영회", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
-  { id: "d10", date: "2026-05-19", start: "14:00", title: "BOM 변경 승인 회의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
-  { id: "d11", date: "2026-05-19", start: "15:00", title: "열연코일 발주 컨펌", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "작업", type: "todo" },
-  { id: "d12", date: "2026-05-19", start: "15:30", title: "AI 코파일럿 데모 시연", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
-  { id: "d13", date: "2026-05-19", start: "16:30", title: "마케팅 캠페인 결과 공유", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
-  { id: "d14", date: "2026-05-19", start: "17:00", title: "주간 OKR 점검", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo" },
-  { id: "d15", date: "2026-05-19", start: "18:00", title: "퇴근 전 일일 보고서 작성", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
+  { id: "e1", date: "2026-04-27", start: "15:00", end: "16:30", title: "MATI 프로젝트 킥오프", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트", location: "본사 3층 대회의실", attendees: ["jh.park@illunex.com", "sm.kim@kolonbenit.com", "yh.lee@kolonbenit.com"], note: "킥오프 안건: 일정/역할/리스크 공유" },
+  { id: "e2", date: "2026-04-30", start: "13:45", end: "14:30", title: "(주)일루넥스 주간 점검", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com", location: "Zoom", attendees: ["jh.park@illunex.com", "bk.park@illunex.com"], note: "이번 주 OKR 진행상황 공유" },
+  { id: "e3", date: "2026-04-30", start: "14:45", end: "15:30", title: "(주)일루넥스 마케팅 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com", location: "Google Meet", attendees: ["jh.park@illunex.com", "marketing@illunex.com"], note: "5월 캠페인 KPI 리뷰" },
+  { id: "e4", date: "2026-05-04", start: "10:30", end: "11:30", title: "PET필름 주간 운영회의", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트", location: "구미공장 회의실 A", attendees: ["pet.team@kolonbenit.com", "sm.kim@kolonbenit.com"], note: "라인 가동률/불량률 점검" },
+  { id: "e5", date: "2026-05-12", start: "14:00", end: "15:00", title: "아라미드 단가 협상 미팅", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo", location: "본사 5층 협상실", attendees: ["purchasing@kolonbenit.com", "vendor@partner.com"], note: "단가 인하 5% 목표, BOM 사전 검토 필요" },
+  { id: "e6", date: "2026-05-16", start: "11:00", end: "12:00", title: "편광필름 품질 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트", location: "QA Lab", attendees: ["qa@kolonbenit.com"], note: "최근 2주 클레임 분석" },
+  { id: "e7", date: "2026-05-19", start: "16:00", end: "17:00", title: "MOQ 정책 사내 공유", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo", location: "본사 대강당", attendees: ["all-sales@kolonbenit.com"], note: "신규 MOQ 정책 발표 및 Q&A" },
+  { id: "e8", date: "2026-05-25", start: "09:00", end: "10:00", title: "흥대 외주사 미팅", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com", location: "흥대 본사 2층", attendees: ["jh.park@illunex.com", "vendor.heungdae@partner.com"], note: "외주 단가 및 납기 일정 확정" },
+  { id: "e9", date: "2026-05-13", start: "10:00", end: "11:00", title: "PET필름 단가 검토 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo", done: true, location: "본사 4층 회의실 B", attendees: ["finance@kolonbenit.com"], note: "원가 분석 자료 첨부 — 임원 보고용" },
+  { id: "e10", date: "2026-05-21", start: "09:30", end: "10:30", title: "월간 안전점검 체크리스트", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo", location: "구미공장 전체", attendees: ["safety@kolonbenit.com"], note: "체크리스트 v3.2 적용 — 사진 첨부 필수" },
+  { id: "d1", date: "2026-05-19", start: "08:00", end: "08:30", title: "조회 및 일일 안전교육", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트", location: "구미공장 조회실", attendees: ["전사원"], note: "안전수칙 5대 원칙 복창" },
+  { id: "d2", date: "2026-05-19", start: "08:30", end: "09:00", title: "원자재 입고 검수", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo", location: "1번 야적장", attendees: ["incoming@kolonbenit.com"], note: "PET 칩 20톤 입고 예정" },
+  { id: "d3", date: "2026-05-19", start: "09:00", end: "09:30", title: "PET필름 라인 점검 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com", location: "라인 1 사무실", attendees: ["pet.team@kolonbenit.com"], note: "야간 가동 이슈 리뷰" },
+  { id: "d4", date: "2026-05-19", start: "09:30", end: "10:00", title: "주간 생산 실적 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트", location: "본사 회의실 C", attendees: ["operations@kolonbenit.com"], note: "W20 실적 + W21 계획" },
+  { id: "d5", date: "2026-05-19", start: "10:00", end: "10:30", title: "구매팀 단가 협의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo", location: "구매팀 미팅룸", attendees: ["purchasing@kolonbenit.com"], note: "Q3 단가 인하안 검토" },
+  { id: "d6", date: "2026-05-19", start: "10:30", end: "12:00", title: "MOQ 정책 사내 공유 (본미팅)", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트", location: "본사 대강당", attendees: ["all-sales@kolonbenit.com", "all-purchasing@kolonbenit.com"], note: "최종 정책안 발표" },
+  { id: "d7", date: "2026-05-19", start: "11:00", end: "12:00", title: "아라미드 신규 거래선 인터뷰", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com", location: "Google Meet", attendees: ["bd@kolonbenit.com", "vendor.aramid@partner.com"], note: "신규 공급사 사전 평가" },
+  { id: "d8", date: "2026-05-19", start: "11:30", end: "12:30", title: "편광필름 품질 이슈 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트", location: "QA Lab", attendees: ["qa@kolonbenit.com"], note: "고객 클레임 3건 원인 분석" },
+  { id: "d9", date: "2026-05-19", start: "13:00", end: "14:00", title: "점심 - 외주사 환영회", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트", location: "본사 1층 식당", attendees: ["jh.park@illunex.com", "vendor@partner.com"], note: "신규 외주사 환영 오찬" },
+  { id: "d10", date: "2026-05-19", start: "14:00", end: "15:00", title: "BOM 변경 승인 회의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo", location: "본사 회의실 D", attendees: ["engineering@kolonbenit.com"], note: "BOM v4.1 변경점 승인" },
+  { id: "d11", date: "2026-05-19", start: "15:00", end: "15:30", title: "열연코일 발주 컨펌", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "작업", type: "todo", location: "구매팀", attendees: ["purchasing@kolonbenit.com"], note: "POSCO 향 발주서 최종 컨펌" },
+  { id: "d12", date: "2026-05-19", start: "15:30", end: "16:30", title: "AI 코파일럿 데모 시연", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트", location: "본사 7층 이노베이션랩", attendees: ["it@kolonbenit.com", "exec@kolonbenit.com"], note: "EM-Graph 코파일럿 라이브 데모" },
+  { id: "d13", date: "2026-05-19", start: "16:30", end: "17:00", title: "마케팅 캠페인 결과 공유", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트", location: "마케팅실", attendees: ["marketing@kolonbenit.com"], note: "5월 캠페인 ROI 보고" },
+  { id: "d14", date: "2026-05-19", start: "17:00", end: "17:30", title: "주간 OKR 점검", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo", location: "본사 회의실 A", attendees: ["leadership@kolonbenit.com"], note: "팀별 OKR 진행률 업데이트" },
+  { id: "d15", date: "2026-05-19", start: "18:00", end: "18:30", title: "퇴근 전 일일 보고서 작성", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo", location: "본인 자리", attendees: ["self"], note: "일일 업무 보고서 제출" },
 ];
 
 const CALENDAR_ACCOUNTS = [
@@ -671,28 +675,36 @@ export default function CalendarPage() {
                                             <X className="w-4 h-4" />
                                           </button>
                                         </div>
-                                        <div className="px-4 py-3 space-y-2 text-xs">
+                                        <div className="px-4 py-3 space-y-2.5 text-xs">
                                           <div className="flex items-start gap-2">
                                             <CalendarPlus className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
                                             <div className="leading-snug">
                                               {sameDay ? (
-                                                <>{sLabel} · {ampm} {ev.start}</>
+                                                <>{sLabel} · {ampm} {ev.start}{ev.end ? ` ~ ${ev.end}` : ""}</>
                                               ) : (
-                                                <>{sLabel} {ampm} {ev.start} ~ {eLabel}</>
+                                                <>{sLabel} {ampm} {ev.start} ~ {eLabel}{ev.end ? ` ${ev.end}` : ""}</>
                                               )}
                                             </div>
                                           </div>
                                           <div className="flex items-start gap-2">
                                             <MapPin className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
-                                            <div className="text-muted-foreground">위치 미지정</div>
+                                            <div className={ev.location ? "" : "text-muted-foreground"}>{ev.location ?? "위치 미지정"}</div>
                                           </div>
                                           <div className="flex items-start gap-2">
                                             <Users className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
-                                            <div className="text-muted-foreground">참석자 미지정</div>
+                                            <div className={ev.attendees && ev.attendees.length > 0 ? "min-w-0" : "text-muted-foreground"}>
+                                              {ev.attendees && ev.attendees.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1">
+                                                  {ev.attendees.map((a, i) => (
+                                                    <span key={i} className="px-1.5 py-0.5 rounded bg-muted text-foreground/80 text-[11px]">{a}</span>
+                                                  ))}
+                                                </div>
+                                              ) : "참석자 미지정"}
+                                            </div>
                                           </div>
                                           <div className="flex items-start gap-2">
                                             <FileText className="w-3.5 h-3.5 mt-0.5 text-muted-foreground shrink-0" />
-                                            <div className="text-muted-foreground">메모 없음</div>
+                                            <div className={ev.note ? "leading-snug" : "text-muted-foreground"}>{ev.note ?? "메모 없음"}</div>
                                           </div>
                                         </div>
                                         {isTodo && (
