@@ -136,14 +136,17 @@ const RANGE_SHORTCUTS: RangeShortcut[] = [
 function fmtDateShort(d: Date) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
+
+function localYmd(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function startOfDay(d: Date) {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
-  return x;
-}
-function endOfDay(d: Date) {
-  const x = new Date(d);
-  x.setHours(23, 59, 59, 999);
   return x;
 }
 
@@ -240,23 +243,22 @@ export default function TodoList() {
   const filtered = useMemo(() => {
     let list = tasks;
     if (tab === "Today") {
-      const k = today.toISOString().slice(0, 10);
+      const k = localYmd(today);
       list = list.filter((t) => t.due === k || t.start === k);
     } else if (tab === "Assigned") {
       list = list.filter((t) => !!t.assignee);
     } else if (tab === "Notes") {
       list = list.filter((t) => !!t.note);
     } else if (tab === "Overdue") {
-      const k = today.toISOString().slice(0, 10);
+      const k = localYmd(today);
       list = list.filter((t) => !!t.due && t.due < k && !t.done);
     }
     if (range?.from) {
-      const from = startOfDay(range.from);
-      const to = endOfDay(range.to ?? range.from);
+      const fromKey = localYmd(range.from);
+      const toKey = localYmd(range.to ?? range.from);
       list = list.filter((t) => {
         if (!t.due) return false;
-        const d = new Date(t.due);
-        return d >= from && d <= to;
+        return t.due >= fromKey && t.due <= toKey;
       });
     }
     if (search.trim()) {
@@ -502,7 +504,11 @@ export default function TodoList() {
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
+                  key={rangeOpen ? "open" : "closed"}
                   mode="range"
+                  captionLayout="dropdown"
+                  startMonth={new Date(new Date().getFullYear() - 5, 0)}
+                  endMonth={new Date(new Date().getFullYear() + 5, 11)}
                   defaultMonth={range?.from ?? new Date()}
                   selected={range}
                   onSelect={(r) => {
@@ -510,6 +516,7 @@ export default function TodoList() {
                     setActiveShortcut(null);
                   }}
                   numberOfMonths={2}
+                  className="[--cell-size:2.5rem] p-4"
                 />
                 <div className="border-t border-border/60 px-3 py-2 flex items-center justify-between">
                   <button
