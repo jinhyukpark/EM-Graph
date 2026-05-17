@@ -35,6 +35,21 @@ const INITIAL_EVENTS: CalEvent[] = [
   { id: "e8", date: "2026-05-25", start: "09:00", title: "흥대 외주사 미팅", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
   { id: "e9", date: "2026-05-13", start: "10:00", title: "PET필름 단가 검토 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "작업", type: "todo", done: true },
   { id: "e10", date: "2026-05-21", start: "09:30", title: "월간 안전점검 체크리스트", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
+  { id: "d1", date: "2026-05-19", start: "08:00", title: "조회 및 일일 안전교육", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
+  { id: "d2", date: "2026-05-19", start: "08:30", title: "원자재 입고 검수", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo" },
+  { id: "d3", date: "2026-05-19", start: "09:00", title: "PET필름 라인 점검 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
+  { id: "d4", date: "2026-05-19", start: "09:30", title: "주간 생산 실적 보고", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
+  { id: "d5", date: "2026-05-19", start: "10:00", title: "구매팀 단가 협의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
+  { id: "d6", date: "2026-05-19", start: "10:30", title: "MOQ 정책 사내 공유 (본미팅)", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
+  { id: "d7", date: "2026-05-19", start: "11:00", title: "아라미드 신규 거래선 인터뷰", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
+  { id: "d8", date: "2026-05-19", start: "11:30", title: "편광필름 품질 이슈 리뷰", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "이벤트" },
+  { id: "d9", date: "2026-05-19", start: "13:00", title: "점심 - 외주사 환영회", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
+  { id: "d10", date: "2026-05-19", start: "14:00", title: "BOM 변경 승인 회의", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
+  { id: "d11", date: "2026-05-19", start: "15:00", title: "열연코일 발주 컨펌", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "작업", type: "todo" },
+  { id: "d12", date: "2026-05-19", start: "15:30", title: "AI 코파일럿 데모 시연", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
+  { id: "d13", date: "2026-05-19", start: "16:30", title: "마케팅 캠페인 결과 공유", color: "bg-emerald-200 text-emerald-900 border-l-emerald-500", calendar: "이벤트" },
+  { id: "d14", date: "2026-05-19", start: "17:00", title: "주간 OKR 점검", color: "bg-amber-200 text-amber-900 border-l-amber-500", calendar: "작업", type: "todo" },
+  { id: "d15", date: "2026-05-19", start: "18:00", title: "퇴근 전 일일 보고서 작성", color: "bg-rose-200 text-rose-900 border-l-rose-500", calendar: "작업", type: "todo" },
 ];
 
 const CALENDAR_ACCOUNTS = [
