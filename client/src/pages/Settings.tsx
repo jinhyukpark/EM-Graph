@@ -848,6 +848,13 @@ export default function Settings() {
                </CardContent>
              </Card>
 
+             <Separator className="my-6" />
+
+             <div className="space-y-1 mb-4">
+               <h2 className="text-2xl font-bold tracking-tight" data-testid="text-billing-info-title">{t("stBillingInfoTitle")}</h2>
+               <p className="text-sm text-muted-foreground">{t("stBillingInfoSubtitle")}</p>
+             </div>
+
              <div className="grid gap-6 md:grid-cols-2">
                <Card>
                  <CardHeader>
