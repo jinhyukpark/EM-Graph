@@ -11,6 +11,7 @@ import {
   Workflow, GitBranch, FileSpreadsheet, Bell, Cloud, Lock, Users, Zap,
   Globe, ImageIcon, PieChart, Slack, ArrowRight, Star
 } from 'lucide-react';
+import aiBannerImg from '@assets/generated_images/modern_office_team_collaboration_416f.png';
 
 type Plugin = {
   id: string;
@@ -105,8 +106,8 @@ function PluginSection({ title, plugins }: { title: string; plugins: Plugin[] })
           자세히 보기 <ArrowRight className="w-3 h-3" />
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {plugins.slice(0, 4).map(p => <PluginCard key={p.id} p={p} />)}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {plugins.slice(0, 3).map(p => <PluginCard key={p.id} p={p} />)}
       </div>
     </div>
   );
@@ -151,7 +152,7 @@ export default function Plugins() {
 
         {/* Scroll Area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-8 py-8 space-y-8">
+          <div className="max-w-[1400px] mx-auto px-8 py-8 space-y-8">
             {/* Heading + Search */}
             <div className="text-center space-y-4">
               <h1 className="text-2xl font-semibold text-foreground">필요에 맞게 제작된 강력한 도구 살펴보기</h1>
@@ -168,22 +169,25 @@ export default function Plugins() {
             </div>
 
             {/* AI Hub Banner */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white p-8 flex items-center justify-between overflow-hidden relative">
+            <div className="rounded-2xl text-white p-10 flex items-center justify-between overflow-hidden relative min-h-[220px]">
+              <img
+                src={aiBannerImg}
+                alt="AI 협업"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/70 to-slate-900/20" />
               <div className="relative z-10 max-w-md">
-                <div className="text-[11px] uppercase tracking-wider opacity-70 mb-1">AI 허브</div>
-                <h2 className="text-2xl font-bold mb-3">새로운 AI 인력을 만나보세요</h2>
-                <Button variant="secondary" size="sm" className="bg-white/10 text-white border border-white/20 hover:bg-white/20" data-testid="button-explore-ai">
+                <div className="text-[11px] uppercase tracking-wider opacity-80 mb-1 flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" />
+                  AI 허브
+                </div>
+                <h2 className="text-3xl font-bold mb-2 leading-snug">새로운 AI 인력을<br/>만나보세요</h2>
+                <p className="text-sm text-white/70 mb-4 max-w-sm">팀의 협업과 인사이트를 가속하는 EM-Graph AI 어시스턴트를 지금 만나보세요.</p>
+                <Button variant="secondary" size="sm" className="bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm" data-testid="button-explore-ai">
                   탐색 시작
                 </Button>
               </div>
-              <div className="hidden md:flex gap-4 relative z-10">
-                {[Sparkles, Bot, Zap].map((Icon, i) => (
-                  <div key={i} className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-xl">
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                ))}
-              </div>
-              <div className="absolute -right-10 -top-10 w-60 h-60 rounded-full bg-violet-500/20 blur-3xl" />
+              <div className="absolute -right-10 -top-10 w-60 h-60 rounded-full bg-violet-500/30 blur-3xl" />
               <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-pink-500/20 blur-3xl" />
             </div>
 
@@ -214,7 +218,7 @@ export default function Plugins() {
             {/* All */}
             <div className="space-y-3">
               <h2 className="text-base font-semibold text-foreground">전체 플러그인 ({filtered.length})</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.map(p => <PluginCard key={p.id} p={p} />)}
               </div>
             </div>

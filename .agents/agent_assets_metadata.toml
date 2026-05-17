@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "d1czsJmUpmYkleTU1Yx5p"
+uri = "file://attached_assets/generated_images/modern_office_team_collaboration_416f.png"
+type = "image"
+title = "generated_image"
