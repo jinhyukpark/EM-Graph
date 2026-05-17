@@ -15,13 +15,14 @@ import {
 type CalEvent = {
   id: string;
   date: string;
+  endDate?: string;
   start: string;
   title: string;
   color: string;
   calendar: string;
 };
 
-const EVENTS: CalEvent[] = [
+const INITIAL_EVENTS: CalEvent[] = [
   { id: "e1", date: "2026-04-27", start: "15:00", title: "MATI 프로젝트 킥오프", color: "bg-violet-200 text-violet-900 border-l-violet-500", calendar: "이벤트" },
   { id: "e2", date: "2026-04-30", start: "13:45", title: "(주)일루넥스 주간 점검", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
   { id: "e3", date: "2026-04-30", start: "14:45", title: "(주)일루넥스 마케팅 회의", color: "bg-blue-200 text-blue-900 border-l-blue-500", calendar: "jh.park@illunex.com" },
@@ -175,12 +176,49 @@ export default function CalendarPage() {
     () => buildMiniMonth(cursor.getFullYear(), cursor.getMonth()),
     [cursor]
   );
+  const [events, setEvents] = useState<CalEvent[]>(INITIAL_EVENTS);
   const eventsByDate = useMemo(() => {
-    return EVENTS.reduce<Record<string, CalEvent[]>>((acc, ev) => {
-      (acc[ev.date] ||= []).push(ev);
-      return acc;
-    }, {});
-  }, []);
+    const map: Record<string, CalEvent[]> = {};
+    for (const ev of events) {
+      const start = new Date(ev.date + "T00:00:00");
+      const end = new Date((ev.endDate ?? ev.date) + "T00:00:00");
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const k = toKey(d);
+        (map[k] ||= []).push(ev);
+      }
+    }
+    return map;
+  }, [events]);
+
+  // Resize logic: drag right edge of an event chip to extend its end date.
+  const [resizingId, setResizingId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!resizingId) return;
+    const onMove = (e: MouseEvent) => {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const cell = el?.closest("[data-date]") as HTMLElement | null;
+      if (!cell) return;
+      const targetDate = cell.dataset.date!;
+      setEvents((prev) =>
+        prev.map((ev) => {
+          if (ev.id !== resizingId) return ev;
+          if (targetDate < ev.date) return ev;
+          return { ...ev, endDate: targetDate === ev.date ? undefined : targetDate };
+        })
+      );
+    };
+    const onUp = () => setResizingId(null);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    document.body.style.cursor = "ew-resize";
+    document.body.style.userSelect = "none";
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [resizingId]);
 
   const [panelOpen, setPanelOpen] = useState(true);
 
@@ -353,6 +391,7 @@ export default function CalendarPage() {
                               isOther ? "bg-muted/20" : ""
                             }`}
                             data-testid={`day-cell-${key}`}
+                            data-date={key}
                           >
                             <div className="flex items-center justify-end mb-2 shrink-0">
                               <span
@@ -369,17 +408,28 @@ export default function CalendarPage() {
                               </span>
                             </div>
                             <div className="space-y-1 flex-1 overflow-hidden">
-                              {dayEvents.slice(0, 3).map((ev) => (
-                                <div
-                                  key={ev.id}
-                                  className={`text-xs px-2 py-1 rounded border-l-2 truncate ${ev.color}`}
-                                  title={`${ev.start} ${ev.title}`}
-                                  data-testid={`event-${ev.id}`}
-                                >
-                                  <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
-                                  {ev.title}
-                                </div>
-                              ))}
+                              {dayEvents.slice(0, 3).map((ev) => {
+                                const lastDay = (ev.endDate ?? ev.date) === key;
+                                return (
+                                  <div
+                                    key={ev.id}
+                                    className={`relative group text-xs px-2 py-1 rounded border-l-2 truncate ${ev.color}`}
+                                    title={`${ev.start} ${ev.title}`}
+                                    data-testid={`event-${ev.id}`}
+                                  >
+                                    <span className="opacity-80">{Number(ev.start.split(":")[0]) >= 12 ? "오후" : "오전"} {ev.start}</span>{" "}
+                                    {ev.title}
+                                    {lastDay && (
+                                      <span
+                                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setResizingId(ev.id); }}
+                                        className="absolute right-0 top-0 h-full w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 bg-foreground/10 rounded-r"
+                                        title="드래그하여 기간 조정"
+                                        data-testid={`resize-${ev.id}`}
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
                               {dayEvents.length > 3 && (
                                 <div className="text-xs text-muted-foreground pl-1">+{dayEvents.length - 3}건</div>
                               )}
