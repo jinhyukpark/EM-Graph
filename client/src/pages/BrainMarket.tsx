@@ -18,7 +18,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { toast } from '@/hooks/use-toast';
+import { Lock } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -320,6 +323,32 @@ export default function BrainMarket() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedBrain, setSelectedBrain] = useState<typeof BRAINS[0] | null>(null);
+    const [userReviews, setUserReviews] = useState<Record<string, { id: number; user: string; role: string; rating: number; date: string; comment: string }[]>>({});
+    const [newReviewRating, setNewReviewRating] = useState(5);
+    const [newReviewComment, setNewReviewComment] = useState('');
+    const submitReview = () => {
+        if (!selectedBrain) return;
+        const comment = newReviewComment.trim();
+        if (!comment) {
+            toast({ title: t('bmReviewEmpty'), description: t('bmReviewEmptyDesc') });
+            return;
+        }
+        const review = {
+            id: Date.now(),
+            user: t('bmReviewYou'),
+            role: t('bmReviewYourRole'),
+            rating: newReviewRating,
+            date: t('bmReviewJustNow'),
+            comment,
+        };
+        setUserReviews((prev) => ({
+            ...prev,
+            [selectedBrain.id]: [review, ...(prev[selectedBrain.id] || [])],
+        }));
+        setNewReviewComment('');
+        setNewReviewRating(5);
+        toast({ title: t('bmReviewSubmitted'), description: t('bmReviewSubmittedDesc') });
+    };
 
     const subscribedCount = BRAINS.filter(b => (b as any).subscribed).length;
 
@@ -716,9 +745,55 @@ export default function BrainMarket() {
                                         </TabsContent>
 
                                         <TabsContent value="reviews" className="m-0 animate-in fade-in-50 duration-300 space-y-6">
-                                            {selectedBrain.reviewList && selectedBrain.reviewList.length > 0 ? (
-                                                <div className="space-y-4">
-                                                    {selectedBrain.reviewList.map((review) => (
+                                            {(() => {
+                                                const isSubscribed = !!(selectedBrain as any).subscribed;
+                                                const combinedReviews = [
+                                                    ...(userReviews[selectedBrain.id] || []),
+                                                    ...(selectedBrain.reviewList || []),
+                                                ];
+                                                return (
+                                                    <>
+                                                        {isSubscribed ? (
+                                                            <div className="p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3" data-testid="form-review">
+                                                                <div className="flex items-center justify-between gap-2">
+                                                                    <div className="font-medium text-sm">{t('bmWriteReview')}</div>
+                                                                    <div className="flex items-center gap-1">
+                                                                        {[1, 2, 3, 4, 5].map((n) => (
+                                                                            <button
+                                                                                key={n}
+                                                                                type="button"
+                                                                                onClick={() => setNewReviewRating(n)}
+                                                                                className="p-0.5"
+                                                                                data-testid={`button-rating-${n}`}
+                                                                            >
+                                                                                <Star className={`w-5 h-5 ${n <= newReviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/40'}`} />
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                                <Textarea
+                                                                    value={newReviewComment}
+                                                                    onChange={(e) => setNewReviewComment(e.target.value)}
+                                                                    placeholder={t('bmReviewPlaceholder')}
+                                                                    className="min-h-[80px] resize-none"
+                                                                    data-testid="textarea-review"
+                                                                />
+                                                                <div className="flex justify-end">
+                                                                    <Button size="sm" onClick={submitReview} data-testid="button-submit-review">
+                                                                        {t('bmReviewSubmit')}
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="p-4 rounded-lg border border-dashed border-border bg-muted/20 flex items-center gap-3 text-sm text-muted-foreground" data-testid="notice-review-locked">
+                                                                <Lock className="w-4 h-4 shrink-0" />
+                                                                <span>{t('bmReviewLockedNotice')}</span>
+                                                            </div>
+                                                        )}
+
+                                                        {combinedReviews.length > 0 ? (
+                                                            <div className="space-y-4">
+                                                                {combinedReviews.map((review) => (
                                                         <div key={review.id} className="p-4 rounded-lg border border-border/50 bg-muted/10 hover:bg-muted/30 transition-colors">
                                                             <div className="flex items-start justify-between mb-2">
                                                                 <div className="flex items-center gap-2">
@@ -749,9 +824,12 @@ export default function BrainMarket() {
                                             ) : (
                                                 <div className="flex flex-col items-center justify-center h-48 text-muted-foreground space-y-4">
                                                     <Star className="w-12 h-12 opacity-20" />
-                                                    <p>Reviews will be available soon.</p>
+                                                    <p>{t('bmNoReviewsYet')}</p>
                                                 </div>
                                             )}
+                                                    </>
+                                                );
+                                            })()}
                                         </TabsContent>
                                     </div>
                                 </Tabs>
