@@ -600,14 +600,20 @@ export default function Settings() {
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$0<span className="text-base font-normal text-muted-foreground">/mo</span></div>
                    <div className="space-y-3 mt-6">
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature1")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature1")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature2")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature2")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-emerald-500" /> {t("stFreeFeature3")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature3")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature4")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm pt-3 mt-3 border-t border-border/60">
+                       <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> <span>{t("stFreeFeature5")}</span>
                      </div>
                    </div>
                  </CardContent>
@@ -637,17 +643,23 @@ export default function Settings() {
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$49<span className="text-base font-normal text-muted-foreground">/mo</span></div>
                    <div className="space-y-3 mt-6">
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature1")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature1")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature2")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature2")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature3")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature3")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-primary" /> {t("stProFeature4")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature4")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature5")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm pt-3 mt-3 border-t border-primary/20">
+                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" /> <span>{t("stProFeature6")}</span>
                      </div>
                    </div>
                  </CardContent>
@@ -669,17 +681,23 @@ export default function Settings() {
                  <CardContent>
                    <div className="text-3xl font-bold mb-2">$299<span className="text-base font-normal text-slate-400">/mo</span></div>
                    <div className="space-y-3 mt-6 text-slate-300">
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature1")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature1")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature2")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature2")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature3")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature3")}</span>
                      </div>
-                     <div className="flex items-center gap-2 text-sm">
-                       <Check className="w-4 h-4 text-indigo-400" /> {t("stPremiumFeature4")}
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature4")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature5")}</span>
+                     </div>
+                     <div className="flex items-start gap-2 text-sm pt-3 mt-3 border-t border-slate-700/60">
+                       <Check className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" /> <span>{t("stPremiumFeature6")}</span>
                      </div>
                    </div>
                  </CardContent>
