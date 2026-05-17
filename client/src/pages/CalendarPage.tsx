@@ -215,7 +215,7 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex-1 flex flex-col px-8 pb-6 min-h-0">
-          <div className="grid grid-cols-[280px_1fr] gap-6 flex-1 min-h-0">
+          <div className="grid grid-cols-[280px_1fr] gap-0 flex-1 min-h-0">
             {/* Sidebar */}
             <aside className="space-y-6 overflow-y-auto pt-6 pr-6 border-r border-border">
               {/* Mini calendar */}
@@ -310,7 +310,7 @@ export default function CalendarPage() {
 
             {/* Main calendar */}
             <section className="relative flex flex-col min-h-0 pt-6">
-              <div className="flex items-center justify-between mb-4 shrink-0">
+              <div className="flex items-center justify-between mb-4 shrink-0 pl-6">
                 <div className="flex items-center gap-2">
                   <SidebarToggleButton />
                   <div className="text-base font-semibold">{monthLabel}</div>
