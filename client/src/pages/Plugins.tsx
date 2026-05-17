@@ -802,17 +802,13 @@ export default function Plugins() {
                   <Sparkles className="w-4 h-4 text-violet-500" />
                   이번 주 {PLUGINS.length}개의 새로운 리소스가 추가되었습니다
                 </div>
-                <div className="space-y-1">
-                  <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight leading-tight">
-                    산업데이터의 확장
-                  </h1>
-                  <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
-                    AI 에이전트 마켓 플레이스
-                  </h2>
-                </div>
-                <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-                  공공기관과 민간기업의 프리미엄 데이터 API와 AI 에이전트를 확인해보세요.
-                </p>
+                <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight leading-tight">
+                  필요에 맞게 제작된{' '}
+                  <span className="bg-gradient-to-r from-indigo-500 via-violet-500 to-pink-500 bg-clip-text text-transparent">
+                    강력한 도구
+                  </span>{' '}
+                  살펴보기
+                </h1>
 
                 {/* Gradient-bordered search */}
                 <div className="pt-2 max-w-3xl mx-auto">
