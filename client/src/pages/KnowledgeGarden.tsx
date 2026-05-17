@@ -22,6 +22,7 @@ import { ReactFlow, Background, Controls, useNodesState, useEdgesState, Backgrou
 import "@xyflow/react/dist/style.css";
 import ImageNode from "@/components/graph/ImageNode";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -786,6 +787,7 @@ const WikiLink = ({ children }: { children: string }) => {
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
 
+  const { t } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
