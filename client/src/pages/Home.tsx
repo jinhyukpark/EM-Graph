@@ -577,8 +577,8 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-                          <div className="h-full overflow-auto rounded-xl">
-                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
+                          <div className="h-full rounded-xl">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -603,8 +603,8 @@ export default function Home() {
                   </Select>
                 </div>
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="pr-4" style={{ height: HEIGHT_MAP[blockOptions.timeline.height] }}>
+              <CardContent className="flex-1 min-h-0 pb-4">
+                <ScrollArea className="pr-4 h-full">
                   <div className="relative pl-6">
                     <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
                     <div className="space-y-5">
@@ -657,8 +657,8 @@ export default function Home() {
                       <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
                         {editChrome}
                         {alignBadge}
-                        <div className="h-full overflow-auto rounded-xl">
-                          <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
+                        <div className="h-full rounded-xl">
+                          <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
@@ -689,8 +689,8 @@ export default function Home() {
                 })}
               </div>
             </CardHeader>
-            <CardContent>
-              <ScrollArea className="pr-2" style={{ height: HEIGHT_MAP[blockOptions.feed.height] }}>
+            <CardContent className="flex-1 min-h-0 pb-4">
+              <ScrollArea className="pr-2 h-full">
                 <div className="space-y-3">
                   {displayedFeed.map((item) => (
                     <div key={item.id} className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
@@ -756,8 +756,8 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-                          <div className="h-full overflow-auto rounded-xl">
-                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
+                          <div className="h-full rounded-xl">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
