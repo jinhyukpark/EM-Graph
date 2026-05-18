@@ -144,15 +144,26 @@ const HEIGHT_MAP = { compact: 260, default: 380, expanded: 520 } as const;
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-type GridPos = { x: number; y: number; w: number; h: number; minW?: number; minH?: number };
+type GridPos = { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number };
 const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
-  notes:      { x: 0,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
-  links:      { x: 3,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
-  dbUsage:    { x: 6,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
-  resource:   { x: 9,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
-  timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5 },
-  feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5 },
-  monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6 },
+  notes:      { x: 0,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
+  links:      { x: 3,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
+  dbUsage:    { x: 6,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
+  resource:   { x: 9,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
+  timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
+  feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
+  monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6, maxW: 12 },
+};
+
+const QUARTER = 3;
+const snapW = (w: number) => Math.max(QUARTER, Math.min(12, Math.round(w / QUARTER) * QUARTER));
+const snapX = (x: number, w: number) => {
+  const sx = Math.max(0, Math.round(x / QUARTER) * QUARTER);
+  return Math.min(sx, 12 - w);
+};
+const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
+  const w = snapW(p.w);
+  return { ...p, w, x: snapX(p.x, w), y: Math.max(0, p.y) };
 };
 
 function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
@@ -322,10 +333,11 @@ export default function Home() {
     if (!editMode) return;
     const patch: Partial<Record<BlockKey, GridPos>> = {};
     next.forEach(l => {
-      patch[l.i as BlockKey] = {
+      const def = DEFAULT_GRID_LAYOUT[l.i as BlockKey];
+      patch[l.i as BlockKey] = snapPos({
         x: l.x, y: l.y, w: l.w, h: l.h,
-        minW: l.minW, minH: l.minH,
-      };
+        minW: def?.minW ?? l.minW, minH: def?.minH ?? l.minH, maxW: 12,
+      });
     });
     setGridLayout(patch);
   };
@@ -342,7 +354,7 @@ export default function Home() {
     const def = DEFAULT_GRID_LAYOUT[candidate];
     setGridLayout(prev => ({
       ...prev,
-      [candidate]: { ...def, x: Math.max(0, Math.min(item.x, 12 - def.w)), y: Math.max(0, item.y) },
+      [candidate]: snapPos({ ...def, x: item.x, y: item.y }),
     }));
     setVisibleBlocks(prev => [...prev, candidate]);
   };
