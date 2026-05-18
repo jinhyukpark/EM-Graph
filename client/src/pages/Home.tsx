@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import avatarPark from "@assets/avatars/avatar_park.png";
 import avatarKim from "@assets/avatars/avatar_kim.png";
@@ -22,7 +23,8 @@ import {
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
   Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid,
-  LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle
+  LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
+  Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -180,6 +182,111 @@ const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: str
   monitoring: { labelKo: "KPI 모니터링 차트", label: "KPI Monitoring", descKo: "리소스 구성, AI 토큰, 노트 성장 차트", desc: "Resource, AI tokens, growth charts", icon: BarChart3 },
 };
 
+type BlockOptions = {
+  kpi: { columns: 2 | 4 };
+  timeline: { height: "compact" | "default" | "expanded" };
+  feed: { height: "compact" | "default" | "expanded" };
+  monitoring: { charts: Array<"pie" | "line" | "bar"> };
+};
+
+const DEFAULT_BLOCK_OPTIONS: BlockOptions = {
+  kpi: { columns: 4 },
+  timeline: { height: "default" },
+  feed: { height: "default" },
+  monitoring: { charts: ["pie", "line", "bar"] },
+};
+
+const HEIGHT_MAP = { compact: 260, default: 380, expanded: 520 } as const;
+
+function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
+  const common = "text-foreground/60";
+  switch (type) {
+    case "kpi":
+      return (
+        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
+          {[0, 1, 2, 3].map((i) => (
+            <g key={i}>
+              <rect x={i * 20 + 1.5} y={2} width={17} height={24} rx={2.5} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.6} />
+              <rect x={i * 20 + 4} y={6} width={5} height={5} rx={1} fill="currentColor" fillOpacity={0.35} />
+              <rect x={i * 20 + 4} y={14} width={11} height={2.2} rx={1.1} fill="currentColor" fillOpacity={0.7} />
+              <rect x={i * 20 + 4} y={19} width={7} height={1.6} rx={0.8} fill="currentColor" fillOpacity={0.35} />
+            </g>
+          ))}
+        </svg>
+      );
+    case "timeline":
+      return (
+        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
+          <line x1={5} y1={3} x2={5} y2={25} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.8} />
+          {[0, 1, 2].map((i) => (
+            <g key={i}>
+              <circle cx={5} cy={6 + i * 8} r={1.6} fill="currentColor" fillOpacity={0.85} />
+              <rect x={10} y={4.5 + i * 8} width={66} height={4.5} rx={1.2} fill="currentColor" fillOpacity={0.1} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
+              <rect x={12} y={6 + i * 8} width={28} height={1.4} rx={0.7} fill="currentColor" fillOpacity={0.6} />
+            </g>
+          ))}
+        </svg>
+      );
+    case "feed":
+      return (
+        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <g key={i}>
+              <rect x={2} y={2 + i * 8} width={76} height={6.5} rx={1.5} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
+              <circle cx={6} cy={5.3 + i * 8} r={1.8} fill="currentColor" fillOpacity={0.5} />
+              <rect x={10.5} y={3.6 + i * 8} width={36} height={1.5} rx={0.7} fill="currentColor" fillOpacity={0.7} />
+              <rect x={10.5} y={6 + i * 8} width={56} height={1.2} rx={0.6} fill="currentColor" fillOpacity={0.35} />
+            </g>
+          ))}
+        </svg>
+      );
+    case "monitoring":
+      return (
+        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
+          <rect x={1.5} y={2} width={23} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
+          <circle cx={13} cy={14} r={6.5} fill="none" stroke="currentColor" strokeOpacity={0.65} strokeWidth={2.4} strokeDasharray="22 12" />
+          <rect x={28} y={2} width={23} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
+          <polyline points="30,22 34,17 38,19 42,12 46,15 50,8" fill="none" stroke="currentColor" strokeOpacity={0.7} strokeWidth={1.2} />
+          <rect x={54.5} y={2} width={24} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
+          {[16, 11, 18, 8, 14].map((h, i) => (
+            <rect key={i} x={57 + i * 4} y={24 - h} width={2.6} height={h} rx={0.6} fill="currentColor" fillOpacity={0.55} />
+          ))}
+        </svg>
+      );
+  }
+}
+
+function EditableBlockBadge({
+  blockKey,
+  editMode,
+  popover,
+  language,
+}: {
+  blockKey: BlockKey;
+  editMode: boolean;
+  popover: React.ReactNode;
+  language: "ko" | "en";
+}) {
+  if (!editMode) return null;
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="absolute top-3 right-3 z-20 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:border-primary/50 shadow-sm transition-colors"
+          data-testid={`button-edit-block-${blockKey}`}
+        >
+          <Settings2 className="w-3 h-3" />
+          {language === "ko" ? "수정" : "Edit"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-72 p-3" data-testid={`popover-edit-${blockKey}`}>
+        {popover}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 const BUSINESS_UNITS: { value: string; labelKey: TranslationKey }[] = [
   { value: "steel", labelKey: "steelDivision" },
   { value: "electronics", labelKey: "electronicsDivision" },
@@ -240,6 +347,30 @@ export default function Home() {
   const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
   const [activeTemplateId, setActiveTemplateId] = useState<string>("default");
   const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(DASHBOARD_TEMPLATES[0].blocks);
+  const [blockOptions, setBlockOptions] = useState<BlockOptions>(DEFAULT_BLOCK_OPTIONS);
+
+  const editMode = templatePanelOpen;
+
+  useEffect(() => {
+    if (!templatePanelOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setTemplatePanelOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [templatePanelOpen]);
+
+  const updateBlockOption = <K extends BlockKey>(key: K, patch: Partial<BlockOptions[K]>) => {
+    setBlockOptions(prev => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+  };
+
+  const toggleMonitoringChart = (chart: "pie" | "line" | "bar") => {
+    setBlockOptions(prev => {
+      const has = prev.monitoring.charts.includes(chart);
+      const next = has ? prev.monitoring.charts.filter(c => c !== chart) : [...prev.monitoring.charts, chart];
+      return { ...prev, monitoring: { charts: next.length === 0 ? [chart] : next } };
+    });
+  };
 
   const applyTemplate = (id: string) => {
     const tpl = DASHBOARD_TEMPLATES.find(t => t.id === id);
@@ -286,7 +417,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="relative z-10 container mx-auto px-6 py-8 space-y-6">
+      <div className={`relative z-10 container mx-auto px-6 py-8 space-y-6 transition-[padding] duration-300 ${templatePanelOpen ? "lg:pr-[440px] xl:pr-[480px]" : ""}`}>
 
         {/* ===== 2-1: MAIN PORTAL HEADER ===== */}
         <div className="flex items-center justify-between">
@@ -312,7 +443,50 @@ export default function Home() {
 
         {showKpi && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl p-3 -m-3 bg-primary/[0.02]" : ""}`}>
+            {editMode && (
+              <div className="absolute -top-2.5 left-3 z-20 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-background border border-primary/30 text-primary">
+                <BarChart3 className="w-3 h-3" />
+                {language === "ko" ? "KPI 카드" : "KPI Cards"}
+              </div>
+            )}
+            <EditableBlockBadge
+              blockKey="kpi"
+              editMode={editMode}
+              language={language as "ko" | "en"}
+              popover={
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="w-3.5 h-3.5 text-primary" />
+                    <h4 className="text-sm font-semibold">{language === "ko" ? "KPI 카드 설정" : "KPI Card Settings"}</h4>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                      {language === "ko" ? "열 개수" : "Columns"}
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {([2, 4] as const).map((cols) => (
+                        <button
+                          key={cols}
+                          type="button"
+                          onClick={() => updateBlockOption("kpi", { columns: cols })}
+                          className={`flex flex-col items-center gap-1.5 p-2.5 rounded-md border text-xs transition-colors ${
+                            blockOptions.kpi.columns === cols
+                              ? "border-primary bg-primary/5 text-foreground"
+                              : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
+                          }`}
+                          data-testid={`kpi-cols-${cols}`}
+                        >
+                          {cols === 2 ? <Columns2 className="w-4 h-4" /> : <Columns4 className="w-4 h-4" />}
+                          <span className="font-semibold">{cols} {language === "ko" ? "열" : "cols"}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              }
+            />
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${blockOptions.kpi.columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-2"} gap-4`}>
             {kpiCards.map((stat, i) => (
               <Card key={i} className="bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow" data-testid={`card-kpi-${i}`}>
                 <CardContent className="p-5">
@@ -338,6 +512,7 @@ export default function Home() {
               </Card>
             ))}
           </div>
+          </div>
         </RoleBasedWrapper>
         )}
 
@@ -348,6 +523,44 @@ export default function Home() {
           {/* 2-2: TIMELINE VIEW */}
           {showTimeline && (
           <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
+            <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+            <EditableBlockBadge
+              blockKey="timeline"
+              editMode={editMode}
+              language={language as "ko" | "en"}
+              popover={
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="w-3.5 h-3.5 text-primary" />
+                    <h4 className="text-sm font-semibold">{language === "ko" ? "타임라인 설정" : "Timeline Settings"}</h4>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                      {language === "ko" ? "높이" : "Height"}
+                    </label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {(["compact", "default", "expanded"] as const).map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => updateBlockOption("timeline", { height: h })}
+                          className={`p-2 rounded-md border text-[11px] font-semibold transition-colors ${
+                            blockOptions.timeline.height === h
+                              ? "border-primary bg-primary/5 text-foreground"
+                              : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
+                          }`}
+                          data-testid={`timeline-h-${h}`}
+                        >
+                          {language === "ko"
+                            ? { compact: "컴팩트", default: "기본", expanded: "확장" }[h]
+                            : { compact: "Compact", default: "Default", expanded: "Expanded" }[h]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              }
+            />
             <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -374,7 +587,7 @@ export default function Home() {
                 </div>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="h-[380px] pr-4">
+                <ScrollArea className="pr-4" style={{ height: HEIGHT_MAP[blockOptions.timeline.height] }}>
                   <div className="relative pl-6">
                     <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
                     <div className="space-y-5">
@@ -416,11 +629,50 @@ export default function Home() {
                 </ScrollArea>
               </CardContent>
             </Card>
+            </div>
           </RoleBasedWrapper>
           )}
 
           {/* 2-3: ISSUE FEED */}
           {showFeed && (
+          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+          <EditableBlockBadge
+            blockKey="feed"
+            editMode={editMode}
+            language={language as "ko" | "en"}
+            popover={
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="w-3.5 h-3.5 text-primary" />
+                  <h4 className="text-sm font-semibold">{language === "ko" ? "피드 설정" : "Feed Settings"}</h4>
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                    {language === "ko" ? "높이" : "Height"}
+                  </label>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(["compact", "default", "expanded"] as const).map((h) => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => updateBlockOption("feed", { height: h })}
+                        className={`p-2 rounded-md border text-[11px] font-semibold transition-colors ${
+                          blockOptions.feed.height === h
+                            ? "border-primary bg-primary/5 text-foreground"
+                            : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
+                        }`}
+                        data-testid={`feed-h-${h}`}
+                      >
+                        {language === "ko"
+                          ? { compact: "컴팩트", default: "기본", expanded: "확장" }[h]
+                          : { compact: "Compact", default: "Default", expanded: "Expanded" }[h]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            }
+          />
           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -453,7 +705,7 @@ export default function Home() {
               </div>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[380px] pr-2">
+              <ScrollArea className="pr-2" style={{ height: HEIGHT_MAP[blockOptions.feed.height] }}>
                 <div className="space-y-3">
                   {displayedFeed.map((item) => (
                     <div key={item.id} className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
@@ -508,6 +760,7 @@ export default function Home() {
               </CardFooter>
             )}
           </Card>
+          </div>
           )}
         </div>
         )}
@@ -515,6 +768,48 @@ export default function Home() {
         {/* ===== 2-4: KPI / STATS MONITORING ===== */}
         {showMonitoring && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
+          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+          <EditableBlockBadge
+            blockKey="monitoring"
+            editMode={editMode}
+            language={language as "ko" | "en"}
+            popover={
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Settings2 className="w-3.5 h-3.5 text-primary" />
+                  <h4 className="text-sm font-semibold">{language === "ko" ? "모니터링 차트 설정" : "Monitoring Charts"}</h4>
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                    {language === "ko" ? "표시할 차트" : "Visible charts"}
+                  </label>
+                  <div className="space-y-1.5">
+                    {([
+                      { key: "pie" as const, icon: PieIcon, labelKo: "리소스 구성 (파이)", label: "Resource (Pie)" },
+                      { key: "line" as const, icon: LineIcon, labelKo: "AI 토큰 추이 (라인)", label: "AI Tokens (Line)" },
+                      { key: "bar" as const, icon: BarChart2, labelKo: "노트 성장 (바)", label: "Note Growth (Bar)" },
+                    ]).map((c) => {
+                      const enabled = blockOptions.monitoring.charts.includes(c.key);
+                      const Icon = c.icon;
+                      return (
+                        <div key={c.key} className={`flex items-center gap-2 p-2 rounded-md border ${enabled ? "border-border bg-background" : "border-dashed border-border bg-muted/20"}`}>
+                          <Icon className={`w-3.5 h-3.5 ${enabled ? "text-primary" : "text-muted-foreground"}`} />
+                          <span className={`text-xs flex-1 ${enabled ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                            {language === "ko" ? c.labelKo : c.label}
+                          </span>
+                          <Switch
+                            checked={enabled}
+                            onCheckedChange={() => toggleMonitoringChart(c.key)}
+                            data-testid={`monitoring-chart-${c.key}`}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            }
+          />
           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -559,7 +854,12 @@ export default function Home() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className={`grid grid-cols-1 gap-6 ${
+                blockOptions.monitoring.charts.length === 3 ? "lg:grid-cols-3" :
+                blockOptions.monitoring.charts.length === 2 ? "lg:grid-cols-2" :
+                "lg:grid-cols-1"
+              }`}>
+                {blockOptions.monitoring.charts.includes("pie") && (
                 <div>
                   <h3 className="text-sm font-semibold mb-3">{t("ovChartResourceComposition")}</h3>
                   <div className="h-[220px] flex items-center">
@@ -590,7 +890,9 @@ export default function Home() {
                     </ResponsiveContainer>
                   </div>
                 </div>
+                )}
 
+                {blockOptions.monitoring.charts.includes("line") && (
                 <div>
                   <h3 className="text-sm font-semibold mb-3">{t("ovChartAiTokenTrend")}</h3>
                   <div className="h-[220px]">
@@ -615,7 +917,9 @@ export default function Home() {
                     </ResponsiveContainer>
                   </div>
                 </div>
+                )}
 
+                {blockOptions.monitoring.charts.includes("bar") && (
                 <div>
                   <h3 className="text-sm font-semibold mb-3">{t("ovChartNoteGrowth")}</h3>
                   <div className="h-[220px]">
@@ -637,9 +941,11 @@ export default function Home() {
                     </ResponsiveContainer>
                   </div>
                 </div>
+                )}
               </div>
             </CardContent>
           </Card>
+          </div>
         </RoleBasedWrapper>
         )}
 
@@ -668,24 +974,40 @@ export default function Home() {
         )}
       </div>
 
-      {/* TEMPLATE EDIT PANEL */}
-      <Sheet open={templatePanelOpen} onOpenChange={setTemplatePanelOpen}>
-        <SheetContent className="w-[420px] sm:w-[460px] p-0 flex flex-col" data-testid="sheet-template-panel">
-          <SheetHeader className="px-6 pt-6 pb-4 border-b border-border">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 rounded-md bg-primary/10 text-primary">
-                <LayoutTemplate className="w-4 h-4" />
+      {/* TEMPLATE EDIT PANEL (non-modal side panel, no backdrop) */}
+      {templatePanelOpen && (
+        <div
+          className="fixed right-0 top-0 bottom-0 w-[420px] sm:w-[460px] bg-background border-l border-border shadow-2xl z-40 flex flex-col animate-in slide-in-from-right duration-300"
+          data-testid="panel-template"
+        >
+          <div className="px-6 pt-6 pb-4 border-b border-border">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                    <LayoutTemplate className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base font-semibold">
+                    {language === "ko" ? "대시보드 템플릿" : "Dashboard Template"}
+                  </h2>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {language === "ko"
+                    ? "프리셋을 선택하거나 각 블록의 [수정] 버튼으로 형상을 직접 조정할 수 있습니다."
+                    : "Pick a preset, or click [Edit] on each block to adjust its shape."}
+                </p>
               </div>
-              <SheetTitle className="text-base">
-                {language === "ko" ? "대시보드 템플릿" : "Dashboard Template"}
-              </SheetTitle>
+              <button
+                type="button"
+                onClick={() => setTemplatePanelOpen(false)}
+                className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                data-testid="button-close-template-panel"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <SheetDescription className="text-xs">
-              {language === "ko"
-                ? "프리셋을 선택하거나 표시할 블록을 직접 켜고 끌 수 있습니다."
-                : "Pick a preset or toggle individual blocks on and off."}
-            </SheetDescription>
-          </SheetHeader>
+          </div>
 
           <ScrollArea className="flex-1">
             <div className="px-6 py-5 space-y-6">
@@ -734,22 +1056,21 @@ export default function Home() {
                             <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                               {language === "ko" ? tpl.descriptionKo : tpl.description}
                             </p>
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {(["kpi", "timeline", "feed", "monitoring"] as BlockKey[]).map((b) => {
-                                const included = tpl.blocks.includes(b);
-                                return (
-                                  <span
-                                    key={b}
-                                    className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
-                                      included
-                                        ? "bg-foreground/10 text-foreground"
-                                        : "bg-muted/40 text-muted-foreground/50 line-through"
-                                    }`}
-                                  >
+                            {/* Mini stacked previews */}
+                            <div className="mt-2.5 space-y-1 p-2 rounded-md bg-background/60 border border-border/60">
+                              {tpl.blocks.length === 0 && (
+                                <div className="text-[10px] text-muted-foreground/60 italic text-center py-1.5">
+                                  {language === "ko" ? "표시 없음" : "Nothing"}
+                                </div>
+                              )}
+                              {tpl.blocks.map((b) => (
+                                <div key={b} className="flex items-center gap-2">
+                                  <BlockPreview type={b} className="w-14 h-5 shrink-0" />
+                                  <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">
                                     {language === "ko" ? BLOCK_META[b].labelKo : BLOCK_META[b].label}
                                   </span>
-                                );
-                              })}
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -759,7 +1080,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* BLOCK TOGGLES */}
+              {/* BLOCK TOGGLES with PREVIEWS */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
@@ -772,7 +1093,7 @@ export default function Home() {
                     </Badge>
                   )}
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {(["kpi", "timeline", "feed", "monitoring"] as BlockKey[]).map((b) => {
                     const meta = BLOCK_META[b];
                     const Icon = meta.icon;
@@ -780,32 +1101,48 @@ export default function Home() {
                     return (
                       <div
                         key={b}
-                        className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                        className={`rounded-lg border transition-colors overflow-hidden ${
                           enabled ? "border-border bg-background" : "border-dashed border-border bg-muted/20"
                         }`}
                         data-testid={`block-toggle-${b}`}
                       >
-                        <div className={`p-1.5 rounded-md ${enabled ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
-                          <Icon className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold flex items-center gap-1.5">
-                            {language === "ko" ? meta.labelKo : meta.label}
-                            {!enabled && <EyeOff className="w-3 h-3 text-muted-foreground" />}
+                        <div className="flex items-stretch">
+                          {/* Preview thumbnail */}
+                          <div className={`shrink-0 w-20 flex items-center justify-center px-2 border-r ${
+                            enabled ? "bg-muted/30 border-border" : "bg-muted/10 border-dashed border-border opacity-60"
+                          }`}>
+                            <BlockPreview type={b} className="w-16 h-7" />
                           </div>
-                          <p className="text-[10px] text-muted-foreground leading-snug">
-                            {language === "ko" ? meta.descKo : meta.desc}
-                          </p>
+                          {/* Info & switch */}
+                          <div className="flex-1 flex items-center gap-2 p-3 min-w-0">
+                            <div className={`p-1.5 rounded-md shrink-0 ${enabled ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-semibold flex items-center gap-1.5">
+                                {language === "ko" ? meta.labelKo : meta.label}
+                                {!enabled && <EyeOff className="w-3 h-3 text-muted-foreground" />}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground leading-snug truncate">
+                                {language === "ko" ? meta.descKo : meta.desc}
+                              </p>
+                            </div>
+                            <Switch
+                              checked={enabled}
+                              onCheckedChange={() => toggleBlock(b)}
+                              data-testid={`switch-block-${b}`}
+                            />
+                          </div>
                         </div>
-                        <Switch
-                          checked={enabled}
-                          onCheckedChange={() => toggleBlock(b)}
-                          data-testid={`switch-block-${b}`}
-                        />
                       </div>
                     );
                   })}
                 </div>
+                <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                  {language === "ko"
+                    ? "팁: 패널이 열린 상태에서 각 블록 우상단의 [수정] 버튼으로 열·높이·차트 등을 조정할 수 있습니다."
+                    : "Tip: While this panel is open, click [Edit] on the top-right of each block to tune columns, height, charts, and more."}
+                </p>
               </div>
             </div>
           </ScrollArea>
@@ -815,7 +1152,7 @@ export default function Home() {
               variant="ghost"
               size="sm"
               className="gap-1.5 text-xs"
-              onClick={() => applyTemplate("default")}
+              onClick={() => { applyTemplate("default"); setBlockOptions(DEFAULT_BLOCK_OPTIONS); }}
               data-testid="button-template-reset"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -831,8 +1168,8 @@ export default function Home() {
               {language === "ko" ? "완료" : "Done"}
             </Button>
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      )}
 
       {/* EVENT DETAIL DRAWER */}
       <Sheet open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
