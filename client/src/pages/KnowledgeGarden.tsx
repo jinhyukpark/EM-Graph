@@ -3301,8 +3301,8 @@ function ShareNotebookDialog({
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>(["공급망", "코오롱베니트", "ERP"]);
   const [tagInput, setTagInput] = useState("");
-  const [pricingModel, setPricingModel] = useState<"free" | "paid">("paid");
-  const [price, setPrice] = useState("49.99");
+  const [pricingModel, setPricingModel] = useState<"free" | "paid">("free");
+  const [price, setPrice] = useState("0");
   const [updateFrequency, setUpdateFrequency] = useState("Weekly");
   const [features, setFeatures] = useState<string[]>([
     "1차/2차 협력사 매핑 12,400+ 노드",
@@ -3576,40 +3576,21 @@ function ShareNotebookDialog({
                       </button>
                       <button
                         type="button"
-                        onClick={() => setPricingModel("paid")}
+                        disabled
                         data-testid="button-pricing-paid"
-                        className={cn(
-                          "p-3 rounded-lg border text-left transition-all",
-                          pricingModel === "paid"
-                            ? "border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/30"
-                            : "border-border bg-background hover:bg-muted/60"
-                        )}
+                        title="유료 구독 모델은 준비 중입니다"
+                        className="relative p-3 rounded-lg border border-dashed border-border bg-muted/30 text-left transition-all cursor-not-allowed opacity-60"
                       >
                         <div className="flex items-center gap-1.5 mb-0.5">
-                          <DollarSign className="w-3.5 h-3.5 text-indigo-600" />
-                          <span className="text-sm font-semibold">유료 구독</span>
+                          <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-sm font-semibold text-muted-foreground">유료 구독</span>
                         </div>
                         <p className="text-[11px] text-muted-foreground">월정액 구독 모델</p>
+                        <span className="absolute top-2 right-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-muted text-muted-foreground border border-border">
+                          준비 중
+                        </span>
                       </button>
                     </div>
-                    {pricingModel === "paid" && (
-                      <div className="flex items-center gap-2 pt-1">
-                        <span className="text-xs text-muted-foreground">월</span>
-                        <div className="relative flex-1 max-w-[180px]">
-                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            className="pl-6"
-                            data-testid="input-share-price"
-                          />
-                        </div>
-                        <span className="text-xs text-muted-foreground">/ 사용자</span>
-                      </div>
-                    )}
                   </div>
 
                   <div className="space-y-1.5">
