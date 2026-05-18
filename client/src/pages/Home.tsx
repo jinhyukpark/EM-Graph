@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
-import { Reorder } from "framer-motion";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
+import { Responsive, WidthProvider } from "react-grid-layout";
+type RglLayout = { i: string; x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number; maxH?: number; static?: boolean; isDraggable?: boolean; isResizable?: boolean };
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -115,70 +118,6 @@ type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed"
 const KPI_KEYS: BlockKey[] = ["notes", "links", "dbUsage", "resource"];
 const isKpiKey = (k: BlockKey) => KPI_KEYS.includes(k);
 
-type DashboardTemplate = {
-  id: string;
-  name: string;
-  nameKo: string;
-  description: string;
-  descriptionKo: string;
-  blocks: BlockKey[];
-  accent: string;
-  icon: typeof BarChart3;
-};
-
-const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
-  {
-    id: "default",
-    name: "Full Overview",
-    nameKo: "기본 (전체 보기)",
-    description: "All blocks: KPI cards, timeline, activity feed, monitoring charts",
-    descriptionKo: "KPI 카드, 타임라인, 활동 피드, 모니터링 차트 모두 표시",
-    blocks: ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"],
-    accent: "from-blue-500/15 to-indigo-500/15 border-indigo-200 dark:border-indigo-900",
-    icon: LayoutGrid,
-  },
-  {
-    id: "activity",
-    name: "Activity-focused",
-    nameKo: "활동 중심",
-    description: "KPI + Timeline + Activity Feed (no charts)",
-    descriptionKo: "KPI 카드, 타임라인, 활동 피드 (차트 제외)",
-    blocks: ["notes", "links", "dbUsage", "resource", "timeline", "feed"],
-    accent: "from-emerald-500/15 to-teal-500/15 border-emerald-200 dark:border-emerald-900",
-    icon: Bell,
-  },
-  {
-    id: "analytics",
-    name: "Analytics",
-    nameKo: "분석 중심",
-    description: "KPI cards and monitoring charts only",
-    descriptionKo: "KPI 카드와 모니터링 차트만 표시",
-    blocks: ["notes", "links", "dbUsage", "resource", "monitoring"],
-    accent: "from-violet-500/15 to-purple-500/15 border-violet-200 dark:border-violet-900",
-    icon: BarChart3,
-  },
-  {
-    id: "compact",
-    name: "Compact",
-    nameKo: "컴팩트",
-    description: "KPI and activity feed only",
-    descriptionKo: "KPI 카드와 활동 피드만",
-    blocks: ["notes", "links", "dbUsage", "resource", "feed"],
-    accent: "from-amber-500/15 to-orange-500/15 border-amber-200 dark:border-amber-900",
-    icon: Newspaper,
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    nameKo: "미니멀",
-    description: "KPI cards only",
-    descriptionKo: "KPI 카드만 표시",
-    blocks: ["notes", "links", "dbUsage", "resource"],
-    accent: "from-slate-500/15 to-slate-400/15 border-slate-200 dark:border-slate-800",
-    icon: Zap,
-  },
-];
-
 const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: string; desc: string; icon: typeof BarChart3 }> = {
   notes: { labelKo: "노트", label: "Notes", descKo: "총 노트 수 및 전일 대비 변화", desc: "Total notes count", icon: StickyNote },
   links: { labelKo: "링크", label: "Links", descKo: "노트 간 연결 수", desc: "Note-to-note connections", icon: Link2 },
@@ -202,6 +141,19 @@ const DEFAULT_BLOCK_OPTIONS: BlockOptions = {
 };
 
 const HEIGHT_MAP = { compact: 260, default: 380, expanded: 520 } as const;
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+type GridPos = { x: number; y: number; w: number; h: number; minW?: number; minH?: number };
+const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
+  notes:      { x: 0,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
+  links:      { x: 3,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
+  dbUsage:    { x: 6,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
+  resource:   { x: 9,  y: 0,  w: 3, h: 3, minW: 2, minH: 2 },
+  timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5 },
+  feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5 },
+  monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6 },
+};
 
 function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
   const common = "text-foreground/60";
@@ -259,55 +211,6 @@ function BlockPreview({ type, className = "" }: { type: BlockKey; className?: st
         </svg>
       );
   }
-}
-
-function DeleteBlockButton({
-  blockKey,
-  onDelete,
-  language,
-  position = "outside",
-}: {
-  blockKey: BlockKey;
-  onDelete: () => void;
-  language: "ko" | "en";
-  position?: "outside" | "inside";
-}) {
-  const posClass = position === "inside" ? "top-2 right-2" : "-top-2.5 -right-2.5";
-  return (
-    <button
-      type="button"
-      onClick={onDelete}
-      className={`absolute ${posClass} z-30 inline-flex items-center justify-center w-7 h-7 rounded-full border border-destructive/40 bg-background hover:bg-destructive hover:text-destructive-foreground text-destructive shadow-md transition-colors`}
-      data-testid={`button-delete-block-${blockKey}`}
-      aria-label={language === "ko" ? "삭제" : "Remove"}
-      title={language === "ko" ? "이 컴포넌트 삭제" : "Remove this component"}
-    >
-      <X className="w-3.5 h-3.5" />
-    </button>
-  );
-}
-
-function DragHandleHint({ language, position = "outside" }: { language: "ko" | "en"; position?: "outside" | "inside" }) {
-  const posClass = position === "inside" ? "top-2 left-2" : "-top-2.5 -left-2.5";
-  return (
-    <div
-      className={`absolute ${posClass} z-30 inline-flex items-center justify-center w-7 h-7 rounded-full border border-primary/40 bg-background text-primary shadow-md cursor-grab active:cursor-grabbing`}
-      title={language === "ko" ? "드래그하여 순서 변경" : "Drag to reorder"}
-    >
-      <GripVertical className="w-3.5 h-3.5" />
-    </div>
-  );
-}
-
-function BlockEditLabel({ blockKey, language }: { blockKey: BlockKey; language: "ko" | "en" }) {
-  const meta = BLOCK_META[blockKey];
-  const Icon = meta.icon;
-  return (
-    <div className="absolute -top-2.5 left-3 z-20 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-background border border-primary/30 text-primary shadow-sm">
-      <Icon className="w-3 h-3" />
-      {language === "ko" ? meta.labelKo : meta.label}
-    </div>
-  );
 }
 
 const BUSINESS_UNITS: { value: string; labelKey: TranslationKey }[] = [
@@ -368,8 +271,9 @@ export default function Home() {
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
   const [visibleFeedCount, setVisibleFeedCount] = useState(4);
   const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
-  const [activeTemplateId, setActiveTemplateId] = useState<string>("default");
-  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(DASHBOARD_TEMPLATES[0].blocks);
+  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
+  const [gridLayout, setGridLayout] = useState<Partial<Record<BlockKey, GridPos>>>({});
+  const [draggingPaletteItem, setDraggingPaletteItem] = useState<BlockKey | null>(null);
   const [blockOptions, setBlockOptions] = useState<BlockOptions>(DEFAULT_BLOCK_OPTIONS);
 
   const editMode = templatePanelOpen;
@@ -383,63 +287,69 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [templatePanelOpen]);
 
-  const applyTemplate = (id: string) => {
-    const tpl = DASHBOARD_TEMPLATES.find(t => t.id === id);
-    if (!tpl) return;
-    setActiveTemplateId(id);
-    setVisibleBlocks(tpl.blocks);
-  };
+  const posFor = (k: BlockKey): GridPos => gridLayout[k] ?? DEFAULT_GRID_LAYOUT[k];
 
-  const matchTemplateForOrder = (blocks: BlockKey[]): string => {
-    const sig = blocks.join("|");
-    const matched = DASHBOARD_TEMPLATES.find(t => t.blocks.join("|") === sig);
-    return matched ? matched.id : "custom";
-  };
+  const rglLayout: RglLayout[] = useMemo(
+    () => visibleBlocks.map(k => ({ i: k, ...posFor(k) })),
+    [visibleBlocks, gridLayout]
+  );
 
-  const toggleBlock = (key: BlockKey) => {
-    setVisibleBlocks(prev => {
-      const next = prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
-      setActiveTemplateId(matchTemplateForOrder(next));
-      return next;
-    });
-  };
-
-  const visibleKpiKeys = visibleBlocks.filter(isKpiKey);
-  const showKpi = visibleKpiKeys.length > 0;
-  const showTimeline = visibleBlocks.includes("timeline");
-  const showFeed = visibleBlocks.includes("feed");
-  const showMonitoring = visibleBlocks.includes("monitoring");
+  const droppingItem = useMemo(() => {
+    if (!draggingPaletteItem) return undefined;
+    const d = DEFAULT_GRID_LAYOUT[draggingPaletteItem];
+    return { i: draggingPaletteItem, w: d.w, h: d.h };
+  }, [draggingPaletteItem]);
 
   const removeBlock = (key: BlockKey) => {
-    setVisibleBlocks(prev => {
-      const next = prev.filter(k => k !== key);
-      setActiveTemplateId(matchTemplateForOrder(next));
-      return next;
+    setVisibleBlocks(prev => prev.filter(k => k !== key));
+    setGridLayout(prev => {
+      const { [key]: _, ...rest } = prev;
+      return rest;
     });
   };
 
   const addBlock = (key: BlockKey) => {
-    setVisibleBlocks(prev => {
-      if (prev.includes(key)) return prev;
-      let next: BlockKey[];
-      if (isKpiKey(key)) {
-        const lastKpiIdx = prev.map(isKpiKey).lastIndexOf(true);
-        const insertAt = lastKpiIdx === -1 ? 0 : lastKpiIdx + 1;
-        next = [...prev.slice(0, insertAt), key, ...prev.slice(insertAt)];
-      } else {
-        next = [...prev, key];
-      }
-      setActiveTemplateId(matchTemplateForOrder(next));
-      return next;
-    });
+    if (visibleBlocks.includes(key)) return;
+    const maxY = rglLayout.reduce((m, l) => Math.max(m, l.y + l.h), 0);
+    setGridLayout(prev => ({
+      ...prev,
+      [key]: { ...DEFAULT_GRID_LAYOUT[key], x: 0, y: maxY },
+    }));
+    setVisibleBlocks(prev => [...prev, key]);
   };
 
-  const handleKpiReorder = (newKpiOrder: BlockKey[]) => {
-    setVisibleBlocks(prev => {
-      const next = [...newKpiOrder, ...prev.filter(k => !isKpiKey(k))];
-      setActiveTemplateId(matchTemplateForOrder(next));
-      return next;
+  const handleLayoutChange = (next: RglLayout[]) => {
+    if (!editMode) return;
+    const patch: Partial<Record<BlockKey, GridPos>> = {};
+    next.forEach(l => {
+      patch[l.i as BlockKey] = {
+        x: l.x, y: l.y, w: l.w, h: l.h,
+        minW: l.minW, minH: l.minH,
+      };
     });
+    setGridLayout(patch);
+  };
+
+  const handleDrop = (_layout: RglLayout[], item: RglLayout, e: Event) => {
+    const fromState = draggingPaletteItem;
+    const fromItem = (item?.i && item.i !== "__dropping__") ? item.i : undefined;
+    const dt = (e as unknown as { dataTransfer?: DataTransfer | null })?.dataTransfer;
+    const fromDt = dt?.getData("text/plain") || undefined;
+    const candidate = (fromState || fromItem || fromDt) as BlockKey | undefined;
+    setDraggingPaletteItem(null);
+    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"];
+    if (!candidate || !valid.includes(candidate) || visibleBlocks.includes(candidate)) return;
+    const def = DEFAULT_GRID_LAYOUT[candidate];
+    setGridLayout(prev => ({
+      ...prev,
+      [candidate]: { ...def, x: Math.max(0, Math.min(item.x, 12 - def.w)), y: Math.max(0, item.y) },
+    }));
+    setVisibleBlocks(prev => [...prev, candidate]);
+  };
+
+  const resetLayout = () => {
+    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
+    setGridLayout({});
   };
 
   const filteredFeed = feedItems.filter(item => feedFilter === "all" || item.source === feedFilter);
@@ -473,95 +383,139 @@ export default function Home() {
             <p className="text-muted-foreground text-sm">{t("systemStatusDesc")}</p>
           </div>
           <div className="flex items-center gap-3">
-            {activeTemplateId !== "default" && (
-              <Badge variant="outline" className="gap-1 text-[10px] h-6 px-2 border-indigo-200 text-indigo-700 bg-indigo-50/60 dark:bg-indigo-950/30 dark:border-indigo-900 dark:text-indigo-300" data-testid="badge-active-template">
+            {editMode && (
+              <Badge variant="outline" className="gap-1 text-[10px] h-6 px-2 border-primary/40 text-primary bg-primary/5" data-testid="badge-edit-mode">
                 <LayoutTemplate className="w-3 h-3" />
-                {language === "ko"
-                  ? (DASHBOARD_TEMPLATES.find(t => t.id === activeTemplateId)?.nameKo ?? "사용자 지정")
-                  : (DASHBOARD_TEMPLATES.find(t => t.id === activeTemplateId)?.name ?? "Custom")}
+                {language === "ko" ? "편집 모드" : "Edit mode"}
               </Badge>
             )}
-            <Button className="gap-2 h-9 text-sm shadow-lg shadow-primary/20" onClick={() => setTemplatePanelOpen(true)} data-testid="button-edit-template">
+            <Button
+              variant={editMode ? "default" : "default"}
+              className="gap-2 h-9 text-sm shadow-lg shadow-primary/20"
+              onClick={() => setTemplatePanelOpen(v => !v)}
+              data-testid="button-edit-template"
+            >
               <LayoutTemplate className="w-4 h-4" />
-              {t("ovEditTemplate")}
+              {editMode
+                ? (language === "ko" ? "편집 완료" : "Done editing")
+                : t("ovEditTemplate")}
             </Button>
           </div>
         </div>
 
-        {showKpi && (
-        <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-          <Reorder.Group
-            axis="x"
-            values={visibleKpiKeys}
-            onReorder={handleKpiReorder}
-            as="div"
-            className={`grid grid-cols-1 md:grid-cols-2 ${
-              ({ 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as Record<number, string>)[Math.min(Math.max(visibleKpiKeys.length, 1), 4)]
-            } gap-4 list-none ${editMode ? "p-3 -m-3 rounded-xl ring-2 ring-primary/20 bg-primary/[0.02]" : ""}`}
-            data-testid="group-kpi-cards"
-          >
-            {visibleKpiKeys.map((key) => {
-              const stat = kpiCardsData[key as "notes" | "links" | "dbUsage" | "resource"];
-              return (
-                <Reorder.Item
-                  key={key}
-                  value={key}
-                  as="div"
-                  className="relative"
-                  dragListener={editMode}
-                  whileDrag={{ scale: 1.03, zIndex: 40 }}
-                  data-testid={`kpi-item-${key}`}
-                >
-                  {editMode && (
+        {visibleBlocks.length === 0 ? (
+            <Card className="bg-card/60 border-dashed border-border" data-testid="card-empty-template">
+              <CardContent className="py-16 flex flex-col items-center justify-center gap-3 text-center">
+                <div className="p-3 rounded-full bg-muted/50 text-muted-foreground">
+                  <LayoutTemplate className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold mb-1">
+                    {language === "ko" ? "표시할 블록이 없습니다" : "No blocks to display"}
+                  </h3>
+                  <p className="text-xs text-muted-foreground max-w-sm">
+                    {language === "ko"
+                      ? "오른쪽 패널을 열고 컴포넌트를 메인 영역으로 드래그해 추가하세요."
+                      : "Open the right panel and drag components into the main area."}
+                  </p>
+                </div>
+                <Button size="sm" className="mt-2 gap-1.5" onClick={() => setTemplatePanelOpen(true)} data-testid="button-empty-open-template">
+                  <LayoutTemplate className="w-3.5 h-3.5" />
+                  {language === "ko" ? "컴포넌트 추가" : "Add components"}
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div
+              className={`relative ${editMode ? "rounded-xl ring-2 ring-primary/15 ring-offset-2 ring-offset-background bg-primary/[0.02] p-2" : ""}`}
+              onDragOver={(e) => { if (editMode) e.preventDefault(); }}
+            >
+              <ResponsiveGridLayout
+                className="layout"
+                layouts={{ lg: rglLayout, md: rglLayout, sm: rglLayout, xs: rglLayout, xxs: rglLayout }}
+                breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
+                rowHeight={56}
+                margin={[16, 16]}
+                containerPadding={[0, 0]}
+                isDraggable={editMode}
+                isResizable={editMode}
+                isDroppable={editMode}
+                droppingItem={droppingItem}
+                onLayoutChange={handleLayoutChange}
+                onDrop={handleDrop}
+                draggableHandle=".drag-handle"
+                draggableCancel=".no-drag"
+                compactType="vertical"
+                preventCollision={false}
+                useCSSTransforms={true}
+              >
+                {visibleBlocks.map((key) => {
+                  const meta = BLOCK_META[key];
+                  const editChrome = editMode ? (
                     <>
-                      <DragHandleHint language={language as "ko" | "en"} />
-                      <DeleteBlockButton blockKey={key} onDelete={() => removeBlock(key)} language={language as "ko" | "en"} />
-                    </>
-                  )}
-                  <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
-                    <CardContent className="p-5">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
-                          <stat.icon className="w-5 h-5" />
-                        </div>
-                        <Badge
-                          variant={stat.changeDir === "up" ? "default" : "secondary"}
-                          className={`font-mono text-xs px-2 py-0.5 gap-1 ${
-                            stat.changeDir === "up"
-                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                              : ""
-                          }`}
-                        >
-                          {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
-                          {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
-                        </Badge>
+                      <div
+                        className="drag-handle absolute -top-2 left-3 z-30 inline-flex items-center gap-1 pl-1 pr-1.5 py-0.5 rounded-md bg-primary text-primary-foreground text-[10px] font-semibold shadow-sm cursor-grab active:cursor-grabbing select-none"
+                        title={language === "ko" ? "여기를 잡아 위치 이동" : "Grab to move"}
+                      >
+                        <GripVertical className="w-3 h-3 opacity-80" />
+                        <meta.icon className="w-3 h-3" />
+                        {language === "ko" ? meta.labelKo : meta.label}
                       </div>
-                      <div className="text-2xl font-bold mb-1">{stat.value}</div>
-                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
-                    </CardContent>
-                  </Card>
-                </Reorder.Item>
-              );
-            })}
-          </Reorder.Group>
-        </RoleBasedWrapper>
-        )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); removeBlock(key); }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        className="no-drag absolute -top-2 -right-2 z-30 w-6 h-6 inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-md hover:scale-110 transition-transform"
+                        aria-label={language === "ko" ? "삭제" : "Remove"}
+                        data-testid={`button-remove-${key}`}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  ) : null;
 
-        {/* ===== 2-2 & 2-3: TIMELINE + ISSUE FEED (side by side) ===== */}
-        {(showTimeline || showFeed) && (
-        <div className={`grid grid-cols-1 ${showTimeline && showFeed ? "md:grid-cols-2" : "md:grid-cols-1"} gap-6`}>
+                  if (isKpiKey(key)) {
+                    const stat = kpiCardsData[key as "notes" | "links" | "dbUsage" | "resource"];
+                    return (
+                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
+                          <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
+                        <CardContent className="p-5 h-full flex flex-col justify-center">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
+                              <stat.icon className="w-5 h-5" />
+                            </div>
+                            <Badge
+                              variant={stat.changeDir === "up" ? "default" : "secondary"}
+                              className={`font-mono text-xs px-2 py-0.5 gap-1 ${
+                                stat.changeDir === "up"
+                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                  : ""
+                              }`}
+                            >
+                              {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
+                              {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
+                            </Badge>
+                          </div>
+                          <div className="text-2xl font-bold mb-1">{stat.value}</div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
+                        </CardContent>
+                      </Card>
+                        </RoleBasedWrapper>
+                      </div>
+                    );
+                  }
 
-          {/* 2-2: TIMELINE VIEW */}
-          {showTimeline && (
-          <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-            <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-            {editMode && (
-              <>
-                <BlockEditLabel blockKey="timeline" language={language as "ko" | "en"} />
-                <DeleteBlockButton blockKey="timeline" onDelete={() => removeBlock("timeline")} language={language as "ko" | "en"} />
-              </>
-            )}
-            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
+                  if (key === "timeline") {
+                    return (
+                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
+                          <div className="h-full overflow-auto rounded-xl">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -629,20 +583,18 @@ export default function Home() {
                 </ScrollArea>
               </CardContent>
             </Card>
-            </div>
-          </RoleBasedWrapper>
-          )}
+                          </div>
+                        </RoleBasedWrapper>
+                      </div>
+                    );
+                  }
 
-          {/* 2-3: ISSUE FEED */}
-          {showFeed && (
-          <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-          {editMode && (
-            <>
-              <BlockEditLabel blockKey="feed" language={language as "ko" | "en"} />
-              <DeleteBlockButton blockKey="feed" onDelete={() => removeBlock("feed")} language={language as "ko" | "en"} />
-            </>
-          )}
-          <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
+                  if (key === "feed") {
+                    return (
+                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        <div className="h-full overflow-auto rounded-xl">
+                          <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
@@ -729,22 +681,18 @@ export default function Home() {
               </CardFooter>
             )}
           </Card>
-          </div>
-          )}
-        </div>
-        )}
+                        </div>
+                      </div>
+                    );
+                  }
 
-        {/* ===== 2-4: KPI / STATS MONITORING ===== */}
-        {showMonitoring && (
-        <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-          <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-          {editMode && (
-            <>
-              <BlockEditLabel blockKey="monitoring" language={language as "ko" | "en"} />
-              <DeleteBlockButton blockKey="monitoring" onDelete={() => removeBlock("monitoring")} language={language as "ko" | "en"} />
-            </>
-          )}
-          <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
+                  if (key === "monitoring") {
+                    return (
+                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
+                          <div className="h-full overflow-auto rounded-xl">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -879,33 +827,17 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-          </div>
-        </RoleBasedWrapper>
-        )}
+                          </div>
+                        </RoleBasedWrapper>
+                      </div>
+                    );
+                  }
 
-        {!showKpi && !showTimeline && !showFeed && !showMonitoring && (
-          <Card className="bg-card/60 border-dashed border-border" data-testid="card-empty-template">
-            <CardContent className="py-16 flex flex-col items-center justify-center gap-3 text-center">
-              <div className="p-3 rounded-full bg-muted/50 text-muted-foreground">
-                <LayoutTemplate className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-base font-semibold mb-1">
-                  {language === "ko" ? "표시할 블록이 없습니다" : "No blocks to display"}
-                </h3>
-                <p className="text-xs text-muted-foreground max-w-sm">
-                  {language === "ko"
-                    ? "오른쪽 상단의 Edit Template 버튼을 눌러 표시할 블록을 선택하세요."
-                    : "Click Edit Template at the top right to choose blocks to display."}
-                </p>
-              </div>
-              <Button size="sm" className="mt-2 gap-1.5" onClick={() => setTemplatePanelOpen(true)} data-testid="button-empty-open-template">
-                <LayoutTemplate className="w-3.5 h-3.5" />
-                {t("ovEditTemplate")}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                  return null;
+                })}
+              </ResponsiveGridLayout>
+            </div>
+          )}
       </div>
 
       {/* TEMPLATE EDIT PANEL (non-modal side panel, no backdrop) */}
@@ -927,8 +859,8 @@ export default function Home() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {language === "ko"
-                    ? "프리셋을 선택하거나, 메인 영역에서 컴포넌트의 X 버튼으로 삭제하고 KPI 카드는 드래그로 순서를 바꿀 수 있습니다. 아래 팔레트에서 컴포넌트를 다시 추가하세요."
-                    : "Pick a preset, or remove components with X in the main area and drag KPI cards to reorder. Add components back from the palette below."}
+                    ? "오른쪽의 컴포넌트를 왼쪽 영역으로 끌어다 놓으세요. 각 컴포넌트는 모서리를 잡아 크기를 조절하고, 헤더를 잡아 위치를 옮길 수 있습니다."
+                    : "Drag components from the right into the main area. Resize from edges and reposition by dragging the header."}
                 </p>
               </div>
               <button
@@ -944,193 +876,86 @@ export default function Home() {
           </div>
 
           <ScrollArea className="flex-1">
-            <div className="px-6 py-5 space-y-6">
-              {/* PRESET TEMPLATES */}
+            <div className="px-6 py-5 space-y-4">
+              {/* COMPONENT PALETTE — drag into main area */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    {language === "ko" ? "프리셋 템플릿" : "Preset Templates"}
+                    {language === "ko" ? "컴포넌트 팔레트" : "Component Palette"}
                   </h3>
-                  <span className="text-[10px] text-muted-foreground">
-                    {DASHBOARD_TEMPLATES.length} {language === "ko" ? "개" : "presets"}
-                  </span>
+                  <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-1 border-primary/30 text-primary bg-primary/5">
+                    <GripVertical className="w-2.5 h-2.5" />
+                    {language === "ko" ? "드래그" : "Drag"}
+                  </Badge>
                 </div>
-                <div className="space-y-2">
-                  {DASHBOARD_TEMPLATES.map((tpl) => {
-                    const Icon = tpl.icon;
-                    const isActive = activeTemplateId === tpl.id;
-                    return (
-                      <button
-                        key={tpl.id}
-                        type="button"
-                        onClick={() => applyTemplate(tpl.id)}
-                        data-testid={`template-${tpl.id}`}
-                        className={`w-full text-left rounded-lg border transition-all p-3 group ${
-                          isActive
-                            ? `bg-gradient-to-br ${tpl.accent} border-2 shadow-sm`
-                            : "border-border bg-background hover:bg-muted/40 hover:border-foreground/20"
-                        }`}
-                      >
-                        <div className="flex items-start gap-2.5">
-                          <div className={`p-1.5 rounded-md ${isActive ? "bg-background/80" : "bg-muted/60"} text-foreground shrink-0`}>
-                            <Icon className="w-3.5 h-3.5" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2">
-                              <h4 className="text-sm font-semibold">
-                                {language === "ko" ? tpl.nameKo : tpl.name}
-                              </h4>
-                              {isActive && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-300">
-                                  <Check className="w-3 h-3" />
-                                  {language === "ko" ? "사용 중" : "Active"}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
-                              {language === "ko" ? tpl.descriptionKo : tpl.description}
-                            </p>
-                            {/* Mini stacked previews */}
-                            <div className="mt-2.5 space-y-1 p-2 rounded-md bg-background/60 border border-border/60">
-                              {tpl.blocks.length === 0 && (
-                                <div className="text-[10px] text-muted-foreground/60 italic text-center py-1.5">
-                                  {language === "ko" ? "표시 없음" : "Nothing"}
-                                </div>
-                              )}
-                              {(() => {
-                                const kpis = tpl.blocks.filter(isKpiKey);
-                                const others = tpl.blocks.filter(b => !isKpiKey(b));
-                                const rows: Array<{ key: string; label: string; preview: BlockKey }> = [];
-                                if (kpis.length > 0) {
-                                  rows.push({
-                                    key: "kpi-group",
-                                    label: language === "ko" ? `KPI 카드 (${kpis.length})` : `KPI Cards (${kpis.length})`,
-                                    preview: kpis[0],
-                                  });
-                                }
-                                others.forEach(b => rows.push({
-                                  key: b,
-                                  label: language === "ko" ? BLOCK_META[b].labelKo : BLOCK_META[b].label,
-                                  preview: b,
-                                }));
-                                return rows.map(r => (
-                                  <div key={r.key} className="flex items-center gap-2">
-                                    <BlockPreview type={r.preview} className="w-14 h-5 shrink-0" />
-                                    <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">
-                                      {r.label}
-                                    </span>
-                                  </div>
-                                ));
-                              })()}
-                            </div>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* AVAILABLE COMPONENTS PALETTE */}
-              <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    {language === "ko" ? "사용 가능한 컴포넌트" : "Available Components"}
-                  </h3>
-                  {activeTemplateId === "custom" && (
-                    <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-1 border-amber-200 text-amber-700 bg-amber-50/60 dark:bg-amber-950/30 dark:border-amber-900 dark:text-amber-300">
-                      <Sparkle className="w-2.5 h-2.5" />
-                      {language === "ko" ? "사용자 지정" : "Custom"}
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-[10px] text-muted-foreground leading-relaxed mb-2.5">
+                <p className="text-[10px] text-muted-foreground leading-relaxed mb-3">
                   {language === "ko"
-                    ? "추가하려면 컴포넌트를 클릭하세요. 삭제는 메인 영역에서 각 컴포넌트의 X 버튼을 누르면 됩니다. KPI 카드는 드래그로 순서를 바꿀 수 있습니다."
-                    : "Click a component to add it. To remove, press X on the component in the main area. KPI cards can be reordered by dragging."}
+                    ? "아래 컴포넌트를 왼쪽 영역으로 끌어다 놓아 레이아웃을 만드세요. 추가된 컴포넌트는 모서리로 크기를 조절하고, 빈 곳을 잡아 위치를 옮길 수 있습니다. 삭제는 카드의 X 버튼을 누르세요."
+                    : "Drag a component into the main area to build your layout. Resize from edges, reposition by dragging, and remove via the X button on each card."}
                 </p>
                 {(() => {
                   const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"] as BlockKey[]);
-                  const hidden = allKeys.filter(k => !visibleBlocks.includes(k));
-                  const visible = allKeys.filter(k => visibleBlocks.includes(k));
                   return (
-                    <div className="space-y-3">
-                      {hidden.length > 0 && (
-                        <div>
-                          <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                            <Plus className="w-3 h-3" />
-                            {language === "ko" ? "추가할 수 있는 컴포넌트" : "Available to add"}
-                          </div>
-                          <div className="space-y-1.5">
-                            {hidden.map((b) => {
-                              const meta = BLOCK_META[b];
-                              const Icon = meta.icon;
-                              return (
-                                <button
-                                  key={b}
-                                  type="button"
-                                  onClick={() => addBlock(b)}
-                                  className="w-full rounded-lg border border-dashed border-border bg-muted/10 hover:border-primary/50 hover:bg-primary/5 transition-colors overflow-hidden text-left group"
-                                  data-testid={`button-add-component-${b}`}
-                                >
-                                  <div className="flex items-stretch">
-                                    <div className="shrink-0 w-20 flex items-center justify-center px-2 border-r border-dashed border-border bg-muted/10 opacity-70 group-hover:opacity-100">
-                                      <BlockPreview type={b} className="w-16 h-7" />
-                                    </div>
-                                    <div className="flex-1 flex items-center gap-2 p-3 min-w-0">
-                                      <div className="p-1.5 rounded-md shrink-0 bg-muted/40 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">
-                                        <Icon className="w-3.5 h-3.5" />
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-semibold flex items-center gap-1.5 text-muted-foreground group-hover:text-foreground">
-                                          {language === "ko" ? meta.labelKo : meta.label}
-                                        </div>
-                                        <p className="text-[10px] text-muted-foreground leading-snug truncate">
-                                          {language === "ko" ? meta.descKo : meta.desc}
-                                        </p>
-                                      </div>
-                                      <div className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-primary/30 bg-background text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                                        <Plus className="w-3.5 h-3.5" />
-                                      </div>
-                                    </div>
+                    <div className="space-y-1.5">
+                      {allKeys.map((b) => {
+                        const meta = BLOCK_META[b];
+                        const Icon = meta.icon;
+                        const inLayout = visibleBlocks.includes(b);
+                        return (
+                          <div
+                            key={b}
+                            draggable={!inLayout}
+                            onDragStart={(e) => {
+                              if (inLayout) { e.preventDefault(); return; }
+                              setDraggingPaletteItem(b);
+                              e.dataTransfer.setData("text/plain", b);
+                              e.dataTransfer.effectAllowed = "move";
+                            }}
+                            onDragEnd={() => setDraggingPaletteItem(null)}
+                            className={`group rounded-lg border overflow-hidden ${
+                              inLayout
+                                ? "border-emerald-300/60 bg-emerald-50/40 dark:bg-emerald-950/20 dark:border-emerald-900/60 opacity-70"
+                                : "border-dashed border-border bg-muted/10 hover:border-primary/50 hover:bg-primary/5 cursor-grab active:cursor-grabbing"
+                            } transition-colors`}
+                            data-testid={`palette-item-${b}`}
+                          >
+                            <div className="flex items-stretch">
+                              <div className="shrink-0 w-7 flex items-center justify-center bg-muted/30 text-muted-foreground group-hover:text-primary">
+                                {inLayout ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <GripVertical className="w-3.5 h-3.5" />}
+                              </div>
+                              <div className="shrink-0 w-20 flex items-center justify-center px-2 border-l border-r border-dashed border-border/60 bg-muted/5 opacity-70 group-hover:opacity-100">
+                                <BlockPreview type={b} className="w-16 h-7" />
+                              </div>
+                              <div className="flex-1 flex items-center gap-2 p-2.5 min-w-0">
+                                <div className={`p-1.5 rounded-md shrink-0 ${inLayout ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-muted/40 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                                  <Icon className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-semibold truncate">
+                                    {language === "ko" ? meta.labelKo : meta.label}
                                   </div>
-                                </button>
-                              );
-                            })}
+                                  <p className="text-[10px] text-muted-foreground leading-snug truncate">
+                                    {inLayout
+                                      ? (language === "ko" ? "레이아웃에 추가됨" : "Added to layout")
+                                      : (language === "ko" ? meta.descKo : meta.desc)}
+                                  </p>
+                                </div>
+                                {!inLayout && (
+                                  <button
+                                    type="button"
+                                    onClick={() => addBlock(b)}
+                                    className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-primary/30 bg-background text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                                    data-testid={`button-add-component-${b}`}
+                                    title={language === "ko" ? "클릭으로 추가" : "Click to add"}
+                                  >
+                                    <Plus className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      {visible.length > 0 && (
-                        <div>
-                          <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                            <Check className="w-3 h-3 text-emerald-600" />
-                            {language === "ko" ? "현재 레이아웃에 있음" : "In current layout"}
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {visible.map((b) => {
-                              const meta = BLOCK_META[b];
-                              const Icon = meta.icon;
-                              return (
-                                <span
-                                  key={b}
-                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-background text-[11px] font-medium"
-                                  data-testid={`badge-active-${b}`}
-                                >
-                                  <Icon className="w-3 h-3 text-primary" />
-                                  {language === "ko" ? meta.labelKo : meta.label}
-                                </span>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      {hidden.length === 0 && (
-                        <div className="text-[11px] text-muted-foreground text-center py-3 border border-dashed border-border rounded-md bg-muted/10">
-                          {language === "ko"
-                            ? "모든 컴포넌트가 이미 레이아웃에 있습니다."
-                            : "All components are already in the layout."}
-                        </div>
-                      )}
+                        );
+                      })}
                     </div>
                   );
                 })()}
@@ -1143,7 +968,7 @@ export default function Home() {
               variant="ghost"
               size="sm"
               className="gap-1.5 text-xs"
-              onClick={() => { applyTemplate("default"); setBlockOptions(DEFAULT_BLOCK_OPTIONS); }}
+              onClick={() => { resetLayout(); setBlockOptions(DEFAULT_BLOCK_OPTIONS); }}
               data-testid="button-template-reset"
             >
               <RotateCcw className="w-3.5 h-3.5" />
