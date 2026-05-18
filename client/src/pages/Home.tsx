@@ -285,6 +285,7 @@ export default function Home() {
   const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
   const [gridLayout, setGridLayout] = useState<Partial<Record<BlockKey, GridPos>>>({});
   const [draggingPaletteItem, setDraggingPaletteItem] = useState<BlockKey | null>(null);
+  const [alignSnap, setAlignSnap] = useState<{ key: BlockKey; h: number; matchedKeys: BlockKey[] } | null>(null);
   const [blockOptions, setBlockOptions] = useState<BlockOptions>(DEFAULT_BLOCK_OPTIONS);
 
   const editMode = templatePanelOpen;
@@ -340,6 +341,39 @@ export default function Home() {
       });
     });
     setGridLayout(patch);
+  };
+
+  const HEIGHT_SNAP_TOLERANCE = 1;
+  const handleResize = (
+    _layout: RglLayout[],
+    _oldItem: RglLayout,
+    newItem: RglLayout,
+    placeholder: RglLayout,
+  ) => {
+    if (!editMode) return;
+    const others = (_layout || []).filter(l => l.i !== newItem.i);
+    let bestH: number | null = null;
+    let bestDiff = HEIGHT_SNAP_TOLERANCE + 1;
+    const matched: BlockKey[] = [];
+    for (const o of others) {
+      const diff = Math.abs(o.h - newItem.h);
+      if (diff <= HEIGHT_SNAP_TOLERANCE && diff < bestDiff) {
+        bestDiff = diff;
+        bestH = o.h;
+      }
+    }
+    if (bestH !== null) {
+      newItem.h = bestH;
+      placeholder.h = bestH;
+      others.forEach(o => { if (o.h === bestH) matched.push(o.i as BlockKey); });
+      setAlignSnap({ key: newItem.i as BlockKey, h: bestH, matchedKeys: matched });
+    } else {
+      setAlignSnap(null);
+    }
+  };
+
+  const handleResizeStop = () => {
+    setAlignSnap(null);
   };
 
   const handleDrop = (_layout: RglLayout[], item: RglLayout, e: Event) => {
@@ -456,6 +490,8 @@ export default function Home() {
                 droppingItem={droppingItem}
                 onLayoutChange={handleLayoutChange}
                 onDrop={handleDrop}
+                onResize={handleResize}
+                onResizeStop={handleResizeStop}
                 draggableHandle=".drag-handle"
                 draggableCancel=".no-drag"
                 compactType="vertical"
@@ -464,6 +500,19 @@ export default function Home() {
               >
                 {visibleBlocks.map((key) => {
                   const meta = BLOCK_META[key];
+                  const isAlignSource = alignSnap?.key === key;
+                  const isAlignMatched = alignSnap?.matchedKeys.includes(key);
+                  const alignRing = isAlignSource
+                    ? "ring-2 ring-emerald-500 ring-offset-1 ring-offset-background"
+                    : isAlignMatched
+                      ? "ring-2 ring-emerald-400/70 ring-offset-1 ring-offset-background"
+                      : "";
+                  const alignBadge = (isAlignSource || isAlignMatched) && editMode ? (
+                    <div className="no-drag absolute -bottom-2 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-semibold shadow-md pointer-events-none">
+                      <Check className="w-3 h-3" />
+                      {language === "ko" ? `높이 맞춤 (${alignSnap?.h}행)` : `Height matched (${alignSnap?.h})`}
+                    </div>
+                  ) : null;
                   const editChrome = editMode ? (
                     <>
                       <div
@@ -491,8 +540,9 @@ export default function Home() {
                   if (isKpiKey(key)) {
                     const stat = kpiCardsData[key as "notes" | "links" | "dbUsage" | "resource"];
                     return (
-                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
                         {editChrome}
+                        {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
                           <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
                         <CardContent className="p-5 h-full flex flex-col justify-center">
@@ -523,8 +573,9 @@ export default function Home() {
 
                   if (key === "timeline") {
                     return (
-                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
                         {editChrome}
+                        {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full overflow-auto rounded-xl">
                             <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
@@ -603,8 +654,9 @@ export default function Home() {
 
                   if (key === "feed") {
                     return (
-                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
                         {editChrome}
+                        {alignBadge}
                         <div className="h-full overflow-auto rounded-xl">
                           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
@@ -700,8 +752,9 @@ export default function Home() {
 
                   if (key === "monitoring") {
                     return (
-                      <div key={key} className="relative" data-testid={`grid-item-${key}`}>
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
                         {editChrome}
+                        {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full overflow-auto rounded-xl">
                             <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
