@@ -3209,7 +3209,7 @@ function ShareNotebookDialog({
   const [description, setDescription] = useState(
     "코오롱베니트의 주요 협력사, 원자재 흐름, 물류 거점 관계를 통합한 공급망 지식 그래프입니다."
   );
-  const [category, setCategory] = useState("supply-chain");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>(["공급망", "코오롱베니트", "ERP"]);
   const [tagInput, setTagInput] = useState("");
   const [pricingModel, setPricingModel] = useState<"free" | "paid">("paid");
@@ -3225,20 +3225,26 @@ function ShareNotebookDialog({
   const [authorBio, setAuthorBio] = useState(
     "그룹사 공급망 데이터 표준화 및 통합 분석을 담당하는 사내 데이터 전략팀입니다."
   );
+  const [authorHistory, setAuthorHistory] = useState<string[]>([
+    "2024: 그룹사 통합 공급망 그래프 v2 출시",
+    "2023: 사내 데이터 표준화 프로젝트 수행",
+    "10년+ 그룹사 ERP/MES 데이터 운영 경험",
+  ]);
+  const [authorHistoryInput, setAuthorHistoryInput] = useState("");
+  const [authorCredibility, setAuthorCredibility] = useState(
+    "코오롱그룹 11개 계열사가 사용 중인 사내 인증 데이터셋입니다."
+  );
   const [includeOntology, setIncludeOntology] = useState(true);
-  const [visibility, setVisibility] = useState<"public" | "org" | "limited">("public");
-
-  const CATEGORIES = [
-    { id: "supply-chain", label: "공급망 / SCM" },
-    { id: "finance", label: "재무 / 회계" },
-    { id: "hr", label: "조직 / 인사" },
-    { id: "sales", label: "영업 / 고객" },
-    { id: "rnd", label: "R&D / 제조" },
-    { id: "compliance", label: "컴플라이언스" },
-    { id: "other", label: "기타" },
-  ];
 
   const UPDATE_FREQS = ["Hourly", "Daily", "Weekly", "Bi-weekly", "Monthly"];
+
+  const datasetStats = {
+    nodes: 12438,
+    edges: 28901,
+    entityTypes: 24,
+    relationTypes: 18,
+    dataSources: 7,
+  };
 
   const addTag = () => {
     const t = tagInput.trim();
@@ -3379,31 +3385,44 @@ function ShareNotebookDialog({
                     <p className="text-[10px] text-muted-foreground">{description.length}자</p>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-foreground">카테고리</label>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {CATEGORIES.map((c) => (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => setCategory(c.id)}
-                          data-testid={`button-category-${c.id}`}
-                          className={cn(
-                            "px-2.5 py-2 rounded-md border text-xs font-medium transition-all text-left",
-                            category === c.id
-                              ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40"
-                              : "border-border bg-background hover:bg-muted/60 text-muted-foreground"
-                          )}
-                        >
-                          {c.label}
-                        </button>
-                      ))}
+                    <label className="text-xs font-semibold text-foreground">대표 이미지</label>
+                    <div
+                      className={cn(
+                        "relative aspect-[16/9] rounded-lg border-2 border-dashed flex items-center justify-center overflow-hidden cursor-pointer transition-colors group",
+                        coverImage
+                          ? "border-indigo-300"
+                          : "border-border bg-muted/30 hover:bg-muted/50 hover:border-indigo-400"
+                      )}
+                      onClick={() =>
+                        setCoverImage(
+                          coverImage
+                            ? null
+                            : "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=800&h=450&fit=crop"
+                        )
+                      }
+                      data-testid="button-share-cover"
+                    >
+                      {coverImage ? (
+                        <>
+                          <img src={coverImage} alt="cover" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <span className="text-white text-xs font-medium">변경 / 제거</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center px-4">
+                          <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-1.5" />
+                          <p className="text-xs font-medium text-foreground">대표 이미지 업로드</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">권장 1600 × 900, PNG/JPG · 최대 5MB</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="rounded-lg border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-900 p-3 flex gap-2.5">
                     <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                     <div className="text-[11px] text-blue-800 dark:text-blue-300 leading-relaxed">
                       노트북의 본문, 첨부 자료, 연결된 온톨로지는 자동으로 그래프 데이터셋으로 변환됩니다.
-                      현재 노트북에서 <span className="font-semibold">노드 12,438개 · 관계 28,901개</span>가 감지되었습니다.
+                      데이터셋 통계와 온톨로지 미리보기는 다음 단계에서 확인할 수 있습니다.
                     </div>
                   </div>
                 </>
@@ -3527,39 +3546,42 @@ function ShareNotebookDialog({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-foreground">공개 범위</label>
-                    <div className="space-y-1.5">
-                      {[
-                        { id: "public", label: "전체 공개", desc: "모든 마켓 방문자에게 노출" },
-                        { id: "org", label: "조직 내 공개", desc: "코오롱베니트 조직 구성원만" },
-                        { id: "limited", label: "초대 전용", desc: "지정된 사용자만 구독 가능" },
-                      ].map((v) => (
-                        <button
-                          key={v.id}
-                          type="button"
-                          onClick={() => setVisibility(v.id as any)}
-                          data-testid={`button-visibility-${v.id}`}
-                          className={cn(
-                            "w-full flex items-start gap-2.5 p-2.5 rounded-md border text-left transition-all",
-                            visibility === v.id
-                              ? "border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/20"
-                              : "border-border bg-background hover:bg-muted/60"
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "w-4 h-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center",
-                              visibility === v.id ? "border-indigo-500" : "border-muted-foreground/40"
-                            )}
-                          >
-                            {visibility === v.id && <div className="w-2 h-2 rounded-full bg-indigo-500" />}
+                    <label className="text-xs font-semibold text-foreground">자동 감지된 데이터셋 통계</label>
+                    <div className="rounded-lg border border-border bg-muted/20 p-3">
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div className="rounded-md bg-background border border-border px-2.5 py-2">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">노드</div>
+                          <div className="text-base font-bold text-foreground" data-testid="stat-nodes">
+                            {datasetStats.nodes.toLocaleString()}
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium">{v.label}</div>
-                            <div className="text-[11px] text-muted-foreground">{v.desc}</div>
+                        </div>
+                        <div className="rounded-md bg-background border border-border px-2.5 py-2">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">관계</div>
+                          <div className="text-base font-bold text-foreground" data-testid="stat-edges">
+                            {datasetStats.edges.toLocaleString()}
                           </div>
-                        </button>
-                      ))}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="rounded-md bg-background border border-border px-2.5 py-2">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">엔터티 타입</div>
+                          <div className="text-sm font-semibold text-foreground" data-testid="stat-entity-types">
+                            {datasetStats.entityTypes}
+                          </div>
+                        </div>
+                        <div className="rounded-md bg-background border border-border px-2.5 py-2">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">관계 타입</div>
+                          <div className="text-sm font-semibold text-foreground" data-testid="stat-relation-types">
+                            {datasetStats.relationTypes}
+                          </div>
+                        </div>
+                        <div className="rounded-md bg-background border border-border px-2.5 py-2">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">데이터 소스</div>
+                          <div className="text-sm font-semibold text-foreground" data-testid="stat-data-sources">
+                            {datasetStats.dataSources}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -3627,13 +3649,78 @@ function ShareNotebookDialog({
                     />
                   </div>
 
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">제공자 이력 / 실적</label>
+                    <div className="flex gap-1.5">
+                      <Input
+                        value={authorHistoryInput}
+                        onChange={(e) => setAuthorHistoryInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            const v = authorHistoryInput.trim();
+                            if (v) {
+                              setAuthorHistory([...authorHistory, v]);
+                              setAuthorHistoryInput("");
+                            }
+                          }
+                        }}
+                        placeholder="예: 2024 그룹사 통합 공급망 그래프 v2 출시"
+                        data-testid="input-share-author-history"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const v = authorHistoryInput.trim();
+                          if (v) {
+                            setAuthorHistory([...authorHistory, v]);
+                            setAuthorHistoryInput("");
+                          }
+                        }}
+                        data-testid="button-add-author-history"
+                      >
+                        추가
+                      </Button>
+                    </div>
+                    <div className="space-y-1 mt-1">
+                      {authorHistory.map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-muted/40 border border-border"
+                          data-testid={`author-history-${i}`}
+                        >
+                          <BadgeCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                          <span className="text-xs flex-1">{h}</span>
+                          <button
+                            onClick={() => setAuthorHistory(authorHistory.filter((_, idx) => idx !== i))}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">신뢰도 / 인증 문구</label>
+                    <Textarea
+                      value={authorCredibility}
+                      onChange={(e) => setAuthorCredibility(e.target.value)}
+                      rows={2}
+                      placeholder="예: 코오롱그룹 11개 계열사가 사용 중인 사내 인증 데이터셋입니다."
+                      data-testid="textarea-share-author-credibility"
+                    />
+                  </div>
+
                   <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-md bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center shrink-0">
-                      <Network className="w-4 h-4 text-violet-600" />
+                    <div className="w-12 h-12 rounded-md bg-gradient-to-br from-violet-100 to-indigo-100 dark:from-violet-950/40 dark:to-indigo-950/40 flex items-center justify-center shrink-0">
+                      <Network className="w-5 h-5 text-violet-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="text-sm font-semibold">온톨로지 구조 함께 게시</div>
+                        <div className="text-sm font-semibold">온톨로지 미리보기 함께 게시</div>
                         <Switch
                           checked={includeOntology}
                           onCheckedChange={setIncludeOntology}
@@ -3641,7 +3728,7 @@ function ShareNotebookDialog({
                         />
                       </div>
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        엔터티 타입 24개, 관계 타입 18개가 자동으로 추출됩니다.
+                        엔터티 {datasetStats.entityTypes}개 · 관계 {datasetStats.relationTypes}개로 구성된 온톨로지 다이어그램이 자동 생성되어 카드에 함께 노출됩니다.
                       </p>
                     </div>
                   </div>
