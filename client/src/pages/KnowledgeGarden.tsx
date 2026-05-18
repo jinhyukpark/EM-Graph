@@ -14,7 +14,7 @@ import {
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
-  Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2,
+  Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2, Palette, Check,
   Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -119,6 +119,29 @@ const STATUS_OPTIONS = [
   { id: 'review', label: 'Review', color: 'bg-orange-500' },
   { id: 'done', label: 'Done', color: 'bg-green-500' },
   { id: 'hold', label: 'Hold', color: 'bg-red-500' },
+];
+
+const TEXT_COLORS = [
+  { id: 'default', name: '기본 (다크)', value: '#0f172a' },
+  { id: 'gray', name: '회색', value: '#64748b' },
+  { id: 'white', name: '흰색', value: '#ffffff' },
+  { id: 'red', name: '빨강', value: '#ef4444' },
+  { id: 'rose', name: '로즈', value: '#f43f5e' },
+  { id: 'pink', name: '핑크', value: '#ec4899' },
+  { id: 'fuchsia', name: '푸시아', value: '#d946ef' },
+  { id: 'purple', name: '퍼플', value: '#a855f7' },
+  { id: 'violet', name: '바이올렛', value: '#8b5cf6' },
+  { id: 'indigo', name: '인디고', value: '#6366f1' },
+  { id: 'blue', name: '블루', value: '#3b82f6' },
+  { id: 'sky', name: '스카이', value: '#0ea5e9' },
+  { id: 'cyan', name: '시안', value: '#06b6d4' },
+  { id: 'teal', name: '틸', value: '#14b8a6' },
+  { id: 'emerald', name: '에메랄드', value: '#10b981' },
+  { id: 'green', name: '그린', value: '#22c55e' },
+  { id: 'lime', name: '라임', value: '#84cc16' },
+  { id: 'yellow', name: '옐로우', value: '#eab308' },
+  { id: 'amber', name: '앰버', value: '#f59e0b' },
+  { id: 'orange', name: '오렌지', value: '#f97316' },
 ];
 
 const INITIAL_FILE_TREE = [
@@ -1081,6 +1104,7 @@ export default function KnowledgeGarden() {
   const [showSearch, setShowSearch] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
+  const [textColor, setTextColor] = useState<string>(TEXT_COLORS[0].value);
   const [docDate, setDocDate] = useState<Date>(new Date(2025, 11, 15)); // Dec 15, 2025
   const [docTags, setDocTags] = useState<string[]>(['Battery', 'EV']);
   const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
@@ -2192,6 +2216,52 @@ export default function KnowledgeGarden() {
                   <button data-testid="editor-italic" title="기울임" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
                     <Italic className="w-4 h-4" />
                   </button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        data-testid="editor-color"
+                        title="글자 색상"
+                        className="h-8 w-8 inline-flex flex-col items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors gap-0.5"
+                      >
+                        <span className="text-[11px] font-bold leading-none" style={{ color: textColor }}>A</span>
+                        <span className="block w-4 h-1 rounded-sm" style={{ backgroundColor: textColor }} />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" sideOffset={6} className="w-auto p-3 rounded-xl shadow-xl border border-border" data-testid="popover-color">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">글자 색상</p>
+                      <div className="grid grid-cols-5 gap-1.5 w-[180px]">
+                        {TEXT_COLORS.map((c) => (
+                          <button
+                            key={c.value}
+                            type="button"
+                            onClick={() => setTextColor(c.value)}
+                            title={c.name}
+                            data-testid={`color-${c.id}`}
+                            className={cn(
+                              "relative w-7 h-7 rounded-md border transition-all hover:scale-110",
+                              textColor === c.value ? "border-foreground ring-2 ring-offset-1 ring-foreground/30" : "border-border/60"
+                            )}
+                            style={{ backgroundColor: c.value }}
+                          >
+                            {textColor === c.value && (
+                              <Check className={cn("absolute inset-0 m-auto w-3.5 h-3.5", c.id === "white" || c.id === "yellow" || c.id === "lime" || c.id === "amber" || c.id === "cyan" ? "text-black" : "text-white")} />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="border-t border-border mt-3 pt-2 flex items-center justify-between gap-2">
+                        <span className="text-[11px] text-muted-foreground">현재: <span className="font-medium text-foreground">{TEXT_COLORS.find(c => c.value === textColor)?.name ?? "사용자 지정"}</span></span>
+                        <button
+                          type="button"
+                          onClick={() => setTextColor("#0f172a")}
+                          className="text-[11px] text-indigo-600 hover:text-indigo-700 font-medium"
+                          data-testid="button-color-reset"
+                        >
+                          초기화
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   <div className="w-px h-5 bg-border mx-1" />
                   <button data-testid="editor-list" title="글머리 기호" className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors">
                     <List className="w-4 h-4" />
