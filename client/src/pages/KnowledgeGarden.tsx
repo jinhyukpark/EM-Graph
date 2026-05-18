@@ -14,7 +14,8 @@ import {
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
-  Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2
+  Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2,
+  Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1304,6 +1305,7 @@ export default function KnowledgeGarden() {
   };
 
   const [showManageSubsDialog, setShowManageSubsDialog] = useState(false);
+  const [showShareNotebookDialog, setShowShareNotebookDialog] = useState(false);
 
   const [treeSearchQuery, setTreeSearchQuery] = useState("");
   const [treeViewMode, setTreeViewMode] = useState<TreeViewMode>({ showNoteCount: true, showSharedCount: true, showNew: true });
@@ -1696,7 +1698,14 @@ export default function KnowledgeGarden() {
                           <DropdownMenuItem onClick={handleAddNewFile} data-testid="item-add-note" className="text-sm">
                             새 노트 추가
                           </DropdownMenuItem>
-                          <DropdownMenuItem data-testid="item-share-notebook" className="text-sm">
+                          <DropdownMenuItem
+                            data-testid="item-share-notebook"
+                            className="text-sm"
+                            onSelect={(e) => {
+                              e.preventDefault();
+                              setShowShareNotebookDialog(true);
+                            }}
+                          >
                             노트북 공유
                           </DropdownMenuItem>
                           <DropdownMenuSub>
@@ -2939,6 +2948,10 @@ export default function KnowledgeGarden() {
             onOpenChange={setShowDeleteDialog} 
             onConfirm={confirmDeleteSession} 
           />
+          <ShareNotebookDialog
+            open={showShareNotebookDialog}
+            onOpenChange={setShowShareNotebookDialog}
+          />
           <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
             <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" data-testid="dialog-search">
               <DialogHeader className="sr-only">
@@ -3176,6 +3189,521 @@ function SubscriptionManageDialog({
             닫기
           </Button>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ShareNotebookDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const [title, setTitle] = useState("코오롱베니트 공급망 인텔리전스");
+  const [description, setDescription] = useState(
+    "코오롱베니트의 주요 협력사, 원자재 흐름, 물류 거점 관계를 통합한 공급망 지식 그래프입니다."
+  );
+  const [category, setCategory] = useState("supply-chain");
+  const [tags, setTags] = useState<string[]>(["공급망", "코오롱베니트", "ERP"]);
+  const [tagInput, setTagInput] = useState("");
+  const [pricingModel, setPricingModel] = useState<"free" | "paid">("paid");
+  const [price, setPrice] = useState("49.99");
+  const [updateFrequency, setUpdateFrequency] = useState("Weekly");
+  const [features, setFeatures] = useState<string[]>([
+    "1차/2차 협력사 매핑 12,400+ 노드",
+    "주간 ERP 데이터 자동 동기화",
+    "리스크 스코어 및 대체 공급사 추천",
+  ]);
+  const [featureInput, setFeatureInput] = useState("");
+  const [authorRole, setAuthorRole] = useState("코오롱베니트 데이터 전략팀");
+  const [authorBio, setAuthorBio] = useState(
+    "그룹사 공급망 데이터 표준화 및 통합 분석을 담당하는 사내 데이터 전략팀입니다."
+  );
+  const [includeOntology, setIncludeOntology] = useState(true);
+  const [visibility, setVisibility] = useState<"public" | "org" | "limited">("public");
+
+  const CATEGORIES = [
+    { id: "supply-chain", label: "공급망 / SCM" },
+    { id: "finance", label: "재무 / 회계" },
+    { id: "hr", label: "조직 / 인사" },
+    { id: "sales", label: "영업 / 고객" },
+    { id: "rnd", label: "R&D / 제조" },
+    { id: "compliance", label: "컴플라이언스" },
+    { id: "other", label: "기타" },
+  ];
+
+  const UPDATE_FREQS = ["Hourly", "Daily", "Weekly", "Bi-weekly", "Monthly"];
+
+  const addTag = () => {
+    const t = tagInput.trim();
+    if (t && !tags.includes(t)) setTags([...tags, t]);
+    setTagInput("");
+  };
+  const removeTag = (t: string) => setTags(tags.filter((x) => x !== t));
+
+  const addFeature = () => {
+    const f = featureInput.trim();
+    if (f) setFeatures([...features, f]);
+    setFeatureInput("");
+  };
+  const removeFeature = (i: number) => setFeatures(features.filter((_, idx) => idx !== i));
+
+  const reset = () => {
+    setStep(1);
+    setSubmitted(false);
+    setSubmitting(false);
+  };
+
+  const handleClose = (next: boolean) => {
+    if (!next) {
+      onOpenChange(false);
+      setTimeout(reset, 250);
+    } else {
+      onOpenChange(true);
+    }
+  };
+
+  const handleSubmit = () => {
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setSubmitted(true);
+      toast.success("브레인 마켓에 등록 요청이 접수되었습니다.");
+    }, 1100);
+  };
+
+  const canNext1 = title.trim().length > 0 && description.trim().length > 10;
+  const canNext2 = tags.length > 0 && (pricingModel === "free" || Number(price) > 0);
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent
+        className="max-w-2xl p-0 gap-0 overflow-hidden"
+        data-testid="dialog-share-notebook"
+      >
+        <div className="px-6 pt-5 pb-4 border-b border-border bg-gradient-to-br from-indigo-50/60 via-white to-blue-50/40 dark:from-indigo-950/40 dark:via-background dark:to-blue-950/20">
+          <DialogHeader className="space-y-1">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-md shadow-indigo-500/20">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <DialogTitle className="text-base font-bold tracking-tight">
+                  브레인 마켓에 노트북 공유
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground">
+                  노트북을 그래프 데이터셋으로 변환하여 마켓에 등록합니다.
+                </DialogDescription>
+              </div>
+              {!submitted && (
+                <Badge variant="outline" className="text-[10px] font-medium border-indigo-200 text-indigo-700 bg-white/70 dark:bg-background/60">
+                  Step {step} / 3
+                </Badge>
+              )}
+            </div>
+          </DialogHeader>
+          {!submitted && (
+            <div className="mt-4 flex items-center gap-1.5">
+              {[1, 2, 3].map((s) => (
+                <div
+                  key={s}
+                  className={cn(
+                    "h-1 flex-1 rounded-full transition-colors",
+                    s <= step ? "bg-indigo-500" : "bg-muted"
+                  )}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {submitted ? (
+          <div className="px-6 py-10 flex flex-col items-center text-center" data-testid="share-submitted">
+            <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center mb-3">
+              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h3 className="text-base font-bold text-foreground mb-1">등록 요청이 접수되었습니다</h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              관리자 검토 후 24시간 이내 브레인 마켓에 게시됩니다. 진행 상황은 알림으로 안내해 드립니다.
+            </p>
+            <div className="mt-5 w-full max-w-sm rounded-lg border border-border bg-muted/30 p-3 text-left">
+              <div className="flex items-center gap-2 mb-1.5">
+                <ShoppingBag className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-xs font-semibold">{title}</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {tags.slice(0, 5).map((t) => (
+                  <span key={t} className="text-[10px] px-1.5 py-0.5 rounded-full bg-background border border-border text-muted-foreground">
+                    #{t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <Button
+              className="mt-5 w-full max-w-sm"
+              onClick={() => handleClose(false)}
+              data-testid="button-share-done"
+            >
+              완료
+            </Button>
+          </div>
+        ) : (
+          <ScrollArea className="max-h-[60vh]">
+            <div className="px-6 py-5 space-y-5">
+              {step === 1 && (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">노트북 제목</label>
+                    <Input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="예: 코오롱베니트 공급망 인텔리전스"
+                      data-testid="input-share-title"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">설명</label>
+                    <Textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows={4}
+                      placeholder="노트북에 어떤 데이터, 관계, 인사이트가 담겨 있는지 설명해 주세요. (최소 10자)"
+                      data-testid="textarea-share-description"
+                    />
+                    <p className="text-[10px] text-muted-foreground">{description.length}자</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">카테고리</label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {CATEGORIES.map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => setCategory(c.id)}
+                          data-testid={`button-category-${c.id}`}
+                          className={cn(
+                            "px-2.5 py-2 rounded-md border text-xs font-medium transition-all text-left",
+                            category === c.id
+                              ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40"
+                              : "border-border bg-background hover:bg-muted/60 text-muted-foreground"
+                          )}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-900 p-3 flex gap-2.5">
+                    <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                    <div className="text-[11px] text-blue-800 dark:text-blue-300 leading-relaxed">
+                      노트북의 본문, 첨부 자료, 연결된 온톨로지는 자동으로 그래프 데이터셋으로 변환됩니다.
+                      현재 노트북에서 <span className="font-semibold">노드 12,438개 · 관계 28,901개</span>가 감지되었습니다.
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">태그</label>
+                    <div className="flex gap-1.5">
+                      <Input
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTag();
+                          }
+                        }}
+                        placeholder="태그 입력 후 Enter (예: 공급망, ERP)"
+                        data-testid="input-share-tag"
+                      />
+                      <Button variant="outline" size="sm" onClick={addTag} data-testid="button-add-tag">
+                        추가
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {tags.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-indigo-50 text-indigo-700 border border-indigo-200"
+                          data-testid={`tag-${t}`}
+                        >
+                          #{t}
+                          <button onClick={() => removeTag(t)} className="hover:text-indigo-900">
+                            <X className="w-2.5 h-2.5" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">가격 정책</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPricingModel("free")}
+                        data-testid="button-pricing-free"
+                        className={cn(
+                          "p-3 rounded-lg border text-left transition-all",
+                          pricingModel === "free"
+                            ? "border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30"
+                            : "border-border bg-background hover:bg-muted/60"
+                        )}
+                      >
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-sm font-semibold">무료 공개</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">누구나 무료로 구독 가능</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPricingModel("paid")}
+                        data-testid="button-pricing-paid"
+                        className={cn(
+                          "p-3 rounded-lg border text-left transition-all",
+                          pricingModel === "paid"
+                            ? "border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/30"
+                            : "border-border bg-background hover:bg-muted/60"
+                        )}
+                      >
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <DollarSign className="w-3.5 h-3.5 text-indigo-600" />
+                          <span className="text-sm font-semibold">유료 구독</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">월정액 구독 모델</p>
+                      </button>
+                    </div>
+                    {pricingModel === "paid" && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="text-xs text-muted-foreground">월</span>
+                        <div className="relative flex-1 max-w-[180px]">
+                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            className="pl-6"
+                            data-testid="input-share-price"
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground">/ 사용자</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">업데이트 주기</label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {UPDATE_FREQS.map((f) => (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => setUpdateFrequency(f)}
+                          data-testid={`button-freq-${f}`}
+                          className={cn(
+                            "px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                            updateFrequency === f
+                              ? "border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40"
+                              : "border-border bg-background text-muted-foreground hover:bg-muted/60"
+                          )}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">공개 범위</label>
+                    <div className="space-y-1.5">
+                      {[
+                        { id: "public", label: "전체 공개", desc: "모든 마켓 방문자에게 노출" },
+                        { id: "org", label: "조직 내 공개", desc: "코오롱베니트 조직 구성원만" },
+                        { id: "limited", label: "초대 전용", desc: "지정된 사용자만 구독 가능" },
+                      ].map((v) => (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => setVisibility(v.id as any)}
+                          data-testid={`button-visibility-${v.id}`}
+                          className={cn(
+                            "w-full flex items-start gap-2.5 p-2.5 rounded-md border text-left transition-all",
+                            visibility === v.id
+                              ? "border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/20"
+                              : "border-border bg-background hover:bg-muted/60"
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "w-4 h-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center",
+                              visibility === v.id ? "border-indigo-500" : "border-muted-foreground/40"
+                            )}
+                          >
+                            {visibility === v.id && <div className="w-2 h-2 rounded-full bg-indigo-500" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium">{v.label}</div>
+                            <div className="text-[11px] text-muted-foreground">{v.desc}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {step === 3 && (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">주요 특징 / 셀링 포인트</label>
+                    <div className="flex gap-1.5">
+                      <Input
+                        value={featureInput}
+                        onChange={(e) => setFeatureInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addFeature();
+                          }
+                        }}
+                        placeholder="예: 주간 ERP 데이터 자동 동기화"
+                        data-testid="input-share-feature"
+                      />
+                      <Button variant="outline" size="sm" onClick={addFeature} data-testid="button-add-feature">
+                        추가
+                      </Button>
+                    </div>
+                    <div className="space-y-1 mt-1">
+                      {features.map((f, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-muted/40 border border-border"
+                          data-testid={`feature-${i}`}
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span className="text-xs flex-1">{f}</span>
+                          <button
+                            onClick={() => removeFeature(i)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">제공자 직함</label>
+                    <Input
+                      value={authorRole}
+                      onChange={(e) => setAuthorRole(e.target.value)}
+                      placeholder="예: 코오롱베니트 데이터 전략팀"
+                      data-testid="input-share-author-role"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">제공자 소개</label>
+                    <Textarea
+                      value={authorBio}
+                      onChange={(e) => setAuthorBio(e.target.value)}
+                      rows={3}
+                      placeholder="제공자에 대한 짧은 소개를 작성해 주세요."
+                      data-testid="textarea-share-author-bio"
+                    />
+                  </div>
+
+                  <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-md bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center shrink-0">
+                      <Network className="w-4 h-4 text-violet-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="text-sm font-semibold">온톨로지 구조 함께 게시</div>
+                        <Switch
+                          checked={includeOntology}
+                          onCheckedChange={setIncludeOntology}
+                          data-testid="switch-include-ontology"
+                        />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        엔터티 타입 24개, 관계 타입 18개가 자동으로 추출됩니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-900 p-3 flex gap-2.5">
+                    <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+                      유료 데이터셋 등록은 <span className="font-semibold">Pro</span> 이상 라이선스에서 가능합니다.
+                      현재 라이선스: <span className="font-semibold">Pro</span> · 등록 가능
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </ScrollArea>
+        )}
+
+        {!submitted && (
+          <DialogFooter className="px-6 py-3 border-t border-border bg-muted/20 gap-2 sm:gap-2">
+            {step > 1 ? (
+              <Button
+                variant="outline"
+                onClick={() => setStep((step - 1) as 1 | 2 | 3)}
+                data-testid="button-share-prev"
+              >
+                이전
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => handleClose(false)} data-testid="button-share-cancel">
+                취소
+              </Button>
+            )}
+            {step < 3 ? (
+              <Button
+                onClick={() => setStep((step + 1) as 1 | 2 | 3)}
+                disabled={(step === 1 && !canNext1) || (step === 2 && !canNext2)}
+                data-testid="button-share-next"
+              >
+                다음
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="gap-1.5"
+                data-testid="button-share-submit"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    등록 중...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-3.5 h-3.5" />
+                    마켓에 등록
+                  </>
+                )}
+              </Button>
+            )}
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
