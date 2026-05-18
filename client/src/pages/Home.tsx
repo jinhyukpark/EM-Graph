@@ -155,15 +155,11 @@ const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
   monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6, maxW: 12 },
 };
 
-const QUARTER = 3;
-const snapW = (w: number) => Math.max(QUARTER, Math.min(12, Math.round(w / QUARTER) * QUARTER));
-const snapX = (x: number, w: number) => {
-  const sx = Math.max(0, Math.round(x / QUARTER) * QUARTER);
-  return Math.min(sx, 12 - w);
-};
 const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
-  const w = snapW(p.w);
-  return { ...p, w, x: snapX(p.x, w), y: Math.max(0, p.y) };
+  const minW = p.minW ?? 1;
+  const w = Math.max(minW, Math.min(12, p.w));
+  const x = Math.max(0, Math.min(12 - w, p.x));
+  return { ...p, w, x, y: Math.max(0, p.y) };
 };
 
 function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
