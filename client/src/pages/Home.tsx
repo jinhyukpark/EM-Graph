@@ -129,18 +129,12 @@ const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: str
 };
 
 type BlockOptions = {
-  timeline: { height: "compact" | "default" | "expanded" };
-  feed: { height: "compact" | "default" | "expanded" };
   monitoring: { charts: Array<"pie" | "line" | "bar"> };
 };
 
 const DEFAULT_BLOCK_OPTIONS: BlockOptions = {
-  timeline: { height: "default" },
-  feed: { height: "default" },
   monitoring: { charts: ["pie", "line", "bar"] },
 };
-
-const HEIGHT_MAP = { compact: 260, default: 380, expanded: 520 } as const;
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -163,57 +157,115 @@ const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number;
 };
 
 function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
-  const common = "text-foreground/60";
+  const common = "text-foreground/70";
+  const frame = (
+    <rect x={1} y={1} width={78} height={38} rx={3} fill="currentColor" fillOpacity={0.05} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.6} />
+  );
   switch (type) {
     case "notes":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <rect x={5} y={5} width={10} height={10} rx={2} fill="currentColor" fillOpacity={0.18} />
+          <path d="M7 8 h6 M7 11 h6" stroke="currentColor" strokeOpacity={0.55} strokeWidth={0.9} strokeLinecap="round" />
+          <rect x={5} y={20} width={32} height={3} rx={1.2} fill="currentColor" fillOpacity={0.75} />
+          <text x={70} y={11} textAnchor="end" fontSize={9} fontWeight={700} fill="currentColor" fillOpacity={0.85}>248</text>
+          <rect x={5} y={27} width={48} height={2.2} rx={1} fill="currentColor" fillOpacity={0.3} />
+          <rect x={5} y={32} width={38} height={2.2} rx={1} fill="currentColor" fillOpacity={0.3} />
+        </svg>
+      );
     case "links":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <g transform="translate(5,5)" stroke="currentColor" strokeOpacity={0.6} strokeWidth={1.2} fill="none" strokeLinecap="round">
+            <path d="M2 6 a4 4 0 0 1 4 -4 h2" />
+            <path d="M10 2 h2 a4 4 0 0 1 4 4" />
+            <path d="M5 4 h8" strokeOpacity={0.45} />
+          </g>
+          <rect x={5} y={20} width={28} height={3} rx={1.2} fill="currentColor" fillOpacity={0.75} />
+          <text x={70} y={11} textAnchor="end" fontSize={9} fontWeight={700} fill="currentColor" fillOpacity={0.85}>56</text>
+          <rect x={5} y={27} width={50} height={2.2} rx={1} fill="currentColor" fillOpacity={0.3} />
+          <rect x={5} y={32} width={34} height={2.2} rx={1} fill="currentColor" fillOpacity={0.3} />
+        </svg>
+      );
     case "dbUsage":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <g transform="translate(5,4)" stroke="currentColor" strokeOpacity={0.55} strokeWidth={0.9} fill="currentColor" fillOpacity={0.15}>
+            <ellipse cx={6} cy={2.5} rx={5} ry={1.6} />
+            <path d="M1 2.5 v6 a5 1.6 0 0 0 10 0 v-6" />
+            <path d="M1 5.5 a5 1.6 0 0 0 10 0" fill="none" />
+          </g>
+          <rect x={5} y={20} width={30} height={3} rx={1.2} fill="currentColor" fillOpacity={0.75} />
+          <text x={70} y={11} textAnchor="end" fontSize={9} fontWeight={700} fill="currentColor" fillOpacity={0.85}>68%</text>
+          <rect x={5} y={28} width={70} height={3.5} rx={1.7} fill="currentColor" fillOpacity={0.12} />
+          <rect x={5} y={28} width={47} height={3.5} rx={1.7} fill="currentColor" fillOpacity={0.7} />
+        </svg>
+      );
     case "resource":
       return (
-        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
-          <rect x={2} y={2} width={76} height={24} rx={3} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.7} />
-          <rect x={6} y={6} width={7} height={7} rx={1.5} fill="currentColor" fillOpacity={0.4} />
-          <rect x={56} y={6.5} width={18} height={4} rx={1.5} fill="currentColor" fillOpacity={0.25} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.4} />
-          <rect x={6} y={16} width={36} height={3.2} rx={1.4} fill="currentColor" fillOpacity={0.75} />
-          <rect x={6} y={21} width={22} height={2} rx={1} fill="currentColor" fillOpacity={0.35} />
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <g transform="translate(4,4)">
+            <rect x={0} y={0} width={12} height={3.5} rx={0.8} fill="currentColor" fillOpacity={0.18} stroke="currentColor" strokeOpacity={0.45} strokeWidth={0.4} />
+            <rect x={0} y={4.5} width={12} height={3.5} rx={0.8} fill="currentColor" fillOpacity={0.18} stroke="currentColor" strokeOpacity={0.45} strokeWidth={0.4} />
+            <rect x={0} y={9} width={12} height={3.5} rx={0.8} fill="currentColor" fillOpacity={0.18} stroke="currentColor" strokeOpacity={0.45} strokeWidth={0.4} />
+            <circle cx={2} cy={1.75} r={0.7} fill="currentColor" fillOpacity={0.8} />
+            <circle cx={2} cy={6.25} r={0.7} fill="currentColor" fillOpacity={0.8} />
+            <circle cx={2} cy={10.75} r={0.7} fill="currentColor" fillOpacity={0.8} />
+          </g>
+          <text x={70} y={11} textAnchor="end" fontSize={9} fontWeight={700} fill="currentColor" fillOpacity={0.85}>1.2T</text>
+          <rect x={5} y={22} width={32} height={3} rx={1.2} fill="currentColor" fillOpacity={0.75} />
+          <rect x={5} y={29} width={70} height={3.5} rx={1.7} fill="currentColor" fillOpacity={0.12} />
+          <rect x={5} y={29} width={28} height={3.5} rx={1.7} fill="currentColor" fillOpacity={0.7} />
         </svg>
       );
     case "timeline":
       return (
-        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
-          <line x1={5} y1={3} x2={5} y2={25} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.8} />
-          {[0, 1, 2].map((i) => (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <line x1={8} y1={6} x2={8} y2={36} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.7} />
+          {[0, 1, 2, 3].map((i) => (
             <g key={i}>
-              <circle cx={5} cy={6 + i * 8} r={1.6} fill="currentColor" fillOpacity={0.85} />
-              <rect x={10} y={4.5 + i * 8} width={66} height={4.5} rx={1.2} fill="currentColor" fillOpacity={0.1} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
-              <rect x={12} y={6 + i * 8} width={28} height={1.4} rx={0.7} fill="currentColor" fillOpacity={0.6} />
+              <circle cx={8} cy={9 + i * 7} r={1.6} fill="currentColor" fillOpacity={0.85} />
+              <rect x={13} y={7.5 + i * 7} width={62} height={4.5} rx={1} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.35} />
+              <rect x={15} y={9 + i * 7} width={26} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.65} />
+              <rect x={62} y={9 + i * 7} width={10} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.35} />
             </g>
           ))}
         </svg>
       );
     case "feed":
       return (
-        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
-          {[0, 1, 2].map((i) => (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          {[0, 1, 2, 3].map((i) => (
             <g key={i}>
-              <rect x={2} y={2 + i * 8} width={76} height={6.5} rx={1.5} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
-              <circle cx={6} cy={5.3 + i * 8} r={1.8} fill="currentColor" fillOpacity={0.5} />
-              <rect x={10.5} y={3.6 + i * 8} width={36} height={1.5} rx={0.7} fill="currentColor" fillOpacity={0.7} />
-              <rect x={10.5} y={6 + i * 8} width={56} height={1.2} rx={0.6} fill="currentColor" fillOpacity={0.35} />
+              <rect x={4} y={4 + i * 8.5} width={72} height={6.5} rx={1.2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.22} strokeWidth={0.35} />
+              <circle cx={8.5} cy={7.3 + i * 8.5} r={1.9} fill="currentColor" fillOpacity={0.55} />
+              <rect x={13} y={5.6 + i * 8.5} width={30} height={1.5} rx={0.7} fill="currentColor" fillOpacity={0.7} />
+              <rect x={13} y={8.1 + i * 8.5} width={52} height={1.2} rx={0.6} fill="currentColor" fillOpacity={0.32} />
+              <rect x={68} y={5.8 + i * 8.5} width={6} height={1.4} rx={0.5} fill="currentColor" fillOpacity={0.4} />
             </g>
           ))}
         </svg>
       );
     case "monitoring":
       return (
-        <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
-          <rect x={1.5} y={2} width={23} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
-          <circle cx={13} cy={14} r={6.5} fill="none" stroke="currentColor" strokeOpacity={0.65} strokeWidth={2.4} strokeDasharray="22 12" />
-          <rect x={28} y={2} width={23} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
-          <polyline points="30,22 34,17 38,19 42,12 46,15 50,8" fill="none" stroke="currentColor" strokeOpacity={0.7} strokeWidth={1.2} />
-          <rect x={54.5} y={2} width={24} height={24} rx={2} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.25} strokeWidth={0.4} />
-          {[16, 11, 18, 8, 14].map((h, i) => (
-            <rect key={i} x={57 + i * 4} y={24 - h} width={2.6} height={h} rx={0.6} fill="currentColor" fillOpacity={0.55} />
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <rect x={4} y={4} width={22} height={32} rx={2} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.22} strokeWidth={0.4} />
+          <circle cx={15} cy={20} r={7.5} fill="none" stroke="currentColor" strokeOpacity={0.18} strokeWidth={2.6} />
+          <circle cx={15} cy={20} r={7.5} fill="none" stroke="currentColor" strokeOpacity={0.75} strokeWidth={2.6} strokeDasharray="34 47" strokeDashoffset={-4} strokeLinecap="round" />
+          <text x={15} y={22.5} textAnchor="middle" fontSize={6.5} fontWeight={700} fill="currentColor" fillOpacity={0.85}>72</text>
+          <rect x={28} y={4} width={22} height={32} rx={2} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.22} strokeWidth={0.4} />
+          <polyline points="30,32 34,26 38,28 42,20 46,23 48,15" fill="none" stroke="currentColor" strokeOpacity={0.75} strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx={48} cy={15} r={1.2} fill="currentColor" fillOpacity={0.85} />
+          <rect x={52} y={4} width={24} height={32} rx={2} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.22} strokeWidth={0.4} />
+          {[22, 14, 26, 10, 19].map((h, i) => (
+            <rect key={i} x={54.5 + i * 4.2} y={34 - h} width={3} height={h} rx={0.6} fill="currentColor" fillOpacity={0.6} />
           ))}
         </svg>
       );
@@ -984,8 +1036,8 @@ export default function Home() {
                               <div className="shrink-0 w-7 flex items-center justify-center bg-muted/30 text-muted-foreground group-hover:text-primary">
                                 {inLayout ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <GripVertical className="w-3.5 h-3.5" />}
                               </div>
-                              <div className="shrink-0 w-20 flex items-center justify-center px-2 border-l border-r border-dashed border-border/60 bg-muted/5 opacity-70 group-hover:opacity-100">
-                                <BlockPreview type={b} className="w-16 h-7" />
+                              <div className="shrink-0 w-28 flex items-center justify-center px-2 py-2 border-l border-r border-dashed border-border/60 bg-gradient-to-br from-muted/10 to-muted/30 opacity-90 group-hover:opacity-100">
+                                <BlockPreview type={b} className="w-24 h-12" />
                               </div>
                               <div className="flex-1 flex items-center gap-2 p-2.5 min-w-0">
                                 <div className={`p-1.5 rounded-md shrink-0 ${inLayout ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-muted/40 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"}`}>
