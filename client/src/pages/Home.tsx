@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Reorder } from "framer-motion";
 import { useLocation } from "wouter";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ import {
   ShieldAlert, Zap, Bot, Users, X,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
-  Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid,
+  Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid, Plus,
   LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
   Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2
 } from "lucide-react";
@@ -109,7 +110,10 @@ const RESOURCE_COMPOSITION_DATA = [
   { name: "ovResVideos" as TranslationKey, value: 47, color: "hsl(280, 65%, 60%)" },
 ];
 
-type BlockKey = "kpi" | "timeline" | "feed" | "monitoring";
+type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring";
+
+const KPI_KEYS: BlockKey[] = ["notes", "links", "dbUsage", "resource"];
+const isKpiKey = (k: BlockKey) => KPI_KEYS.includes(k);
 
 type DashboardTemplate = {
   id: string;
@@ -127,9 +131,9 @@ const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
     id: "default",
     name: "Full Overview",
     nameKo: "기본 (전체 보기)",
-    description: "All blocks: KPI, timeline, activity feed, monitoring charts",
+    description: "All blocks: KPI cards, timeline, activity feed, monitoring charts",
     descriptionKo: "KPI 카드, 타임라인, 활동 피드, 모니터링 차트 모두 표시",
-    blocks: ["kpi", "timeline", "feed", "monitoring"],
+    blocks: ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"],
     accent: "from-blue-500/15 to-indigo-500/15 border-indigo-200 dark:border-indigo-900",
     icon: LayoutGrid,
   },
@@ -139,7 +143,7 @@ const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
     nameKo: "활동 중심",
     description: "KPI + Timeline + Activity Feed (no charts)",
     descriptionKo: "KPI 카드, 타임라인, 활동 피드 (차트 제외)",
-    blocks: ["kpi", "timeline", "feed"],
+    blocks: ["notes", "links", "dbUsage", "resource", "timeline", "feed"],
     accent: "from-emerald-500/15 to-teal-500/15 border-emerald-200 dark:border-emerald-900",
     icon: Bell,
   },
@@ -149,7 +153,7 @@ const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
     nameKo: "분석 중심",
     description: "KPI cards and monitoring charts only",
     descriptionKo: "KPI 카드와 모니터링 차트만 표시",
-    blocks: ["kpi", "monitoring"],
+    blocks: ["notes", "links", "dbUsage", "resource", "monitoring"],
     accent: "from-violet-500/15 to-purple-500/15 border-violet-200 dark:border-violet-900",
     icon: BarChart3,
   },
@@ -159,7 +163,7 @@ const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
     nameKo: "컴팩트",
     description: "KPI and activity feed only",
     descriptionKo: "KPI 카드와 활동 피드만",
-    blocks: ["kpi", "feed"],
+    blocks: ["notes", "links", "dbUsage", "resource", "feed"],
     accent: "from-amber-500/15 to-orange-500/15 border-amber-200 dark:border-amber-900",
     icon: Newspaper,
   },
@@ -169,28 +173,29 @@ const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
     nameKo: "미니멀",
     description: "KPI cards only",
     descriptionKo: "KPI 카드만 표시",
-    blocks: ["kpi"],
+    blocks: ["notes", "links", "dbUsage", "resource"],
     accent: "from-slate-500/15 to-slate-400/15 border-slate-200 dark:border-slate-800",
     icon: Zap,
   },
 ];
 
 const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: string; desc: string; icon: typeof BarChart3 }> = {
-  kpi: { labelKo: "KPI 카드", label: "KPI Cards", descKo: "노트/링크/저장공간 상단 통계", desc: "Top metrics row", icon: BarChart3 },
+  notes: { labelKo: "노트", label: "Notes", descKo: "총 노트 수 및 전일 대비 변화", desc: "Total notes count", icon: StickyNote },
+  links: { labelKo: "링크", label: "Links", descKo: "노트 간 연결 수", desc: "Note-to-note connections", icon: Link2 },
+  dbUsage: { labelKo: "DB 사용량", label: "Database Usage", descKo: "데이터베이스 저장 공간 사용량", desc: "Database storage usage", icon: Database },
+  resource: { labelKo: "리소스 사용량", label: "Resource Usage", descKo: "파일/리소스 저장 공간 사용량", desc: "File & resource storage", icon: HardDrive },
   timeline: { labelKo: "최근 노트 타임라인", label: "Recent Notes Timeline", descKo: "최근 생성된 노트와 변경 사항", desc: "Recent notes and changes", icon: Calendar },
   feed: { labelKo: "활동 피드", label: "Activity Feed", descKo: "댓글, 멘션, 공유, 시스템 알림", desc: "Comments, mentions, shares", icon: Bell },
   monitoring: { labelKo: "KPI 모니터링 차트", label: "KPI Monitoring", descKo: "리소스 구성, AI 토큰, 노트 성장 차트", desc: "Resource, AI tokens, growth charts", icon: BarChart3 },
 };
 
 type BlockOptions = {
-  kpi: { columns: 2 | 4 };
   timeline: { height: "compact" | "default" | "expanded" };
   feed: { height: "compact" | "default" | "expanded" };
   monitoring: { charts: Array<"pie" | "line" | "bar"> };
 };
 
 const DEFAULT_BLOCK_OPTIONS: BlockOptions = {
-  kpi: { columns: 4 },
   timeline: { height: "default" },
   feed: { height: "default" },
   monitoring: { charts: ["pie", "line", "bar"] },
@@ -201,17 +206,17 @@ const HEIGHT_MAP = { compact: 260, default: 380, expanded: 520 } as const;
 function BlockPreview({ type, className = "" }: { type: BlockKey; className?: string }) {
   const common = "text-foreground/60";
   switch (type) {
-    case "kpi":
+    case "notes":
+    case "links":
+    case "dbUsage":
+    case "resource":
       return (
         <svg viewBox="0 0 80 28" className={`${common} ${className}`} aria-hidden="true">
-          {[0, 1, 2, 3].map((i) => (
-            <g key={i}>
-              <rect x={i * 20 + 1.5} y={2} width={17} height={24} rx={2.5} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.6} />
-              <rect x={i * 20 + 4} y={6} width={5} height={5} rx={1} fill="currentColor" fillOpacity={0.35} />
-              <rect x={i * 20 + 4} y={14} width={11} height={2.2} rx={1.1} fill="currentColor" fillOpacity={0.7} />
-              <rect x={i * 20 + 4} y={19} width={7} height={1.6} rx={0.8} fill="currentColor" fillOpacity={0.35} />
-            </g>
-          ))}
+          <rect x={2} y={2} width={76} height={24} rx={3} fill="currentColor" fillOpacity={0.08} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.7} />
+          <rect x={6} y={6} width={7} height={7} rx={1.5} fill="currentColor" fillOpacity={0.4} />
+          <rect x={56} y={6.5} width={18} height={4} rx={1.5} fill="currentColor" fillOpacity={0.25} stroke="currentColor" strokeOpacity={0.35} strokeWidth={0.4} />
+          <rect x={6} y={16} width={36} height={3.2} rx={1.4} fill="currentColor" fillOpacity={0.75} />
+          <rect x={6} y={21} width={22} height={2} rx={1} fill="currentColor" fillOpacity={0.35} />
         </svg>
       );
     case "timeline":
@@ -256,34 +261,52 @@ function BlockPreview({ type, className = "" }: { type: BlockKey; className?: st
   }
 }
 
-function EditableBlockBadge({
+function DeleteBlockButton({
   blockKey,
-  editMode,
-  popover,
+  onDelete,
   language,
+  position = "outside",
 }: {
   blockKey: BlockKey;
-  editMode: boolean;
-  popover: React.ReactNode;
+  onDelete: () => void;
   language: "ko" | "en";
+  position?: "outside" | "inside";
 }) {
-  if (!editMode) return null;
+  const posClass = position === "inside" ? "top-2 right-2" : "-top-2.5 -right-2.5";
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="absolute top-3 right-3 z-20 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:border-primary/50 shadow-sm transition-colors"
-          data-testid={`button-edit-block-${blockKey}`}
-        >
-          <Settings2 className="w-3 h-3" />
-          {language === "ko" ? "수정" : "Edit"}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-72 p-3" data-testid={`popover-edit-${blockKey}`}>
-        {popover}
-      </PopoverContent>
-    </Popover>
+    <button
+      type="button"
+      onClick={onDelete}
+      className={`absolute ${posClass} z-30 inline-flex items-center justify-center w-7 h-7 rounded-full border border-destructive/40 bg-background hover:bg-destructive hover:text-destructive-foreground text-destructive shadow-md transition-colors`}
+      data-testid={`button-delete-block-${blockKey}`}
+      aria-label={language === "ko" ? "삭제" : "Remove"}
+      title={language === "ko" ? "이 컴포넌트 삭제" : "Remove this component"}
+    >
+      <X className="w-3.5 h-3.5" />
+    </button>
+  );
+}
+
+function DragHandleHint({ language, position = "outside" }: { language: "ko" | "en"; position?: "outside" | "inside" }) {
+  const posClass = position === "inside" ? "top-2 left-2" : "-top-2.5 -left-2.5";
+  return (
+    <div
+      className={`absolute ${posClass} z-30 inline-flex items-center justify-center w-7 h-7 rounded-full border border-primary/40 bg-background text-primary shadow-md cursor-grab active:cursor-grabbing`}
+      title={language === "ko" ? "드래그하여 순서 변경" : "Drag to reorder"}
+    >
+      <GripVertical className="w-3.5 h-3.5" />
+    </div>
+  );
+}
+
+function BlockEditLabel({ blockKey, language }: { blockKey: BlockKey; language: "ko" | "en" }) {
+  const meta = BLOCK_META[blockKey];
+  const Icon = meta.icon;
+  return (
+    <div className="absolute -top-2.5 left-3 z-20 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-background border border-primary/30 text-primary shadow-sm">
+      <Icon className="w-3 h-3" />
+      {language === "ko" ? meta.labelKo : meta.label}
+    </div>
   );
 }
 
@@ -360,18 +383,6 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [templatePanelOpen]);
 
-  const updateBlockOption = <K extends BlockKey>(key: K, patch: Partial<BlockOptions[K]>) => {
-    setBlockOptions(prev => ({ ...prev, [key]: { ...prev[key], ...patch } }));
-  };
-
-  const toggleMonitoringChart = (chart: "pie" | "line" | "bar") => {
-    setBlockOptions(prev => {
-      const has = prev.monitoring.charts.includes(chart);
-      const next = has ? prev.monitoring.charts.filter(c => c !== chart) : [...prev.monitoring.charts, chart];
-      return { ...prev, monitoring: { charts: next.length === 0 ? [chart] : next } };
-    });
-  };
-
   const applyTemplate = (id: string) => {
     const tpl = DASHBOARD_TEMPLATES.find(t => t.id === id);
     if (!tpl) return;
@@ -379,21 +390,57 @@ export default function Home() {
     setVisibleBlocks(tpl.blocks);
   };
 
+  const matchTemplateForOrder = (blocks: BlockKey[]): string => {
+    const sig = blocks.join("|");
+    const matched = DASHBOARD_TEMPLATES.find(t => t.blocks.join("|") === sig);
+    return matched ? matched.id : "custom";
+  };
+
   const toggleBlock = (key: BlockKey) => {
     setVisibleBlocks(prev => {
       const next = prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
-      const matched = DASHBOARD_TEMPLATES.find(t =>
-        t.blocks.length === next.length && t.blocks.every(b => next.includes(b))
-      );
-      setActiveTemplateId(matched ? matched.id : "custom");
+      setActiveTemplateId(matchTemplateForOrder(next));
       return next;
     });
   };
 
-  const showKpi = visibleBlocks.includes("kpi");
+  const visibleKpiKeys = visibleBlocks.filter(isKpiKey);
+  const showKpi = visibleKpiKeys.length > 0;
   const showTimeline = visibleBlocks.includes("timeline");
   const showFeed = visibleBlocks.includes("feed");
   const showMonitoring = visibleBlocks.includes("monitoring");
+
+  const removeBlock = (key: BlockKey) => {
+    setVisibleBlocks(prev => {
+      const next = prev.filter(k => k !== key);
+      setActiveTemplateId(matchTemplateForOrder(next));
+      return next;
+    });
+  };
+
+  const addBlock = (key: BlockKey) => {
+    setVisibleBlocks(prev => {
+      if (prev.includes(key)) return prev;
+      let next: BlockKey[];
+      if (isKpiKey(key)) {
+        const lastKpiIdx = prev.map(isKpiKey).lastIndexOf(true);
+        const insertAt = lastKpiIdx === -1 ? 0 : lastKpiIdx + 1;
+        next = [...prev.slice(0, insertAt), key, ...prev.slice(insertAt)];
+      } else {
+        next = [...prev, key];
+      }
+      setActiveTemplateId(matchTemplateForOrder(next));
+      return next;
+    });
+  };
+
+  const handleKpiReorder = (newKpiOrder: BlockKey[]) => {
+    setVisibleBlocks(prev => {
+      const next = [...newKpiOrder, ...prev.filter(k => !isKpiKey(k))];
+      setActiveTemplateId(matchTemplateForOrder(next));
+      return next;
+    });
+  };
 
   const filteredFeed = feedItems.filter(item => feedFilter === "all" || item.source === feedFilter);
   const displayedFeed = filteredFeed.slice(0, visibleFeedCount);
@@ -408,12 +455,12 @@ export default function Home() {
     ));
   };
 
-  const kpiCards = [
-    { labelKey: "ovKpiNotes" as TranslationKey, value: "1,247", change: "+24", changeDir: "up" as const, icon: StickyNote, color: "text-primary" },
-    { labelKey: "ovKpiLinks" as TranslationKey, value: "8,432", change: "+156", changeDir: "up" as const, icon: Link2, color: "text-accent" },
-    { labelKey: "ovKpiDbUsage" as TranslationKey, value: "2.4 / 5 GB", change: "48%", changeDir: "neutral" as const, icon: Database, color: "text-emerald-500" },
-    { labelKey: "ovKpiResourceUsage" as TranslationKey, value: "3.2 / 5 GB", change: "64%", changeDir: "neutral" as const, icon: HardDrive, color: "text-muted-foreground" },
-  ];
+  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote; color: string }> = {
+    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote, color: "text-primary" },
+    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2, color: "text-accent" },
+    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database, color: "text-emerald-500" },
+    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive, color: "text-muted-foreground" },
+  };
 
   return (
     <Layout>
@@ -443,76 +490,60 @@ export default function Home() {
 
         {showKpi && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl p-3 -m-3 bg-primary/[0.02]" : ""}`}>
-            {editMode && (
-              <div className="absolute -top-2.5 left-3 z-20 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-background border border-primary/30 text-primary">
-                <BarChart3 className="w-3 h-3" />
-                {language === "ko" ? "KPI 카드" : "KPI Cards"}
-              </div>
-            )}
-            <EditableBlockBadge
-              blockKey="kpi"
-              editMode={editMode}
-              language={language as "ko" | "en"}
-              popover={
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Settings2 className="w-3.5 h-3.5 text-primary" />
-                    <h4 className="text-sm font-semibold">{language === "ko" ? "KPI 카드 설정" : "KPI Card Settings"}</h4>
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                      {language === "ko" ? "열 개수" : "Columns"}
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {([2, 4] as const).map((cols) => (
-                        <button
-                          key={cols}
-                          type="button"
-                          onClick={() => updateBlockOption("kpi", { columns: cols })}
-                          className={`flex flex-col items-center gap-1.5 p-2.5 rounded-md border text-xs transition-colors ${
-                            blockOptions.kpi.columns === cols
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
+          <Reorder.Group
+            axis="x"
+            values={visibleKpiKeys}
+            onReorder={handleKpiReorder}
+            as="div"
+            className={`grid grid-cols-1 md:grid-cols-2 ${
+              ({ 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as Record<number, string>)[Math.min(Math.max(visibleKpiKeys.length, 1), 4)]
+            } gap-4 list-none ${editMode ? "p-3 -m-3 rounded-xl ring-2 ring-primary/20 bg-primary/[0.02]" : ""}`}
+            data-testid="group-kpi-cards"
+          >
+            {visibleKpiKeys.map((key) => {
+              const stat = kpiCardsData[key as "notes" | "links" | "dbUsage" | "resource"];
+              return (
+                <Reorder.Item
+                  key={key}
+                  value={key}
+                  as="div"
+                  className="relative"
+                  dragListener={editMode}
+                  whileDrag={{ scale: 1.03, zIndex: 40 }}
+                  data-testid={`kpi-item-${key}`}
+                >
+                  {editMode && (
+                    <>
+                      <DragHandleHint language={language as "ko" | "en"} />
+                      <DeleteBlockButton blockKey={key} onDelete={() => removeBlock(key)} language={language as "ko" | "en"} />
+                    </>
+                  )}
+                  <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
+                    <CardContent className="p-5">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
+                          <stat.icon className="w-5 h-5" />
+                        </div>
+                        <Badge
+                          variant={stat.changeDir === "up" ? "default" : "secondary"}
+                          className={`font-mono text-xs px-2 py-0.5 gap-1 ${
+                            stat.changeDir === "up"
+                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                              : ""
                           }`}
-                          data-testid={`kpi-cols-${cols}`}
                         >
-                          {cols === 2 ? <Columns2 className="w-4 h-4" /> : <Columns4 className="w-4 h-4" />}
-                          <span className="font-semibold">{cols} {language === "ko" ? "열" : "cols"}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              }
-            />
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${blockOptions.kpi.columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-2"} gap-4`}>
-            {kpiCards.map((stat, i) => (
-              <Card key={i} className="bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow" data-testid={`card-kpi-${i}`}>
-                <CardContent className="p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
-                      <stat.icon className="w-5 h-5" />
-                    </div>
-                    <Badge
-                      variant={stat.changeDir === "up" ? "default" : "secondary"}
-                      className={`font-mono text-xs px-2 py-0.5 gap-1 ${
-                        stat.changeDir === "up"
-                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                          : ""
-                      }`}
-                    >
-                      {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
-                      {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
-                    </Badge>
-                  </div>
-                  <div className="text-2xl font-bold mb-1">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          </div>
+                          {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
+                          {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
+                        </Badge>
+                      </div>
+                      <div className="text-2xl font-bold mb-1">{stat.value}</div>
+                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
+                    </CardContent>
+                  </Card>
+                </Reorder.Item>
+              );
+            })}
+          </Reorder.Group>
         </RoleBasedWrapper>
         )}
 
@@ -523,44 +554,13 @@ export default function Home() {
           {/* 2-2: TIMELINE VIEW */}
           {showTimeline && (
           <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-            <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-            <EditableBlockBadge
-              blockKey="timeline"
-              editMode={editMode}
-              language={language as "ko" | "en"}
-              popover={
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Settings2 className="w-3.5 h-3.5 text-primary" />
-                    <h4 className="text-sm font-semibold">{language === "ko" ? "타임라인 설정" : "Timeline Settings"}</h4>
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                      {language === "ko" ? "높이" : "Height"}
-                    </label>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {(["compact", "default", "expanded"] as const).map((h) => (
-                        <button
-                          key={h}
-                          type="button"
-                          onClick={() => updateBlockOption("timeline", { height: h })}
-                          className={`p-2 rounded-md border text-[11px] font-semibold transition-colors ${
-                            blockOptions.timeline.height === h
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
-                          }`}
-                          data-testid={`timeline-h-${h}`}
-                        >
-                          {language === "ko"
-                            ? { compact: "컴팩트", default: "기본", expanded: "확장" }[h]
-                            : { compact: "Compact", default: "Default", expanded: "Expanded" }[h]}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              }
-            />
+            <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+            {editMode && (
+              <>
+                <BlockEditLabel blockKey="timeline" language={language as "ko" | "en"} />
+                <DeleteBlockButton blockKey="timeline" onDelete={() => removeBlock("timeline")} language={language as "ko" | "en"} />
+              </>
+            )}
             <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -635,44 +635,13 @@ export default function Home() {
 
           {/* 2-3: ISSUE FEED */}
           {showFeed && (
-          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-          <EditableBlockBadge
-            blockKey="feed"
-            editMode={editMode}
-            language={language as "ko" | "en"}
-            popover={
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Settings2 className="w-3.5 h-3.5 text-primary" />
-                  <h4 className="text-sm font-semibold">{language === "ko" ? "피드 설정" : "Feed Settings"}</h4>
-                </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                    {language === "ko" ? "높이" : "Height"}
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {(["compact", "default", "expanded"] as const).map((h) => (
-                      <button
-                        key={h}
-                        type="button"
-                        onClick={() => updateBlockOption("feed", { height: h })}
-                        className={`p-2 rounded-md border text-[11px] font-semibold transition-colors ${
-                          blockOptions.feed.height === h
-                            ? "border-primary bg-primary/5 text-foreground"
-                            : "border-border bg-background hover:bg-muted/40 text-muted-foreground"
-                        }`}
-                        data-testid={`feed-h-${h}`}
-                      >
-                        {language === "ko"
-                          ? { compact: "컴팩트", default: "기본", expanded: "확장" }[h]
-                          : { compact: "Compact", default: "Default", expanded: "Expanded" }[h]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            }
-          />
+          <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+          {editMode && (
+            <>
+              <BlockEditLabel blockKey="feed" language={language as "ko" | "en"} />
+              <DeleteBlockButton blockKey="feed" onDelete={() => removeBlock("feed")} language={language as "ko" | "en"} />
+            </>
+          )}
           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -768,48 +737,13 @@ export default function Home() {
         {/* ===== 2-4: KPI / STATS MONITORING ===== */}
         {showMonitoring && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
-          <div className={`relative ${editMode ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
-          <EditableBlockBadge
-            blockKey="monitoring"
-            editMode={editMode}
-            language={language as "ko" | "en"}
-            popover={
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Settings2 className="w-3.5 h-3.5 text-primary" />
-                  <h4 className="text-sm font-semibold">{language === "ko" ? "모니터링 차트 설정" : "Monitoring Charts"}</h4>
-                </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                    {language === "ko" ? "표시할 차트" : "Visible charts"}
-                  </label>
-                  <div className="space-y-1.5">
-                    {([
-                      { key: "pie" as const, icon: PieIcon, labelKo: "리소스 구성 (파이)", label: "Resource (Pie)" },
-                      { key: "line" as const, icon: LineIcon, labelKo: "AI 토큰 추이 (라인)", label: "AI Tokens (Line)" },
-                      { key: "bar" as const, icon: BarChart2, labelKo: "노트 성장 (바)", label: "Note Growth (Bar)" },
-                    ]).map((c) => {
-                      const enabled = blockOptions.monitoring.charts.includes(c.key);
-                      const Icon = c.icon;
-                      return (
-                        <div key={c.key} className={`flex items-center gap-2 p-2 rounded-md border ${enabled ? "border-border bg-background" : "border-dashed border-border bg-muted/20"}`}>
-                          <Icon className={`w-3.5 h-3.5 ${enabled ? "text-primary" : "text-muted-foreground"}`} />
-                          <span className={`text-xs flex-1 ${enabled ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                            {language === "ko" ? c.labelKo : c.label}
-                          </span>
-                          <Switch
-                            checked={enabled}
-                            onCheckedChange={() => toggleMonitoringChart(c.key)}
-                            data-testid={`monitoring-chart-${c.key}`}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            }
-          />
+          <div className={`relative ${editMode ? "ring-2 ring-primary/20 ring-offset-2 ring-offset-background rounded-xl" : ""}`}>
+          {editMode && (
+            <>
+              <BlockEditLabel blockKey="monitoring" language={language as "ko" | "en"} />
+              <DeleteBlockButton blockKey="monitoring" onDelete={() => removeBlock("monitoring")} language={language as "ko" | "en"} />
+            </>
+          )}
           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -993,8 +927,8 @@ export default function Home() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {language === "ko"
-                    ? "프리셋을 선택하거나 각 블록의 [수정] 버튼으로 형상을 직접 조정할 수 있습니다."
-                    : "Pick a preset, or click [Edit] on each block to adjust its shape."}
+                    ? "프리셋을 선택하거나, 메인 영역에서 컴포넌트의 X 버튼으로 삭제하고 KPI 카드는 드래그로 순서를 바꿀 수 있습니다. 아래 팔레트에서 컴포넌트를 다시 추가하세요."
+                    : "Pick a preset, or remove components with X in the main area and drag KPI cards to reorder. Add components back from the palette below."}
                 </p>
               </div>
               <button
@@ -1063,14 +997,31 @@ export default function Home() {
                                   {language === "ko" ? "표시 없음" : "Nothing"}
                                 </div>
                               )}
-                              {tpl.blocks.map((b) => (
-                                <div key={b} className="flex items-center gap-2">
-                                  <BlockPreview type={b} className="w-14 h-5 shrink-0" />
-                                  <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">
-                                    {language === "ko" ? BLOCK_META[b].labelKo : BLOCK_META[b].label}
-                                  </span>
-                                </div>
-                              ))}
+                              {(() => {
+                                const kpis = tpl.blocks.filter(isKpiKey);
+                                const others = tpl.blocks.filter(b => !isKpiKey(b));
+                                const rows: Array<{ key: string; label: string; preview: BlockKey }> = [];
+                                if (kpis.length > 0) {
+                                  rows.push({
+                                    key: "kpi-group",
+                                    label: language === "ko" ? `KPI 카드 (${kpis.length})` : `KPI Cards (${kpis.length})`,
+                                    preview: kpis[0],
+                                  });
+                                }
+                                others.forEach(b => rows.push({
+                                  key: b,
+                                  label: language === "ko" ? BLOCK_META[b].labelKo : BLOCK_META[b].label,
+                                  preview: b,
+                                }));
+                                return rows.map(r => (
+                                  <div key={r.key} className="flex items-center gap-2">
+                                    <BlockPreview type={r.preview} className="w-14 h-5 shrink-0" />
+                                    <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">
+                                      {r.label}
+                                    </span>
+                                  </div>
+                                ));
+                              })()}
                             </div>
                           </div>
                         </div>
@@ -1080,11 +1031,11 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* BLOCK TOGGLES with PREVIEWS */}
+              {/* AVAILABLE COMPONENTS PALETTE */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    {language === "ko" ? "블록 직접 설정" : "Customize Blocks"}
+                    {language === "ko" ? "사용 가능한 컴포넌트" : "Available Components"}
                   </h3>
                   {activeTemplateId === "custom" && (
                     <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-1 border-amber-200 text-amber-700 bg-amber-50/60 dark:bg-amber-950/30 dark:border-amber-900 dark:text-amber-300">
@@ -1093,56 +1044,96 @@ export default function Home() {
                     </Badge>
                   )}
                 </div>
-                <div className="space-y-2">
-                  {(["kpi", "timeline", "feed", "monitoring"] as BlockKey[]).map((b) => {
-                    const meta = BLOCK_META[b];
-                    const Icon = meta.icon;
-                    const enabled = visibleBlocks.includes(b);
-                    return (
-                      <div
-                        key={b}
-                        className={`rounded-lg border transition-colors overflow-hidden ${
-                          enabled ? "border-border bg-background" : "border-dashed border-border bg-muted/20"
-                        }`}
-                        data-testid={`block-toggle-${b}`}
-                      >
-                        <div className="flex items-stretch">
-                          {/* Preview thumbnail */}
-                          <div className={`shrink-0 w-20 flex items-center justify-center px-2 border-r ${
-                            enabled ? "bg-muted/30 border-border" : "bg-muted/10 border-dashed border-border opacity-60"
-                          }`}>
-                            <BlockPreview type={b} className="w-16 h-7" />
+                <p className="text-[10px] text-muted-foreground leading-relaxed mb-2.5">
+                  {language === "ko"
+                    ? "추가하려면 컴포넌트를 클릭하세요. 삭제는 메인 영역에서 각 컴포넌트의 X 버튼을 누르면 됩니다. KPI 카드는 드래그로 순서를 바꿀 수 있습니다."
+                    : "Click a component to add it. To remove, press X on the component in the main area. KPI cards can be reordered by dragging."}
+                </p>
+                {(() => {
+                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"] as BlockKey[]);
+                  const hidden = allKeys.filter(k => !visibleBlocks.includes(k));
+                  const visible = allKeys.filter(k => visibleBlocks.includes(k));
+                  return (
+                    <div className="space-y-3">
+                      {hidden.length > 0 && (
+                        <div>
+                          <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <Plus className="w-3 h-3" />
+                            {language === "ko" ? "추가할 수 있는 컴포넌트" : "Available to add"}
                           </div>
-                          {/* Info & switch */}
-                          <div className="flex-1 flex items-center gap-2 p-3 min-w-0">
-                            <div className={`p-1.5 rounded-md shrink-0 ${enabled ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
-                              <Icon className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-semibold flex items-center gap-1.5">
-                                {language === "ko" ? meta.labelKo : meta.label}
-                                {!enabled && <EyeOff className="w-3 h-3 text-muted-foreground" />}
-                              </div>
-                              <p className="text-[10px] text-muted-foreground leading-snug truncate">
-                                {language === "ko" ? meta.descKo : meta.desc}
-                              </p>
-                            </div>
-                            <Switch
-                              checked={enabled}
-                              onCheckedChange={() => toggleBlock(b)}
-                              data-testid={`switch-block-${b}`}
-                            />
+                          <div className="space-y-1.5">
+                            {hidden.map((b) => {
+                              const meta = BLOCK_META[b];
+                              const Icon = meta.icon;
+                              return (
+                                <button
+                                  key={b}
+                                  type="button"
+                                  onClick={() => addBlock(b)}
+                                  className="w-full rounded-lg border border-dashed border-border bg-muted/10 hover:border-primary/50 hover:bg-primary/5 transition-colors overflow-hidden text-left group"
+                                  data-testid={`button-add-component-${b}`}
+                                >
+                                  <div className="flex items-stretch">
+                                    <div className="shrink-0 w-20 flex items-center justify-center px-2 border-r border-dashed border-border bg-muted/10 opacity-70 group-hover:opacity-100">
+                                      <BlockPreview type={b} className="w-16 h-7" />
+                                    </div>
+                                    <div className="flex-1 flex items-center gap-2 p-3 min-w-0">
+                                      <div className="p-1.5 rounded-md shrink-0 bg-muted/40 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">
+                                        <Icon className="w-3.5 h-3.5" />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-semibold flex items-center gap-1.5 text-muted-foreground group-hover:text-foreground">
+                                          {language === "ko" ? meta.labelKo : meta.label}
+                                        </div>
+                                        <p className="text-[10px] text-muted-foreground leading-snug truncate">
+                                          {language === "ko" ? meta.descKo : meta.desc}
+                                        </p>
+                                      </div>
+                                      <div className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-primary/30 bg-background text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                        <Plus className="w-3.5 h-3.5" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-                  {language === "ko"
-                    ? "팁: 패널이 열린 상태에서 각 블록 우상단의 [수정] 버튼으로 열·높이·차트 등을 조정할 수 있습니다."
-                    : "Tip: While this panel is open, click [Edit] on the top-right of each block to tune columns, height, charts, and more."}
-                </p>
+                      )}
+                      {visible.length > 0 && (
+                        <div>
+                          <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            {language === "ko" ? "현재 레이아웃에 있음" : "In current layout"}
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {visible.map((b) => {
+                              const meta = BLOCK_META[b];
+                              const Icon = meta.icon;
+                              return (
+                                <span
+                                  key={b}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-background text-[11px] font-medium"
+                                  data-testid={`badge-active-${b}`}
+                                >
+                                  <Icon className="w-3 h-3 text-primary" />
+                                  {language === "ko" ? meta.labelKo : meta.label}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {hidden.length === 0 && (
+                        <div className="text-[11px] text-muted-foreground text-center py-3 border border-dashed border-border rounded-md bg-muted/10">
+                          {language === "ko"
+                            ? "모든 컴포넌트가 이미 레이아웃에 있습니다."
+                            : "All components are already in the layout."}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </ScrollArea>
