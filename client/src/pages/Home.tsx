@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import avatarPark from "@assets/avatars/avatar_park.png";
 import avatarKim from "@assets/avatars/avatar_kim.png";
@@ -20,7 +21,8 @@ import {
   ShieldAlert, Zap, Bot, Users, X,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle, Sparkles,
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
-  Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid
+  Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid,
+  LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -105,6 +107,79 @@ const RESOURCE_COMPOSITION_DATA = [
   { name: "ovResVideos" as TranslationKey, value: 47, color: "hsl(280, 65%, 60%)" },
 ];
 
+type BlockKey = "kpi" | "timeline" | "feed" | "monitoring";
+
+type DashboardTemplate = {
+  id: string;
+  name: string;
+  nameKo: string;
+  description: string;
+  descriptionKo: string;
+  blocks: BlockKey[];
+  accent: string;
+  icon: typeof BarChart3;
+};
+
+const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
+  {
+    id: "default",
+    name: "Full Overview",
+    nameKo: "기본 (전체 보기)",
+    description: "All blocks: KPI, timeline, activity feed, monitoring charts",
+    descriptionKo: "KPI 카드, 타임라인, 활동 피드, 모니터링 차트 모두 표시",
+    blocks: ["kpi", "timeline", "feed", "monitoring"],
+    accent: "from-blue-500/15 to-indigo-500/15 border-indigo-200 dark:border-indigo-900",
+    icon: LayoutGrid,
+  },
+  {
+    id: "activity",
+    name: "Activity-focused",
+    nameKo: "활동 중심",
+    description: "KPI + Timeline + Activity Feed (no charts)",
+    descriptionKo: "KPI 카드, 타임라인, 활동 피드 (차트 제외)",
+    blocks: ["kpi", "timeline", "feed"],
+    accent: "from-emerald-500/15 to-teal-500/15 border-emerald-200 dark:border-emerald-900",
+    icon: Bell,
+  },
+  {
+    id: "analytics",
+    name: "Analytics",
+    nameKo: "분석 중심",
+    description: "KPI cards and monitoring charts only",
+    descriptionKo: "KPI 카드와 모니터링 차트만 표시",
+    blocks: ["kpi", "monitoring"],
+    accent: "from-violet-500/15 to-purple-500/15 border-violet-200 dark:border-violet-900",
+    icon: BarChart3,
+  },
+  {
+    id: "compact",
+    name: "Compact",
+    nameKo: "컴팩트",
+    description: "KPI and activity feed only",
+    descriptionKo: "KPI 카드와 활동 피드만",
+    blocks: ["kpi", "feed"],
+    accent: "from-amber-500/15 to-orange-500/15 border-amber-200 dark:border-amber-900",
+    icon: Newspaper,
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    nameKo: "미니멀",
+    description: "KPI cards only",
+    descriptionKo: "KPI 카드만 표시",
+    blocks: ["kpi"],
+    accent: "from-slate-500/15 to-slate-400/15 border-slate-200 dark:border-slate-800",
+    icon: Zap,
+  },
+];
+
+const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: string; desc: string; icon: typeof BarChart3 }> = {
+  kpi: { labelKo: "KPI 카드", label: "KPI Cards", descKo: "노트/링크/저장공간 상단 통계", desc: "Top metrics row", icon: BarChart3 },
+  timeline: { labelKo: "최근 노트 타임라인", label: "Recent Notes Timeline", descKo: "최근 생성된 노트와 변경 사항", desc: "Recent notes and changes", icon: Calendar },
+  feed: { labelKo: "활동 피드", label: "Activity Feed", descKo: "댓글, 멘션, 공유, 시스템 알림", desc: "Comments, mentions, shares", icon: Bell },
+  monitoring: { labelKo: "KPI 모니터링 차트", label: "KPI Monitoring", descKo: "리소스 구성, AI 토큰, 노트 성장 차트", desc: "Resource, AI tokens, growth charts", icon: BarChart3 },
+};
+
 const BUSINESS_UNITS: { value: string; labelKey: TranslationKey }[] = [
   { value: "steel", labelKey: "steelDivision" },
   { value: "electronics", labelKey: "electronicsDivision" },
@@ -162,6 +237,32 @@ export default function Home() {
   const [chartPeriod, setChartPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
   const [visibleFeedCount, setVisibleFeedCount] = useState(4);
+  const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
+  const [activeTemplateId, setActiveTemplateId] = useState<string>("default");
+  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(DASHBOARD_TEMPLATES[0].blocks);
+
+  const applyTemplate = (id: string) => {
+    const tpl = DASHBOARD_TEMPLATES.find(t => t.id === id);
+    if (!tpl) return;
+    setActiveTemplateId(id);
+    setVisibleBlocks(tpl.blocks);
+  };
+
+  const toggleBlock = (key: BlockKey) => {
+    setVisibleBlocks(prev => {
+      const next = prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key];
+      const matched = DASHBOARD_TEMPLATES.find(t =>
+        t.blocks.length === next.length && t.blocks.every(b => next.includes(b))
+      );
+      setActiveTemplateId(matched ? matched.id : "custom");
+      return next;
+    });
+  };
+
+  const showKpi = visibleBlocks.includes("kpi");
+  const showTimeline = visibleBlocks.includes("timeline");
+  const showFeed = visibleBlocks.includes("feed");
+  const showMonitoring = visibleBlocks.includes("monitoring");
 
   const filteredFeed = feedItems.filter(item => feedFilter === "all" || item.source === feedFilter);
   const displayedFeed = filteredFeed.slice(0, visibleFeedCount);
@@ -194,13 +295,22 @@ export default function Home() {
             <p className="text-muted-foreground text-sm">{t("systemStatusDesc")}</p>
           </div>
           <div className="flex items-center gap-3">
-            <Button className="gap-2 h-9 text-sm shadow-lg shadow-primary/20" onClick={() => setLocation("/settings")} data-testid="button-edit-template">
-              <LayoutGrid className="w-4 h-4" />
+            {activeTemplateId !== "default" && (
+              <Badge variant="outline" className="gap-1 text-[10px] h-6 px-2 border-indigo-200 text-indigo-700 bg-indigo-50/60 dark:bg-indigo-950/30 dark:border-indigo-900 dark:text-indigo-300" data-testid="badge-active-template">
+                <LayoutTemplate className="w-3 h-3" />
+                {language === "ko"
+                  ? (DASHBOARD_TEMPLATES.find(t => t.id === activeTemplateId)?.nameKo ?? "사용자 지정")
+                  : (DASHBOARD_TEMPLATES.find(t => t.id === activeTemplateId)?.name ?? "Custom")}
+              </Badge>
+            )}
+            <Button className="gap-2 h-9 text-sm shadow-lg shadow-primary/20" onClick={() => setTemplatePanelOpen(true)} data-testid="button-edit-template">
+              <LayoutTemplate className="w-4 h-4" />
               {t("ovEditTemplate")}
             </Button>
           </div>
         </div>
 
+        {showKpi && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {kpiCards.map((stat, i) => (
@@ -229,11 +339,14 @@ export default function Home() {
             ))}
           </div>
         </RoleBasedWrapper>
+        )}
 
         {/* ===== 2-2 & 2-3: TIMELINE + ISSUE FEED (side by side) ===== */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {(showTimeline || showFeed) && (
+        <div className={`grid grid-cols-1 ${showTimeline && showFeed ? "md:grid-cols-2" : "md:grid-cols-1"} gap-6`}>
 
           {/* 2-2: TIMELINE VIEW */}
+          {showTimeline && (
           <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
             <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-timeline">
               <CardHeader className="pb-3">
@@ -304,9 +417,11 @@ export default function Home() {
               </CardContent>
             </Card>
           </RoleBasedWrapper>
+          )}
 
           {/* 2-3: ISSUE FEED */}
-          <Card className={`${role === "viewer" ? "md:col-span-2" : ""} bg-card/80 backdrop-blur border-border shadow-sm`} data-testid="card-issue-feed">
+          {showFeed && (
+          <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
@@ -393,9 +508,12 @@ export default function Home() {
               </CardFooter>
             )}
           </Card>
+          )}
         </div>
+        )}
 
         {/* ===== 2-4: KPI / STATS MONITORING ===== */}
+        {showMonitoring && (
         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
           <Card className="bg-card/80 backdrop-blur border-border shadow-sm" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
@@ -523,7 +641,198 @@ export default function Home() {
             </CardContent>
           </Card>
         </RoleBasedWrapper>
+        )}
+
+        {!showKpi && !showTimeline && !showFeed && !showMonitoring && (
+          <Card className="bg-card/60 border-dashed border-border" data-testid="card-empty-template">
+            <CardContent className="py-16 flex flex-col items-center justify-center gap-3 text-center">
+              <div className="p-3 rounded-full bg-muted/50 text-muted-foreground">
+                <LayoutTemplate className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold mb-1">
+                  {language === "ko" ? "표시할 블록이 없습니다" : "No blocks to display"}
+                </h3>
+                <p className="text-xs text-muted-foreground max-w-sm">
+                  {language === "ko"
+                    ? "오른쪽 상단의 Edit Template 버튼을 눌러 표시할 블록을 선택하세요."
+                    : "Click Edit Template at the top right to choose blocks to display."}
+                </p>
+              </div>
+              <Button size="sm" className="mt-2 gap-1.5" onClick={() => setTemplatePanelOpen(true)} data-testid="button-empty-open-template">
+                <LayoutTemplate className="w-3.5 h-3.5" />
+                {t("ovEditTemplate")}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      {/* TEMPLATE EDIT PANEL */}
+      <Sheet open={templatePanelOpen} onOpenChange={setTemplatePanelOpen}>
+        <SheetContent className="w-[420px] sm:w-[460px] p-0 flex flex-col" data-testid="sheet-template-panel">
+          <SheetHeader className="px-6 pt-6 pb-4 border-b border-border">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                <LayoutTemplate className="w-4 h-4" />
+              </div>
+              <SheetTitle className="text-base">
+                {language === "ko" ? "대시보드 템플릿" : "Dashboard Template"}
+              </SheetTitle>
+            </div>
+            <SheetDescription className="text-xs">
+              {language === "ko"
+                ? "프리셋을 선택하거나 표시할 블록을 직접 켜고 끌 수 있습니다."
+                : "Pick a preset or toggle individual blocks on and off."}
+            </SheetDescription>
+          </SheetHeader>
+
+          <ScrollArea className="flex-1">
+            <div className="px-6 py-5 space-y-6">
+              {/* PRESET TEMPLATES */}
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                    {language === "ko" ? "프리셋 템플릿" : "Preset Templates"}
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground">
+                    {DASHBOARD_TEMPLATES.length} {language === "ko" ? "개" : "presets"}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {DASHBOARD_TEMPLATES.map((tpl) => {
+                    const Icon = tpl.icon;
+                    const isActive = activeTemplateId === tpl.id;
+                    return (
+                      <button
+                        key={tpl.id}
+                        type="button"
+                        onClick={() => applyTemplate(tpl.id)}
+                        data-testid={`template-${tpl.id}`}
+                        className={`w-full text-left rounded-lg border transition-all p-3 group ${
+                          isActive
+                            ? `bg-gradient-to-br ${tpl.accent} border-2 shadow-sm`
+                            : "border-border bg-background hover:bg-muted/40 hover:border-foreground/20"
+                        }`}
+                      >
+                        <div className="flex items-start gap-2.5">
+                          <div className={`p-1.5 rounded-md ${isActive ? "bg-background/80" : "bg-muted/60"} text-foreground shrink-0`}>
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <h4 className="text-sm font-semibold">
+                                {language === "ko" ? tpl.nameKo : tpl.name}
+                              </h4>
+                              {isActive && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-300">
+                                  <Check className="w-3 h-3" />
+                                  {language === "ko" ? "사용 중" : "Active"}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+                              {language === "ko" ? tpl.descriptionKo : tpl.description}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {(["kpi", "timeline", "feed", "monitoring"] as BlockKey[]).map((b) => {
+                                const included = tpl.blocks.includes(b);
+                                return (
+                                  <span
+                                    key={b}
+                                    className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
+                                      included
+                                        ? "bg-foreground/10 text-foreground"
+                                        : "bg-muted/40 text-muted-foreground/50 line-through"
+                                    }`}
+                                  >
+                                    {language === "ko" ? BLOCK_META[b].labelKo : BLOCK_META[b].label}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* BLOCK TOGGLES */}
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                    {language === "ko" ? "블록 직접 설정" : "Customize Blocks"}
+                  </h3>
+                  {activeTemplateId === "custom" && (
+                    <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-1 border-amber-200 text-amber-700 bg-amber-50/60 dark:bg-amber-950/30 dark:border-amber-900 dark:text-amber-300">
+                      <Sparkle className="w-2.5 h-2.5" />
+                      {language === "ko" ? "사용자 지정" : "Custom"}
+                    </Badge>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  {(["kpi", "timeline", "feed", "monitoring"] as BlockKey[]).map((b) => {
+                    const meta = BLOCK_META[b];
+                    const Icon = meta.icon;
+                    const enabled = visibleBlocks.includes(b);
+                    return (
+                      <div
+                        key={b}
+                        className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                          enabled ? "border-border bg-background" : "border-dashed border-border bg-muted/20"
+                        }`}
+                        data-testid={`block-toggle-${b}`}
+                      >
+                        <div className={`p-1.5 rounded-md ${enabled ? "bg-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
+                          <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold flex items-center gap-1.5">
+                            {language === "ko" ? meta.labelKo : meta.label}
+                            {!enabled && <EyeOff className="w-3 h-3 text-muted-foreground" />}
+                          </div>
+                          <p className="text-[10px] text-muted-foreground leading-snug">
+                            {language === "ko" ? meta.descKo : meta.desc}
+                          </p>
+                        </div>
+                        <Switch
+                          checked={enabled}
+                          onCheckedChange={() => toggleBlock(b)}
+                          data-testid={`switch-block-${b}`}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+
+          <div className="px-6 py-3 border-t border-border bg-muted/20 flex items-center justify-between gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={() => applyTemplate("default")}
+              data-testid="button-template-reset"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              {language === "ko" ? "기본값" : "Reset"}
+            </Button>
+            <Button
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={() => setTemplatePanelOpen(false)}
+              data-testid="button-template-apply"
+            >
+              <Check className="w-3.5 h-3.5" />
+              {language === "ko" ? "완료" : "Done"}
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* EVENT DETAIL DRAWER */}
       <Sheet open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
