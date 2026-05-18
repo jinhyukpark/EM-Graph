@@ -23,7 +23,6 @@ import BrainMarket from "@/pages/BrainMarket";
 import IntelliSearch from "@/pages/IntelliSearch";
 import Chatbot from "@/pages/Chatbot";
 import Plugins from "@/pages/Plugins";
-import BusinessGlossary from "@/pages/BusinessGlossary";
 import TodoList from "@/pages/TodoList";
 import CalendarPage from "@/pages/CalendarPage";
 
@@ -57,7 +56,6 @@ function AppRouter() {
         <Route path="/todo-list" component={TodoList} />
         <Route path="/calendar" component={CalendarPage} />
         <Route path="/brain-market" component={BrainMarket} />
-        <Route path="/business-glossary" component={BusinessGlossary} />
         <Route path="/create" component={CreateProject} />
         <Route path="/project/:id/setup" component={ProjectSetup} />
         <Route path="/project/:id/view" component={ProjectView} />
