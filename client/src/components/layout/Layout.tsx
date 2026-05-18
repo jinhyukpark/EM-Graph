@@ -492,7 +492,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
               <NavItem href="/todo-list" icon={ListTodo} label={t("todoList")} />
               <NavItem href="/calendar" icon={Calendar} label={t("calendar")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
-              <NavItem href="/business-glossary" icon={BookOpen} label={t("businessGlossary")} />
             </div>
           )}
 
