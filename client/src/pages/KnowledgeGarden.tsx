@@ -1105,6 +1105,16 @@ export default function KnowledgeGarden() {
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
   const [textColor, setTextColor] = useState<string>(TEXT_COLORS[0].value);
+
+  const applyTextColor = useCallback((color: string) => {
+    setTextColor(color);
+    try {
+      if (typeof document !== "undefined" && (document as any).execCommand) {
+        (document as any).execCommand("styleWithCSS", false, true);
+        (document as any).execCommand("foreColor", false, color);
+      }
+    } catch {}
+  }, []);
   const [docDate, setDocDate] = useState<Date>(new Date(2025, 11, 15)); // Dec 15, 2025
   const [docTags, setDocTags] = useState<string[]>(['Battery', 'EV']);
   const [customStatuses, setCustomStatuses] = useState<typeof STATUS_OPTIONS>([]);
@@ -2221,20 +2231,28 @@ export default function KnowledgeGarden() {
                       <button
                         data-testid="editor-color"
                         title="글자 색상"
+                        onMouseDown={(e) => e.preventDefault()}
                         className="h-8 w-8 inline-flex flex-col items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors gap-0.5"
                       >
                         <span className="text-[11px] font-bold leading-none" style={{ color: textColor }}>A</span>
                         <span className="block w-4 h-1 rounded-sm" style={{ backgroundColor: textColor }} />
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent align="start" sideOffset={6} className="w-auto p-3 rounded-xl shadow-xl border border-border" data-testid="popover-color">
+                    <PopoverContent
+                      align="start"
+                      sideOffset={6}
+                      className="w-auto p-3 rounded-xl shadow-xl border border-border"
+                      data-testid="popover-color"
+                      onOpenAutoFocus={(e) => e.preventDefault()}
+                    >
                       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">글자 색상</p>
                       <div className="grid grid-cols-5 gap-1.5 w-[180px]">
                         {TEXT_COLORS.map((c) => (
                           <button
                             key={c.value}
                             type="button"
-                            onClick={() => setTextColor(c.value)}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => applyTextColor(c.value)}
                             title={c.name}
                             data-testid={`color-${c.id}`}
                             className={cn(
@@ -2253,7 +2271,8 @@ export default function KnowledgeGarden() {
                         <span className="text-[11px] text-muted-foreground">현재: <span className="font-medium text-foreground">{TEXT_COLORS.find(c => c.value === textColor)?.name ?? "사용자 지정"}</span></span>
                         <button
                           type="button"
-                          onClick={() => setTextColor("#0f172a")}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => applyTextColor("#0f172a")}
                           className="text-[11px] text-indigo-600 hover:text-indigo-700 font-medium"
                           data-testid="button-color-reset"
                         >
