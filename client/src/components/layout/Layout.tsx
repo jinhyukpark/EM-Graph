@@ -636,7 +636,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           </Button>
         </header>
 
-        <main className="flex-1 overflow-hidden relative">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden relative">
            <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggle: () => setIsCollapsed(!isCollapsed) }}>
              {children}
            </SidebarContext.Provider>
