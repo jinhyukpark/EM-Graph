@@ -596,22 +596,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 </Button>
               </div>
             )}
-            {isCollapsed && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    onClick={() => setLanguage(language === "en" ? "ko" : "en")}
-                    data-testid="button-language-toggle-collapsed"
-                  >
-                    <Globe className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
-              </Tooltip>
-            )}
           </div>
         </div>
         )}
