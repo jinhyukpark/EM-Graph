@@ -144,6 +144,163 @@ const TEXT_COLORS = [
   { id: 'orange', name: '오렌지', value: '#f97316' },
 ];
 
+type DocTemplateId = 'meeting' | 'report' | 'summary' | 'proposal' | 'action';
+
+const DOC_TEMPLATES: {
+  id: DocTemplateId;
+  label: string;
+  desc: string;
+  icon: typeof FileText;
+  accent: string;
+}[] = [
+  { id: 'meeting', label: '회의록', desc: '일시·참석자·안건·결정사항 형식으로 재작성', icon: Users, accent: 'text-blue-600 bg-blue-50 border-blue-200' },
+  { id: 'report', label: '보고서', desc: '개요·배경·분석·결론·권고 형식의 정식 보고서', icon: FileText, accent: 'text-violet-600 bg-violet-50 border-violet-200' },
+  { id: 'summary', label: '핵심 요약', desc: '한 페이지 경영진용 요약 (Executive Summary)', icon: LayoutTemplate, accent: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+  { id: 'proposal', label: '제안서', desc: '제안 배경·목표·실행방안·기대효과 구성', icon: Edit3, accent: 'text-amber-600 bg-amber-50 border-amber-200' },
+  { id: 'action', label: '액션 아이템', desc: '담당자·기한이 포함된 실행 과제 체크리스트', icon: CheckSquare, accent: 'text-rose-600 bg-rose-50 border-rose-200' },
+];
+
+function DocTemplateContent({ id }: { id: DocTemplateId }) {
+  if (id === 'meeting') {
+    return (
+      <>
+        <div className="not-prose mb-8 rounded-xl border border-border bg-muted/20 p-5">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div><span className="text-muted-foreground">일시</span><div className="font-medium text-foreground mt-0.5">2025년 12월 15일 (월) 14:00 ~ 15:30</div></div>
+            <div><span className="text-muted-foreground">장소</span><div className="font-medium text-foreground mt-0.5">본사 3F 전략회의실 / 화상 병행</div></div>
+            <div><span className="text-muted-foreground">참석자</span><div className="font-medium text-foreground mt-0.5">김애널 (작성), 박법무, 이전략, 최기술</div></div>
+            <div><span className="text-muted-foreground">안건</span><div className="font-medium text-foreground mt-0.5">LG-SK 배터리 특허 분쟁 대응 방향</div></div>
+          </div>
+        </div>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 안건 논의</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li><strong>영업비밀 침해 쟁점:</strong> 세라믹 코팅 분리막(CCS) 기술 유출 주장에 대한 사실관계 확인 필요.</li>
+            <li><strong>특허 침해 주장:</strong> 하이니켈 양극재 제조 공정 관련 4건의 특허 검토 진행.</li>
+            <li><strong>법적 대응:</strong> US ITC 및 델라웨어 지방법원 제출 자료 기반 방어 논리 수립.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 결정 사항</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
+            <li>선행기술(Prior Art) 방어 전략 유효성을 12월 말까지 검증 완료한다.</li>
+            <li>크로스 라이선싱 제안을 위한 대응 논리를 법무팀이 준비한다.</li>
+            <li>시장 점유율 기반 손해배상/로열티 모델을 추가 분석한다.</li>
+          </ol>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 액션 아이템</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li>SK 배터리 모듈 기술 도면 분석 — <strong>최기술</strong> (~12/22)</li>
+            <li>크로스 라이선싱 대응안 초안 — <strong>박법무</strong> (~12/26)</li>
+            <li>손해배상 모델 시나리오 작성 — <strong>이전략</strong> (~12/29)</li>
+          </ul>
+        </div>
+      </>
+    );
+  }
+  if (id === 'report') {
+    return (
+      <>
+        <p className="lead text-lg text-foreground/80 mb-8 leading-relaxed tracking-wide">
+          LG에너지솔루션과 SK이노베이션 간 배터리 특허 분쟁에 대한 정식 분석 보고서. 주요 특허, 법적 쟁점, 시장 영향을 종합 검토한다.
+        </p>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 개요</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">본 보고서는 양사 간 영업비밀 침해 및 특허 침해 주장에 관한 최근 법원 제출 자료와 기술 분석을 정리한 것이다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 배경</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">분쟁의 핵심은 세라믹 코팅 분리막(CCS) 기술 및 하이니켈 양극재 제조 공정의 유출·침해 여부이다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 분석</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li><strong>분리막 기술:</strong> CCS 기술의 영업비밀성 인정 가능성이 높음.</li>
+            <li><strong>양극재:</strong> 하이니켈 공정 특허의 청구항 범위가 쟁점.</li>
+            <li><strong>제조 데이터:</strong> 수율 데이터 및 생산라인 도면 이전 여부가 핵심 증거.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 결론 및 권고</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">선행기술 방어와 크로스 라이선싱 협상을 병행하는 이원 전략을 권고한다. 장기 소송 리스크 대비 협상 우위 확보가 필요하다.</p>
+        </div>
+      </>
+    );
+  }
+  if (id === 'summary') {
+    return (
+      <>
+        <div className="not-prose rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 mb-6">
+          <div className="flex items-center gap-2 mb-3 text-emerald-700 font-semibold text-sm">
+            <LayoutTemplate className="w-4 h-4" /> 핵심 요약 (Executive Summary)
+          </div>
+          <ul className="space-y-2.5 text-sm text-foreground/90">
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> LG에너지솔루션 vs SK이노베이션 배터리 특허·영업비밀 분쟁.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 핵심 쟁점: CCS 분리막 기술 유출, 하이니켈 양극재 공정 침해.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 분쟁 특허 4건 검토 — 모두 공개 상태, 청구항 범위가 관건.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 권고: 선행기술 방어 + 크로스 라이선싱 협상 병행.</li>
+          </ul>
+        </div>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">한눈에 보기</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">분쟁의 본질은 기술 유출 여부 입증에 있으며, 단기적으로는 협상, 장기적으로는 특허 무효 심판 대응이 핵심 변수다.</p>
+        </div>
+      </>
+    );
+  }
+  if (id === 'proposal') {
+    return (
+      <>
+        <h3 className="mt-2 mb-4 text-base font-bold text-foreground">1. 제안 배경</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">장기 소송에 따른 비용·불확실성을 줄이기 위해 분쟁 조기 종결 전략을 제안한다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 목표</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li>2026년 상반기 내 협상 타결 또는 핵심 특허 방어 확정.</li>
+            <li>핵심 기술 자산 보호 및 추가 유출 리스크 차단.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 실행 방안</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
+            <li>선행기술 조사로 상대 특허 무효 가능성 확보.</li>
+            <li>크로스 라이선싱 협상 카드 마련.</li>
+            <li>대외 커뮤니케이션 및 IR 메시지 정렬.</li>
+          </ol>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 기대 효과</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">소송 비용 절감, 기술 자산 보호, 시장 신뢰 유지의 3대 효과를 기대할 수 있다.</p>
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="lead text-base text-foreground/80 mb-6 leading-relaxed">분쟁 대응을 위한 실행 과제 목록. 담당자와 기한을 기준으로 진행 상황을 관리한다.</p>
+      <div className="not-prose space-y-2.5">
+        {[
+          { done: true, task: '초기 법원 제출 자료 검토', owner: '김애널', due: '완료 2024-12-01' },
+          { done: false, task: 'SK 배터리 모듈 기술 도면 분석', owner: '최기술', due: '2025-12-22' },
+          { done: false, task: '크로스 라이선싱 대응안 초안 작성', owner: '박법무', due: '2025-12-26' },
+          { done: false, task: '손해배상/로열티 모델 시나리오 작성', owner: '이전략', due: '2025-12-29' },
+          { done: false, task: '선행기술 방어 전략 유효성 검증', owner: '최기술', due: '2025-12-31' },
+        ].map((item, i) => (
+          <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
+            <input type="checkbox" checked={item.done} readOnly className="h-4 w-4 rounded border-gray-300 text-blue-600 accent-blue-600 cursor-default shrink-0" />
+            <span className={cn("flex-1 text-sm", item.done ? "line-through text-muted-foreground" : "text-foreground/90")}>{item.task}</span>
+            <Badge variant="secondary" className="text-[10px] font-normal shrink-0">{item.owner}</Badge>
+            <span className="text-xs text-muted-foreground shrink-0 w-28 text-right">{item.due}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 const INITIAL_FILE_TREE = [
   {
     id: "root",
@@ -1128,6 +1285,20 @@ export default function KnowledgeGarden() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditingTags, setIsEditingTags] = useState(false);
   const [showAiAlert, setShowAiAlert] = useState(true);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [docTemplates, setDocTemplates] = useState<DocTemplateId[]>([]);
+  const [activeDocTab, setActiveDocTab] = useState<'original' | DocTemplateId>('original');
+
+  const applyDocTemplate = (id: DocTemplateId) => {
+    setDocTemplates(prev => prev.includes(id) ? prev : [...prev, id]);
+    setActiveDocTab(id);
+    setShowTemplateDialog(false);
+  };
+
+  const removeDocTemplate = (id: DocTemplateId) => {
+    setDocTemplates(prev => prev.filter(t => t !== id));
+    setActiveDocTab(prev => prev === id ? 'original' : prev);
+  };
   
   // Ref for handling click outside
   const editingRef = useRef<HTMLDivElement>(null);
@@ -2324,9 +2495,13 @@ export default function KnowledgeGarden() {
                              <BadgeCheck className="w-3.5 h-3.5" />
                              <span>Verify</span>
                            </button>
-                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
-                             <MessageSquare className="w-3.5 h-3.5" />
-                             <span>{t("documents")}</span>
+                           <button
+                             onClick={() => setShowTemplateDialog(true)}
+                             data-testid="button-templatize"
+                             className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors"
+                           >
+                             <LayoutTemplate className="w-3.5 h-3.5" />
+                             <span>템플릿</span>
                            </button>
                         </div>
                         
@@ -2512,11 +2687,70 @@ export default function KnowledgeGarden() {
                         </div>
                       </div>
 
+                      {docTemplates.length > 0 && (
+                        <div className="flex items-center gap-1 border-b border-border -mt-2 mb-2 overflow-x-auto scrollbar-hide" data-testid="tabs-templates">
+                          <button
+                            onClick={() => setActiveDocTab('original')}
+                            data-testid="tab-original"
+                            className={cn(
+                              "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+                              activeDocTab === 'original'
+                                ? "border-primary text-foreground"
+                                : "border-transparent text-muted-foreground hover:text-foreground"
+                            )}
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            원본
+                          </button>
+                          {docTemplates.map((tid) => {
+                            const tpl = DOC_TEMPLATES.find(t => t.id === tid)!;
+                            const Icon = tpl.icon;
+                            return (
+                              <button
+                                key={tid}
+                                onClick={() => setActiveDocTab(tid)}
+                                data-testid={`tab-template-${tid}`}
+                                className={cn(
+                                  "group/tab flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+                                  activeDocTab === tid
+                                    ? "border-primary text-foreground"
+                                    : "border-transparent text-muted-foreground hover:text-foreground"
+                                )}
+                              >
+                                <Icon className="w-3.5 h-3.5" />
+                                {tpl.label}
+                                <span
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={(e) => { e.stopPropagation(); removeDocTemplate(tid); }}
+                                  data-testid={`button-remove-tab-${tid}`}
+                                  className="ml-0.5 rounded-full p-0.5 opacity-0 group-hover/tab:opacity-100 hover:bg-muted text-muted-foreground hover:text-red-500 transition-all"
+                                >
+                                  <X className="w-3 h-3" />
+                                </span>
+                              </button>
+                            );
+                          })}
+                          <button
+                            onClick={() => setShowTemplateDialog(true)}
+                            data-testid="button-add-template-tab"
+                            className="flex items-center justify-center px-2 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                            title="템플릿 추가"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+
                       <div 
                         contentEditable 
                         suppressContentEditableWarning 
                         className="prose prose-slate max-w-none prose-sm prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:leading-relaxed outline-none min-h-[500px] cursor-text px-2"
                       >
+                        {activeDocTab !== 'original' ? (
+                          <DocTemplateContent id={activeDocTab} />
+                        ) : (
+                        <>
                         {showAiAlert && (
                             <div className="flex items-center gap-2 p-3 mb-6 text-sm text-blue-700 bg-blue-50 border border-blue-100 rounded-lg select-none group relative">
                                 <Sparkles className="w-4 h-4 text-blue-500 fill-blue-500/20" />
@@ -2692,6 +2926,8 @@ export default function KnowledgeGarden() {
                                 </Button>
                             </div>
                         </div>
+                        </>
+                        )}
                       </div>
                     </div>
                 </ScrollArea>
@@ -3041,6 +3277,45 @@ export default function KnowledgeGarden() {
             open={showShareNotebookDialog}
             onOpenChange={setShowShareNotebookDialog}
           />
+          <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+            <DialogContent className="max-w-2xl" data-testid="dialog-templatize">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <LayoutTemplate className="w-5 h-5 text-primary" />
+                  문서 템플릿으로 변환
+                </DialogTitle>
+                <DialogDescription>
+                  원본 문서를 선택한 형식으로 재작성합니다. 변환된 문서는 노트 상단에 탭으로 추가되어 자유롭게 전환할 수 있습니다.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-3 py-2">
+                {DOC_TEMPLATES.map((tpl) => {
+                  const Icon = tpl.icon;
+                  const added = docTemplates.includes(tpl.id);
+                  return (
+                    <button
+                      key={tpl.id}
+                      onClick={() => applyDocTemplate(tpl.id)}
+                      data-testid={`card-template-${tpl.id}`}
+                      className={cn(
+                        "group relative flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all hover:shadow-md hover:border-primary/40",
+                        added ? "border-primary/40 bg-primary/5" : "border-border bg-card"
+                      )}
+                    >
+                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg border", tpl.accent)}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                        {tpl.label}
+                        {added && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{tpl.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </DialogContent>
+          </Dialog>
           <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
             <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" data-testid="dialog-search">
               <DialogHeader className="sr-only">
