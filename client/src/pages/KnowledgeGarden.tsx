@@ -2743,6 +2743,7 @@ export default function KnowledgeGarden() {
                       )}
 
                       <div 
+                        key={activeDocTab}
                         contentEditable 
                         suppressContentEditableWarning 
                         className="prose prose-slate max-w-none prose-sm prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:leading-relaxed outline-none min-h-[500px] cursor-text px-2"
