@@ -1235,6 +1235,8 @@ export default function KnowledgeGarden() {
   const [showDocDetails, setShowDocDetails] = useState(true);
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
+  const [ontologyLayout, setOntologyLayout] = useState<"lens" | "organic" | "structural">("lens");
+  const [showLayoutPanel, setShowLayoutPanel] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
@@ -2935,19 +2937,97 @@ export default function KnowledgeGarden() {
                            </Button>
                          </div>
                         <div className="flex-1 w-full relative">
-                          <div className="absolute top-3 right-3 z-20 flex flex-col items-center gap-2">
-                            <Button variant="ghost" size="icon" className="h-10 w-10 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40" title="Ontology Shape" data-testid="button-ontology-shape">
-                              <Hexagon className="w-6 h-6" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
-                              <ToggleLeft className="w-6 h-6" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
-                              <BarChart3 className="w-6 h-6" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
-                              <Filter className="w-6 h-6" />
-                            </Button>
+                          <div className="absolute top-3 right-3 z-20 flex flex-row-reverse items-start gap-2">
+                            {/* Toolbar icons */}
+                            <div className="flex flex-col items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showLayoutPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40"}`}
+                                title="Layout"
+                                data-testid="button-ontology-shape"
+                                onClick={() => setShowLayoutPanel(p => !p)}
+                              >
+                                <Hexagon className="w-6 h-6" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-10 w-10 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
+                                <ToggleLeft className="w-6 h-6" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
+                                <BarChart3 className="w-6 h-6" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-10 w-10 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
+                                <Filter className="w-6 h-6" />
+                              </Button>
+                            </div>
+
+                            {/* Layout selection panel */}
+                            {showLayoutPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl p-4 w-56" data-testid="panel-ontology-layout">
+                                <p className="font-semibold text-sm text-foreground mb-3">Layout</p>
+                                <div className="grid grid-cols-3 gap-2">
+                                  {([
+                                    {
+                                      key: "lens" as const,
+                                      label: "Lens",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                                          <circle cx="18" cy="18" r="12" stroke="currentColor" strokeWidth="2.2" strokeDasharray="5 3.5" strokeLinecap="round" />
+                                        </svg>
+                                      ),
+                                    },
+                                    {
+                                      key: "organic" as const,
+                                      label: "Organic",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                          <rect x="12" y="4" width="12" height="8" rx="2" />
+                                          <rect x="2" y="24" width="11" height="8" rx="2" />
+                                          <rect x="23" y="24" width="11" height="8" rx="2" />
+                                          <line x1="18" y1="12" x2="18" y2="18" />
+                                          <line x1="18" y1="18" x2="7.5" y2="24" />
+                                          <line x1="18" y1="18" x2="28.5" y2="24" />
+                                        </svg>
+                                      ),
+                                    },
+                                    {
+                                      key: "structural" as const,
+                                      label: "Structural",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                                          <circle cx="18" cy="18" r="3.5" />
+                                          <circle cx="30" cy="10" r="3" />
+                                          <circle cx="30" cy="26" r="3" />
+                                          <circle cx="6" cy="10" r="3" />
+                                          <circle cx="6" cy="26" r="3" />
+                                          <line x1="18" y1="18" x2="27.3" y2="11.2" />
+                                          <line x1="18" y1="18" x2="27.3" y2="24.8" />
+                                          <line x1="18" y1="18" x2="8.7" y2="11.2" />
+                                          <line x1="18" y1="18" x2="8.7" y2="24.8" />
+                                        </svg>
+                                      ),
+                                    },
+                                  ] as const).map(({ key, label, icon }) => (
+                                    <button
+                                      key={key}
+                                      type="button"
+                                      onClick={() => setOntologyLayout(key)}
+                                      data-testid={`button-layout-${key}`}
+                                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all ${
+                                        ontologyLayout === key
+                                          ? "border-primary bg-primary/5 text-primary"
+                                          : "border-border/60 bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
+                                      }`}
+                                    >
+                                      {icon}
+                                      <span className={`text-[10px] font-medium leading-none ${ontologyLayout === key ? "text-primary" : "text-muted-foreground"}`}>
+                                        {label}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <ReactFlowProvider>
                             <GraphErrorBoundary>
