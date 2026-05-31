@@ -16,7 +16,8 @@ import {
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
   Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2, Palette, Check,
   Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2,
-  Hexagon, ToggleLeft, BarChart3
+  Hexagon, ToggleLeft, BarChart3,
+  Pencil, Eraser, Highlighter, Paintbrush, Minus
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1237,6 +1238,12 @@ export default function KnowledgeGarden() {
   const [showCopilot, setShowCopilot] = useState(true);
   const [ontologyLayout, setOntologyLayout] = useState<"lens" | "organic" | "structural">("lens");
   const [showLayoutPanel, setShowLayoutPanel] = useState(false);
+  const [insertPopoverOpen, setInsertPopoverOpen] = useState(false);
+  const [showSketchMode, setShowSketchMode] = useState(false);
+  const [sketchTool, setSketchTool] = useState<"pen" | "brush" | "eraser" | "highlighter">("pen");
+  const [sketchColor, setSketchColor] = useState("#1a1a1a");
+  const [sketchSize] = useState(2);
+  const [sketchZoom, setSketchZoom] = useState(100);
   const [showSearch, setShowSearch] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
@@ -1341,6 +1348,43 @@ export default function KnowledgeGarden() {
   };
 
   const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
+
+  useEffect(() => {
+    if (!showSketchMode) return;
+    const raf = requestAnimationFrame(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      sketchHistoryRef.current = [canvas.toDataURL()];
+      sketchHistoryIdxRef.current = 0;
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [showSketchMode]);
+
+  const undoSketch = () => {
+    if (sketchHistoryIdxRef.current <= 0) return;
+    sketchHistoryIdxRef.current--;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = sketchHistoryRef.current[sketchHistoryIdxRef.current];
+  };
+
+  const redoSketch = () => {
+    if (sketchHistoryIdxRef.current >= sketchHistoryRef.current.length - 1) return;
+    sketchHistoryIdxRef.current++;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = sketchHistoryRef.current[sketchHistoryIdxRef.current];
+  };
 
   // Helper function to toggle views safely
   const toggleView = (
@@ -1578,6 +1622,11 @@ export default function KnowledgeGarden() {
   const tabScrollerRef = useRef<HTMLDivElement>(null);
   const tabItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const addTabBtnRef = useRef<HTMLButtonElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+  const sketchHistoryRef = useRef<string[]>([]);
+  const sketchHistoryIdxRef = useRef(-1);
   const [hiddenTabIds, setHiddenTabIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -2275,7 +2324,7 @@ export default function KnowledgeGarden() {
                 ) : (
                 <>
                 <div className="shrink-0 border-b border-border bg-background/80 backdrop-blur-sm px-3 py-2 flex items-center gap-1 overflow-x-auto" data-testid="editor-toolbar">
-                  <Popover>
+                  <Popover open={insertPopoverOpen} onOpenChange={setInsertPopoverOpen}>
                     <PopoverTrigger asChild>
                       <button
                         type="button"
@@ -2333,11 +2382,13 @@ export default function KnowledgeGarden() {
                           { Icon: ListOrdered, label: '번호 매기기' },
                           { Icon: CheckSquare, label: '체크리스트' },
                           { Icon: TableIcon, label: '표' },
-                          { Icon: ImagePlus, label: '이미지' },
-                          { Icon: Link2, label: '링크' },
-                        ].map(({ Icon, label }) => (
+                          { Icon: ImagePlus, label: '이미지', onClick: undefined as (() => void) | undefined },
+                          { Icon: Link2, label: '링크', onClick: undefined as (() => void) | undefined },
+                          { Icon: Pencil, label: '그리기', onClick: () => { setShowSketchMode(true); setInsertPopoverOpen(false); } },
+                        ].map(({ Icon, label, onClick }) => (
                           <button
                             key={label}
+                            onClick={onClick}
                             className="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-muted/60 transition-colors text-left"
                           >
                             <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -2913,6 +2964,198 @@ export default function KnowledgeGarden() {
                 </ScrollArea>
                 </>
                 )}
+
+              {/* Sketch Mode Overlay */}
+              {showSketchMode && (
+                <div className="absolute inset-0 z-50 flex flex-col bg-white select-none" data-testid="sketch-mode-overlay">
+                  {/* Top bar */}
+                  <div className="shrink-0 h-11 border-b border-gray-200 bg-white flex items-center justify-between px-4 shadow-sm">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setSketchZoom(z => Math.max(25, z - 25))}
+                        className="h-7 w-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-zoom-out"
+                      >
+                        <Minus className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                      <span className="text-sm font-medium w-14 text-center tabular-nums text-gray-700">{sketchZoom}%</span>
+                      <button
+                        type="button"
+                        onClick={() => setSketchZoom(z => Math.min(200, z + 25))}
+                        className="h-7 w-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-zoom-in"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                      <div className="w-px h-5 bg-gray-200 mx-1.5" />
+                      <button type="button" onClick={undoSketch} className="h-7 w-7 rounded-md hover:bg-gray-100 transition-colors flex items-center justify-center" data-testid="sketch-undo">
+                        <Undo2 className="w-4 h-4 text-gray-500" />
+                      </button>
+                      <button type="button" onClick={redoSketch} className="h-7 w-7 rounded-md hover:bg-gray-100 transition-colors flex items-center justify-center" data-testid="sketch-redo">
+                        <Redo2 className="w-4 h-4 text-gray-500" />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowSketchMode(false)}
+                        className="h-8 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-cancel"
+                      >
+                        취소
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowSketchMode(false)}
+                        className="h-8 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
+                        data-testid="sketch-done"
+                      >
+                        완료
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Canvas area */}
+                  <div className="flex flex-1 min-h-0">
+                    {/* Left tool bar */}
+                    <div className="shrink-0 w-12 border-r border-gray-200 bg-white flex flex-col items-center gap-2 py-4">
+                      {([
+                        { tool: "pen" as const, icon: <Pencil className="w-[18px] h-[18px]" />, label: "펜" },
+                        { tool: "brush" as const, icon: <Paintbrush className="w-[18px] h-[18px]" />, label: "브러시" },
+                        { tool: "eraser" as const, icon: <Eraser className="w-[18px] h-[18px]" />, label: "지우개" },
+                        { tool: "highlighter" as const, icon: <Highlighter className="w-[18px] h-[18px]" />, label: "형광펜" },
+                      ] as const).map(({ tool, icon, label }) => (
+                        <button
+                          key={tool}
+                          type="button"
+                          title={label}
+                          onClick={() => setSketchTool(tool)}
+                          data-testid={`sketch-tool-${tool}`}
+                          className={`h-9 w-9 rounded-xl flex items-center justify-center transition-all ${
+                            sketchTool === tool
+                              ? "bg-blue-600 text-white shadow-sm"
+                              : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                          }`}
+                        >
+                          {icon}
+                        </button>
+                      ))}
+                      <div className="mt-auto flex flex-col items-center gap-1.5 pb-1">
+                        {(["#1a1a1a", "#2563eb", "#ef4444", "#22c55e", "#f97316", "#8b5cf6"] as const).map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setSketchColor(c)}
+                            data-testid={`sketch-color-${c.slice(1)}`}
+                            className={`w-6 h-6 rounded-full border-2 transition-transform ${
+                              sketchColor === c ? "border-gray-600 scale-110" : "border-gray-200 hover:scale-105"
+                            }`}
+                            style={{ background: c }}
+                          />
+                        ))}
+                        <div className="mt-1 text-[10px] font-medium text-gray-400 tabular-nums leading-none">
+                          {String(sketchSize).padStart(2, "0")}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Drawing canvas */}
+                    <div
+                      className="flex-1 overflow-auto"
+                      style={{
+                        backgroundImage: "radial-gradient(circle, #b8b8b8 1px, transparent 1px)",
+                        backgroundSize: "24px 24px",
+                        backgroundColor: "#f4f4f4",
+                      }}
+                    >
+                      <canvas
+                        ref={canvasRef}
+                        width={2400}
+                        height={1600}
+                        data-testid="sketch-canvas"
+                        style={{
+                          display: "block",
+                          width: `${24 * sketchZoom}px`,
+                          height: `${16 * sketchZoom}px`,
+                          cursor: sketchTool === "eraser" ? "cell" : "crosshair",
+                        }}
+                        onMouseDown={(e) => {
+                          isDrawingRef.current = true;
+                          const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                          const scaleX = 2400 / rect.width;
+                          const scaleY = 1600 / rect.height;
+                          lastPosRef.current = {
+                            x: (e.clientX - rect.left) * scaleX,
+                            y: (e.clientY - rect.top) * scaleY,
+                          };
+                        }}
+                        onMouseMove={(e) => {
+                          if (!isDrawingRef.current || !canvasRef.current) return;
+                          const ctx = canvasRef.current.getContext("2d");
+                          if (!ctx) return;
+                          const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                          const scaleX = 2400 / rect.width;
+                          const scaleY = 1600 / rect.height;
+                          const x = (e.clientX - rect.left) * scaleX;
+                          const y = (e.clientY - rect.top) * scaleY;
+                          const last = lastPosRef.current ?? { x, y };
+                          ctx.beginPath();
+                          ctx.moveTo(last.x, last.y);
+                          ctx.lineTo(x, y);
+                          ctx.lineCap = "round";
+                          ctx.lineJoin = "round";
+                          if (sketchTool === "eraser") {
+                            ctx.strokeStyle = "#ffffff";
+                            ctx.lineWidth = sketchSize * 12;
+                            ctx.globalAlpha = 1.0;
+                          } else if (sketchTool === "brush") {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 6;
+                            ctx.globalAlpha = 0.85;
+                          } else if (sketchTool === "highlighter") {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 8;
+                            ctx.globalAlpha = 0.35;
+                          } else {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 2;
+                            ctx.globalAlpha = 1.0;
+                          }
+                          ctx.stroke();
+                          ctx.globalAlpha = 1.0;
+                          lastPosRef.current = { x, y };
+                        }}
+                        onMouseUp={() => {
+                          if (!isDrawingRef.current) return;
+                          isDrawingRef.current = false;
+                          lastPosRef.current = null;
+                          const canvas = canvasRef.current;
+                          if (!canvas) return;
+                          const snap = canvas.toDataURL();
+                          const next = sketchHistoryRef.current.slice(0, sketchHistoryIdxRef.current + 1);
+                          next.push(snap);
+                          sketchHistoryRef.current = next;
+                          sketchHistoryIdxRef.current = next.length - 1;
+                        }}
+                        onMouseLeave={() => {
+                          isDrawingRef.current = false;
+                          lastPosRef.current = null;
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Floating + button */}
+                  <button
+                    type="button"
+                    className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+                    data-testid="sketch-add"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
               </ResizablePanel>
                   )}
 
