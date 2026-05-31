@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,7 +31,8 @@ import {
   Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid, Plus,
   LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
   Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2,
-  Tag, ListChecks, CalendarDays, Circle
+  Tag, ListChecks, CalendarDays, Circle,
+  NotebookPen, Trash2, Maximize2
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -163,7 +166,42 @@ const buildMonthGrid = (year: number, month: number): (number | null)[] => {
 };
 const MONTH_GRID = buildMonthGrid(CALENDAR_YEAR, CALENDAR_MONTH);
 
-type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring" | "tags" | "todos" | "calendar";
+type Memo = { id: string; content: string; createdAt: string };
+const MEMO_STORAGE_KEY = "em-graph-memos";
+const SEED_MEMOS: Memo[] = [
+  { id: "m1", content: "PET필름 #3 라인 압출 온도 235도로 조정 후 가동률 재측정 필요", createdAt: "2026-05-31T09:14:00" },
+  { id: "m2", content: "아라미드 단가 협상 — 공급사 B안 원가표 다시 확인하기", createdAt: "2026-05-31T11:02:00" },
+  { id: "m3", content: "편광필름 황변 이슈: 2호기 UV 경화 파라미터 로그 정리", createdAt: "2026-05-30T16:40:00" },
+  { id: "m4", content: "MOQ 3톤 인하 시 중소형 고객사 예상 매출 시뮬레이션 요청", createdAt: "2026-05-29T14:25:00" },
+  { id: "m5", content: "공급망 지식정원 1차 협력사 노드 라벨 표준화 규칙 메모", createdAt: "2026-05-28T10:10:00" },
+];
+const memoDateKey = (iso: string) => {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const formatMemoDay = (iso: string, language: string) => {
+  const d = new Date(iso);
+  return language === "ko"
+    ? `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
+    : d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+};
+const formatMemoTime = (iso: string, language: string) => {
+  const d = new Date(iso);
+  return d.toLocaleTimeString(language === "ko" ? "ko-KR" : "en-US", { hour: "2-digit", minute: "2-digit" });
+};
+const groupMemosByDate = (memos: Memo[]) => {
+  const sorted = [...memos].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const groups: { date: string; items: Memo[] }[] = [];
+  for (const m of sorted) {
+    const key = memoDateKey(m.createdAt);
+    let g = groups.find((x) => x.date === key);
+    if (!g) { g = { date: key, items: [] }; groups.push(g); }
+    g.items.push(m);
+  }
+  return groups;
+};
+
+type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring" | "tags" | "todos" | "calendar" | "memo";
 
 const KPI_KEYS: BlockKey[] = ["notes", "links", "dbUsage", "resource"];
 const isKpiKey = (k: BlockKey) => KPI_KEYS.includes(k);
@@ -179,6 +217,7 @@ const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: str
   tags: { labelKo: "노트 태그 모음", label: "Note Tags", descKo: "자주 사용된 노트 태그 모음", desc: "Frequently used note tags", icon: Tag },
   todos: { labelKo: "할 일 (진행률)", label: "To-Do (Progress)", descKo: "할 일 목록과 진행률", desc: "To-do list with progress", icon: ListChecks },
   calendar: { labelKo: "캘린더 (일정)", label: "Calendar", descKo: "월간 일정 및 다가오는 이벤트", desc: "Monthly schedule & events", icon: CalendarDays },
+  memo: { labelKo: "메모장", label: "Memo Pad", descKo: "대시보드에서 바로 메모 작성·날짜별 저장", desc: "Quick memos saved by date", icon: NotebookPen },
 };
 
 type BlockOptions = {
@@ -203,6 +242,7 @@ const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
   tags:       { x: 0,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
   todos:      { x: 4,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
   calendar:   { x: 8,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
+  memo:       { x: 0,  y: 25, w: 6, h: 7, minW: 4, minH: 5, maxW: 12 },
 };
 
 const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
@@ -368,6 +408,22 @@ function BlockPreview({ type, className = "" }: { type: BlockKey; className?: st
           ))}
         </svg>
       );
+    case "memo":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <rect x={5} y={5} width={70} height={9} rx={2} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.5} strokeDasharray="2 1.5" />
+          <rect x={8} y={9} width={30} height={1.6} rx={0.8} fill="currentColor" fillOpacity={0.4} />
+          <rect x={64} y={7.5} width={8} height={4.5} rx={1} fill="currentColor" fillOpacity={0.55} />
+          {[0, 1, 2].map((i) => (
+            <g key={i}>
+              <rect x={5} y={18 + i * 7} width={70} height={5} rx={1} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.18} strokeWidth={0.35} />
+              <rect x={8} y={20 + i * 7} width={i === 1 ? 34 : 44} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.5} />
+              <rect x={64} y={20 + i * 7} width={8} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.3} />
+            </g>
+          ))}
+        </svg>
+      );
   }
 }
 
@@ -426,11 +482,20 @@ export default function Home() {
   const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
   const [todos, setTodos] = useState(TODO_ITEMS);
+  const [memos, setMemos] = useState<Memo[]>(() => {
+    try {
+      const raw = localStorage.getItem(MEMO_STORAGE_KEY);
+      if (raw) return JSON.parse(raw) as Memo[];
+    } catch { /* ignore */ }
+    return SEED_MEMOS;
+  });
+  const [memoDraft, setMemoDraft] = useState("");
+  const [memoDetailOpen, setMemoDetailOpen] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
   const [visibleFeedCount, setVisibleFeedCount] = useState(4);
   const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
-  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"]);
+  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"]);
   const [gridLayout, setGridLayout] = useState<Partial<Record<BlockKey, GridPos>>>({});
   const [draggingPaletteItem, setDraggingPaletteItem] = useState<BlockKey | null>(null);
   const [alignSnap, setAlignSnap] = useState<{ key: BlockKey; h: number; matchedKeys: BlockKey[] } | null>(null);
@@ -531,7 +596,7 @@ export default function Home() {
     const fromDt = dt?.getData("text/plain") || undefined;
     const candidate = (fromState || fromItem || fromDt) as BlockKey | undefined;
     setDraggingPaletteItem(null);
-    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"];
+    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"];
     if (!candidate || !valid.includes(candidate) || visibleBlocks.includes(candidate)) return;
     const def = DEFAULT_GRID_LAYOUT[candidate];
     setGridLayout(prev => ({
@@ -542,7 +607,7 @@ export default function Home() {
   };
 
   const resetLayout = () => {
-    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"]);
+    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"]);
     setGridLayout({});
   };
 
@@ -555,6 +620,21 @@ export default function Home() {
 
   const toggleTodo = (id: string) => {
     setTodos(prev => prev.map(td => td.id === id ? { ...td, done: !td.done } : td));
+  };
+
+  useEffect(() => {
+    try { localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(memos)); } catch { /* ignore */ }
+  }, [memos]);
+
+  const addMemo = () => {
+    const text = memoDraft.trim();
+    if (!text) return;
+    setMemos(prev => [{ id: `m${Date.now()}`, content: text, createdAt: new Date().toISOString() }, ...prev]);
+    setMemoDraft("");
+  };
+
+  const deleteMemo = (id: string) => {
+    setMemos(prev => prev.filter(m => m.id !== id));
   };
 
   const toggleSubscribe = (id: string) => {
@@ -1207,6 +1287,101 @@ export default function Home() {
                     );
                   }
 
+                  if (key === "memo") {
+                    const recent = [...memos].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+                    return (
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        {alignBadge}
+                        <div className="h-full rounded-xl">
+                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-memo">
+                            <CardHeader className="pb-3 shrink-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <CardTitle className="text-lg flex items-center gap-2">
+                                    <NotebookPen className="w-[18px] h-[18px] text-muted-foreground" />
+                                    {language === "ko" ? "메모장" : "Memo Pad"}
+                                  </CardTitle>
+                                  <CardDescription className="text-xs mt-1">
+                                    {language === "ko" ? "여기서 바로 메모를 작성하고 날짜별로 저장하세요" : "Jot memos here, saved by date"}
+                                  </CardDescription>
+                                </div>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="no-drag h-7 gap-1 text-xs shrink-0"
+                                  onClick={() => setMemoDetailOpen(true)}
+                                  data-testid="button-memo-detail"
+                                >
+                                  <Maximize2 className="w-3.5 h-3.5" />
+                                  {language === "ko" ? "상세보기" : "Detail"}
+                                </Button>
+                              </div>
+                              <div className="mt-3 space-y-2">
+                                <Textarea
+                                  value={memoDraft}
+                                  onChange={(e) => setMemoDraft(e.target.value)}
+                                  onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); addMemo(); } }}
+                                  placeholder={language === "ko" ? "메모를 입력하세요... (Ctrl+Enter 저장)" : "Write a memo... (Ctrl+Enter to save)"}
+                                  className="no-drag min-h-[64px] resize-none text-sm"
+                                  data-testid="input-memo"
+                                />
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] text-muted-foreground">
+                                    {language === "ko" ? `총 ${memos.length}개 메모` : `${memos.length} memos`}
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    className="no-drag h-7 gap-1 text-xs"
+                                    onClick={addMemo}
+                                    disabled={!memoDraft.trim()}
+                                    data-testid="button-memo-save"
+                                  >
+                                    <Save className="w-3.5 h-3.5" />
+                                    {language === "ko" ? "저장" : "Save"}
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="flex-1 min-h-0 pb-4">
+                              <ScrollArea className="h-full pr-2">
+                                {recent.length === 0 ? (
+                                  <div className="flex flex-col items-center justify-center text-center py-10 text-muted-foreground">
+                                    <NotebookPen className="w-6 h-6 mb-2 opacity-50" />
+                                    <p className="text-xs">{language === "ko" ? "저장된 메모가 없습니다" : "No memos yet"}</p>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-2">
+                                    {recent.map((m) => (
+                                      <div key={m.id} className="group/memo rounded-xl border border-border/60 bg-background/50 p-3" data-testid={`memo-${m.id}`}>
+                                        <div className="flex items-start justify-between gap-2">
+                                          <p className="text-sm text-foreground whitespace-pre-wrap break-words flex-1 leading-snug">{m.content}</p>
+                                          <button
+                                            type="button"
+                                            onClick={() => deleteMemo(m.id)}
+                                            className="no-drag shrink-0 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover/memo:opacity-100"
+                                            aria-label={language === "ko" ? "삭제" : "Delete"}
+                                            data-testid={`button-memo-delete-${m.id}`}
+                                          >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                        <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                                          <Clock className="w-3 h-3" />
+                                          <span>{formatMemoDay(m.createdAt, language)} · {formatMemoTime(m.createdAt, language)}</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </ScrollArea>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return null;
                 })}
               </ResponsiveGridLayout>
@@ -1268,7 +1443,7 @@ export default function Home() {
                     : "Drag a component into the main area to build your layout. Resize from edges, reposition by dragging, and remove via the X button on each card."}
                 </p>
                 {(() => {
-                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"] as BlockKey[]);
+                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"] as BlockKey[]);
                   return (
                     <div className="space-y-1.5">
                       {allKeys.map((b) => {
@@ -1408,6 +1583,61 @@ export default function Home() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* MEMO DETAIL MODAL (centered) */}
+      <Dialog open={memoDetailOpen} onOpenChange={setMemoDetailOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col" data-testid="dialog-memo-detail">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <NotebookPen className="w-5 h-5 text-primary" />
+              {language === "ko" ? "메모 상세보기" : "Memo Detail"}
+            </DialogTitle>
+            <DialogDescription>
+              {language === "ko" ? "기간별로 작성한 메모를 모아봅니다" : "All memos grouped by date"}
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 -mx-1 px-1">
+            {groupMemosByDate(memos).length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground text-sm">
+                {language === "ko" ? "저장된 메모가 없습니다" : "No memos yet"}
+              </div>
+            ) : (
+              <div className="space-y-5 py-1">
+                {groupMemosByDate(memos).map((g) => (
+                  <div key={g.date}>
+                    <div className="sticky top-0 bg-background/95 backdrop-blur py-1.5 mb-2 flex items-center gap-2 z-10">
+                      <CalendarDays className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm font-semibold">{formatMemoDay(g.items[0].createdAt, language)}</h3>
+                      <Badge variant="secondary" className="text-[10px] h-5">{g.items.length}</Badge>
+                    </div>
+                    <div className="space-y-2 pl-1">
+                      {g.items.map((m) => (
+                        <div key={m.id} className="rounded-xl border border-border/60 bg-card p-3.5" data-testid={`memo-detail-${m.id}`}>
+                          <p className="text-sm text-foreground whitespace-pre-wrap break-words leading-relaxed">{m.content}</p>
+                          <div className="mt-2 flex items-center justify-between">
+                            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" />{formatMemoTime(m.createdAt, language)}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => deleteMemo(m.id)}
+                              className="text-muted-foreground hover:text-destructive transition-colors"
+                              aria-label={language === "ko" ? "삭제" : "Delete"}
+                              data-testid={`button-memo-detail-delete-${m.id}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
