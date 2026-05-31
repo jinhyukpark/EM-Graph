@@ -15,7 +15,8 @@ import {
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
   Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2, Palette, Check,
-  Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2
+  Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2,
+  Hexagon, ToggleLeft, BarChart3
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -2921,17 +2922,33 @@ export default function KnowledgeGarden() {
                          {/* Graph Header - Empty but height aligned */}
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
-                              <Share2 className="w-4 h-4 text-blue-500" />
+                              <Share2 className="w-4 h-4 text-violet-500" />
                               <span className="font-semibold text-sm">Ontology</span>
                            </div>
-                           <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8" 
-                            onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
-                           >
-                             <X className="w-4 h-4 text-muted-foreground" />
-                           </Button>
+                           <div className="flex items-center gap-1">
+                             <div className="flex items-center gap-0.5 mr-1">
+                               <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40" title="Ontology Shape" data-testid="button-ontology-shape">
+                                 <Hexagon className="w-4 h-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" className="h-8 w-8 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
+                                 <ToggleLeft className="w-4 h-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
+                                 <BarChart3 className="w-4 h-4" />
+                               </Button>
+                               <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
+                                 <Filter className="w-4 h-4" />
+                               </Button>
+                             </div>
+                             <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8" 
+                              onClick={() => toggleView(showGraph, setShowGraph, [showDocDetails, showCopilot])}
+                             >
+                               <X className="w-4 h-4 text-muted-foreground" />
+                             </Button>
+                           </div>
                          </div>
                         <div className="flex-1 w-full relative">
                           <ReactFlowProvider>
