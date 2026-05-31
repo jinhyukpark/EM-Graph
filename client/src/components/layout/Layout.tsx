@@ -478,7 +478,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           ) : (
             <div className={cn("space-y-1 animate-in fade-in duration-300", isCollapsed ? "p-2" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">{t("work")}</div>}
-              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
               <NavItem href="/database" icon={Database} label={t("database")} />
               <NavItem href="/resources" icon={Library} label={t("resources")} />
               <NavItem href="/projects" icon={FolderOpen} label={t("graphAnalysis")} />
@@ -487,8 +486,9 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           
           {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
-              <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("knowledgeGarden")}</div>}
+              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
+              <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledge")} />
               <NavItem href="/todo-list" icon={ListTodo} label={t("todoList")} />
               <NavItem href="/calendar" icon={Calendar} label={t("calendar")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
