@@ -6,7 +6,7 @@ const translations = {
   en: {
     workspace: "Workspace",
     switchWorkspace: "Switch Workspace",
-    work: "Work",
+    work: "Graph Project",
     dashboard: "Dashboard",
     database: "Database",
     resources: "Resources",
@@ -608,7 +608,7 @@ const translations = {
   ko: {
     workspace: "워크스페이스",
     switchWorkspace: "워크스페이스 전환",
-    work: "작업",
+    work: "그래프 프로젝트",
     dashboard: "대시보드",
     database: "데이터베이스",
     resources: "리소스",
