@@ -10,6 +10,7 @@ interface ImageNodeProps {
     subLabel?: string;
     highlight?: boolean;
     borderColor?: string;
+    hideInitials?: boolean;
   };
   selected?: boolean;
 }
@@ -63,7 +64,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
             alt={data.label} 
             className="w-full h-full object-cover"
           />
-        ) : (
+        ) : data.hideInitials ? null : (
           /* Inner Text (Initials) */
           <span 
             className="text-[16px] font-bold leading-tight"
@@ -74,7 +75,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
         )}
         
         {/* Type Icon Overlay */}
-        {data.type && (
+        {data.type && !data.hideInitials && (
             <div 
                 className="absolute bottom-0 right-0 p-1 rounded-tl-lg bg-background/80 backdrop-blur-sm border-t border-l border-border/50"
                 style={{ color: color }}

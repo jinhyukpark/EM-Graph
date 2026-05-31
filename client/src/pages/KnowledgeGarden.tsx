@@ -358,8 +358,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kang "The Viper"', 
       subLabel: 'Crime Boss',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
       highlight: true,
     },
     style: { width: 80, height: 80 }
@@ -372,8 +372,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Thug A', 
       subLabel: 'Associate',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -385,8 +385,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Witness Kim', 
       subLabel: 'Observer',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -398,8 +398,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Lee', 
       subLabel: 'Partner',
-      type: 'detective',
-      borderColor: '#3b82f6', // blue-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -411,8 +411,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Choi', 
       subLabel: 'Lead Investigator',
-      type: 'detective',
-      borderColor: '#3b82f6', // blue-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 70, height: 70 }
   },
@@ -424,8 +424,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Lawyer Han', 
       subLabel: 'Defense Attorney',
-      type: 'criminal',
-      borderColor: '#a855f7', // purple-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 65, height: 65 }
   },
@@ -437,8 +437,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Park "Razor"', 
       subLabel: 'Enforcer',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 70, height: 70 }
   },
@@ -450,8 +450,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kim "Ledger"', 
       subLabel: 'Money Launderer',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 65, height: 65 }
   },
@@ -463,8 +463,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim A', 
       subLabel: 'Assault',
-      type: 'victim',
-      borderColor: '#f97316', // orange-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -476,8 +476,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Case #22-004', 
       subLabel: 'Lawsuit',
-      type: 'detective',
-      borderColor: '#a855f7', // purple-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -489,8 +489,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim B', 
       subLabel: 'Fraud',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 50, height: 50 }
   },
@@ -502,8 +502,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Company X', 
       subLabel: 'Fraud Victim',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -515,8 +515,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Burner Phone', 
       subLabel: 'Evidence',
-      type: 'detective',
-      borderColor: '#64748b', // slate-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 50, height: 50 }
   },
@@ -528,8 +528,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Offshore Account', 
       subLabel: 'Asset',
-      type: 'criminal',
-      borderColor: '#10b981', // emerald-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -541,8 +541,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Seoul Central', 
       subLabel: 'Prison',
-      type: 'prison',
-      borderColor: '#10b981', // emerald-500
+      borderColor: '#3b82f6',
+      hideInitials: true,
     },
     style: { width: 75, height: 75 }
   }
@@ -550,28 +550,28 @@ const INITIAL_NODES = [
 
 const INITIAL_EDGES = [
   // Red Arrows (Criminal/Hostile)
-  { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-park-warehouse', source: 'park_razor', target: 'prison_central', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
+  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
+  { id: 'e-park-warehouse', source: 'park_razor', target: 'prison_central', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
+  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
   
   // Blue Lines (Police/Investigation)
-  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-lee-warehouse', source: 'det_lee', target: 'prison_central', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 } },
+  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
+  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 } },
+  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 } },
+  { id: 'e-lee-warehouse', source: 'det_lee', target: 'prison_central', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1 } },
   
   // Purple (Legal)
-  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },
-  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 1.5 } },
+  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
+  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 } },
   
   // Green (Money/Asset)
-  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', type: 'straight', style: { stroke: '#10b981', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
+  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#93c5fd' } },
   
   // Misc
-  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5, strokeDasharray: '5,5' } },
-  { id: 'e-company-kang', source: 'company_x', target: 'kang', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5 } },
+  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5, strokeDasharray: '5,5' } },
+  { id: 'e-company-kang', source: 'company_x', target: 'kang', type: 'straight', style: { stroke: '#93c5fd', strokeWidth: 1.5 } },
 ];
 
 const CHAT_HISTORY = [

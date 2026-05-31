@@ -24,3 +24,15 @@ children and resize math throws.
 **How to apply:** any time panels inside a group are wrapped in conditionals, add a
 visibility-derived key to the group. In KnowledgeGarden.tsx both `kg-outer`
 (explorer) and `kg-inner` (docdetails/graph/copilot) groups use this.
+
+## Global suppressor for the residual ResizeObserver crash
+
+If the "not an error object" crash still fires on load (not from resize), it is the
+benign ResizeObserver loop from React Flow settling layout. A window 'error' handler
+in `client/src/App.tsx` suppresses it. Two requirements learned the hard way:
+- `stopImmediatePropagation()` alone is NOT enough — the env's crash detector still
+  reports it. Must also call `preventDefault()` (capture phase). Also handle
+  `unhandledrejection`.
+- Keep the allowlist NARROW: only `ResizeObserver loop` + the "not an error object"
+  message. Do NOT suppress `"Script error."` — that is the generic cross-origin
+  signature and would mask real production errors.

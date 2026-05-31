@@ -34,10 +34,13 @@ console.error = (...args) => {
   originalConsoleError.apply(console, args);
 };
 
+// Only suppress the benign ResizeObserver loop signal, which React Flow + resizable
+// panels trigger when layout settles. The "not an error object" message is how this
+// env surfaces that loop (an error event with no error object). We intentionally do
+// NOT suppress "Script error." so genuine cross-origin failures still surface.
 const isBenignError = (message?: string) =>
   !!message && (
     message.includes('ResizeObserver loop') ||
-    message === 'Script error.' ||
     message === 'An uncaught exception occured but the error was not an error object.'
   );
 
