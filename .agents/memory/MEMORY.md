@@ -1,3 +1,3 @@
 - [react-resizable-panels conditional crash](resizable-panels-conditional.md) — conditionally-rendered panels crash on resize unless the PanelGroup gets a visibility-derived key
 - [contentEditable conditional children](contenteditable-react-children.md) — swapping children of a contentEditable via state throws removeChild; remount it with a key
-- [react-grid-layout version pin](react-grid-layout-version.md) — keep react-grid-layout on v1.x; v2 drops the WidthProvider named export and blanks the dashboard.
+- [react-grid-layout React 19 drag/resize stack](react-grid-layout-version.md) — pin react-grid-layout v1.x + react-resizable 3.2.0; nodeRef-less versions silently break dashboard drag/resize under React 19.
