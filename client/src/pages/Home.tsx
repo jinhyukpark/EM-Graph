@@ -146,7 +146,7 @@ const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
   resource:   { x: 9,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
   timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
   feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
-  monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6, maxW: 12 },
+  monitoring: { x: 0,  y: 12, w: 12, h: 7, minW: 6, minH: 6, maxW: 12 },
 };
 
 const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
@@ -807,7 +807,7 @@ export default function Home() {
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
                             <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-3 shrink-0">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -849,16 +849,16 @@ export default function Home() {
                 ))}
               </div>
             </CardHeader>
-            <CardContent>
-              <div className={`grid grid-cols-1 gap-6 ${
+            <CardContent className="flex-1 min-h-0 pt-1">
+              <div className={`h-full min-h-0 grid grid-cols-1 gap-4 ${
                 blockOptions.monitoring.charts.length === 3 ? "lg:grid-cols-3" :
                 blockOptions.monitoring.charts.length === 2 ? "lg:grid-cols-2" :
                 "lg:grid-cols-1"
               }`}>
                 {blockOptions.monitoring.charts.includes("pie") && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-3">{t("ovChartResourceComposition")}</h3>
-                  <div className="h-[220px] flex items-center">
+                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
+                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartResourceComposition")}</h3>
+                  <div className="flex-1 min-h-[200px] flex items-center">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -889,17 +889,11 @@ export default function Home() {
                 )}
 
                 {blockOptions.monitoring.charts.includes("line") && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-3">{t("ovChartAiTokenTrend")}</h3>
-                  <div className="h-[220px]">
+                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
+                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartAiTokenTrend")}</h3>
+                  <div className="flex-1 min-h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={AI_TOKEN_USAGE_DATA}>
-                        <defs>
-                          <linearGradient id="tokenGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                         <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
@@ -916,9 +910,9 @@ export default function Home() {
                 )}
 
                 {blockOptions.monitoring.charts.includes("bar") && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-3">{t("ovChartNoteGrowth")}</h3>
-                  <div className="h-[220px]">
+                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
+                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartNoteGrowth")}</h3>
+                  <div className="flex-1 min-h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
