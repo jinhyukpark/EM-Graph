@@ -34,14 +34,28 @@ console.error = (...args) => {
   originalConsoleError.apply(console, args);
 };
 
+const isBenignError = (message?: string) =>
+  !!message && (
+    message.includes('ResizeObserver loop') ||
+    message === 'Script error.' ||
+    message === 'An uncaught exception occured but the error was not an error object.'
+  );
+
 window.addEventListener('error', (event) => {
-  if (event.message === 'ResizeObserver loop limit exceeded' || 
-      event.message === 'Script error.' ||
-      event.message === 'An uncaught exception occured but the error was not an error object.') {
+  if (isBenignError(event.message)) {
     event.stopImmediatePropagation();
-    // Don't prevent default for everything, just suppress the noise
+    event.preventDefault();
   }
-});
+}, true);
+
+window.addEventListener('unhandledrejection', (event) => {
+  const reason: any = event.reason;
+  const message = typeof reason === 'string' ? reason : reason?.message;
+  if (isBenignError(message)) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  }
+}, true);
 
 function AppRouter() {
   return (
