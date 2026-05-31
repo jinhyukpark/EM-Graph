@@ -2935,18 +2935,18 @@ export default function KnowledgeGarden() {
                            </Button>
                          </div>
                         <div className="flex-1 w-full relative">
-                          <div className="absolute top-3 right-3 z-20 flex flex-col items-center gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg shadow-sm px-0.5 py-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40" title="Ontology Shape" data-testid="button-ontology-shape">
-                              <Hexagon className="w-4 h-4" />
+                          <div className="absolute top-3 right-3 z-20 flex flex-col items-center gap-2">
+                            <Button variant="ghost" size="icon" className="h-10 w-10 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40" title="Ontology Shape" data-testid="button-ontology-shape">
+                              <Hexagon className="w-6 h-6" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
-                              <ToggleLeft className="w-4 h-4" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
+                              <ToggleLeft className="w-6 h-6" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
-                              <BarChart3 className="w-4 h-4" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
+                              <BarChart3 className="w-6 h-6" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
-                              <Filter className="w-4 h-4" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
+                              <Filter className="w-6 h-6" />
                             </Button>
                           </div>
                           <ReactFlowProvider>
