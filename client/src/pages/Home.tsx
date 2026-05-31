@@ -997,7 +997,7 @@ export default function Home() {
                   <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartAiTokenTrend")}</h3>
                   <div className="flex-1 min-h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={AI_TOKEN_USAGE_DATA}>
+                      <LineChart data={AI_TOKEN_USAGE_DATA} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                         <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
@@ -1018,7 +1018,7 @@ export default function Home() {
                   <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartNoteGrowth")}</h3>
                   <div className="flex-1 min-h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))}>
+                      <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                         <XAxis dataKey="proj" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
