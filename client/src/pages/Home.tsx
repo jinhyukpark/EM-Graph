@@ -459,11 +459,11 @@ export default function Home() {
     ));
   };
 
-  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote }> = {
-    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote },
-    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2 },
-    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database },
-    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive },
+  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote; tint: string }> = {
+    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote, tint: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
+    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2, tint: "bg-violet-500/10 text-violet-600 dark:text-violet-400" },
+    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database, tint: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
+    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive, tint: "bg-amber-500/10 text-amber-600 dark:text-amber-400" },
   };
 
   return (
@@ -592,21 +592,23 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-                          <Card className={`bg-card border-border shadow-none hover:border-foreground/15 transition-colors h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
-                        <CardContent className="p-5 h-full flex flex-col justify-between gap-4">
+                          <Card className={`bg-card border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
+                        <CardContent className="p-5 h-full flex flex-col justify-between gap-5">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</span>
-                            <stat.icon className="w-4 h-4 text-muted-foreground/50" />
+                            <span className="text-sm text-muted-foreground font-medium">{t(stat.labelKey)}</span>
+                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${stat.tint}`}>
+                              <stat.icon className="w-[18px] h-[18px]" />
+                            </div>
                           </div>
                           <div>
-                            <div className="text-3xl font-semibold tracking-tight tabular-nums text-foreground">{stat.value}</div>
-                            <div className="flex items-center gap-1 mt-1.5 text-xs">
+                            <div className="text-[28px] leading-none font-bold tracking-tight tabular-nums text-foreground">{stat.value}</div>
+                            <div className="flex items-center gap-1 mt-2 text-xs">
                               {stat.changeDir === "up" ? (
-                                <span className="inline-flex items-center gap-0.5 font-medium text-emerald-600 dark:text-emerald-400">
+                                <span className="inline-flex items-center gap-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
                                   <ArrowUpRight className="w-3.5 h-3.5" />{stat.change}
                                 </span>
                               ) : (
-                                <span className="font-medium text-foreground">{stat.change}</span>
+                                <span className="font-semibold text-foreground">{stat.change}</span>
                               )}
                               <span className="text-muted-foreground">{stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}</span>
                             </div>
@@ -625,7 +627,7 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card border-border shadow-none h-full flex flex-col" data-testid="card-timeline">
+                            <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -666,7 +668,7 @@ export default function Home() {
                             event.type === "note" ? "bg-blue-500" :
                             event.type === "comment" ? "bg-violet-500" : "bg-emerald-500"
                           }`} />
-                          <div className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/50 transition-colors">
+                          <div className="p-3 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/50 transition-colors">
                             <div className="flex items-center justify-between mb-1.5">
                               <div className="flex items-center gap-2">
                                 <EventTypeTag type={event.type} t={t} />
@@ -705,7 +707,7 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border shadow-none h-full flex flex-col" data-testid="card-issue-feed">
+                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Bell className="w-[18px] h-[18px] text-muted-foreground" />
@@ -740,7 +742,7 @@ export default function Home() {
               <ScrollArea className="pr-2 h-full">
                 <div className="space-y-3">
                   {displayedFeed.map((item) => (
-                    <div key={item.id} className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
+                    <div key={item.id} className="p-3 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
                       <div className="flex items-center justify-between mb-2">
                         <FeedBadge source={item.source} t={t} />
                         <div className="flex items-center gap-2">
@@ -804,7 +806,7 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card border-border shadow-none h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
+                            <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -835,8 +837,8 @@ export default function Home() {
                   { labelKey: "ovStatNewNotes" as TranslationKey, value: "+24", icon: StickyNote, color: "text-accent" },
                   { labelKey: "ovStatActiveUsers" as TranslationKey, value: "12", icon: Users, color: "text-emerald-500" },
                 ].map((stat, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border" data-testid={`stat-summary-${i}`}>
-                    <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30 border border-border/60" data-testid={`stat-summary-${i}`}>
+                    <div className={`p-2 rounded-full bg-background border border-border/60 ${stat.color}`}>
                       <stat.icon className="w-4 h-4" />
                     </div>
                     <div>
@@ -906,7 +908,7 @@ export default function Home() {
                           itemStyle={{ color: 'hsl(var(--foreground))' }}
                           formatter={(value: number) => [`${value.toLocaleString()} ${t("ovTokens")}`, t("ovTokens")]}
                         />
-                        <Line type="monotone" dataKey="tokens" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: 'hsl(var(--accent))', strokeWidth: 0, r: 3 }} name={t("ovTokens")} />
+                        <Line type="monotone" dataKey="tokens" stroke="#10b981" strokeWidth={2.5} dot={false} activeDot={{ fill: '#10b981', strokeWidth: 0, r: 4 }} name={t("ovTokens")} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
