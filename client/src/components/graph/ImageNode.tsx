@@ -54,7 +54,7 @@ export default function ImageNode({ data, selected }: ImageNodeProps) {
         style={{
           width: '100%',
           height: '100%',
-          backgroundColor: 'white',
+          backgroundColor: data.hideInitials && !data.image ? color : 'white',
           border: `3px solid ${color}`,
         }}
       >
