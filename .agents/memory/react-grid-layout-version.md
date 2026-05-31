@@ -1,17 +1,19 @@
 ---
-name: react-grid-layout React 19 drag/resize stack
-description: Version constraints for react-grid-layout + react-draggable + react-resizable so the dashboard Edit Template drag/resize works under React 19
+name: react-grid-layout drag/resize on Replit (React 19 + Vite)
+description: Dependency and Vite-config requirements so the dashboard Edit Template drag/resize actually works in the browser
 ---
 
-The dashboard Edit Template feature (client/src/pages/Home.tsx) uses `react-grid-layout` with `{ Responsive, WidthProvider }` for draggable/resizable widgets. This project runs React 19, which removed `ReactDOM.findDOMNode`.
+The dashboard Edit Template feature (client/src/pages/Home.tsx) uses `react-grid-layout` with `{ Responsive, WidthProvider }` for draggable/resizable widgets. Getting drag/resize to actually work in this Vite + React 19 setup required THREE separate fixes — they are easy to confuse because each produces a different failure mode.
 
-Working dependency set (all pass a `nodeRef`, so they avoid `findDOMNode`):
-- `react-grid-layout` ^1.5.3  — GridItem passes `nodeRef` for moving; exports `Responsive` + `WidthProvider` as NAMED exports.
-- `react-resizable` 3.2.0      — Resizable passes `nodeRef` to DraggableCore for resize handles.
-- `react-draggable` 4.5.0+/4.6.0 — DraggableCore.findDOMNode() returns `nodeRef.current` when provided.
+1. **react-grid-layout must stay on v1.x (^1.5.3).** v2.x drops the named `WidthProvider` export → Vite "does not provide an export named 'WidthProvider'" SyntaxError → blank dashboard.
 
-**Why:** Under React 19 any of these libraries that does NOT pass `nodeRef` falls back to `ReactDOM.findDOMNode` (undefined) and throws "ReactDOM.findDOMNode is not available in React 19+. You must provide a nodeRef prop." Known bad combos:
-- `react-grid-layout` v2.x → drops the named `WidthProvider` export, causing a Vite "does not provide an export named 'WidthProvider'" SyntaxError and a blank dashboard. Stay on v1.x.
-- `react-resizable` 4.0.1 → does NOT pass nodeRef. The throw happens while the resize handles mount; the app's global error suppression (App.tsx isBenignError) swallows it, so the grid renders but drag AND resize are silently inert. Use 3.2.0.
+2. **Whole drag/resize stack must pass `nodeRef` (React 19 removed `ReactDOM.findDOMNode`).** Working set: `react-grid-layout`@1.5.3 (GridItem passes nodeRef for moving), `react-resizable`@3.2.0 (passes nodeRef for resize handles), `react-draggable`@4.5.0+ (DraggableCore.findDOMNode returns nodeRef.current). `react-resizable`@4.0.1 does NOT pass nodeRef → throws while resize handles mount; the app's global error suppression (App.tsx isBenignError) swallows it, so the grid renders but is inert.
 
-**How to apply:** If dashboard widgets render but won't drag/resize, suspect a nodeRef-less version in this stack. Pin `react-resizable@3.2.0` and keep `react-grid-layout@^1.5.3`; confirm each installed lib references `nodeRef` (rg -rn nodeRef node_modules/<lib>). After changing versions, `rm -rf node_modules/.vite` and restart the workflow so Vite re-optimizes deps.
+3. **react-draggable references `process.env.DRAGGABLE_DEBUG` at runtime, which crashes in the browser.** Its `log()` helper runs `if (process.env.DRAGGABLE_DEBUG) ...` and is called from `handleDragStart`. `process` is undefined in the browser → `ReferenceError: process is not defined` the moment you start dragging. Fix in vite.config.ts: add the replacement to BOTH `define` AND `optimizeDeps.esbuildOptions.define`:
+   ```ts
+   define: { "process.env.DRAGGABLE_DEBUG": "false" },
+   optimizeDeps: { esbuildOptions: { define: { "process.env.DRAGGABLE_DEBUG": "false" } } },
+   ```
+   **Why both:** Vite's top-level `define` is NOT applied to dependency pre-bundling. Without the `optimizeDeps.esbuildOptions.define` copy, the optimized dep bundle still contains the raw `process.env.DRAGGABLE_DEBUG` and still crashes. Verify the replacement landed: `rg "DRAGGABLE_DEBUG" node_modules/.vite/deps/react-grid-layout.js` should show `if (false) console.log(...)`.
+
+**How to apply / verify:** After any of these changes, `rm -rf node_modules/.vite`, restart the workflow, then load /#/dashboard once (Vite optimizes deps lazily on first request) before checking the bundle/console.
