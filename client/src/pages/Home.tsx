@@ -653,10 +653,10 @@ export default function Home() {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 min-h-0 pb-4">
-                <ScrollArea className="pr-4 h-full">
-                  <div className="relative pl-6">
-                    <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
-                    <div className="space-y-5">
+                <ScrollArea className="h-full pr-3" data-testid="scroll-timeline">
+                  <div className="relative pl-8 pr-1">
+                    <div className="absolute left-[10px] top-4 bottom-4 w-0.5 bg-border rounded-full" aria-hidden />
+                    <div className="space-y-4">
                       {filteredTimeline.map((event) => (
                         <div
                           key={event.id}
@@ -664,7 +664,7 @@ export default function Home() {
                           onClick={() => setSelectedEvent(event)}
                           data-testid={`timeline-event-${event.id}`}
                         >
-                          <div className={`absolute -left-6 top-1.5 w-[10px] h-[10px] rounded-full ring-2 ring-background z-10 ${
+                          <span className={`absolute top-[14px] -left-[28px] w-3.5 h-3.5 rounded-full ring-4 ring-card z-10 shadow-sm transition-transform group-hover:scale-110 ${
                             event.type === "note" ? "bg-blue-500" :
                             event.type === "comment" ? "bg-violet-500" : "bg-emerald-500"
                           }`} />
