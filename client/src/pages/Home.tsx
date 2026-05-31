@@ -459,11 +459,11 @@ export default function Home() {
     ));
   };
 
-  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote; color: string }> = {
-    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote, color: "text-primary" },
-    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2, color: "text-accent" },
-    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database, color: "text-emerald-500" },
-    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive, color: "text-muted-foreground" },
+  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote }> = {
+    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote },
+    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2 },
+    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database },
+    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive },
   };
 
   return (
@@ -484,8 +484,8 @@ export default function Home() {
               </Badge>
             )}
             <Button
-              variant={editMode ? "default" : "default"}
-              className="gap-2 h-9 text-sm shadow-lg shadow-primary/20"
+              variant={editMode ? "default" : "outline"}
+              className="gap-2 h-9 text-sm"
               onClick={() => setTemplatePanelOpen(v => !v)}
               data-testid="button-edit-template"
             >
@@ -592,26 +592,25 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-                          <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
-                        <CardContent className="p-5 h-full flex flex-col justify-center">
-                          <div className="flex justify-between items-start mb-3">
-                            <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
-                              <stat.icon className="w-5 h-5" />
-                            </div>
-                            <Badge
-                              variant={stat.changeDir === "up" ? "default" : "secondary"}
-                              className={`font-mono text-xs px-2 py-0.5 gap-1 ${
-                                stat.changeDir === "up"
-                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                                  : ""
-                              }`}
-                            >
-                              {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
-                              {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
-                            </Badge>
+                          <Card className={`bg-card border-border shadow-none hover:border-foreground/15 transition-colors h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
+                        <CardContent className="p-5 h-full flex flex-col justify-between gap-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</span>
+                            <stat.icon className="w-4 h-4 text-muted-foreground/50" />
                           </div>
-                          <div className="text-2xl font-bold mb-1">{stat.value}</div>
-                          <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
+                          <div>
+                            <div className="text-3xl font-semibold tracking-tight tabular-nums text-foreground">{stat.value}</div>
+                            <div className="flex items-center gap-1 mt-1.5 text-xs">
+                              {stat.changeDir === "up" ? (
+                                <span className="inline-flex items-center gap-0.5 font-medium text-emerald-600 dark:text-emerald-400">
+                                  <ArrowUpRight className="w-3.5 h-3.5" />{stat.change}
+                                </span>
+                              ) : (
+                                <span className="font-medium text-foreground">{stat.change}</span>
+                              )}
+                              <span className="text-muted-foreground">{stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}</span>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                         </RoleBasedWrapper>
@@ -626,12 +625,12 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-timeline">
+                            <Card className="bg-card border-border shadow-none h-full flex flex-col" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-primary" />
+                      <Calendar className="w-[18px] h-[18px] text-muted-foreground" />
                       {t("ovTimelineTitle")}
                     </CardTitle>
                     <CardDescription className="text-xs mt-1">{t("ovTimelineDesc")}</CardDescription>
@@ -706,10 +705,10 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <div className="h-full rounded-xl">
-                          <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-issue-feed">
+                          <Card className="bg-card border-border shadow-none h-full flex flex-col" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-primary" />
+                <Bell className="w-[18px] h-[18px] text-muted-foreground" />
                 {t("ovActivityFeed")}
               </CardTitle>
               <CardDescription className="text-xs">{t("ovActivityFeedDesc")}</CardDescription>
@@ -805,12 +804,12 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
+                            <Card className="bg-card border-border shadow-none h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-primary" />
+                    <BarChart3 className="w-[18px] h-[18px] text-muted-foreground" />
                     {t("kpiMonitoring")}
                   </CardTitle>
                 </div>
