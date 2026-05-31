@@ -1238,6 +1238,26 @@ export default function KnowledgeGarden() {
   const [showCopilot, setShowCopilot] = useState(true);
   const [ontologyLayout, setOntologyLayout] = useState<"lens" | "organic" | "structural">("lens");
   const [showLayoutPanel, setShowLayoutPanel] = useState(false);
+  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
+  const [showNodeSizePanel, setShowNodeSizePanel] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [optShowLinks, setOptShowLinks] = useState(true);
+  const [optLinkThickness, setOptLinkThickness] = useState(2);
+  const [optShowLabels, setOptShowLabels] = useState(true);
+  const [optLabelSize, setOptLabelSize] = useState(13);
+  const [nodeSizeMetric, setNodeSizeMetric] = useState("Content Length");
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
+  const [filterStatuses, setFilterStatuses] = useState<string[]>([]);
+  const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterStatusSearch, setFilterStatusSearch] = useState("");
+  const [filterTagSearch, setFilterTagSearch] = useState("");
+  const [filterViewMin, setFilterViewMin] = useState(0);
+  const [filterViewMax, setFilterViewMax] = useState(10000);
+  const [filterRefMin, setFilterRefMin] = useState(0);
+  const [filterRefMax, setFilterRefMax] = useState(100);
+  const [filterContentMin, setFilterContentMin] = useState(0);
+  const [filterContentMax, setFilterContentMax] = useState(20000);
   const [insertPopoverOpen, setInsertPopoverOpen] = useState(false);
   const [showSketchMode, setShowSketchMode] = useState(false);
   const [sketchTool, setSketchTool] = useState<"pen" | "brush" | "eraser" | "highlighter">("pen");
@@ -3189,20 +3209,339 @@ export default function KnowledgeGarden() {
                                 className={`h-10 w-10 transition-colors ${showLayoutPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40"}`}
                                 title="Layout"
                                 data-testid="button-ontology-shape"
-                                onClick={() => setShowLayoutPanel(p => !p)}
+                                onClick={() => { setShowLayoutPanel(p => !p); setShowOptionsPanel(false); setShowNodeSizePanel(false); setShowFilterPanel(false); }}
                               >
                                 <Hexagon className="w-6 h-6" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40" title="Toggle View" data-testid="button-ontology-toggle">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showOptionsPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40"}`}
+                                title="Options"
+                                data-testid="button-ontology-toggle"
+                                onClick={() => { setShowOptionsPanel(p => !p); setShowLayoutPanel(false); setShowNodeSizePanel(false); setShowFilterPanel(false); }}
+                              >
                                 <ToggleLeft className="w-6 h-6" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" title="Statistics" data-testid="button-ontology-stats">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showNodeSizePanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"}`}
+                                title="Node Size"
+                                data-testid="button-ontology-stats"
+                                onClick={() => { setShowNodeSizePanel(p => !p); setShowLayoutPanel(false); setShowOptionsPanel(false); setShowFilterPanel(false); }}
+                              >
                                 <BarChart3 className="w-6 h-6" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-10 w-10 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40" title="Filter" data-testid="button-ontology-filter">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showFilterPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"}`}
+                                title="Filter"
+                                data-testid="button-ontology-filter"
+                                onClick={() => { setShowFilterPanel(p => !p); setShowLayoutPanel(false); setShowOptionsPanel(false); setShowNodeSizePanel(false); }}
+                              >
                                 <Filter className="w-6 h-6" />
                               </Button>
                             </div>
+
+                            {/* Options panel */}
+                            {showOptionsPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl p-5 w-72" data-testid="panel-ontology-options">
+                                <p className="font-semibold text-sm text-foreground mb-4">Options</p>
+                                {/* Show Links */}
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-sm text-foreground">Show Links</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOptShowLinks(v => !v)}
+                                    className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-colors ${optShowLinks ? "bg-blue-600 border-blue-600" : "bg-white border-gray-300"}`}
+                                  >
+                                    {optShowLinks && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                  </button>
+                                </div>
+                                {/* Link Thickness */}
+                                <div className="mb-4">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-foreground">Link Thickness</span>
+                                    <span className="text-sm text-muted-foreground tabular-nums">{optLinkThickness}</span>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min={1}
+                                    max={10}
+                                    value={optLinkThickness}
+                                    onChange={e => setOptLinkThickness(Number(e.target.value))}
+                                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                    style={{ accentColor: "#2563eb" }}
+                                  />
+                                </div>
+                                {/* Show Labels */}
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-sm text-foreground">Show Labels</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOptShowLabels(v => !v)}
+                                    className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-colors ${optShowLabels ? "bg-blue-600 border-blue-600" : "bg-white border-gray-300"}`}
+                                  >
+                                    {optShowLabels && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                  </button>
+                                </div>
+                                {/* Label Size */}
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-foreground">Label Size</span>
+                                    <span className="text-sm text-muted-foreground tabular-nums">{optLabelSize}</span>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min={8}
+                                    max={32}
+                                    value={optLabelSize}
+                                    onChange={e => setOptLabelSize(Number(e.target.value))}
+                                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                    style={{ accentColor: "#2563eb" }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Node Size panel */}
+                            {showNodeSizePanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl w-64 overflow-hidden" data-testid="panel-ontology-nodesize">
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+                                  <p className="font-semibold text-sm text-foreground">Node Size</p>
+                                  <button
+                                    type="button"
+                                    onClick={() => setNodeSizeMetric("Content Length")}
+                                    className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-muted/60 transition-colors"
+                                    title="Reset"
+                                  >
+                                    <RotateCcw className="w-4 h-4 text-muted-foreground" />
+                                  </button>
+                                </div>
+                                <div className="py-2">
+                                  <div className="px-5 py-1.5">
+                                    <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">Usage Metrics</p>
+                                  </div>
+                                  {["View Count", "Reference Count", "Content Length"].map(metric => (
+                                    <button
+                                      key={metric}
+                                      type="button"
+                                      onClick={() => setNodeSizeMetric(metric)}
+                                      data-testid={`nodesize-${metric.toLowerCase().replace(/ /g, "-")}`}
+                                      className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${
+                                        nodeSizeMetric === metric
+                                          ? "bg-muted/60 text-foreground font-medium"
+                                          : "text-foreground hover:bg-muted/40"
+                                      }`}
+                                    >
+                                      {metric}
+                                    </button>
+                                  ))}
+                                  <div className="px-5 py-1.5 mt-1">
+                                    <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">Centrality</p>
+                                  </div>
+                                  {["betweenness", "degrees", "pageRank", "eigenCentrality"].map(metric => (
+                                    <button
+                                      key={metric}
+                                      type="button"
+                                      onClick={() => setNodeSizeMetric(metric)}
+                                      data-testid={`nodesize-${metric.toLowerCase()}`}
+                                      className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${
+                                        nodeSizeMetric === metric
+                                          ? "bg-muted/60 text-foreground font-medium"
+                                          : "text-foreground hover:bg-muted/40"
+                                      }`}
+                                    >
+                                      {metric}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Filter panel */}
+                            {showFilterPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl w-72 max-h-[75vh] overflow-y-auto" data-testid="panel-ontology-filter">
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 sticky top-0 bg-card z-10">
+                                  <p className="font-semibold text-sm text-foreground">Filter</p>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setFilterStartDate(""); setFilterEndDate(""); setFilterStatuses([]); setFilterTags([]);
+                                      setFilterStatusSearch(""); setFilterTagSearch("");
+                                      setFilterViewMin(0); setFilterViewMax(10000);
+                                      setFilterRefMin(0); setFilterRefMax(100);
+                                      setFilterContentMin(0); setFilterContentMax(20000);
+                                    }}
+                                    className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-muted/60 transition-colors"
+                                    title="Reset all"
+                                  >
+                                    <RotateCcw className="w-4 h-4 text-muted-foreground" />
+                                  </button>
+                                </div>
+                                <div className="px-5 py-4 space-y-5">
+                                  {/* Created Date */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Created Date</p>
+                                      <button type="button" onClick={() => { setFilterStartDate(""); setFilterEndDate(""); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex gap-2 mb-2">
+                                      <div className="flex-1 flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background">
+                                        <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                        <input
+                                          type="date"
+                                          value={filterStartDate}
+                                          onChange={e => setFilterStartDate(e.target.value)}
+                                          placeholder="Start"
+                                          className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground min-w-0"
+                                        />
+                                      </div>
+                                      <div className="flex-1 flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background">
+                                        <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                        <input
+                                          type="date"
+                                          value={filterEndDate}
+                                          onChange={e => setFilterEndDate(e.target.value)}
+                                          placeholder="End"
+                                          className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground min-w-0"
+                                        />
+                                      </div>
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Status */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Status</p>
+                                      <button type="button" onClick={() => setFilterStatuses([])} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background mb-2">
+                                      <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                      <input
+                                        type="text"
+                                        value={filterStatusSearch}
+                                        onChange={e => setFilterStatusSearch(e.target.value)}
+                                        placeholder="Search status"
+                                        className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                                      {[
+                                        { label: "미등록", color: "bg-gray-400" },
+                                        { label: "작성완료", color: "bg-amber-400" },
+                                        { label: "작성중", color: "bg-amber-500" },
+                                      ].filter(s => !filterStatusSearch || s.label.includes(filterStatusSearch)).map(({ label, color }) => (
+                                        <label key={label} className="flex items-center gap-1.5 cursor-pointer">
+                                          <button
+                                            type="button"
+                                            onClick={() => setFilterStatuses(prev => prev.includes(label) ? prev.filter(s => s !== label) : [...prev, label])}
+                                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${filterStatuses.includes(label) ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"}`}
+                                          >
+                                            {filterStatuses.includes(label) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                                          </button>
+                                          <span className={`w-2 h-2 rounded-full shrink-0 ${color}`} />
+                                          <span className="text-xs text-foreground">{label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Tag */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Tag</p>
+                                      <button type="button" onClick={() => setFilterTags([])} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background mb-2">
+                                      <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                      <input
+                                        type="text"
+                                        value={filterTagSearch}
+                                        onChange={e => setFilterTagSearch(e.target.value)}
+                                        placeholder="Search tag"
+                                        className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                                      {[
+                                        { label: "123421", color: "#3b82f6" },
+                                        { label: "AI", color: "#ec4899" },
+                                        { label: "EM", color: "#8b5cf6" },
+                                        { label: "GNN", color: "#22c55e" },
+                                        { label: "kimi", color: "#14b8a6" },
+                                        { label: "감자", color: "#22c55e" },
+                                        { label: "국방비", color: "#f97316" },
+                                        { label: "마케팅", color: "#a78bfa" },
+                                        { label: "반도체", color: "#f59e0b" },
+                                        { label: "삼성전자", color: "#6366f1" },
+                                        { label: "아이디어", color: "#06b6d4" },
+                                        { label: "온톨로지", color: "#10b981" },
+                                        { label: "일루넥스", color: "#64748b" },
+                                        { label: "헤그세스", color: "#ef4444" },
+                                      ].filter(t => !filterTagSearch || t.label.includes(filterTagSearch)).map(({ label, color }) => (
+                                        <label key={label} className="flex items-center gap-1.5 cursor-pointer">
+                                          <button
+                                            type="button"
+                                            onClick={() => setFilterTags(prev => prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label])}
+                                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${filterTags.includes(label) ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"}`}
+                                          >
+                                            {filterTags.includes(label) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                                          </button>
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
+                                          <span className="text-xs text-foreground">{label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* View Count */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">View Count</p>
+                                      <button type="button" onClick={() => { setFilterViewMin(0); setFilterViewMax(10000); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={10000} value={filterViewMin} onChange={e => setFilterViewMin(Math.min(Number(e.target.value), filterViewMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterViewMin} onChange={e => setFilterViewMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterViewMax} onChange={e => setFilterViewMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Reference Count */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Reference Count</p>
+                                      <button type="button" onClick={() => { setFilterRefMin(0); setFilterRefMax(100); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={100} value={filterRefMin} onChange={e => setFilterRefMin(Math.min(Number(e.target.value), filterRefMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterRefMin} onChange={e => setFilterRefMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterRefMax} onChange={e => setFilterRefMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Content Length */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Content Length</p>
+                                      <button type="button" onClick={() => { setFilterContentMin(0); setFilterContentMax(20000); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={20000} value={filterContentMin} onChange={e => setFilterContentMin(Math.min(Number(e.target.value), filterContentMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterContentMin} onChange={e => setFilterContentMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterContentMax} onChange={e => setFilterContentMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Layout selection panel */}
                             {showLayoutPanel && (
