@@ -28,7 +28,8 @@ import {
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
   Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid, Plus,
   LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
-  Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2
+  Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2,
+  Tag, ListChecks, CalendarDays, Circle
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -113,7 +114,56 @@ const RESOURCE_COMPOSITION_DATA = [
   { name: "ovResVideos" as TranslationKey, value: 47, color: "hsl(280, 65%, 60%)" },
 ];
 
-type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring";
+const NOTE_TAGS: { label: string; count: number }[] = [
+  { label: "PET필름", count: 42 },
+  { label: "공급망", count: 36 },
+  { label: "아라미드", count: 31 },
+  { label: "편광필름", count: 28 },
+  { label: "지식정원", count: 26 },
+  { label: "BOM", count: 24 },
+  { label: "열연코일", count: 22 },
+  { label: "원가분석", count: 20 },
+  { label: "MOQ", count: 19 },
+  { label: "단가협상", count: 17 },
+  { label: "품질이슈", count: 14 },
+  { label: "ESG", count: 11 },
+];
+
+type TodoItem = { id: string; labelKo: string; label: string; done: boolean };
+const TODO_ITEMS: TodoItem[] = [
+  { id: "td1", labelKo: "PET필름 #3 라인 가동률 보고서 작성", label: "Write PET film line #3 utilization report", done: true },
+  { id: "td2", labelKo: "아라미드 단가 협상 자료 검토", label: "Review aramid pricing materials", done: true },
+  { id: "td3", labelKo: "MOQ 정책 개정 초안 피드백", label: "Give feedback on MOQ policy draft", done: false },
+  { id: "td4", labelKo: "공급망 지식정원 신규 노드 정리", label: "Organize new supply chain garden nodes", done: false },
+  { id: "td5", labelKo: "편광필름 품질 이슈 회의 준비", label: "Prepare polarizer quality meeting", done: false },
+  { id: "td6", labelKo: "열연코일 BOM 매핑 마무리", label: "Finalize HRC BOM mapping", done: true },
+  { id: "td7", labelKo: "주간 운영 리포트 제출", label: "Submit weekly ops report", done: false },
+];
+
+type ScheduleItem = { id: string; day: number; titleKo: string; title: string; type: "meeting" | "deadline" | "review" };
+const SCHEDULE_EVENTS: ScheduleItem[] = [
+  { id: "ev1", day: 18, titleKo: "PET필름 주간 운영회의", title: "PET Film Weekly Ops Meeting", type: "meeting" },
+  { id: "ev2", day: 22, titleKo: "아라미드 단가 협상 마감", title: "Aramid Pricing Deadline", type: "deadline" },
+  { id: "ev3", day: 27, titleKo: "MOQ 정책 검토 회의", title: "MOQ Policy Review Meeting", type: "review" },
+  { id: "ev4", day: 29, titleKo: "공급망 지식정원 리뷰", title: "Supply Chain Garden Review", type: "review" },
+  { id: "ev5", day: 31, titleKo: "월말 운영 리포트 제출", title: "Month-end Report Due", type: "deadline" },
+];
+
+const CALENDAR_YEAR = 2026;
+const CALENDAR_MONTH = 5;
+const CALENDAR_TODAY = 31;
+const buildMonthGrid = (year: number, month: number): (number | null)[] => {
+  const startWeekday = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < startWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+  return cells;
+};
+const MONTH_GRID = buildMonthGrid(CALENDAR_YEAR, CALENDAR_MONTH);
+
+type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring" | "tags" | "todos" | "calendar";
 
 const KPI_KEYS: BlockKey[] = ["notes", "links", "dbUsage", "resource"];
 const isKpiKey = (k: BlockKey) => KPI_KEYS.includes(k);
@@ -126,6 +176,9 @@ const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: str
   timeline: { labelKo: "최근 노트 타임라인", label: "Recent Notes Timeline", descKo: "최근 생성된 노트와 변경 사항", desc: "Recent notes and changes", icon: Calendar },
   feed: { labelKo: "활동 피드", label: "Activity Feed", descKo: "댓글, 멘션, 공유, 시스템 알림", desc: "Comments, mentions, shares", icon: Bell },
   monitoring: { labelKo: "KPI 모니터링 차트", label: "KPI Monitoring", descKo: "리소스 구성, AI 토큰, 노트 성장 차트", desc: "Resource, AI tokens, growth charts", icon: BarChart3 },
+  tags: { labelKo: "노트 태그 모음", label: "Note Tags", descKo: "자주 사용된 노트 태그 모음", desc: "Frequently used note tags", icon: Tag },
+  todos: { labelKo: "할 일 (진행률)", label: "To-Do (Progress)", descKo: "할 일 목록과 진행률", desc: "To-do list with progress", icon: ListChecks },
+  calendar: { labelKo: "캘린더 (일정)", label: "Calendar", descKo: "월간 일정 및 다가오는 이벤트", desc: "Monthly schedule & events", icon: CalendarDays },
 };
 
 type BlockOptions = {
@@ -147,6 +200,9 @@ const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
   timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
   feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
   monitoring: { x: 0,  y: 12, w: 12, h: 7, minW: 6, minH: 6, maxW: 12 },
+  tags:       { x: 0,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
+  todos:      { x: 4,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
+  calendar:   { x: 8,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
 };
 
 const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
@@ -269,6 +325,49 @@ function BlockPreview({ type, className = "" }: { type: BlockKey; className?: st
           ))}
         </svg>
       );
+    case "tags":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          {[
+            { x: 5, y: 7, w: 20 }, { x: 28, y: 7, w: 14 }, { x: 45, y: 7, w: 24 },
+            { x: 5, y: 17, w: 16 }, { x: 24, y: 17, w: 26 }, { x: 53, y: 17, w: 18 },
+            { x: 5, y: 27, w: 22 }, { x: 30, y: 27, w: 18 }, { x: 51, y: 27, w: 20 },
+          ].map((p, i) => (
+            <rect key={i} x={p.x} y={p.y} width={p.w} height={6} rx={3} fill="currentColor" fillOpacity={i % 3 === 0 ? 0.55 : 0.2} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.4} />
+          ))}
+        </svg>
+      );
+    case "todos":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <rect x={5} y={5} width={70} height={3} rx={1.5} fill="currentColor" fillOpacity={0.12} />
+          <rect x={5} y={5} width={42} height={3} rx={1.5} fill="currentColor" fillOpacity={0.7} />
+          {[0, 1, 2].map((i) => (
+            <g key={i}>
+              <circle cx={8} cy={16 + i * 8} r={2.2} fill="none" stroke="currentColor" strokeOpacity={0.5} strokeWidth={0.8} />
+              {i < 2 && <path d={`M6.6 ${16 + i * 8} l1 1 l1.8 -2`} stroke="currentColor" strokeOpacity={0.85} strokeWidth={0.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />}
+              <rect x={13} y={14.6 + i * 8} width={i === 1 ? 40 : 54} height={2.6} rx={1.2} fill="currentColor" fillOpacity={i < 2 ? 0.3 : 0.55} />
+            </g>
+          ))}
+        </svg>
+      );
+    case "calendar":
+      return (
+        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
+          {frame}
+          <rect x={5} y={6} width={70} height={5} rx={1.5} fill="currentColor" fillOpacity={0.12} />
+          <rect x={9} y={3} width={2.5} height={5} rx={1} fill="currentColor" fillOpacity={0.6} />
+          <rect x={68} y={3} width={2.5} height={5} rx={1} fill="currentColor" fillOpacity={0.6} />
+          {[0, 1, 2, 3].map((r) => (
+            [0, 1, 2, 3, 4, 5, 6].map((c) => {
+              const on = r === 1 && c === 3;
+              return <rect key={`${r}-${c}`} x={6 + c * 10} y={14 + r * 6} width={6} height={4.4} rx={1} fill="currentColor" fillOpacity={on ? 0.85 : 0.15} />;
+            })
+          ))}
+        </svg>
+      );
   }
 }
 
@@ -326,11 +425,12 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
+  const [todos, setTodos] = useState(TODO_ITEMS);
   const [chartPeriod, setChartPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
   const [visibleFeedCount, setVisibleFeedCount] = useState(4);
   const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
-  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
+  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"]);
   const [gridLayout, setGridLayout] = useState<Partial<Record<BlockKey, GridPos>>>({});
   const [draggingPaletteItem, setDraggingPaletteItem] = useState<BlockKey | null>(null);
   const [alignSnap, setAlignSnap] = useState<{ key: BlockKey; h: number; matchedKeys: BlockKey[] } | null>(null);
@@ -431,7 +531,7 @@ export default function Home() {
     const fromDt = dt?.getData("text/plain") || undefined;
     const candidate = (fromState || fromItem || fromDt) as BlockKey | undefined;
     setDraggingPaletteItem(null);
-    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"];
+    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"];
     if (!candidate || !valid.includes(candidate) || visibleBlocks.includes(candidate)) return;
     const def = DEFAULT_GRID_LAYOUT[candidate];
     setGridLayout(prev => ({
@@ -442,7 +542,7 @@ export default function Home() {
   };
 
   const resetLayout = () => {
-    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
+    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"]);
     setGridLayout({});
   };
 
@@ -452,6 +552,10 @@ export default function Home() {
   const filteredTimeline = TIMELINE_EVENTS.filter(e =>
     timelineBusinessUnit === "all" || e.businessUnit === timelineBusinessUnit
   );
+
+  const toggleTodo = (id: string) => {
+    setTodos(prev => prev.map(td => td.id === id ? { ...td, done: !td.done } : td));
+  };
 
   const toggleSubscribe = (id: string) => {
     setFeedItems(prev => prev.map(item =>
@@ -941,6 +1045,168 @@ export default function Home() {
                     );
                   }
 
+                  if (key === "tags") {
+                    return (
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        {alignBadge}
+                        <div className="h-full rounded-xl">
+                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-tags">
+                            <CardHeader className="pb-3 shrink-0">
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                <Tag className="w-[18px] h-[18px] text-muted-foreground" />
+                                {language === "ko" ? "노트 태그 모음" : "Note Tags"}
+                              </CardTitle>
+                              <CardDescription className="text-xs">
+                                {language === "ko" ? "자주 사용된 태그를 한눈에 확인하세요" : "Most used note tags at a glance"}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex-1 min-h-0 pb-4">
+                              <ScrollArea className="h-full pr-2">
+                                <div className="flex flex-wrap gap-2">
+                                  {NOTE_TAGS.map((tag) => {
+                                    const size = tag.count >= 35 ? "text-base px-3 py-1.5" : tag.count >= 24 ? "text-sm px-2.5 py-1" : "text-xs px-2 py-0.5";
+                                    return (
+                                      <button
+                                        key={tag.label}
+                                        type="button"
+                                        className={`no-drag inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/40 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-colors font-medium ${size}`}
+                                        data-testid={`tag-${tag.label}`}
+                                      >
+                                        <span>{tag.label}</span>
+                                        <span className="text-[10px] text-muted-foreground font-semibold tabular-nums">{tag.count}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </ScrollArea>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (key === "todos") {
+                    const doneCount = todos.filter(td => td.done).length;
+                    const pct = todos.length ? Math.round((doneCount / todos.length) * 100) : 0;
+                    return (
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        {alignBadge}
+                        <div className="h-full rounded-xl">
+                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-todos">
+                            <CardHeader className="pb-3 shrink-0">
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                <ListChecks className="w-[18px] h-[18px] text-muted-foreground" />
+                                {language === "ko" ? "할 일 (진행률)" : "To-Do (Progress)"}
+                              </CardTitle>
+                              <div className="mt-2.5">
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-xs text-muted-foreground">
+                                    {language === "ko" ? `${doneCount} / ${todos.length}개 완료` : `${doneCount} / ${todos.length} done`}
+                                  </span>
+                                  <span className="text-xs font-semibold text-primary tabular-nums">{pct}%</span>
+                                </div>
+                                <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+                                  <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="flex-1 min-h-0 pb-4">
+                              <ScrollArea className="h-full pr-2">
+                                <div className="space-y-1.5">
+                                  {todos.map((td) => (
+                                    <button
+                                      key={td.id}
+                                      type="button"
+                                      onClick={() => toggleTodo(td.id)}
+                                      className="no-drag w-full flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/50 transition-colors text-left"
+                                      data-testid={`todo-${td.id}`}
+                                    >
+                                      {td.done
+                                        ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                        : <Circle className="w-4 h-4 text-muted-foreground shrink-0" />}
+                                      <span className={`text-sm leading-snug ${td.done ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                                        {language === "ko" ? td.labelKo : td.label}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </ScrollArea>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (key === "calendar") {
+                    const eventDays = new Set(SCHEDULE_EVENTS.map((e) => e.day));
+                    const weekdays = language === "ko" ? ["일", "월", "화", "수", "목", "금", "토"] : ["S", "M", "T", "W", "T", "F", "S"];
+                    const typeColor: Record<ScheduleItem["type"], string> = { meeting: "bg-blue-500", deadline: "bg-rose-500", review: "bg-emerald-500" };
+                    return (
+                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
+                        {editChrome}
+                        {alignBadge}
+                        <div className="h-full rounded-xl">
+                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-calendar">
+                            <CardHeader className="pb-3 shrink-0">
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                <CalendarDays className="w-[18px] h-[18px] text-muted-foreground" />
+                                {language === "ko" ? "캘린더 (일정)" : "Calendar"}
+                              </CardTitle>
+                              <CardDescription className="text-xs">
+                                {language === "ko" ? "2026년 5월" : "May 2026"}
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex-1 min-h-0 pb-4">
+                              <ScrollArea className="h-full pr-2">
+                                <div className="grid grid-cols-7 gap-1 mb-3">
+                                  {weekdays.map((w, i) => (
+                                    <div key={`wd-${i}`} className="text-center text-[10px] font-semibold text-muted-foreground py-1">{w}</div>
+                                  ))}
+                                  {MONTH_GRID.map((d, i) => (
+                                    <div key={`day-${i}`} className="h-8 flex items-center justify-center">
+                                      {d && (
+                                        <div className={`relative w-7 h-7 flex items-center justify-center rounded-full text-xs tabular-nums ${
+                                          d === CALENDAR_TODAY
+                                            ? "bg-primary text-primary-foreground font-semibold"
+                                            : eventDays.has(d)
+                                              ? "font-semibold text-foreground"
+                                              : "text-muted-foreground"
+                                        }`}>
+                                          {d}
+                                          {eventDays.has(d) && d !== CALENDAR_TODAY && (
+                                            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="space-y-2 border-t border-border/60 pt-3">
+                                  <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                                    {language === "ko" ? "이번 달 일정" : "This Month"}
+                                  </div>
+                                  {SCHEDULE_EVENTS.map((ev) => (
+                                    <div key={ev.id} className="flex items-center gap-2.5" data-testid={`schedule-${ev.id}`}>
+                                      <div className="flex flex-col items-center justify-center w-8 shrink-0">
+                                        <span className="text-base font-bold leading-none tabular-nums text-foreground">{ev.day}</span>
+                                      </div>
+                                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${typeColor[ev.type]}`} />
+                                      <span className="flex-1 truncate text-sm text-foreground">{language === "ko" ? ev.titleKo : ev.title}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </ScrollArea>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return null;
                 })}
               </ResponsiveGridLayout>
@@ -1002,7 +1268,7 @@ export default function Home() {
                     : "Drag a component into the main area to build your layout. Resize from edges, reposition by dragging, and remove via the X button on each card."}
                 </p>
                 {(() => {
-                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"] as BlockKey[]);
+                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar"] as BlockKey[]);
                   return (
                     <div className="space-y-1.5">
                       {allKeys.map((b) => {
