@@ -2935,7 +2935,7 @@ export default function KnowledgeGarden() {
                            </Button>
                          </div>
                         <div className="flex-1 w-full relative">
-                          <div className="absolute top-3 right-3 z-20 flex items-center gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg shadow-sm px-1 py-0.5">
+                          <div className="absolute top-3 right-3 z-20 flex flex-col items-center gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg shadow-sm px-0.5 py-1">
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40" title="Ontology Shape" data-testid="button-ontology-shape">
                               <Hexagon className="w-4 h-4" />
                             </Button>
