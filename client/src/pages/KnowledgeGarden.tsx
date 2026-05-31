@@ -1709,7 +1709,7 @@ export default function KnowledgeGarden() {
             )}
          </AnimatePresence>
 
-        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-outer">
+        <ResizablePanelGroup key={`kg-outer-${showExplorer ? 'e' : ''}`} direction="horizontal" className="h-full items-stretch" id="kg-outer">
           {/* 1. File Explorer */}
           {showExplorer && (
             <>
@@ -2065,7 +2065,7 @@ export default function KnowledgeGarden() {
 
           {/* Main Content Area */}
           <ResizablePanel id="kg-main" order={2} defaultSize={80} className="h-full">
-            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-inner">
+            <ResizablePanelGroup key={`kg-inner-${showDocDetails ? 'd' : ''}${showGraph ? 'g' : ''}${showCopilot ? 'c' : ''}`} direction="horizontal" className="h-full items-stretch" id="kg-inner">
               
               {/* 2. Document Details */}
               {showDocDetails && (

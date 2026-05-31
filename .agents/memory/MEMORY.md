@@ -1,0 +1,2 @@
+- [react-resizable-panels conditional crash](resizable-panels-conditional.md) — conditionally-rendered panels crash on resize unless the PanelGroup gets a visibility-derived key
+- [contentEditable conditional children](contenteditable-react-children.md) — swapping children of a contentEditable via state throws removeChild; remount it with a key
