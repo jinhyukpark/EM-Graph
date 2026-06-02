@@ -46,7 +46,7 @@ type Role = "admin" | "manager" | "viewer";
 type TimelineEvent = {
   id: string;
   date: string;
-  type: "note" | "garden" | "comment";
+  type: "note" | "garden" | "comment" | "alert";
   title: string;
   titleKo: string;
   summary: string;
@@ -80,6 +80,10 @@ const TIMELINE_EVENTS: TimelineEvent[] = [
   { id: "t4", date: "2026-05-15", type: "garden", title: "공급망 지식정원 신규 노드 18개 추가", titleKo: "공급망 지식정원 신규 노드 18개 추가", summary: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", summaryKo: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", severity: "high", relatedEntity: "공급망 지식정원", businessUnit: "energy", material: "lithium" },
   { id: "t5", date: "2026-05-14", type: "note", title: "열연코일 BOM 구조 정리", titleKo: "열연코일 BOM 구조 정리", summary: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", summaryKo: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", severity: "medium", relatedEntity: "철강사업본부", businessUnit: "automotive", material: "parts" },
   { id: "t6", date: "2026-05-12", type: "comment", title: "편광필름 품질 이슈 노트 토론", titleKo: "편광필름 품질 이슈 노트 토론", summary: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", summaryKo: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", severity: "low", relatedEntity: "필름사업본부", businessUnit: "energy", material: "solar" },
+  { id: "t7", date: "2026-05-17", type: "alert", title: "아라미드 재고 안전수준 미달 경고", titleKo: "아라미드 재고 안전수준 미달 경고", summary: "구미공장 아라미드 원사 재고가 안전수준(120톤) 아래인 98톤으로 하락. 긴급 발주 검토 필요.", summaryKo: "구미공장 아라미드 원사 재고가 안전수준(120톤) 아래인 98톤으로 하락. 긴급 발주 검토 필요.", severity: "high", relatedEntity: "산업자재", businessUnit: "chemicals", material: "ethylene" },
+  { id: "t8", date: "2026-05-13", type: "alert", title: "PET필름 #2 라인 가동 중단 발생", titleKo: "PET필름 #2 라인 가동 중단 발생", summary: "압출기 온도 센서 이상으로 PET필름 #2 라인 42분간 비계획 정지. 설비팀 긴급 점검 완료, 원인 분석 중.", summaryKo: "압출기 온도 센서 이상으로 PET필름 #2 라인 42분간 비계획 정지. 설비팀 긴급 점검 완료, 원인 분석 중.", severity: "high", relatedEntity: "필름사업본부", businessUnit: "steel", material: "hrc" },
+  { id: "t9", date: "2026-05-11", type: "note", title: "글로벌 물류비 변동 분석 노트", titleKo: "글로벌 물류비 변동 분석 노트", summary: "Q2 해상 운임 전분기 대비 8.3% 상승. 미주 노선 중심 인상, 수출 단가 재산정 필요.", summaryKo: "Q2 해상 운임 전분기 대비 8.3% 상승. 미주 노선 중심 인상, 수출 단가 재산정 필요.", severity: "medium", relatedEntity: "물류본부", businessUnit: "automotive", material: "parts" },
+  { id: "t10", date: "2026-05-10", type: "garden", title: "고객사 관계망 지식정원 엣지 정비", titleKo: "고객사 관계망 지식정원 엣지 정비", summary: "주요 고객사 47개사 관계망 지식정원 엣지 230개 재검증 및 중복 12건 정리 완료.", summaryKo: "주요 고객사 47개사 관계망 지식정원 엣지 230개 재검증 및 중복 12건 정리 완료.", severity: "low", relatedEntity: "영업본부", businessUnit: "electronics", material: "dram" },
 ];
 
 const ISSUE_FEED_DATA: IssueFeedItem[] = [
@@ -448,11 +452,12 @@ function RoleBasedWrapper({ role, allowedRoles, children, masked = false }: {
   return <>{children}</>;
 }
 
-function EventTypeTag({ type, t }: { type: "note" | "garden" | "comment"; t: (key: TranslationKey) => string }) {
+function EventTypeTag({ type, t }: { type: "note" | "garden" | "comment" | "alert"; t: (key: TranslationKey) => string }) {
   const config = {
     note: { label: t("ovTypeNote"), className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400" },
     garden: { label: t("ovTypeGarden"), className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" },
     comment: { label: t("ovTypeComment"), className: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400" },
+    alert: { label: t("ovTypeAlert"), className: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400" },
   };
   const c = config[type];
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.className}`}>{c.label}</span>;
@@ -850,7 +855,8 @@ export default function Home() {
                         >
                           <span className={`absolute top-[14px] -left-[28px] w-3.5 h-3.5 rounded-full ring-4 ring-card z-10 shadow-sm transition-transform group-hover:scale-110 ${
                             event.type === "note" ? "bg-blue-500" :
-                            event.type === "comment" ? "bg-violet-500" : "bg-emerald-500"
+                            event.type === "comment" ? "bg-violet-500" :
+                            event.type === "alert" ? "bg-rose-500" : "bg-emerald-500"
                           }`} />
                           <div className="p-3 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/50 transition-colors">
                             <div className="flex items-center justify-between mb-1.5">
