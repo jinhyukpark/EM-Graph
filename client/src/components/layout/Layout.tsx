@@ -370,6 +370,12 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
             </div>
           )}
 
+          {!isProjectView && !sidebar && (
+            <div className={cn(isCollapsed ? "px-2 pt-2" : "px-4 pt-4")}>
+              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
+            </div>
+          )}
+
           {sidebar && !isCollapsed ? (
             <div className="flex-1 overflow-hidden flex flex-col">
               {sidebar}
@@ -478,7 +484,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           ) : (
             <div className={cn("space-y-1 animate-in fade-in duration-300", isCollapsed ? "p-2" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2">{t("work")}</div>}
-              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
               <NavItem href="/database" icon={Database} label={t("database")} />
               <NavItem href="/resources" icon={Library} label={t("resources")} />
               <NavItem href="/projects" icon={FolderOpen} label={t("graphAnalysis")} />
@@ -487,8 +492,8 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           
           {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
-              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ontology")}</div>}
-              <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledgeGarden")} />
+              {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("knowledgeGarden")}</div>}
+              <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledge")} />
               <NavItem href="/todo-list" icon={ListTodo} label={t("todoList")} />
               <NavItem href="/calendar" icon={Calendar} label={t("calendar")} />
               <NavItem href="/brain-market" icon={Brain} label={t("brainMarket")} />
@@ -596,22 +601,6 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
                 </Button>
               </div>
             )}
-            {isCollapsed && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                    onClick={() => setLanguage(language === "en" ? "ko" : "en")}
-                    data-testid="button-language-toggle-collapsed"
-                  >
-                    <Globe className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">{language === "en" ? "한국어" : "ENG"}</TooltipContent>
-              </Tooltip>
-            )}
           </div>
         </div>
         )}
@@ -636,7 +625,7 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           </Button>
         </header>
 
-        <main className="flex-1 overflow-hidden relative">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden relative">
            <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggle: () => setIsCollapsed(!isCollapsed) }}>
              {children}
            </SidebarContext.Provider>

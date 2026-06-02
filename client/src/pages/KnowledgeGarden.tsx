@@ -15,7 +15,9 @@ import {
   Bot, Database, FileCode, Sidebar, PanelLeft, PanelRight, Network, LayoutTemplate, Columns, Trash2, Tag, Calendar as CalendarIcon, Eye, EyeOff, Image as ImageIcon, AtSign, ArrowUp, Copy, RotateCcw, Link, AlertCircle,
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
   Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2, Palette, Check,
-  Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2
+  Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2,
+  Hexagon, ToggleLeft, BarChart3,
+  Pencil, Eraser, Highlighter, Paintbrush, Minus
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -104,15 +106,6 @@ class GraphErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
 
 // --- Mock Data ---
 
-import stockPrison from '@assets/stock_images/modern_prison_buildi_9bacaffd.jpg';
-import stockDetective from '@assets/stock_images/police_detective_inv_e00135e9.jpg';
-import stockCriminal from '@assets/stock_images/criminal_mugshot_or__e3300888.jpg';
-import stockVictim from '@assets/stock_images/victim_of_crime_port_a8ed2300.jpg';
-import stockCase from '@assets/stock_images/legal_case_file_docu_d34f6df4.jpg';
-import stockVictimB from '@assets/stock_images/portrait_of_a_young__70369a95.jpg';
-import stockCompany from '@assets/stock_images/modern_corporate_off_11c42306.jpg';
-import stockPhone from '@assets/stock_images/old_burner_mobile_ph_af367193.jpg';
-import stockMoney from '@assets/stock_images/stacks_of_money_in_b_5f30198e.jpg';
 
 const STATUS_OPTIONS = [
   { id: 'draft', label: 'Draft', color: 'bg-slate-500' },
@@ -132,7 +125,7 @@ const TEXT_COLORS = [
   { id: 'purple', name: '퍼플', value: '#a855f7' },
   { id: 'violet', name: '바이올렛', value: '#8b5cf6' },
   { id: 'indigo', name: '인디고', value: '#6366f1' },
-  { id: 'blue', name: '블루', value: '#3b82f6' },
+  { id: 'blue', name: '블루', value: '#8b5cf6' },
   { id: 'sky', name: '스카이', value: '#0ea5e9' },
   { id: 'cyan', name: '시안', value: '#06b6d4' },
   { id: 'teal', name: '틸', value: '#14b8a6' },
@@ -143,6 +136,163 @@ const TEXT_COLORS = [
   { id: 'amber', name: '앰버', value: '#f59e0b' },
   { id: 'orange', name: '오렌지', value: '#f97316' },
 ];
+
+type DocTemplateId = 'meeting' | 'report' | 'summary' | 'proposal' | 'action';
+
+const DOC_TEMPLATES: {
+  id: DocTemplateId;
+  label: string;
+  desc: string;
+  icon: typeof FileText;
+  accent: string;
+}[] = [
+  { id: 'meeting', label: '회의록', desc: '일시·참석자·안건·결정사항 형식으로 재작성', icon: Users, accent: 'text-blue-600 bg-blue-50 border-blue-200' },
+  { id: 'report', label: '보고서', desc: '개요·배경·분석·결론·권고 형식의 정식 보고서', icon: FileText, accent: 'text-violet-600 bg-violet-50 border-violet-200' },
+  { id: 'summary', label: '핵심 요약', desc: '한 페이지 경영진용 요약 (Executive Summary)', icon: LayoutTemplate, accent: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+  { id: 'proposal', label: '제안서', desc: '제안 배경·목표·실행방안·기대효과 구성', icon: Edit3, accent: 'text-amber-600 bg-amber-50 border-amber-200' },
+  { id: 'action', label: '액션 아이템', desc: '담당자·기한이 포함된 실행 과제 체크리스트', icon: CheckSquare, accent: 'text-rose-600 bg-rose-50 border-rose-200' },
+];
+
+function DocTemplateContent({ id }: { id: DocTemplateId }) {
+  if (id === 'meeting') {
+    return (
+      <>
+        <div className="not-prose mb-8 rounded-xl border border-border bg-muted/20 p-5">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+            <div><span className="text-muted-foreground">일시</span><div className="font-medium text-foreground mt-0.5">2025년 12월 15일 (월) 14:00 ~ 15:30</div></div>
+            <div><span className="text-muted-foreground">장소</span><div className="font-medium text-foreground mt-0.5">본사 3F 전략회의실 / 화상 병행</div></div>
+            <div><span className="text-muted-foreground">참석자</span><div className="font-medium text-foreground mt-0.5">김애널 (작성), 박법무, 이전략, 최기술</div></div>
+            <div><span className="text-muted-foreground">안건</span><div className="font-medium text-foreground mt-0.5">LG-SK 배터리 특허 분쟁 대응 방향</div></div>
+          </div>
+        </div>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 안건 논의</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li><strong>영업비밀 침해 쟁점:</strong> 세라믹 코팅 분리막(CCS) 기술 유출 주장에 대한 사실관계 확인 필요.</li>
+            <li><strong>특허 침해 주장:</strong> 하이니켈 양극재 제조 공정 관련 4건의 특허 검토 진행.</li>
+            <li><strong>법적 대응:</strong> US ITC 및 델라웨어 지방법원 제출 자료 기반 방어 논리 수립.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 결정 사항</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
+            <li>선행기술(Prior Art) 방어 전략 유효성을 12월 말까지 검증 완료한다.</li>
+            <li>크로스 라이선싱 제안을 위한 대응 논리를 법무팀이 준비한다.</li>
+            <li>시장 점유율 기반 손해배상/로열티 모델을 추가 분석한다.</li>
+          </ol>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 액션 아이템</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li>SK 배터리 모듈 기술 도면 분석 — <strong>최기술</strong> (~12/22)</li>
+            <li>크로스 라이선싱 대응안 초안 — <strong>박법무</strong> (~12/26)</li>
+            <li>손해배상 모델 시나리오 작성 — <strong>이전략</strong> (~12/29)</li>
+          </ul>
+        </div>
+      </>
+    );
+  }
+  if (id === 'report') {
+    return (
+      <>
+        <p className="lead text-lg text-foreground/80 mb-8 leading-relaxed tracking-wide">
+          LG에너지솔루션과 SK이노베이션 간 배터리 특허 분쟁에 대한 정식 분석 보고서. 주요 특허, 법적 쟁점, 시장 영향을 종합 검토한다.
+        </p>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 개요</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">본 보고서는 양사 간 영업비밀 침해 및 특허 침해 주장에 관한 최근 법원 제출 자료와 기술 분석을 정리한 것이다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 배경</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">분쟁의 핵심은 세라믹 코팅 분리막(CCS) 기술 및 하이니켈 양극재 제조 공정의 유출·침해 여부이다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 분석</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li><strong>분리막 기술:</strong> CCS 기술의 영업비밀성 인정 가능성이 높음.</li>
+            <li><strong>양극재:</strong> 하이니켈 공정 특허의 청구항 범위가 쟁점.</li>
+            <li><strong>제조 데이터:</strong> 수율 데이터 및 생산라인 도면 이전 여부가 핵심 증거.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 결론 및 권고</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">선행기술 방어와 크로스 라이선싱 협상을 병행하는 이원 전략을 권고한다. 장기 소송 리스크 대비 협상 우위 확보가 필요하다.</p>
+        </div>
+      </>
+    );
+  }
+  if (id === 'summary') {
+    return (
+      <>
+        <div className="not-prose rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 mb-6">
+          <div className="flex items-center gap-2 mb-3 text-emerald-700 font-semibold text-sm">
+            <LayoutTemplate className="w-4 h-4" /> 핵심 요약 (Executive Summary)
+          </div>
+          <ul className="space-y-2.5 text-sm text-foreground/90">
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> LG에너지솔루션 vs SK이노베이션 배터리 특허·영업비밀 분쟁.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 핵심 쟁점: CCS 분리막 기술 유출, 하이니켈 양극재 공정 침해.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 분쟁 특허 4건 검토 — 모두 공개 상태, 청구항 범위가 관건.</li>
+            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 권고: 선행기술 방어 + 크로스 라이선싱 협상 병행.</li>
+          </ul>
+        </div>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">한눈에 보기</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">분쟁의 본질은 기술 유출 여부 입증에 있으며, 단기적으로는 협상, 장기적으로는 특허 무효 심판 대응이 핵심 변수다.</p>
+        </div>
+      </>
+    );
+  }
+  if (id === 'proposal') {
+    return (
+      <>
+        <h3 className="mt-2 mb-4 text-base font-bold text-foreground">1. 제안 배경</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">장기 소송에 따른 비용·불확실성을 줄이기 위해 분쟁 조기 종결 전략을 제안한다.</p>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 목표</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li>2026년 상반기 내 협상 타결 또는 핵심 특허 방어 확정.</li>
+            <li>핵심 기술 자산 보호 및 추가 유출 리스크 차단.</li>
+          </ul>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 실행 방안</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
+            <li>선행기술 조사로 상대 특허 무효 가능성 확보.</li>
+            <li>크로스 라이선싱 협상 카드 마련.</li>
+            <li>대외 커뮤니케이션 및 IR 메시지 정렬.</li>
+          </ol>
+        </div>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 기대 효과</h3>
+        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+          <p className="mb-3">소송 비용 절감, 기술 자산 보호, 시장 신뢰 유지의 3대 효과를 기대할 수 있다.</p>
+        </div>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="lead text-base text-foreground/80 mb-6 leading-relaxed">분쟁 대응을 위한 실행 과제 목록. 담당자와 기한을 기준으로 진행 상황을 관리한다.</p>
+      <div className="not-prose space-y-2.5">
+        {[
+          { done: true, task: '초기 법원 제출 자료 검토', owner: '김애널', due: '완료 2024-12-01' },
+          { done: false, task: 'SK 배터리 모듈 기술 도면 분석', owner: '최기술', due: '2025-12-22' },
+          { done: false, task: '크로스 라이선싱 대응안 초안 작성', owner: '박법무', due: '2025-12-26' },
+          { done: false, task: '손해배상/로열티 모델 시나리오 작성', owner: '이전략', due: '2025-12-29' },
+          { done: false, task: '선행기술 방어 전략 유효성 검증', owner: '최기술', due: '2025-12-31' },
+        ].map((item, i) => (
+          <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
+            <input type="checkbox" checked={item.done} readOnly className="h-4 w-4 rounded border-gray-300 text-blue-600 accent-blue-600 cursor-default shrink-0" />
+            <span className={cn("flex-1 text-sm", item.done ? "line-through text-muted-foreground" : "text-foreground/90")}>{item.task}</span>
+            <Badge variant="secondary" className="text-[10px] font-normal shrink-0">{item.owner}</Badge>
+            <span className="text-xs text-muted-foreground shrink-0 w-28 text-right">{item.due}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
 
 const INITIAL_FILE_TREE = [
   {
@@ -210,10 +360,9 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kang "The Viper"', 
       subLabel: 'Crime Boss',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
+      borderColor: '#8b5cf6',
+      hideInitials: true,
       highlight: true,
-      image: stockCriminal
     },
     style: { width: 80, height: 80 }
   },
@@ -225,9 +374,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Thug A', 
       subLabel: 'Associate',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
-      image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -239,9 +387,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Witness Kim', 
       subLabel: 'Observer',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -253,9 +400,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Lee', 
       subLabel: 'Partner',
-      type: 'detective',
-      borderColor: '#3b82f6', // blue-500
-      image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -267,9 +413,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Det. Choi', 
       subLabel: 'Lead Investigator',
-      type: 'detective',
-      borderColor: '#3b82f6', // blue-500
-      image: stockDetective
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 70, height: 70 }
   },
@@ -281,9 +426,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Lawyer Han', 
       subLabel: 'Defense Attorney',
-      type: 'criminal',
-      borderColor: '#a855f7', // purple-500
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 65, height: 65 }
   },
@@ -295,9 +439,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Park "Razor"', 
       subLabel: 'Enforcer',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 70, height: 70 }
   },
@@ -309,9 +452,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Kim "Ledger"', 
       subLabel: 'Money Launderer',
-      type: 'criminal',
-      borderColor: '#ef4444', // red-500
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop'
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 65, height: 65 }
   },
@@ -323,9 +465,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim A', 
       subLabel: 'Assault',
-      type: 'victim',
-      borderColor: '#f97316', // orange-500
-      image: stockVictim
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -337,9 +478,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Case #22-004', 
       subLabel: 'Lawsuit',
-      type: 'detective',
-      borderColor: '#a855f7', // purple-500
-      image: stockCase
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -351,9 +491,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Victim B', 
       subLabel: 'Fraud',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
-      image: stockVictimB
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 50, height: 50 }
   },
@@ -365,9 +504,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Company X', 
       subLabel: 'Fraud Victim',
-      type: 'victim',
-      borderColor: '#eab308', // yellow-500
-      image: stockCompany
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -379,9 +517,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Burner Phone', 
       subLabel: 'Evidence',
-      type: 'detective',
-      borderColor: '#64748b', // slate-500
-      image: stockPhone
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 50, height: 50 }
   },
@@ -393,9 +530,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Offshore Account', 
       subLabel: 'Asset',
-      type: 'criminal',
-      borderColor: '#10b981', // emerald-500
-      image: stockMoney
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 60, height: 60 }
   },
@@ -407,9 +543,8 @@ const INITIAL_NODES = [
     data: { 
       label: 'Seoul Central', 
       subLabel: 'Prison',
-      type: 'prison',
-      borderColor: '#10b981', // emerald-500
-      image: stockPrison
+      borderColor: '#8b5cf6',
+      hideInitials: true,
     },
     style: { width: 75, height: 75 }
   }
@@ -417,28 +552,28 @@ const INITIAL_NODES = [
 
 const INITIAL_EDGES = [
   // Red Arrows (Criminal/Hostile)
-  { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-park-warehouse', source: 'park_razor', target: 'prison_central', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
-  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#ef4444', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#ef4444' } },
+  { id: 'e-kang-park', source: 'kang', target: 'park_razor', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
+  { id: 'e-kang-kim', source: 'kang', target: 'kim_ledger', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 2, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
+  { id: 'e-park-warehouse', source: 'park_razor', target: 'prison_central', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
+  { id: 'e-thug-kang', source: 'thug_a', target: 'kang', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
   
   // Blue Lines (Police/Investigation)
-  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' } },
-  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1.5 } },
-  { id: 'e-lee-warehouse', source: 'det_lee', target: 'prison_central', type: 'straight', style: { stroke: '#3b82f6', strokeWidth: 1 } },
+  { id: 'e-lee-choi', source: 'det_lee', target: 'det_choi', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 } },
+  { id: 'e-choi-kang', source: 'det_choi', target: 'kang', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5, strokeDasharray: '5,5' }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
+  { id: 'e-choi-case', source: 'det_choi', target: 'case_22004', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 } },
+  { id: 'e-park-burner', source: 'park_razor', target: 'burner_phone', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 } },
+  { id: 'e-lee-warehouse', source: 'det_lee', target: 'prison_central', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1 } },
   
   // Purple (Legal)
-  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#a855f7' } },
-  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', type: 'straight', style: { stroke: '#a855f7', strokeWidth: 1.5 } },
+  { id: 'e-han-kang', source: 'lawyer_han', target: 'kang', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 2 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
+  { id: 'e-han-case', source: 'lawyer_han', target: 'case_22004', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 } },
   
   // Green (Money/Asset)
-  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', type: 'straight', style: { stroke: '#10b981', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#10b981' } },
+  { id: 'e-kim-offshore', source: 'kim_ledger', target: 'offshore_account', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, color: '#c4b5fd' } },
   
   // Misc
-  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5, strokeDasharray: '5,5' } },
-  { id: 'e-company-kang', source: 'company_x', target: 'kang', type: 'straight', style: { stroke: '#eab308', strokeWidth: 1.5 } },
+  { id: 'e-witness-choi', source: 'witness_kim', target: 'det_choi', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5, strokeDasharray: '5,5' } },
+  { id: 'e-company-kang', source: 'company_x', target: 'kang', type: 'straight', style: { stroke: '#c4b5fd', strokeWidth: 1.5 } },
 ];
 
 const CHAT_HISTORY = [
@@ -1101,6 +1236,34 @@ export default function KnowledgeGarden() {
   const [showDocDetails, setShowDocDetails] = useState(true);
   const [showGraph, setShowGraph] = useState(true);
   const [showCopilot, setShowCopilot] = useState(true);
+  const [ontologyLayout, setOntologyLayout] = useState<"lens" | "organic" | "structural">("lens");
+  const [showLayoutPanel, setShowLayoutPanel] = useState(false);
+  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
+  const [showNodeSizePanel, setShowNodeSizePanel] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [optShowLinks, setOptShowLinks] = useState(true);
+  const [optLinkThickness, setOptLinkThickness] = useState(2);
+  const [optShowLabels, setOptShowLabels] = useState(true);
+  const [optLabelSize, setOptLabelSize] = useState(13);
+  const [nodeSizeMetric, setNodeSizeMetric] = useState("Content Length");
+  const [filterStartDate, setFilterStartDate] = useState("");
+  const [filterEndDate, setFilterEndDate] = useState("");
+  const [filterStatuses, setFilterStatuses] = useState<string[]>([]);
+  const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterStatusSearch, setFilterStatusSearch] = useState("");
+  const [filterTagSearch, setFilterTagSearch] = useState("");
+  const [filterViewMin, setFilterViewMin] = useState(0);
+  const [filterViewMax, setFilterViewMax] = useState(10000);
+  const [filterRefMin, setFilterRefMin] = useState(0);
+  const [filterRefMax, setFilterRefMax] = useState(100);
+  const [filterContentMin, setFilterContentMin] = useState(0);
+  const [filterContentMax, setFilterContentMax] = useState(20000);
+  const [insertPopoverOpen, setInsertPopoverOpen] = useState(false);
+  const [showSketchMode, setShowSketchMode] = useState(false);
+  const [sketchTool, setSketchTool] = useState<"pen" | "brush" | "eraser" | "highlighter">("pen");
+  const [sketchColor, setSketchColor] = useState("#1a1a1a");
+  const [sketchSize] = useState(2);
+  const [sketchZoom, setSketchZoom] = useState(100);
   const [showSearch, setShowSearch] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [docStatus, setDocStatus] = useState(STATUS_OPTIONS[0]); // Default: Draft
@@ -1128,6 +1291,20 @@ export default function KnowledgeGarden() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isEditingTags, setIsEditingTags] = useState(false);
   const [showAiAlert, setShowAiAlert] = useState(true);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [docTemplates, setDocTemplates] = useState<DocTemplateId[]>([]);
+  const [activeDocTab, setActiveDocTab] = useState<'original' | DocTemplateId>('original');
+
+  const applyDocTemplate = (id: DocTemplateId) => {
+    setDocTemplates(prev => prev.includes(id) ? prev : [...prev, id]);
+    setActiveDocTab(id);
+    setShowTemplateDialog(false);
+  };
+
+  const removeDocTemplate = (id: DocTemplateId) => {
+    setDocTemplates(prev => prev.filter(t => t !== id));
+    setActiveDocTab(prev => prev === id ? 'original' : prev);
+  };
   
   // Ref for handling click outside
   const editingRef = useRef<HTMLDivElement>(null);
@@ -1191,6 +1368,43 @@ export default function KnowledgeGarden() {
   };
 
   const allStatuses = [...STATUS_OPTIONS, ...customStatuses];
+
+  useEffect(() => {
+    if (!showSketchMode) return;
+    const raf = requestAnimationFrame(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      sketchHistoryRef.current = [canvas.toDataURL()];
+      sketchHistoryIdxRef.current = 0;
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [showSketchMode]);
+
+  const undoSketch = () => {
+    if (sketchHistoryIdxRef.current <= 0) return;
+    sketchHistoryIdxRef.current--;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = sketchHistoryRef.current[sketchHistoryIdxRef.current];
+  };
+
+  const redoSketch = () => {
+    if (sketchHistoryIdxRef.current >= sketchHistoryRef.current.length - 1) return;
+    sketchHistoryIdxRef.current++;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = sketchHistoryRef.current[sketchHistoryIdxRef.current];
+  };
 
   // Helper function to toggle views safely
   const toggleView = (
@@ -1428,6 +1642,11 @@ export default function KnowledgeGarden() {
   const tabScrollerRef = useRef<HTMLDivElement>(null);
   const tabItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const addTabBtnRef = useRef<HTMLButtonElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDrawingRef = useRef(false);
+  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
+  const sketchHistoryRef = useRef<string[]>([]);
+  const sketchHistoryIdxRef = useRef(-1);
   const [hiddenTabIds, setHiddenTabIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -1538,7 +1757,7 @@ export default function KnowledgeGarden() {
             )}
          </AnimatePresence>
 
-        <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-outer">
+        <ResizablePanelGroup key={`kg-outer-${showExplorer ? 'e' : ''}`} direction="horizontal" className="h-full items-stretch" id="kg-outer">
           {/* 1. File Explorer */}
           {showExplorer && (
             <>
@@ -1894,7 +2113,7 @@ export default function KnowledgeGarden() {
 
           {/* Main Content Area */}
           <ResizablePanel id="kg-main" order={2} defaultSize={80} className="h-full">
-            <ResizablePanelGroup direction="horizontal" className="h-full items-stretch" id="kg-inner">
+            <ResizablePanelGroup key={`kg-inner-${showDocDetails ? 'd' : ''}${showGraph ? 'g' : ''}${showCopilot ? 'c' : ''}`} direction="horizontal" className="h-full items-stretch" id="kg-inner">
               
               {/* 2. Document Details */}
               {showDocDetails && (
@@ -2125,7 +2344,7 @@ export default function KnowledgeGarden() {
                 ) : (
                 <>
                 <div className="shrink-0 border-b border-border bg-background/80 backdrop-blur-sm px-3 py-2 flex items-center gap-1 overflow-x-auto" data-testid="editor-toolbar">
-                  <Popover>
+                  <Popover open={insertPopoverOpen} onOpenChange={setInsertPopoverOpen}>
                     <PopoverTrigger asChild>
                       <button
                         type="button"
@@ -2183,11 +2402,13 @@ export default function KnowledgeGarden() {
                           { Icon: ListOrdered, label: '번호 매기기' },
                           { Icon: CheckSquare, label: '체크리스트' },
                           { Icon: TableIcon, label: '표' },
-                          { Icon: ImagePlus, label: '이미지' },
-                          { Icon: Link2, label: '링크' },
-                        ].map(({ Icon, label }) => (
+                          { Icon: ImagePlus, label: '이미지', onClick: undefined as (() => void) | undefined },
+                          { Icon: Link2, label: '링크', onClick: undefined as (() => void) | undefined },
+                          { Icon: Pencil, label: '그리기', onClick: () => { setShowSketchMode(true); setInsertPopoverOpen(false); } },
+                        ].map(({ Icon, label, onClick }) => (
                           <button
                             key={label}
+                            onClick={onClick}
                             className="w-full flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-muted/60 transition-colors text-left"
                           >
                             <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -2324,9 +2545,13 @@ export default function KnowledgeGarden() {
                              <BadgeCheck className="w-3.5 h-3.5" />
                              <span>Verify</span>
                            </button>
-                           <button className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors">
-                             <MessageSquare className="w-3.5 h-3.5" />
-                             <span>{t("documents")}</span>
+                           <button
+                             onClick={() => setShowTemplateDialog(true)}
+                             data-testid="button-templatize"
+                             className="flex items-center gap-1.5 hover:text-foreground hover:bg-muted/50 px-1.5 py-0.5 rounded transition-colors"
+                           >
+                             <LayoutTemplate className="w-3.5 h-3.5" />
+                             <span>템플릿</span>
                            </button>
                         </div>
                         
@@ -2512,11 +2737,71 @@ export default function KnowledgeGarden() {
                         </div>
                       </div>
 
+                      {docTemplates.length > 0 && (
+                        <div className="flex items-center gap-1 border-b border-border -mt-2 mb-2 overflow-x-auto scrollbar-hide" data-testid="tabs-templates">
+                          <button
+                            onClick={() => setActiveDocTab('original')}
+                            data-testid="tab-original"
+                            className={cn(
+                              "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+                              activeDocTab === 'original'
+                                ? "border-primary text-foreground"
+                                : "border-transparent text-muted-foreground hover:text-foreground"
+                            )}
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            원본
+                          </button>
+                          {docTemplates.map((tid) => {
+                            const tpl = DOC_TEMPLATES.find(t => t.id === tid)!;
+                            const Icon = tpl.icon;
+                            return (
+                              <button
+                                key={tid}
+                                onClick={() => setActiveDocTab(tid)}
+                                data-testid={`tab-template-${tid}`}
+                                className={cn(
+                                  "group/tab flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+                                  activeDocTab === tid
+                                    ? "border-primary text-foreground"
+                                    : "border-transparent text-muted-foreground hover:text-foreground"
+                                )}
+                              >
+                                <Icon className="w-3.5 h-3.5" />
+                                {tpl.label}
+                                <span
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={(e) => { e.stopPropagation(); removeDocTemplate(tid); }}
+                                  data-testid={`button-remove-tab-${tid}`}
+                                  className="ml-0.5 rounded-full p-0.5 opacity-0 group-hover/tab:opacity-100 hover:bg-muted text-muted-foreground hover:text-red-500 transition-all"
+                                >
+                                  <X className="w-3 h-3" />
+                                </span>
+                              </button>
+                            );
+                          })}
+                          <button
+                            onClick={() => setShowTemplateDialog(true)}
+                            data-testid="button-add-template-tab"
+                            className="flex items-center justify-center px-2 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                            title="템플릿 추가"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+
                       <div 
+                        key={activeDocTab}
                         contentEditable 
                         suppressContentEditableWarning 
                         className="prose prose-slate max-w-none prose-sm prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:leading-relaxed outline-none min-h-[500px] cursor-text px-2"
                       >
+                        {activeDocTab !== 'original' ? (
+                          <DocTemplateContent id={activeDocTab} />
+                        ) : (
+                        <>
                         {showAiAlert && (
                             <div className="flex items-center gap-2 p-3 mb-6 text-sm text-blue-700 bg-blue-50 border border-blue-100 rounded-lg select-none group relative">
                                 <Sparkles className="w-4 h-4 text-blue-500 fill-blue-500/20" />
@@ -2692,11 +2977,205 @@ export default function KnowledgeGarden() {
                                 </Button>
                             </div>
                         </div>
+                        </>
+                        )}
                       </div>
                     </div>
                 </ScrollArea>
                 </>
                 )}
+
+              {/* Sketch Mode Overlay */}
+              {showSketchMode && (
+                <div className="absolute inset-0 z-50 flex flex-col bg-white select-none" data-testid="sketch-mode-overlay">
+                  {/* Top bar */}
+                  <div className="shrink-0 h-11 border-b border-gray-200 bg-white flex items-center justify-between px-4 shadow-sm">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setSketchZoom(z => Math.max(25, z - 25))}
+                        className="h-7 w-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-zoom-out"
+                      >
+                        <Minus className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                      <span className="text-sm font-medium w-14 text-center tabular-nums text-gray-700">{sketchZoom}%</span>
+                      <button
+                        type="button"
+                        onClick={() => setSketchZoom(z => Math.min(200, z + 25))}
+                        className="h-7 w-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-zoom-in"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-gray-500" />
+                      </button>
+                      <div className="w-px h-5 bg-gray-200 mx-1.5" />
+                      <button type="button" onClick={undoSketch} className="h-7 w-7 rounded-md hover:bg-gray-100 transition-colors flex items-center justify-center" data-testid="sketch-undo">
+                        <Undo2 className="w-4 h-4 text-gray-500" />
+                      </button>
+                      <button type="button" onClick={redoSketch} className="h-7 w-7 rounded-md hover:bg-gray-100 transition-colors flex items-center justify-center" data-testid="sketch-redo">
+                        <Redo2 className="w-4 h-4 text-gray-500" />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowSketchMode(false)}
+                        className="h-8 px-4 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        data-testid="sketch-cancel"
+                      >
+                        취소
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowSketchMode(false)}
+                        className="h-8 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
+                        data-testid="sketch-done"
+                      >
+                        완료
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Canvas area */}
+                  <div className="flex flex-1 min-h-0">
+                    {/* Left tool bar */}
+                    <div className="shrink-0 w-12 border-r border-gray-200 bg-white flex flex-col items-center gap-2 py-4">
+                      {([
+                        { tool: "pen" as const, icon: <Pencil className="w-[18px] h-[18px]" />, label: "펜" },
+                        { tool: "brush" as const, icon: <Paintbrush className="w-[18px] h-[18px]" />, label: "브러시" },
+                        { tool: "eraser" as const, icon: <Eraser className="w-[18px] h-[18px]" />, label: "지우개" },
+                        { tool: "highlighter" as const, icon: <Highlighter className="w-[18px] h-[18px]" />, label: "형광펜" },
+                      ] as const).map(({ tool, icon, label }) => (
+                        <button
+                          key={tool}
+                          type="button"
+                          title={label}
+                          onClick={() => setSketchTool(tool)}
+                          data-testid={`sketch-tool-${tool}`}
+                          className={`h-9 w-9 rounded-xl flex items-center justify-center transition-all ${
+                            sketchTool === tool
+                              ? "bg-blue-600 text-white shadow-sm"
+                              : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                          }`}
+                        >
+                          {icon}
+                        </button>
+                      ))}
+                      <div className="mt-auto flex flex-col items-center gap-1.5 pb-1">
+                        {(["#1a1a1a", "#2563eb", "#ef4444", "#22c55e", "#f97316", "#8b5cf6"] as const).map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setSketchColor(c)}
+                            data-testid={`sketch-color-${c.slice(1)}`}
+                            className={`w-6 h-6 rounded-full border-2 transition-transform ${
+                              sketchColor === c ? "border-gray-600 scale-110" : "border-gray-200 hover:scale-105"
+                            }`}
+                            style={{ background: c }}
+                          />
+                        ))}
+                        <div className="mt-1 text-[10px] font-medium text-gray-400 tabular-nums leading-none">
+                          {String(sketchSize).padStart(2, "0")}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Drawing canvas */}
+                    <div
+                      className="flex-1 overflow-auto"
+                      style={{
+                        backgroundImage: "radial-gradient(circle, #b8b8b8 1px, transparent 1px)",
+                        backgroundSize: "24px 24px",
+                        backgroundColor: "#f4f4f4",
+                      }}
+                    >
+                      <canvas
+                        ref={canvasRef}
+                        width={2400}
+                        height={1600}
+                        data-testid="sketch-canvas"
+                        style={{
+                          display: "block",
+                          width: `${24 * sketchZoom}px`,
+                          height: `${16 * sketchZoom}px`,
+                          cursor: sketchTool === "eraser" ? "cell" : "crosshair",
+                        }}
+                        onMouseDown={(e) => {
+                          isDrawingRef.current = true;
+                          const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                          const scaleX = 2400 / rect.width;
+                          const scaleY = 1600 / rect.height;
+                          lastPosRef.current = {
+                            x: (e.clientX - rect.left) * scaleX,
+                            y: (e.clientY - rect.top) * scaleY,
+                          };
+                        }}
+                        onMouseMove={(e) => {
+                          if (!isDrawingRef.current || !canvasRef.current) return;
+                          const ctx = canvasRef.current.getContext("2d");
+                          if (!ctx) return;
+                          const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+                          const scaleX = 2400 / rect.width;
+                          const scaleY = 1600 / rect.height;
+                          const x = (e.clientX - rect.left) * scaleX;
+                          const y = (e.clientY - rect.top) * scaleY;
+                          const last = lastPosRef.current ?? { x, y };
+                          ctx.beginPath();
+                          ctx.moveTo(last.x, last.y);
+                          ctx.lineTo(x, y);
+                          ctx.lineCap = "round";
+                          ctx.lineJoin = "round";
+                          if (sketchTool === "eraser") {
+                            ctx.strokeStyle = "#ffffff";
+                            ctx.lineWidth = sketchSize * 12;
+                            ctx.globalAlpha = 1.0;
+                          } else if (sketchTool === "brush") {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 6;
+                            ctx.globalAlpha = 0.85;
+                          } else if (sketchTool === "highlighter") {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 8;
+                            ctx.globalAlpha = 0.35;
+                          } else {
+                            ctx.strokeStyle = sketchColor;
+                            ctx.lineWidth = sketchSize * 2;
+                            ctx.globalAlpha = 1.0;
+                          }
+                          ctx.stroke();
+                          ctx.globalAlpha = 1.0;
+                          lastPosRef.current = { x, y };
+                        }}
+                        onMouseUp={() => {
+                          if (!isDrawingRef.current) return;
+                          isDrawingRef.current = false;
+                          lastPosRef.current = null;
+                          const canvas = canvasRef.current;
+                          if (!canvas) return;
+                          const snap = canvas.toDataURL();
+                          const next = sketchHistoryRef.current.slice(0, sketchHistoryIdxRef.current + 1);
+                          next.push(snap);
+                          sketchHistoryRef.current = next;
+                          sketchHistoryIdxRef.current = next.length - 1;
+                        }}
+                        onMouseLeave={() => {
+                          isDrawingRef.current = false;
+                          lastPosRef.current = null;
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Floating + button */}
+                  <button
+                    type="button"
+                    className="absolute bottom-5 right-5 w-10 h-10 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+                    data-testid="sketch-add"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
               </ResizablePanel>
                   )}
 
@@ -2708,7 +3187,7 @@ export default function KnowledgeGarden() {
                          {/* Graph Header - Empty but height aligned */}
                          <div className="h-16 border-b border-border flex items-center justify-between px-3 bg-background shrink-0">
                            <div className="flex items-center gap-2 px-2">
-                              <Share2 className="w-4 h-4 text-blue-500" />
+                              <Share2 className="w-4 h-4 text-violet-500" />
                               <span className="font-semibold text-sm">Ontology</span>
                            </div>
                            <Button 
@@ -2721,6 +3200,417 @@ export default function KnowledgeGarden() {
                            </Button>
                          </div>
                         <div className="flex-1 w-full relative">
+                          <div className="absolute top-3 right-3 z-20 flex flex-row-reverse items-start gap-2">
+                            {/* Toolbar icons */}
+                            <div className="flex flex-col items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showLayoutPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-950/40"}`}
+                                title="Layout"
+                                data-testid="button-ontology-shape"
+                                onClick={() => { setShowLayoutPanel(p => !p); setShowOptionsPanel(false); setShowNodeSizePanel(false); setShowFilterPanel(false); }}
+                              >
+                                <Hexagon className="w-6 h-6" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showOptionsPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-sky-600 hover:text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950/40"}`}
+                                title="Options"
+                                data-testid="button-ontology-toggle"
+                                onClick={() => { setShowOptionsPanel(p => !p); setShowLayoutPanel(false); setShowNodeSizePanel(false); setShowFilterPanel(false); }}
+                              >
+                                <ToggleLeft className="w-6 h-6" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showNodeSizePanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"}`}
+                                title="Node Size"
+                                data-testid="button-ontology-stats"
+                                onClick={() => { setShowNodeSizePanel(p => !p); setShowLayoutPanel(false); setShowOptionsPanel(false); setShowFilterPanel(false); }}
+                              >
+                                <BarChart3 className="w-6 h-6" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-10 w-10 transition-colors ${showFilterPanel ? "bg-primary/10 text-primary border border-primary/50 rounded-xl" : "text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40"}`}
+                                title="Filter"
+                                data-testid="button-ontology-filter"
+                                onClick={() => { setShowFilterPanel(p => !p); setShowLayoutPanel(false); setShowOptionsPanel(false); setShowNodeSizePanel(false); }}
+                              >
+                                <Filter className="w-6 h-6" />
+                              </Button>
+                            </div>
+
+                            {/* Options panel */}
+                            {showOptionsPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl p-5 w-72" data-testid="panel-ontology-options">
+                                <p className="font-semibold text-sm text-foreground mb-4">Options</p>
+                                {/* Show Links */}
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-sm text-foreground">Show Links</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOptShowLinks(v => !v)}
+                                    className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-colors ${optShowLinks ? "bg-blue-600 border-blue-600" : "bg-white border-gray-300"}`}
+                                  >
+                                    {optShowLinks && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                  </button>
+                                </div>
+                                {/* Link Thickness */}
+                                <div className="mb-4">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-foreground">Link Thickness</span>
+                                    <span className="text-sm text-muted-foreground tabular-nums">{optLinkThickness}</span>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min={1}
+                                    max={10}
+                                    value={optLinkThickness}
+                                    onChange={e => setOptLinkThickness(Number(e.target.value))}
+                                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                    style={{ accentColor: "#2563eb" }}
+                                  />
+                                </div>
+                                {/* Show Labels */}
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-sm text-foreground">Show Labels</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOptShowLabels(v => !v)}
+                                    className={`w-5 h-5 rounded flex items-center justify-center border-2 transition-colors ${optShowLabels ? "bg-blue-600 border-blue-600" : "bg-white border-gray-300"}`}
+                                  >
+                                    {optShowLabels && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                  </button>
+                                </div>
+                                {/* Label Size */}
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-foreground">Label Size</span>
+                                    <span className="text-sm text-muted-foreground tabular-nums">{optLabelSize}</span>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min={8}
+                                    max={32}
+                                    value={optLabelSize}
+                                    onChange={e => setOptLabelSize(Number(e.target.value))}
+                                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                    style={{ accentColor: "#2563eb" }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Node Size panel */}
+                            {showNodeSizePanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl w-64 overflow-hidden" data-testid="panel-ontology-nodesize">
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+                                  <p className="font-semibold text-sm text-foreground">Node Size</p>
+                                  <button
+                                    type="button"
+                                    onClick={() => setNodeSizeMetric("Content Length")}
+                                    className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-muted/60 transition-colors"
+                                    title="Reset"
+                                  >
+                                    <RotateCcw className="w-4 h-4 text-muted-foreground" />
+                                  </button>
+                                </div>
+                                <div className="py-2">
+                                  <div className="px-5 py-1.5">
+                                    <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">Usage Metrics</p>
+                                  </div>
+                                  {["View Count", "Reference Count", "Content Length"].map(metric => (
+                                    <button
+                                      key={metric}
+                                      type="button"
+                                      onClick={() => setNodeSizeMetric(metric)}
+                                      data-testid={`nodesize-${metric.toLowerCase().replace(/ /g, "-")}`}
+                                      className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${
+                                        nodeSizeMetric === metric
+                                          ? "bg-muted/60 text-foreground font-medium"
+                                          : "text-foreground hover:bg-muted/40"
+                                      }`}
+                                    >
+                                      {metric}
+                                    </button>
+                                  ))}
+                                  <div className="px-5 py-1.5 mt-1">
+                                    <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide">Centrality</p>
+                                  </div>
+                                  {["betweenness", "degrees", "pageRank", "eigenCentrality"].map(metric => (
+                                    <button
+                                      key={metric}
+                                      type="button"
+                                      onClick={() => setNodeSizeMetric(metric)}
+                                      data-testid={`nodesize-${metric.toLowerCase()}`}
+                                      className={`w-full text-left px-5 py-2.5 text-sm transition-colors ${
+                                        nodeSizeMetric === metric
+                                          ? "bg-muted/60 text-foreground font-medium"
+                                          : "text-foreground hover:bg-muted/40"
+                                      }`}
+                                    >
+                                      {metric}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Filter panel */}
+                            {showFilterPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl w-72 max-h-[75vh] overflow-y-auto" data-testid="panel-ontology-filter">
+                                <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 sticky top-0 bg-card z-10">
+                                  <p className="font-semibold text-sm text-foreground">Filter</p>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setFilterStartDate(""); setFilterEndDate(""); setFilterStatuses([]); setFilterTags([]);
+                                      setFilterStatusSearch(""); setFilterTagSearch("");
+                                      setFilterViewMin(0); setFilterViewMax(10000);
+                                      setFilterRefMin(0); setFilterRefMax(100);
+                                      setFilterContentMin(0); setFilterContentMax(20000);
+                                    }}
+                                    className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-muted/60 transition-colors"
+                                    title="Reset all"
+                                  >
+                                    <RotateCcw className="w-4 h-4 text-muted-foreground" />
+                                  </button>
+                                </div>
+                                <div className="px-5 py-4 space-y-5">
+                                  {/* Created Date */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Created Date</p>
+                                      <button type="button" onClick={() => { setFilterStartDate(""); setFilterEndDate(""); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex gap-2 mb-2">
+                                      <div className="flex-1 flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background">
+                                        <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                        <input
+                                          type="date"
+                                          value={filterStartDate}
+                                          onChange={e => setFilterStartDate(e.target.value)}
+                                          placeholder="Start"
+                                          className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground min-w-0"
+                                        />
+                                      </div>
+                                      <div className="flex-1 flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background">
+                                        <CalendarIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                        <input
+                                          type="date"
+                                          value={filterEndDate}
+                                          onChange={e => setFilterEndDate(e.target.value)}
+                                          placeholder="End"
+                                          className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground min-w-0"
+                                        />
+                                      </div>
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Status */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Status</p>
+                                      <button type="button" onClick={() => setFilterStatuses([])} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background mb-2">
+                                      <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                      <input
+                                        type="text"
+                                        value={filterStatusSearch}
+                                        onChange={e => setFilterStatusSearch(e.target.value)}
+                                        placeholder="Search status"
+                                        className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                                      {[
+                                        { label: "미등록", color: "bg-gray-400" },
+                                        { label: "작성완료", color: "bg-amber-400" },
+                                        { label: "작성중", color: "bg-amber-500" },
+                                      ].filter(s => !filterStatusSearch || s.label.includes(filterStatusSearch)).map(({ label, color }) => (
+                                        <label key={label} className="flex items-center gap-1.5 cursor-pointer">
+                                          <button
+                                            type="button"
+                                            onClick={() => setFilterStatuses(prev => prev.includes(label) ? prev.filter(s => s !== label) : [...prev, label])}
+                                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${filterStatuses.includes(label) ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"}`}
+                                          >
+                                            {filterStatuses.includes(label) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                                          </button>
+                                          <span className={`w-2 h-2 rounded-full shrink-0 ${color}`} />
+                                          <span className="text-xs text-foreground">{label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Tag */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Tag</p>
+                                      <button type="button" onClick={() => setFilterTags([])} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 border border-border rounded-lg px-2.5 py-2 bg-background mb-2">
+                                      <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                      <input
+                                        type="text"
+                                        value={filterTagSearch}
+                                        onChange={e => setFilterTagSearch(e.target.value)}
+                                        placeholder="Search tag"
+                                        className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                                      {[
+                                        { label: "123421", color: "#3b82f6" },
+                                        { label: "AI", color: "#ec4899" },
+                                        { label: "EM", color: "#8b5cf6" },
+                                        { label: "GNN", color: "#22c55e" },
+                                        { label: "kimi", color: "#14b8a6" },
+                                        { label: "감자", color: "#22c55e" },
+                                        { label: "국방비", color: "#f97316" },
+                                        { label: "마케팅", color: "#a78bfa" },
+                                        { label: "반도체", color: "#f59e0b" },
+                                        { label: "삼성전자", color: "#6366f1" },
+                                        { label: "아이디어", color: "#06b6d4" },
+                                        { label: "온톨로지", color: "#10b981" },
+                                        { label: "일루넥스", color: "#64748b" },
+                                        { label: "헤그세스", color: "#ef4444" },
+                                      ].filter(t => !filterTagSearch || t.label.includes(filterTagSearch)).map(({ label, color }) => (
+                                        <label key={label} className="flex items-center gap-1.5 cursor-pointer">
+                                          <button
+                                            type="button"
+                                            onClick={() => setFilterTags(prev => prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label])}
+                                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${filterTags.includes(label) ? "bg-blue-600 border-blue-600" : "border-gray-300 bg-white"}`}
+                                          >
+                                            {filterTags.includes(label) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                                          </button>
+                                          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: color }} />
+                                          <span className="text-xs text-foreground">{label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* View Count */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">View Count</p>
+                                      <button type="button" onClick={() => { setFilterViewMin(0); setFilterViewMax(10000); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={10000} value={filterViewMin} onChange={e => setFilterViewMin(Math.min(Number(e.target.value), filterViewMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterViewMin} onChange={e => setFilterViewMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterViewMax} onChange={e => setFilterViewMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Reference Count */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Reference Count</p>
+                                      <button type="button" onClick={() => { setFilterRefMin(0); setFilterRefMax(100); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={100} value={filterRefMin} onChange={e => setFilterRefMin(Math.min(Number(e.target.value), filterRefMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterRefMin} onChange={e => setFilterRefMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterRefMax} onChange={e => setFilterRefMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+
+                                  {/* Content Length */}
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-sm font-semibold text-foreground">Content Length</p>
+                                      <button type="button" onClick={() => { setFilterContentMin(0); setFilterContentMax(20000); }} className="text-xs text-blue-500 hover:text-blue-600">Reset</button>
+                                    </div>
+                                    <input type="range" min={0} max={20000} value={filterContentMin} onChange={e => setFilterContentMin(Math.min(Number(e.target.value), filterContentMax - 1))} className="w-full mb-1" style={{ accentColor: "#2563eb" }} />
+                                    <div className="flex gap-2 mb-2">
+                                      <input type="number" value={filterContentMin} onChange={e => setFilterContentMin(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                      <input type="number" value={filterContentMax} onChange={e => setFilterContentMax(Number(e.target.value))} className="flex-1 border border-border rounded-lg px-2.5 py-1.5 text-xs text-center bg-background outline-none focus:ring-1 focus:ring-blue-400" />
+                                    </div>
+                                    <button type="button" className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">Apply</button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Layout selection panel */}
+                            {showLayoutPanel && (
+                              <div className="bg-card border border-border/80 rounded-2xl shadow-xl p-4 w-56" data-testid="panel-ontology-layout">
+                                <p className="font-semibold text-sm text-foreground mb-3">Layout</p>
+                                <div className="grid grid-cols-3 gap-2">
+                                  {([
+                                    {
+                                      key: "lens" as const,
+                                      label: "Lens",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                                          <circle cx="18" cy="18" r="12" stroke="currentColor" strokeWidth="2.2" strokeDasharray="5 3.5" strokeLinecap="round" />
+                                        </svg>
+                                      ),
+                                    },
+                                    {
+                                      key: "organic" as const,
+                                      label: "Organic",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                          <rect x="12" y="4" width="12" height="8" rx="2" />
+                                          <rect x="2" y="24" width="11" height="8" rx="2" />
+                                          <rect x="23" y="24" width="11" height="8" rx="2" />
+                                          <line x1="18" y1="12" x2="18" y2="18" />
+                                          <line x1="18" y1="18" x2="7.5" y2="24" />
+                                          <line x1="18" y1="18" x2="28.5" y2="24" />
+                                        </svg>
+                                      ),
+                                    },
+                                    {
+                                      key: "structural" as const,
+                                      label: "Structural",
+                                      icon: (
+                                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                                          <circle cx="18" cy="18" r="3.5" />
+                                          <circle cx="30" cy="10" r="3" />
+                                          <circle cx="30" cy="26" r="3" />
+                                          <circle cx="6" cy="10" r="3" />
+                                          <circle cx="6" cy="26" r="3" />
+                                          <line x1="18" y1="18" x2="27.3" y2="11.2" />
+                                          <line x1="18" y1="18" x2="27.3" y2="24.8" />
+                                          <line x1="18" y1="18" x2="8.7" y2="11.2" />
+                                          <line x1="18" y1="18" x2="8.7" y2="24.8" />
+                                        </svg>
+                                      ),
+                                    },
+                                  ] as const).map(({ key, label, icon }) => (
+                                    <button
+                                      key={key}
+                                      type="button"
+                                      onClick={() => setOntologyLayout(key)}
+                                      data-testid={`button-layout-${key}`}
+                                      className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all ${
+                                        ontologyLayout === key
+                                          ? "border-primary bg-primary/5 text-primary"
+                                          : "border-border/60 bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
+                                      }`}
+                                    >
+                                      {icon}
+                                      <span className={`text-[10px] font-medium leading-none ${ontologyLayout === key ? "text-primary" : "text-muted-foreground"}`}>
+                                        {label}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                           <ReactFlowProvider>
                             <GraphErrorBoundary>
                               {isMounted && <GraphView />}
@@ -3041,6 +3931,45 @@ export default function KnowledgeGarden() {
             open={showShareNotebookDialog}
             onOpenChange={setShowShareNotebookDialog}
           />
+          <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+            <DialogContent className="max-w-2xl" data-testid="dialog-templatize">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <LayoutTemplate className="w-5 h-5 text-primary" />
+                  문서 템플릿으로 변환
+                </DialogTitle>
+                <DialogDescription>
+                  원본 문서를 선택한 형식으로 재작성합니다. 변환된 문서는 노트 상단에 탭으로 추가되어 자유롭게 전환할 수 있습니다.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-3 py-2">
+                {DOC_TEMPLATES.map((tpl) => {
+                  const Icon = tpl.icon;
+                  const added = docTemplates.includes(tpl.id);
+                  return (
+                    <button
+                      key={tpl.id}
+                      onClick={() => applyDocTemplate(tpl.id)}
+                      data-testid={`card-template-${tpl.id}`}
+                      className={cn(
+                        "group relative flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all hover:shadow-md hover:border-primary/40",
+                        added ? "border-primary/40 bg-primary/5" : "border-border bg-card"
+                      )}
+                    >
+                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg border", tpl.accent)}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+                        {tpl.label}
+                        {added && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{tpl.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </DialogContent>
+          </Dialog>
           <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
             <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" data-testid="dialog-search">
               <DialogHeader className="sr-only">

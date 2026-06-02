@@ -23,6 +23,16 @@ export default defineConfig({
         ]
       : []),
   ],
+  define: {
+    "process.env.DRAGGABLE_DEBUG": "false",
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        "process.env.DRAGGABLE_DEBUG": "false",
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),

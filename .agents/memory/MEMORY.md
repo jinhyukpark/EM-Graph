@@ -1,0 +1,3 @@
+- [react-resizable-panels conditional crash](resizable-panels-conditional.md) — conditionally-rendered panels crash on resize unless the PanelGroup gets a visibility-derived key
+- [contentEditable conditional children](contenteditable-react-children.md) — swapping children of a contentEditable via state throws removeChild; remount it with a key
+- [react-grid-layout drag/resize on Replit](react-grid-layout-version.md) — 3 fixes for dashboard drag/resize: rgl v1.x, nodeRef-capable resize/draggable, and Vite define for process.env.DRAGGABLE_DEBUG (both define + optimizeDeps).
