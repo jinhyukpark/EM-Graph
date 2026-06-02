@@ -485,9 +485,14 @@ export default function Layout({ children, sidebar, sidebarControls }: { childre
           )}
           
           {!isProjectView && (
+            <div className={cn(isCollapsed ? "p-2" : "px-4 pt-4 pb-0")}>
+              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
+            </div>
+          )}
+
+          {!isProjectView && (
             <div className={cn("pt-0 mt-4", isCollapsed ? "p-2 border-t border-border/50" : "p-4")}>
               {!isCollapsed && <div className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("knowledgeGarden")}</div>}
-              <NavItem href="/dashboard" icon={LayoutGrid} label={t("dashboard")} />
               <NavItem href="/knowledge-garden" icon={Sprout} label={t("knowledge")} />
               <NavItem href="/todo-list" icon={ListTodo} label={t("todoList")} />
               <NavItem href="/calendar" icon={Calendar} label={t("calendar")} />
