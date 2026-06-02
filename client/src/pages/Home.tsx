@@ -11,8 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,9 +28,7 @@ import {
   StickyNote, MessageSquare, AtSign, Share2, Image as ImageIcon,
   Film, FileBox, HardDrive, Link2, Check, CheckCheck, LayoutGrid, Plus,
   LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
-  Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2,
-  Tag, ListChecks, CalendarDays, Circle,
-  NotebookPen, Trash2, Maximize2
+  Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -46,7 +42,7 @@ type Role = "admin" | "manager" | "viewer";
 type TimelineEvent = {
   id: string;
   date: string;
-  type: "note" | "garden" | "comment" | "alert";
+  type: "note" | "garden" | "comment";
   title: string;
   titleKo: string;
   summary: string;
@@ -80,10 +76,6 @@ const TIMELINE_EVENTS: TimelineEvent[] = [
   { id: "t4", date: "2026-05-15", type: "garden", title: "공급망 지식정원 신규 노드 18개 추가", titleKo: "공급망 지식정원 신규 노드 18개 추가", summary: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", summaryKo: "코오롱인더 글로벌 공급망 지식정원에 1차 협력사 노드 12개, 자재 노드 6개가 추가되었습니다.", severity: "high", relatedEntity: "공급망 지식정원", businessUnit: "energy", material: "lithium" },
   { id: "t5", date: "2026-05-14", type: "note", title: "열연코일 BOM 구조 정리", titleKo: "열연코일 BOM 구조 정리", summary: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", summaryKo: "열연코일 제품군 BOM 트리 4단 구조로 재정의. 자재 코드 매핑 96% 완료.", severity: "medium", relatedEntity: "철강사업본부", businessUnit: "automotive", material: "parts" },
   { id: "t6", date: "2026-05-12", type: "comment", title: "편광필름 품질 이슈 노트 토론", titleKo: "편광필름 품질 이슈 노트 토론", summary: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", summaryKo: "최수정 책임 외 4명, 편광필름 #2호기 황변 이슈 노트에서 원인 분석 토론 진행 중.", severity: "low", relatedEntity: "필름사업본부", businessUnit: "energy", material: "solar" },
-  { id: "t7", date: "2026-05-17", type: "alert", title: "공급망 지식정원 그래프 무결성 경고", titleKo: "공급망 지식정원 그래프 무결성 경고", summary: "공급망 지식정원에서 고립 노드 14개와 끊어진 엣지 6건이 감지되었습니다. 그래프 연결 관계 재검토가 필요합니다.", summaryKo: "공급망 지식정원에서 고립 노드 14개와 끊어진 엣지 6건이 감지되었습니다. 그래프 연결 관계 재검토가 필요합니다.", severity: "high", relatedEntity: "공급망 지식정원", businessUnit: "energy", material: "lithium" },
-  { id: "t8", date: "2026-05-13", type: "alert", title: "편광필름 분석 노트 출처 검증 경고", titleKo: "편광필름 분석 노트 출처 검증 경고", summary: "'편광필름 품질 분석 정원' 노트 3건에서 깨진 인용 링크와 만료된 출처가 발견되었습니다. 노트 내용 검토가 필요합니다.", summaryKo: "'편광필름 품질 분석 정원' 노트 3건에서 깨진 인용 링크와 만료된 출처가 발견되었습니다. 노트 내용 검토가 필요합니다.", severity: "high", relatedEntity: "필름사업본부", businessUnit: "energy", material: "solar" },
-  { id: "t9", date: "2026-05-11", type: "note", title: "글로벌 물류비 변동 분석 노트", titleKo: "글로벌 물류비 변동 분석 노트", summary: "Q2 해상 운임 전분기 대비 8.3% 상승. 미주 노선 중심 인상, 수출 단가 재산정 필요.", summaryKo: "Q2 해상 운임 전분기 대비 8.3% 상승. 미주 노선 중심 인상, 수출 단가 재산정 필요.", severity: "medium", relatedEntity: "물류본부", businessUnit: "automotive", material: "parts" },
-  { id: "t10", date: "2026-05-10", type: "garden", title: "고객사 관계망 지식정원 엣지 정비", titleKo: "고객사 관계망 지식정원 엣지 정비", summary: "주요 고객사 47개사 관계망 지식정원 엣지 230개 재검증 및 중복 12건 정리 완료.", summaryKo: "주요 고객사 47개사 관계망 지식정원 엣지 230개 재검증 및 중복 12건 정리 완료.", severity: "low", relatedEntity: "영업본부", businessUnit: "electronics", material: "dram" },
 ];
 
 const ISSUE_FEED_DATA: IssueFeedItem[] = [
@@ -121,91 +113,7 @@ const RESOURCE_COMPOSITION_DATA = [
   { name: "ovResVideos" as TranslationKey, value: 47, color: "hsl(280, 65%, 60%)" },
 ];
 
-const NOTE_TAGS: { label: string; count: number }[] = [
-  { label: "PET필름", count: 42 },
-  { label: "공급망", count: 36 },
-  { label: "아라미드", count: 31 },
-  { label: "편광필름", count: 28 },
-  { label: "지식정원", count: 26 },
-  { label: "BOM", count: 24 },
-  { label: "열연코일", count: 22 },
-  { label: "원가분석", count: 20 },
-  { label: "MOQ", count: 19 },
-  { label: "단가협상", count: 17 },
-  { label: "품질이슈", count: 14 },
-  { label: "ESG", count: 11 },
-];
-
-type TodoItem = { id: string; labelKo: string; label: string; done: boolean };
-const TODO_ITEMS: TodoItem[] = [
-  { id: "td1", labelKo: "PET필름 #3 라인 가동률 보고서 작성", label: "Write PET film line #3 utilization report", done: true },
-  { id: "td2", labelKo: "아라미드 단가 협상 자료 검토", label: "Review aramid pricing materials", done: true },
-  { id: "td3", labelKo: "MOQ 정책 개정 초안 피드백", label: "Give feedback on MOQ policy draft", done: false },
-  { id: "td4", labelKo: "공급망 지식정원 신규 노드 정리", label: "Organize new supply chain garden nodes", done: false },
-  { id: "td5", labelKo: "편광필름 품질 이슈 회의 준비", label: "Prepare polarizer quality meeting", done: false },
-  { id: "td6", labelKo: "열연코일 BOM 매핑 마무리", label: "Finalize HRC BOM mapping", done: true },
-  { id: "td7", labelKo: "주간 운영 리포트 제출", label: "Submit weekly ops report", done: false },
-];
-
-type ScheduleItem = { id: string; day: number; titleKo: string; title: string; type: "meeting" | "deadline" | "review" };
-const SCHEDULE_EVENTS: ScheduleItem[] = [
-  { id: "ev1", day: 18, titleKo: "PET필름 주간 운영회의", title: "PET Film Weekly Ops Meeting", type: "meeting" },
-  { id: "ev2", day: 22, titleKo: "아라미드 단가 협상 마감", title: "Aramid Pricing Deadline", type: "deadline" },
-  { id: "ev3", day: 27, titleKo: "MOQ 정책 검토 회의", title: "MOQ Policy Review Meeting", type: "review" },
-  { id: "ev4", day: 29, titleKo: "공급망 지식정원 리뷰", title: "Supply Chain Garden Review", type: "review" },
-  { id: "ev5", day: 31, titleKo: "월말 운영 리포트 제출", title: "Month-end Report Due", type: "deadline" },
-];
-
-const CALENDAR_YEAR = 2026;
-const CALENDAR_MONTH = 5;
-const CALENDAR_TODAY = 31;
-const buildMonthGrid = (year: number, month: number): (number | null)[] => {
-  const startWeekday = new Date(year, month - 1, 1).getDay();
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const cells: (number | null)[] = [];
-  for (let i = 0; i < startWeekday; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  while (cells.length % 7 !== 0) cells.push(null);
-  return cells;
-};
-const MONTH_GRID = buildMonthGrid(CALENDAR_YEAR, CALENDAR_MONTH);
-
-type Memo = { id: string; content: string; createdAt: string };
-const MEMO_STORAGE_KEY = "em-graph-memos";
-const SEED_MEMOS: Memo[] = [
-  { id: "m1", content: "PET필름 #3 라인 압출 온도 235도로 조정 후 가동률 재측정 필요", createdAt: "2026-05-31T09:14:00" },
-  { id: "m2", content: "아라미드 단가 협상 — 공급사 B안 원가표 다시 확인하기", createdAt: "2026-05-31T11:02:00" },
-  { id: "m3", content: "편광필름 황변 이슈: 2호기 UV 경화 파라미터 로그 정리", createdAt: "2026-05-30T16:40:00" },
-  { id: "m4", content: "MOQ 3톤 인하 시 중소형 고객사 예상 매출 시뮬레이션 요청", createdAt: "2026-05-29T14:25:00" },
-  { id: "m5", content: "공급망 지식정원 1차 협력사 노드 라벨 표준화 규칙 메모", createdAt: "2026-05-28T10:10:00" },
-];
-const memoDateKey = (iso: string) => {
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
-const formatMemoDay = (iso: string, language: string) => {
-  const d = new Date(iso);
-  return language === "ko"
-    ? `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
-    : d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-};
-const formatMemoTime = (iso: string, language: string) => {
-  const d = new Date(iso);
-  return d.toLocaleTimeString(language === "ko" ? "ko-KR" : "en-US", { hour: "2-digit", minute: "2-digit" });
-};
-const groupMemosByDate = (memos: Memo[]) => {
-  const sorted = [...memos].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  const groups: { date: string; items: Memo[] }[] = [];
-  for (const m of sorted) {
-    const key = memoDateKey(m.createdAt);
-    let g = groups.find((x) => x.date === key);
-    if (!g) { g = { date: key, items: [] }; groups.push(g); }
-    g.items.push(m);
-  }
-  return groups;
-};
-
-type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring" | "tags" | "todos" | "calendar" | "memo";
+type BlockKey = "notes" | "links" | "dbUsage" | "resource" | "timeline" | "feed" | "monitoring";
 
 const KPI_KEYS: BlockKey[] = ["notes", "links", "dbUsage", "resource"];
 const isKpiKey = (k: BlockKey) => KPI_KEYS.includes(k);
@@ -218,10 +126,6 @@ const BLOCK_META: Record<BlockKey, { labelKo: string; label: string; descKo: str
   timeline: { labelKo: "최근 노트 타임라인", label: "Recent Notes Timeline", descKo: "최근 생성된 노트와 변경 사항", desc: "Recent notes and changes", icon: Calendar },
   feed: { labelKo: "활동 피드", label: "Activity Feed", descKo: "댓글, 멘션, 공유, 시스템 알림", desc: "Comments, mentions, shares", icon: Bell },
   monitoring: { labelKo: "KPI 모니터링 차트", label: "KPI Monitoring", descKo: "리소스 구성, AI 토큰, 노트 성장 차트", desc: "Resource, AI tokens, growth charts", icon: BarChart3 },
-  tags: { labelKo: "노트 태그 모음", label: "Note Tags", descKo: "자주 사용된 노트 태그 모음", desc: "Frequently used note tags", icon: Tag },
-  todos: { labelKo: "할 일 (진행률)", label: "To-Do (Progress)", descKo: "할 일 목록과 진행률", desc: "To-do list with progress", icon: ListChecks },
-  calendar: { labelKo: "캘린더 (일정)", label: "Calendar", descKo: "월간 일정 및 다가오는 이벤트", desc: "Monthly schedule & events", icon: CalendarDays },
-  memo: { labelKo: "메모장", label: "Memo Pad", descKo: "대시보드에서 바로 메모 작성·날짜별 저장", desc: "Quick memos saved by date", icon: NotebookPen },
 };
 
 type BlockOptions = {
@@ -242,11 +146,7 @@ const DEFAULT_GRID_LAYOUT: Record<BlockKey, GridPos> = {
   resource:   { x: 9,  y: 0,  w: 3, h: 3, minW: 3, minH: 2, maxW: 12 },
   timeline:   { x: 0,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
   feed:       { x: 6,  y: 3,  w: 6, h: 9, minW: 3, minH: 5, maxW: 12 },
-  monitoring: { x: 0,  y: 12, w: 12, h: 7, minW: 6, minH: 6, maxW: 12 },
-  tags:       { x: 0,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
-  todos:      { x: 4,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
-  calendar:   { x: 8,  y: 19, w: 4, h: 6, minW: 3, minH: 4, maxW: 12 },
-  memo:       { x: 0,  y: 25, w: 6, h: 7, minW: 4, minH: 5, maxW: 12 },
+  monitoring: { x: 0,  y: 12, w: 12, h: 9, minW: 6, minH: 6, maxW: 12 },
 };
 
 const snapPos = (p: { x: number; y: number; w: number; h: number; minW?: number; minH?: number; maxW?: number }) => {
@@ -369,65 +269,6 @@ function BlockPreview({ type, className = "" }: { type: BlockKey; className?: st
           ))}
         </svg>
       );
-    case "tags":
-      return (
-        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
-          {frame}
-          {[
-            { x: 5, y: 7, w: 20 }, { x: 28, y: 7, w: 14 }, { x: 45, y: 7, w: 24 },
-            { x: 5, y: 17, w: 16 }, { x: 24, y: 17, w: 26 }, { x: 53, y: 17, w: 18 },
-            { x: 5, y: 27, w: 22 }, { x: 30, y: 27, w: 18 }, { x: 51, y: 27, w: 20 },
-          ].map((p, i) => (
-            <rect key={i} x={p.x} y={p.y} width={p.w} height={6} rx={3} fill="currentColor" fillOpacity={i % 3 === 0 ? 0.55 : 0.2} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.4} />
-          ))}
-        </svg>
-      );
-    case "todos":
-      return (
-        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
-          {frame}
-          <rect x={5} y={5} width={70} height={3} rx={1.5} fill="currentColor" fillOpacity={0.12} />
-          <rect x={5} y={5} width={42} height={3} rx={1.5} fill="currentColor" fillOpacity={0.7} />
-          {[0, 1, 2].map((i) => (
-            <g key={i}>
-              <circle cx={8} cy={16 + i * 8} r={2.2} fill="none" stroke="currentColor" strokeOpacity={0.5} strokeWidth={0.8} />
-              {i < 2 && <path d={`M6.6 ${16 + i * 8} l1 1 l1.8 -2`} stroke="currentColor" strokeOpacity={0.85} strokeWidth={0.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />}
-              <rect x={13} y={14.6 + i * 8} width={i === 1 ? 40 : 54} height={2.6} rx={1.2} fill="currentColor" fillOpacity={i < 2 ? 0.3 : 0.55} />
-            </g>
-          ))}
-        </svg>
-      );
-    case "calendar":
-      return (
-        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
-          {frame}
-          <rect x={5} y={6} width={70} height={5} rx={1.5} fill="currentColor" fillOpacity={0.12} />
-          <rect x={9} y={3} width={2.5} height={5} rx={1} fill="currentColor" fillOpacity={0.6} />
-          <rect x={68} y={3} width={2.5} height={5} rx={1} fill="currentColor" fillOpacity={0.6} />
-          {[0, 1, 2, 3].map((r) => (
-            [0, 1, 2, 3, 4, 5, 6].map((c) => {
-              const on = r === 1 && c === 3;
-              return <rect key={`${r}-${c}`} x={6 + c * 10} y={14 + r * 6} width={6} height={4.4} rx={1} fill="currentColor" fillOpacity={on ? 0.85 : 0.15} />;
-            })
-          ))}
-        </svg>
-      );
-    case "memo":
-      return (
-        <svg viewBox="0 0 80 40" className={`${common} ${className}`} aria-hidden="true">
-          {frame}
-          <rect x={5} y={5} width={70} height={9} rx={2} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.3} strokeWidth={0.5} strokeDasharray="2 1.5" />
-          <rect x={8} y={9} width={30} height={1.6} rx={0.8} fill="currentColor" fillOpacity={0.4} />
-          <rect x={64} y={7.5} width={8} height={4.5} rx={1} fill="currentColor" fillOpacity={0.55} />
-          {[0, 1, 2].map((i) => (
-            <g key={i}>
-              <rect x={5} y={18 + i * 7} width={70} height={5} rx={1} fill="currentColor" fillOpacity={0.06} stroke="currentColor" strokeOpacity={0.18} strokeWidth={0.35} />
-              <rect x={8} y={20 + i * 7} width={i === 1 ? 34 : 44} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.5} />
-              <rect x={64} y={20 + i * 7} width={8} height={1.4} rx={0.6} fill="currentColor" fillOpacity={0.3} />
-            </g>
-          ))}
-        </svg>
-      );
   }
 }
 
@@ -452,12 +293,11 @@ function RoleBasedWrapper({ role, allowedRoles, children, masked = false }: {
   return <>{children}</>;
 }
 
-function EventTypeTag({ type, t }: { type: "note" | "garden" | "comment" | "alert"; t: (key: TranslationKey) => string }) {
+function EventTypeTag({ type, t }: { type: "note" | "garden" | "comment"; t: (key: TranslationKey) => string }) {
   const config = {
     note: { label: t("ovTypeNote"), className: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400" },
     garden: { label: t("ovTypeGarden"), className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400" },
     comment: { label: t("ovTypeComment"), className: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400" },
-    alert: { label: t("ovTypeAlert"), className: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400" },
   };
   const c = config[type];
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.className}`}>{c.label}</span>;
@@ -486,21 +326,11 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
-  const [todos, setTodos] = useState(TODO_ITEMS);
-  const [memos, setMemos] = useState<Memo[]>(() => {
-    try {
-      const raw = localStorage.getItem(MEMO_STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Memo[];
-    } catch { /* ignore */ }
-    return SEED_MEMOS;
-  });
-  const [memoDraft, setMemoDraft] = useState("");
-  const [memoDetailOpen, setMemoDetailOpen] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [timelineBusinessUnit, setTimelineBusinessUnit] = useState<string>("all");
   const [visibleFeedCount, setVisibleFeedCount] = useState(4);
   const [templatePanelOpen, setTemplatePanelOpen] = useState(false);
-  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"]);
+  const [visibleBlocks, setVisibleBlocks] = useState<BlockKey[]>(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
   const [gridLayout, setGridLayout] = useState<Partial<Record<BlockKey, GridPos>>>({});
   const [draggingPaletteItem, setDraggingPaletteItem] = useState<BlockKey | null>(null);
   const [alignSnap, setAlignSnap] = useState<{ key: BlockKey; h: number; matchedKeys: BlockKey[] } | null>(null);
@@ -601,7 +431,7 @@ export default function Home() {
     const fromDt = dt?.getData("text/plain") || undefined;
     const candidate = (fromState || fromItem || fromDt) as BlockKey | undefined;
     setDraggingPaletteItem(null);
-    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"];
+    const valid: BlockKey[] = ["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"];
     if (!candidate || !valid.includes(candidate) || visibleBlocks.includes(candidate)) return;
     const def = DEFAULT_GRID_LAYOUT[candidate];
     setGridLayout(prev => ({
@@ -612,7 +442,7 @@ export default function Home() {
   };
 
   const resetLayout = () => {
-    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"]);
+    setVisibleBlocks(["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"]);
     setGridLayout({});
   };
 
@@ -623,36 +453,17 @@ export default function Home() {
     timelineBusinessUnit === "all" || e.businessUnit === timelineBusinessUnit
   );
 
-  const toggleTodo = (id: string) => {
-    setTodos(prev => prev.map(td => td.id === id ? { ...td, done: !td.done } : td));
-  };
-
-  useEffect(() => {
-    try { localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(memos)); } catch { /* ignore */ }
-  }, [memos]);
-
-  const addMemo = () => {
-    const text = memoDraft.trim();
-    if (!text) return;
-    setMemos(prev => [{ id: `m${Date.now()}`, content: text, createdAt: new Date().toISOString() }, ...prev]);
-    setMemoDraft("");
-  };
-
-  const deleteMemo = (id: string) => {
-    setMemos(prev => prev.filter(m => m.id !== id));
-  };
-
   const toggleSubscribe = (id: string) => {
     setFeedItems(prev => prev.map(item =>
       item.id === id ? { ...item, subscribed: !item.subscribed } : item
     ));
   };
 
-  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote; tint: string }> = {
-    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote, tint: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
-    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2, tint: "bg-violet-500/10 text-violet-600 dark:text-violet-400" },
-    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database, tint: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
-    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive, tint: "bg-amber-500/10 text-amber-600 dark:text-amber-400" },
+  const kpiCardsData: Record<"notes" | "links" | "dbUsage" | "resource", { labelKey: TranslationKey; value: string; change: string; changeDir: "up" | "neutral"; icon: typeof StickyNote; color: string }> = {
+    notes: { labelKey: "ovKpiNotes", value: "1,247", change: "+24", changeDir: "up", icon: StickyNote, color: "text-primary" },
+    links: { labelKey: "ovKpiLinks", value: "8,432", change: "+156", changeDir: "up", icon: Link2, color: "text-accent" },
+    dbUsage: { labelKey: "ovKpiDbUsage", value: "2.4 / 5 GB", change: "48%", changeDir: "neutral", icon: Database, color: "text-emerald-500" },
+    resource: { labelKey: "ovKpiResourceUsage", value: "3.2 / 5 GB", change: "64%", changeDir: "neutral", icon: HardDrive, color: "text-muted-foreground" },
   };
 
   return (
@@ -673,8 +484,8 @@ export default function Home() {
               </Badge>
             )}
             <Button
-              variant={editMode ? "default" : "outline"}
-              className="gap-2 h-9 text-sm"
+              variant={editMode ? "default" : "default"}
+              className="gap-2 h-9 text-sm shadow-lg shadow-primary/20"
               onClick={() => setTemplatePanelOpen(v => !v)}
               data-testid="button-edit-template"
             >
@@ -781,27 +592,26 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager", "viewer"]} masked={role === "viewer"}>
-                          <Card className={`bg-card border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
-                        <CardContent className="p-5 h-full flex flex-col justify-between gap-5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground font-medium">{t(stat.labelKey)}</span>
-                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${stat.tint}`}>
-                              <stat.icon className="w-[18px] h-[18px]" />
+                          <Card className={`bg-card/80 backdrop-blur border-border shadow-sm hover:shadow-md transition-shadow h-full ${editMode ? "ring-1 ring-primary/20" : ""}`} data-testid={`card-kpi-${key}`}>
+                        <CardContent className="p-5 h-full flex flex-col justify-center">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
+                              <stat.icon className="w-5 h-5" />
                             </div>
+                            <Badge
+                              variant={stat.changeDir === "up" ? "default" : "secondary"}
+                              className={`font-mono text-xs px-2 py-0.5 gap-1 ${
+                                stat.changeDir === "up"
+                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                  : ""
+                              }`}
+                            >
+                              {stat.changeDir === "up" && <ArrowUpRight className="w-3.5 h-3.5" />}
+                              {stat.change} {stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}
+                            </Badge>
                           </div>
-                          <div>
-                            <div className="text-[28px] leading-none font-bold tracking-tight tabular-nums text-foreground">{stat.value}</div>
-                            <div className="flex items-center gap-1 mt-2 text-xs">
-                              {stat.changeDir === "up" ? (
-                                <span className="inline-flex items-center gap-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
-                                  <ArrowUpRight className="w-3.5 h-3.5" />{stat.change}
-                                </span>
-                              ) : (
-                                <span className="font-semibold text-foreground">{stat.change}</span>
-                              )}
-                              <span className="text-muted-foreground">{stat.changeDir === "up" ? t("vsYesterday") : t("ovOfQuota")}</span>
-                            </div>
-                          </div>
+                          <div className="text-2xl font-bold mb-1">{stat.value}</div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{t(stat.labelKey)}</div>
                         </CardContent>
                       </Card>
                         </RoleBasedWrapper>
@@ -816,12 +626,12 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-timeline">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-timeline">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <Calendar className="w-[18px] h-[18px] text-muted-foreground" />
+                      <Calendar className="w-5 h-5 text-primary" />
                       {t("ovTimelineTitle")}
                     </CardTitle>
                     <CardDescription className="text-xs mt-1">{t("ovTimelineDesc")}</CardDescription>
@@ -842,10 +652,10 @@ export default function Home() {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 min-h-0 pb-4">
-                <ScrollArea className="h-full pr-3" data-testid="scroll-timeline">
-                  <div className="relative pl-8 pr-1">
-                    <div className="absolute left-[10px] top-4 bottom-4 w-0.5 bg-border rounded-full" aria-hidden />
-                    <div className="space-y-4">
+                <ScrollArea className="pr-4 h-full">
+                  <div className="relative pl-6">
+                    <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
+                    <div className="space-y-5">
                       {filteredTimeline.map((event) => (
                         <div
                           key={event.id}
@@ -853,12 +663,11 @@ export default function Home() {
                           onClick={() => setSelectedEvent(event)}
                           data-testid={`timeline-event-${event.id}`}
                         >
-                          <span className={`absolute top-[14px] -left-[28px] w-3.5 h-3.5 rounded-full ring-4 ring-card z-10 shadow-sm transition-transform group-hover:scale-110 ${
+                          <div className={`absolute -left-6 top-1.5 w-[10px] h-[10px] rounded-full ring-2 ring-background z-10 ${
                             event.type === "note" ? "bg-blue-500" :
-                            event.type === "comment" ? "bg-violet-500" :
-                            event.type === "alert" ? "bg-rose-500" : "bg-emerald-500"
+                            event.type === "comment" ? "bg-violet-500" : "bg-emerald-500"
                           }`} />
-                          <div className="p-3 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/50 transition-colors">
+                          <div className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/50 transition-colors">
                             <div className="flex items-center justify-between mb-1.5">
                               <div className="flex items-center gap-2">
                                 <EventTypeTag type={event.type} t={t} />
@@ -897,10 +706,10 @@ export default function Home() {
                         {editChrome}
                         {alignBadge}
                         <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-issue-feed">
+                          <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col" data-testid="card-issue-feed">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-[18px] h-[18px] text-muted-foreground" />
+                <Bell className="w-5 h-5 text-primary" />
                 {t("ovActivityFeed")}
               </CardTitle>
               <CardDescription className="text-xs">{t("ovActivityFeedDesc")}</CardDescription>
@@ -932,7 +741,7 @@ export default function Home() {
               <ScrollArea className="pr-2 h-full">
                 <div className="space-y-3">
                   {displayedFeed.map((item) => (
-                    <div key={item.id} className="p-3 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
+                    <div key={item.id} className="p-3 rounded-lg border border-border bg-background/50 hover:bg-secondary/30 transition-colors" data-testid={`feed-item-${item.id}`}>
                       <div className="flex items-center justify-between mb-2">
                         <FeedBadge source={item.source} t={t} />
                         <div className="flex items-center gap-2">
@@ -996,12 +805,12 @@ export default function Home() {
                         {alignBadge}
                         <RoleBasedWrapper role={role} allowedRoles={["admin", "manager"]}>
                           <div className="h-full rounded-xl">
-                            <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
-            <CardHeader className="pb-3 shrink-0">
+                            <Card className="bg-card/80 backdrop-blur border-border shadow-sm h-full flex flex-col overflow-auto" data-testid="card-kpi-monitoring">
+            <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <BarChart3 className="w-[18px] h-[18px] text-muted-foreground" />
+                    <BarChart3 className="w-5 h-5 text-primary" />
                     {t("kpiMonitoring")}
                   </CardTitle>
                 </div>
@@ -1027,8 +836,8 @@ export default function Home() {
                   { labelKey: "ovStatNewNotes" as TranslationKey, value: "+24", icon: StickyNote, color: "text-accent" },
                   { labelKey: "ovStatActiveUsers" as TranslationKey, value: "12", icon: Users, color: "text-emerald-500" },
                 ].map((stat, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30 border border-border/60" data-testid={`stat-summary-${i}`}>
-                    <div className={`p-2 rounded-full bg-background border border-border/60 ${stat.color}`}>
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border" data-testid={`stat-summary-${i}`}>
+                    <div className={`p-2 rounded-lg bg-background border border-border ${stat.color}`}>
                       <stat.icon className="w-4 h-4" />
                     </div>
                     <div>
@@ -1039,16 +848,16 @@ export default function Home() {
                 ))}
               </div>
             </CardHeader>
-            <CardContent className="flex-1 min-h-0 pt-1">
-              <div className={`h-full min-h-0 grid grid-cols-1 gap-4 ${
+            <CardContent>
+              <div className={`grid grid-cols-1 gap-6 ${
                 blockOptions.monitoring.charts.length === 3 ? "lg:grid-cols-3" :
                 blockOptions.monitoring.charts.length === 2 ? "lg:grid-cols-2" :
                 "lg:grid-cols-1"
               }`}>
                 {blockOptions.monitoring.charts.includes("pie") && (
-                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
-                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartResourceComposition")}</h3>
-                  <div className="flex-1 min-h-[200px] flex items-center">
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartResourceComposition")}</h3>
+                  <div className="h-[220px] flex items-center">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -1079,11 +888,17 @@ export default function Home() {
                 )}
 
                 {blockOptions.monitoring.charts.includes("line") && (
-                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
-                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartAiTokenTrend")}</h3>
-                  <div className="flex-1 min-h-[200px]">
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartAiTokenTrend")}</h3>
+                  <div className="h-[220px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={AI_TOKEN_USAGE_DATA} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
+                      <LineChart data={AI_TOKEN_USAGE_DATA}>
+                        <defs>
+                          <linearGradient id="tokenGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                         <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `${(v / 1000).toFixed(0)}K`} />
@@ -1092,7 +907,7 @@ export default function Home() {
                           itemStyle={{ color: 'hsl(var(--foreground))' }}
                           formatter={(value: number) => [`${value.toLocaleString()} ${t("ovTokens")}`, t("ovTokens")]}
                         />
-                        <Line type="monotone" dataKey="tokens" stroke="#10b981" strokeWidth={2.5} dot={false} activeDot={{ fill: '#10b981', strokeWidth: 0, r: 4 }} name={t("ovTokens")} />
+                        <Line type="monotone" dataKey="tokens" stroke="hsl(var(--accent))" strokeWidth={2} dot={{ fill: 'hsl(var(--accent))', strokeWidth: 0, r: 3 }} name={t("ovTokens")} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -1100,11 +915,11 @@ export default function Home() {
                 )}
 
                 {blockOptions.monitoring.charts.includes("bar") && (
-                <div className="flex flex-col min-h-0 rounded-xl border border-border/60 bg-secondary/20 p-4">
-                  <h3 className="text-sm font-semibold mb-3 shrink-0">{t("ovChartNoteGrowth")}</h3>
-                  <div className="flex-1 min-h-[200px]">
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">{t("ovChartNoteGrowth")}</h3>
+                  <div className="h-[220px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
+                      <BarChart data={NOTE_GROWTH_BY_PROJECT.map(d => ({ proj: t(d.proj), count: d.count }))}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                         <XAxis dataKey="proj" fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
                         <YAxis fontSize={10} tickLine={false} axisLine={false} stroke="hsl(var(--muted-foreground))" />
@@ -1127,263 +942,6 @@ export default function Home() {
           </Card>
                           </div>
                         </RoleBasedWrapper>
-                      </div>
-                    );
-                  }
-
-                  if (key === "tags") {
-                    return (
-                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
-                        {editChrome}
-                        {alignBadge}
-                        <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-tags">
-                            <CardHeader className="pb-3 shrink-0">
-                              <CardTitle className="text-lg flex items-center gap-2">
-                                <Tag className="w-[18px] h-[18px] text-muted-foreground" />
-                                {language === "ko" ? "노트 태그 모음" : "Note Tags"}
-                              </CardTitle>
-                              <CardDescription className="text-xs">
-                                {language === "ko" ? "자주 사용된 태그를 한눈에 확인하세요" : "Most used note tags at a glance"}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0 pb-4">
-                              <ScrollArea className="h-full pr-2">
-                                <div className="flex flex-wrap gap-2">
-                                  {NOTE_TAGS.map((tag) => {
-                                    const size = tag.count >= 35 ? "text-base px-3 py-1.5" : tag.count >= 24 ? "text-sm px-2.5 py-1" : "text-xs px-2 py-0.5";
-                                    return (
-                                      <button
-                                        key={tag.label}
-                                        type="button"
-                                        className={`no-drag inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary/40 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-colors font-medium ${size}`}
-                                        data-testid={`tag-${tag.label}`}
-                                      >
-                                        <span>{tag.label}</span>
-                                        <span className="text-[10px] text-muted-foreground font-semibold tabular-nums">{tag.count}</span>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </ScrollArea>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  if (key === "todos") {
-                    const doneCount = todos.filter(td => td.done).length;
-                    const pct = todos.length ? Math.round((doneCount / todos.length) * 100) : 0;
-                    return (
-                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
-                        {editChrome}
-                        {alignBadge}
-                        <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-todos">
-                            <CardHeader className="pb-3 shrink-0">
-                              <CardTitle className="text-lg flex items-center gap-2">
-                                <ListChecks className="w-[18px] h-[18px] text-muted-foreground" />
-                                {language === "ko" ? "할 일 (진행률)" : "To-Do (Progress)"}
-                              </CardTitle>
-                              <div className="mt-2.5">
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-xs text-muted-foreground">
-                                    {language === "ko" ? `${doneCount} / ${todos.length}개 완료` : `${doneCount} / ${todos.length} done`}
-                                  </span>
-                                  <span className="text-xs font-semibold text-primary tabular-nums">{pct}%</span>
-                                </div>
-                                <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
-                                  <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0 pb-4">
-                              <ScrollArea className="h-full pr-2">
-                                <div className="space-y-1.5">
-                                  {todos.map((td) => (
-                                    <button
-                                      key={td.id}
-                                      type="button"
-                                      onClick={() => toggleTodo(td.id)}
-                                      className="no-drag w-full flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-background/50 hover:bg-secondary/50 transition-colors text-left"
-                                      data-testid={`todo-${td.id}`}
-                                    >
-                                      {td.done
-                                        ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                                        : <Circle className="w-4 h-4 text-muted-foreground shrink-0" />}
-                                      <span className={`text-sm leading-snug ${td.done ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                                        {language === "ko" ? td.labelKo : td.label}
-                                      </span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </ScrollArea>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  if (key === "calendar") {
-                    const eventDays = new Set(SCHEDULE_EVENTS.map((e) => e.day));
-                    const weekdays = language === "ko" ? ["일", "월", "화", "수", "목", "금", "토"] : ["S", "M", "T", "W", "T", "F", "S"];
-                    const typeColor: Record<ScheduleItem["type"], string> = { meeting: "bg-blue-500", deadline: "bg-rose-500", review: "bg-emerald-500" };
-                    return (
-                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
-                        {editChrome}
-                        {alignBadge}
-                        <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-calendar">
-                            <CardHeader className="pb-3 shrink-0">
-                              <CardTitle className="text-lg flex items-center gap-2">
-                                <CalendarDays className="w-[18px] h-[18px] text-muted-foreground" />
-                                {language === "ko" ? "캘린더 (일정)" : "Calendar"}
-                              </CardTitle>
-                              <CardDescription className="text-xs">
-                                {language === "ko" ? "2026년 5월" : "May 2026"}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0 pb-4">
-                              <ScrollArea className="h-full pr-2">
-                                <div className="grid grid-cols-7 gap-1 mb-3">
-                                  {weekdays.map((w, i) => (
-                                    <div key={`wd-${i}`} className="text-center text-[10px] font-semibold text-muted-foreground py-1">{w}</div>
-                                  ))}
-                                  {MONTH_GRID.map((d, i) => (
-                                    <div key={`day-${i}`} className="h-8 flex items-center justify-center">
-                                      {d && (
-                                        <div className={`relative w-7 h-7 flex items-center justify-center rounded-full text-xs tabular-nums ${
-                                          d === CALENDAR_TODAY
-                                            ? "bg-primary text-primary-foreground font-semibold"
-                                            : eventDays.has(d)
-                                              ? "font-semibold text-foreground"
-                                              : "text-muted-foreground"
-                                        }`}>
-                                          {d}
-                                          {eventDays.has(d) && d !== CALENDAR_TODAY && (
-                                            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                                <div className="space-y-2 border-t border-border/60 pt-3">
-                                  <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                                    {language === "ko" ? "이번 달 일정" : "This Month"}
-                                  </div>
-                                  {SCHEDULE_EVENTS.map((ev) => (
-                                    <div key={ev.id} className="flex items-center gap-2.5" data-testid={`schedule-${ev.id}`}>
-                                      <div className="flex flex-col items-center justify-center w-8 shrink-0">
-                                        <span className="text-base font-bold leading-none tabular-nums text-foreground">{ev.day}</span>
-                                      </div>
-                                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${typeColor[ev.type]}`} />
-                                      <span className="flex-1 truncate text-sm text-foreground">{language === "ko" ? ev.titleKo : ev.title}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </ScrollArea>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  if (key === "memo") {
-                    const recent = [...memos].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-                    return (
-                      <div key={key} className={`relative rounded-xl ${alignRing}`} data-testid={`grid-item-${key}`}>
-                        {editChrome}
-                        {alignBadge}
-                        <div className="h-full rounded-xl">
-                          <Card className="bg-card border-border/60 rounded-2xl shadow-sm h-full flex flex-col" data-testid="card-memo">
-                            <CardHeader className="pb-3 shrink-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="min-w-0">
-                                  <CardTitle className="text-lg flex items-center gap-2">
-                                    <NotebookPen className="w-[18px] h-[18px] text-muted-foreground" />
-                                    {language === "ko" ? "메모장" : "Memo Pad"}
-                                  </CardTitle>
-                                  <CardDescription className="text-xs mt-1">
-                                    {language === "ko" ? "여기서 바로 메모를 작성하고 날짜별로 저장하세요" : "Jot memos here, saved by date"}
-                                  </CardDescription>
-                                </div>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="no-drag h-7 gap-1 text-xs shrink-0"
-                                  onClick={() => setMemoDetailOpen(true)}
-                                  data-testid="button-memo-detail"
-                                >
-                                  <Maximize2 className="w-3.5 h-3.5" />
-                                  {language === "ko" ? "상세보기" : "Detail"}
-                                </Button>
-                              </div>
-                              <div className="mt-3 space-y-2">
-                                <Textarea
-                                  value={memoDraft}
-                                  onChange={(e) => setMemoDraft(e.target.value)}
-                                  onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); addMemo(); } }}
-                                  placeholder={language === "ko" ? "메모를 입력하세요... (Ctrl+Enter 저장)" : "Write a memo... (Ctrl+Enter to save)"}
-                                  className="no-drag min-h-[64px] resize-none text-sm"
-                                  data-testid="input-memo"
-                                />
-                                <div className="flex items-center justify-between">
-                                  <span className="text-[11px] text-muted-foreground">
-                                    {language === "ko" ? `총 ${memos.length}개 메모` : `${memos.length} memos`}
-                                  </span>
-                                  <Button
-                                    size="sm"
-                                    className="no-drag h-7 gap-1 text-xs"
-                                    onClick={addMemo}
-                                    disabled={!memoDraft.trim()}
-                                    data-testid="button-memo-save"
-                                  >
-                                    <Save className="w-3.5 h-3.5" />
-                                    {language === "ko" ? "저장" : "Save"}
-                                  </Button>
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0 pb-4">
-                              <ScrollArea className="h-full pr-2">
-                                {recent.length === 0 ? (
-                                  <div className="flex flex-col items-center justify-center text-center py-10 text-muted-foreground">
-                                    <NotebookPen className="w-6 h-6 mb-2 opacity-50" />
-                                    <p className="text-xs">{language === "ko" ? "저장된 메모가 없습니다" : "No memos yet"}</p>
-                                  </div>
-                                ) : (
-                                  <div className="space-y-2">
-                                    {recent.map((m) => (
-                                      <div key={m.id} className="group/memo rounded-xl border border-border/60 bg-background/50 p-3" data-testid={`memo-${m.id}`}>
-                                        <div className="flex items-start justify-between gap-2">
-                                          <p className="text-sm text-foreground whitespace-pre-wrap break-words flex-1 leading-snug">{m.content}</p>
-                                          <button
-                                            type="button"
-                                            onClick={() => deleteMemo(m.id)}
-                                            className="no-drag shrink-0 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover/memo:opacity-100"
-                                            aria-label={language === "ko" ? "삭제" : "Delete"}
-                                            data-testid={`button-memo-delete-${m.id}`}
-                                          >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                          </button>
-                                        </div>
-                                        <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                                          <Clock className="w-3 h-3" />
-                                          <span>{formatMemoDay(m.createdAt, language)} · {formatMemoTime(m.createdAt, language)}</span>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </ScrollArea>
-                            </CardContent>
-                          </Card>
-                        </div>
                       </div>
                     );
                   }
@@ -1449,7 +1007,7 @@ export default function Home() {
                     : "Drag a component into the main area to build your layout. Resize from edges, reposition by dragging, and remove via the X button on each card."}
                 </p>
                 {(() => {
-                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring", "tags", "todos", "calendar", "memo"] as BlockKey[]);
+                  const allKeys = (["notes", "links", "dbUsage", "resource", "timeline", "feed", "monitoring"] as BlockKey[]);
                   return (
                     <div className="space-y-1.5">
                       {allKeys.map((b) => {
@@ -1589,61 +1147,6 @@ export default function Home() {
           )}
         </SheetContent>
       </Sheet>
-
-      {/* MEMO DETAIL MODAL (centered) */}
-      <Dialog open={memoDetailOpen} onOpenChange={setMemoDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col" data-testid="dialog-memo-detail">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <NotebookPen className="w-5 h-5 text-primary" />
-              {language === "ko" ? "메모 상세보기" : "Memo Detail"}
-            </DialogTitle>
-            <DialogDescription>
-              {language === "ko" ? "기간별로 작성한 메모를 모아봅니다" : "All memos grouped by date"}
-            </DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="flex-1 -mx-1 px-1">
-            {groupMemosByDate(memos).length === 0 ? (
-              <div className="py-16 text-center text-muted-foreground text-sm">
-                {language === "ko" ? "저장된 메모가 없습니다" : "No memos yet"}
-              </div>
-            ) : (
-              <div className="space-y-5 py-1">
-                {groupMemosByDate(memos).map((g) => (
-                  <div key={g.date}>
-                    <div className="sticky top-0 bg-background/95 backdrop-blur py-1.5 mb-2 flex items-center gap-2 z-10">
-                      <CalendarDays className="w-4 h-4 text-primary" />
-                      <h3 className="text-sm font-semibold">{formatMemoDay(g.items[0].createdAt, language)}</h3>
-                      <Badge variant="secondary" className="text-[10px] h-5">{g.items.length}</Badge>
-                    </div>
-                    <div className="space-y-2 pl-1">
-                      {g.items.map((m) => (
-                        <div key={m.id} className="rounded-xl border border-border/60 bg-card p-3.5" data-testid={`memo-detail-${m.id}`}>
-                          <p className="text-sm text-foreground whitespace-pre-wrap break-words leading-relaxed">{m.content}</p>
-                          <div className="mt-2 flex items-center justify-between">
-                            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                              <Clock className="w-3 h-3" />{formatMemoTime(m.createdAt, language)}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => deleteMemo(m.id)}
-                              className="text-muted-foreground hover:text-destructive transition-colors"
-                              aria-label={language === "ko" ? "삭제" : "Delete"}
-                              data-testid={`button-memo-detail-delete-${m.id}`}
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </Layout>
   );
 }
