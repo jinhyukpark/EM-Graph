@@ -4,7 +4,7 @@ import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Scissors, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
-  Send, Plus,
+  Send, Plus, Puzzle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
@@ -545,12 +545,22 @@ export default function LandingPage() {
       <section id="engine" className="py-24 bg-gradient-to-br from-blue-50/60 via-white to-purple-50/50">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center rounded-full border border-transparent bg-primary/10 text-primary px-3 py-1 text-xs font-semibold mb-4">
-              <Network className="w-3.5 h-3.5 mr-1.5" />
-              {t.engine.badge}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="inline-flex items-center rounded-full border border-transparent bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+                <Network className="w-3.5 h-3.5 mr-1.5" />
+                {t.engine.badge}
+              </div>
+              <div className="inline-flex items-center rounded-full bg-amber-100 text-amber-700 px-3 py-1 text-xs font-semibold" data-testid="badge-engine-plugin">
+                <Puzzle className="w-3.5 h-3.5 mr-1.5" />
+                {t.engine.plugin}
+              </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-engine-title">{t.engine.title}</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
+            <p className="mt-3 inline-flex items-center gap-1.5 text-sm text-amber-700" data-testid="text-engine-plugin-note">
+              <Puzzle className="w-4 h-4" />
+              {t.engine.pluginNote}
+            </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

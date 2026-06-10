@@ -108,6 +108,8 @@ export const translations = {
     },
     engine: {
       badge: "Advanced graph & data engine",
+      plugin: "Plugin",
+      pluginNote: "This feature is available as an optional plugin.",
       title: "Turn raw data into living graphs",
       subtitle: "Beyond notes — EM-Graph's data engine preprocesses, models, and analyzes your data as connected graphs.",
       items: [
@@ -266,6 +268,8 @@ export const translations = {
     },
     engine: {
       badge: "고급 그래프 & 데이터 엔진",
+      plugin: "플러그인",
+      pluginNote: "이 기능은 선택형 플러그인으로 제공됩니다.",
       title: "원시 데이터를 살아 있는 그래프로",
       subtitle: "노트를 넘어 — EM-Graph의 데이터 엔진이 데이터를 전처리하고 모델링하며 연결된 그래프로 분석합니다.",
       items: [
