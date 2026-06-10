@@ -383,13 +383,6 @@ export default function LandingPage() {
                         ))}
                       </div>
                     </div>
-                    <div className="pt-2">
-                      <Link href="/organization-select">
-                        <Button className="gap-2" data-testid={`button-highlight-${i}`}>
-                          {row.btn} <ArrowRight className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                    </div>
                   </div>
                 </motion.div>
               );
