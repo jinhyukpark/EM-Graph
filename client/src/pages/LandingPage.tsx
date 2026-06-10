@@ -4,10 +4,11 @@ import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Scissors, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
+  Send, Plus,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext,
   type CarouselApi,
@@ -60,6 +61,236 @@ const float = (delay: number, distance = 12) => ({
   animate: { y: [0, -distance, 0] },
   transition: { duration: 5, repeat: Infinity, ease: "easeInOut" as const, delay },
 });
+
+type PreviewT = (typeof translations)['en']['hero']['preview'];
+
+function Typewriter({ text, speed = 38, startDelay = 0, className }: { text: string; speed?: number; startDelay?: number; className?: string }) {
+  const [shown, setShown] = useState("");
+  useEffect(() => {
+    setShown("");
+    let i = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(() => {
+      interval = setInterval(() => {
+        i += 1;
+        setShown(text.slice(0, i));
+        if (i >= text.length && interval) clearInterval(interval);
+      }, speed);
+    }, startDelay);
+    return () => { clearTimeout(start); if (interval) clearInterval(interval); };
+  }, [text, speed, startDelay]);
+  return (
+    <span className={className}>
+      {shown}
+      {shown.length < text.length && (
+        <span className="inline-block w-[2px] h-[1em] -mb-0.5 ml-0.5 bg-current animate-pulse align-middle" />
+      )}
+    </span>
+  );
+}
+
+const GRAPH_NODES = [
+  { cx: "22%", cy: "26%", color: "bg-blue-400" },
+  { cx: "80%", cy: "24%", color: "bg-purple-400" },
+  { cx: "26%", cy: "80%", color: "bg-sky-400" },
+  { cx: "80%", cy: "78%", color: "bg-indigo-400" },
+];
+
+function HeroDemo({ p }: { p: PreviewT }) {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const durations = [4200, 4400, 5200];
+    const id = setTimeout(() => setStep((s) => (s + 1) % 3), durations[step]);
+    return () => clearTimeout(id);
+  }, [step]);
+
+  return (
+    <motion.div {...float(0.3, 8)} className="rounded-2xl border bg-white shadow-2xl overflow-hidden text-left">
+      {/* Window top bar */}
+      <div className="h-11 bg-slate-50 border-b flex items-center px-4 gap-4">
+        <div className="flex gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-red-400" />
+          <div className="w-3 h-3 rounded-full bg-yellow-400" />
+          <div className="w-3 h-3 rounded-full bg-green-400" />
+        </div>
+        <div className="flex-1 flex items-center">
+          <div className="bg-white text-slate-500 text-xs px-3 py-1.5 rounded-md flex items-center gap-2 border w-full max-w-md">
+            <Sprout className="w-3 h-3 text-primary" />
+            <span className="truncate">{p.breadcrumb}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex">
+        {/* Mini sidebar */}
+        <div className="w-14 bg-slate-50/70 border-r flex flex-col items-center py-4 gap-3 shrink-0">
+          <div className="p-2 bg-primary rounded-lg shadow-sm"><Sprout className="w-4 h-4 text-primary-foreground" /></div>
+          <div className="p-2 rounded-lg"><Search className="w-4 h-4 text-slate-400" /></div>
+          <div className="p-2 rounded-lg"><ListChecks className="w-4 h-4 text-slate-400" /></div>
+          <div className="p-2 rounded-lg"><Users className="w-4 h-4 text-slate-400" /></div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          {/* Step tabs */}
+          <div className="flex items-center gap-1.5 px-5 md:px-7 pt-4 pb-1">
+            {p.steps.map((label, i) => (
+              <div
+                key={i}
+                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors ${
+                  step === i ? 'bg-primary/10 text-primary' : 'text-slate-400'
+                }`}
+                data-testid={`hero-step-${i}`}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+
+          <div className="px-5 md:px-7 pb-6 pt-2 min-h-[260px]">
+            <AnimatePresence mode="wait">
+              {step === 0 && (
+                <motion.div
+                  key="note"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {[p.tag1, p.tag2].map((tg, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.15 + i * 0.15, type: "spring", stiffness: 400, damping: 20 }}
+                        className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md border ${
+                          i === 0 ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-purple-50 text-purple-700 border-purple-100'
+                        }`}
+                      >
+                        <Tag className="w-3 h-3" /> {tg}
+                      </motion.span>
+                    ))}
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2 min-h-[1.75rem]">
+                    <Typewriter text={p.noteTitle} startDelay={450} />
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed mb-5 max-w-xl min-h-[2.5rem]">
+                    <Typewriter text={p.noteBody} speed={18} startDelay={1500} />
+                  </p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 3.2 }}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1"
+                  >
+                    <Check className="w-3.5 h-3.5" /> {p.saved}
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {step === 1 && (
+                <motion.div
+                  key="graph"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                  className="relative h-[230px] rounded-xl border bg-slate-50/60 overflow-hidden"
+                >
+                  <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
+                    {GRAPH_NODES.map((n, i) => (
+                      <motion.line
+                        key={i}
+                        x1="50%" y1="50%" x2={n.cx} y2={n.cy}
+                        stroke="#c7d2fe" strokeWidth="2"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.5 + i * 0.35 }}
+                      />
+                    ))}
+                  </svg>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.1 }}
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg z-10"
+                  >
+                    <Network className="w-5 h-5" />
+                  </motion.div>
+                  {GRAPH_NODES.map((n, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 320, damping: 18, delay: 0.7 + i * 0.35 }}
+                      className={`absolute w-7 h-7 rounded-full shadow-md ${n.color}`}
+                      style={{ left: n.cx, top: n.cy, transform: "translate(-50%, -50%)" }}
+                    />
+                  ))}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20, delay: 2.3 }}
+                    className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-white border border-emerald-100 shadow-sm rounded-full px-3 py-1.5"
+                  >
+                    <Link2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-xs font-semibold text-slate-700">{p.connections}</span>
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {step === 2 && (
+                <motion.div
+                  key="chat"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex flex-col gap-3"
+                >
+                  {/* User question */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="self-end max-w-[80%] bg-primary text-primary-foreground rounded-2xl rounded-br-sm px-4 py-2.5 text-sm shadow-sm"
+                  >
+                    <Typewriter text={p.chatPrompt} startDelay={400} />
+                  </motion.div>
+                  {/* AI answer */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.9 }}
+                    className="self-start max-w-[88%] flex gap-2"
+                  >
+                    <div className="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-white flex items-center justify-center shadow-sm">
+                      <Brain className="w-4 h-4" />
+                    </div>
+                    <div className="bg-slate-100 text-slate-700 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed">
+                      <Typewriter text={p.chatAnswer} speed={16} startDelay={2100} />
+                    </div>
+                  </motion.div>
+                  {/* Input bar */}
+                  <div className="mt-auto pt-2">
+                    <div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-white">
+                      <Plus className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span className="flex-1 text-xs text-slate-400 truncate">{p.typePlaceholder}</span>
+                      <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                        <Send className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function LandingPage() {
   const [lang, setLang] = useState<'en' | 'ko'>('en');
@@ -206,75 +437,8 @@ export default function LandingPage() {
               <span className="text-sm font-semibold text-slate-700">{p.chipNote}</span>
             </motion.div>
 
-            {/* App window */}
-            <motion.div {...float(0.3, 8)} className="rounded-2xl border bg-white shadow-2xl overflow-hidden text-left">
-              {/* Window top bar */}
-              <div className="h-11 bg-slate-50 border-b flex items-center px-4 gap-4">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-                <div className="flex-1 flex items-center">
-                  <div className="bg-white text-slate-500 text-xs px-3 py-1.5 rounded-md flex items-center gap-2 border w-full max-w-md">
-                    <Sprout className="w-3 h-3 text-primary" />
-                    <span className="truncate">{p.breadcrumb}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex">
-                {/* Mini sidebar */}
-                <div className="w-14 bg-slate-50/70 border-r flex flex-col items-center py-4 gap-3 shrink-0">
-                  <div className="p-2 bg-primary rounded-lg shadow-sm"><Sprout className="w-4 h-4 text-primary-foreground" /></div>
-                  <div className="p-2 rounded-lg"><Search className="w-4 h-4 text-slate-400" /></div>
-                  <div className="p-2 rounded-lg"><ListChecks className="w-4 h-4 text-slate-400" /></div>
-                  <div className="p-2 rounded-lg"><Users className="w-4 h-4 text-slate-400" /></div>
-                </div>
-
-                {/* Main content */}
-                <div className="flex-1 p-5 md:p-7 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100">
-                      <Tag className="w-3 h-3" /> {p.tag1}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-100">
-                      <Tag className="w-3 h-3" /> {p.tag2}
-                    </span>
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2">{p.noteTitle}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-5 max-w-xl">{p.noteBody}</p>
-
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {/* AI summary card */}
-                    <div className="rounded-xl border bg-gradient-to-br from-violet-50 to-blue-50 p-4">
-                      <div className="flex items-center gap-2 mb-2 text-violet-700">
-                        <Brain className="w-4 h-4" />
-                        <span className="text-xs font-bold">{p.aiTitle}</span>
-                      </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">{p.aiBody}</p>
-                    </div>
-
-                    {/* Mini graph */}
-                    <div className="rounded-xl border bg-slate-50 p-4 relative overflow-hidden min-h-[110px]">
-                      <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
-                        <line x1="50%" y1="50%" x2="22%" y2="30%" stroke="#c7d2fe" strokeWidth="2" />
-                        <line x1="50%" y1="50%" x2="80%" y2="28%" stroke="#ddd6fe" strokeWidth="2" />
-                        <line x1="50%" y1="50%" x2="28%" y2="78%" stroke="#bfdbfe" strokeWidth="2" />
-                        <line x1="50%" y1="50%" x2="78%" y2="76%" stroke="#c7d2fe" strokeWidth="2" />
-                      </svg>
-                      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md z-10">
-                        <Network className="w-4 h-4" />
-                      </div>
-                      <motion.div {...float(0.2, 6)} className="absolute left-[22%] top-[30%] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-200" />
-                      <motion.div {...float(0.9, 6)} className="absolute left-[80%] top-[28%] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-purple-200" />
-                      <motion.div {...float(1.4, 6)} className="absolute left-[28%] top-[78%] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-sky-200" />
-                      <motion.div {...float(0.5, 6)} className="absolute left-[78%] top-[76%] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-indigo-200" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            {/* Animated app window */}
+            <HeroDemo p={p} />
           </motion.div>
         </div>
       </section>
