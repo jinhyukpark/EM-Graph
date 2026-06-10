@@ -2,281 +2,321 @@ export const translations = {
   en: {
     nav: {
       features: "Features",
-      solutions: "Solutions",
-      cases: "Cases",
+      solutions: "Highlights",
       pricing: "Pricing",
       login: "Log in",
       getStarted: "Get Started",
     },
     hero: {
-      newBadge: "New: MCP Integration Live",
-      title: "Advanced Graph Analytics",
-      subtitle: "Powered by AI & Ontology",
-      description: "EM-Graph allows you to rapidly build and analyze complex relationship networks. From supply chains to criminal investigations, uncover hidden insights with our AI-driven ontology engine.",
-      startBtn: "Start Analyzing Now",
-      demoBtn: "View Demo",
+      newBadge: "Where your knowledge grows",
+      titleLine: "Your second brain,",
+      subtitle: "the Knowledge Garden",
+      description: "Capture every note, resource, and idea in one place — then let AI and graphs connect them into living knowledge you can grow.",
+      startBtn: "Start for free",
+      demoBtn: "Watch demo",
+      loginPrompt: "Already have an account?",
+      loginLink: "Log in",
+      preview: {
+        breadcrumb: "Knowledge Garden / PET Film Analysis",
+        noteTitle: "PET Film Line Productivity Note",
+        noteBody: "Operating rate at Gumi Plant #3 reached 92%, up 4.2%p vs. last week. Key driver: optimized compression temperature.",
+        tag1: "Film Division",
+        tag2: "Production",
+        aiTitle: "AI Summary",
+        aiBody: "3 linked notes found. Productivity up for the 3rd straight week.",
+        chipSearch: "Smart Search",
+        chipLink: "12 connections",
+        chipNote: "1,247 notes",
+        steps: ["Add a note", "Build the graph", "Ask AI"],
+        typePlaceholder: "Write a note in the Knowledge Garden…",
+        saved: "Saved to Knowledge Garden",
+        connections: "12 connections found",
+        chatPrompt: "What insights connect to this note?",
+        chatAnswer: "Across 3 linked notes, productivity has risen for 3 weeks straight — driven by compression temperature tuning.",
+      },
     },
-    features: {
-      title: "Why EM-Graph?",
-      description: "Built for complex data relationships. Our platform combines traditional graph theory with modern AI capabilities.",
-      ai: {
-        title: "AI & MCP Integration",
-        desc: "Connect external data sources via Model Context Protocol (MCP) and leverage AI to automatically detect patterns and anomalies."
-      },
-      ontology: {
-        title: "Ontology-First Design",
-        desc: "Define strict data structures with our flexible ontology builder. Ensure data consistency across your entire dataset."
-      },
-      metrics: {
-        title: "Graph Metrics",
-        desc: "Built-in algorithms for Degree, PageRank, Betweenness Centrality to identify key influencers and hidden bottlenecks."
-      },
-      collab: {
-        title: "Visual Collaboration",
-        desc: "Work together in real-time. Share graphs, export reports, and manage team permissions with enterprise-grade security."
-      }
+    grid: {
+      title: "Make the most of your ideas and time",
+      subtitle: "Bring everything that matters — past, present, and future — into one place you can reach anytime.",
+      items: [
+        { title: "Knowledge Garden", desc: "Grow your notes into a connected, living map of everything you know." },
+        { title: "Notebooks & Spaces", desc: "Organize ideas into structured notebooks and shared team spaces." },
+        { title: "Smart Search", desc: "Find the right note in seconds with intelligent, intent-aware search." },
+        { title: "Tasks", desc: "Manage to-dos and projects right alongside the notes they belong to." },
+        { title: "Calendar", desc: "See deadlines and events connected to your notes and work." },
+        { title: "Capture", desc: "Save anything — files, spreadsheets, clips — and keep it safe." },
+        { title: "Collaboration", desc: "Work together in real time with comments, mentions, and shared spaces." },
+        { title: "AI Copilot", desc: "Let AI summarize, connect, and surface insights from your knowledge." },
+      ],
     },
-    creation: {
-      badge: "Effortless Creation",
-      title: "Build Complex Networks in Minutes, Not Days",
-      desc: "Say goodbye to manual coding and complex scripts. With our drag-and-drop builder and AI-assisted node linking, you can construct intricate relationship networks intuitively. Just bring your data, and we'll handle the connections.",
-      list: [
-        {
-          title: "Visual Builder",
-          desc: "Intuitive drag-and-drop interface for defining nodes and edges without writing a single line of code.",
-          benefits: [
-            "No coding required",
-            "Real-time visual feedback"
-          ]
-        },
-        {
-          title: "AI-Powered Suggestions",
-          desc: "Smart algorithms automatically suggest potential relationships and detect schema inconsistencies.",
-          benefits: [
-            "Auto-detect hidden links",
-            "Prevent schema errors"
-          ]
-        },
-        {
-          title: "One-Click Import",
-          desc: "Seamlessly ingest CSV, JSON, or SQL data with intelligent field mapping and validation.",
-          benefits: [
-            "Support CSV, JSON, SQL",
-            "Smart field mapping"
-          ]
-        }
-      ]
+    band: {
+      title: "Maximize your productivity",
+      desc: "EM-Graph's powerful AI Copilot takes your second brain one step further.",
+      btn: "Learn more",
     },
-    solutions: {
-      title: "Tailored for Complex Domains",
-      subtitle: "EM-Graph provides specialized tools for industries where relationship analysis is critical.",
-      cards: {
-        investigation: {
-          title: "Case Study: Cyber Syndicate",
-          desc: "Operation 'Nightshade': Uncovered a hidden $50M crypto-laundering ring by visualizing connections between 5,000+ anonymous wallets and 3 offshore shell companies.",
-          label: "Investigation",
-          sub: "Link Analysis"
+    highlights: {
+      title: "Everything you need to think clearly",
+      subtitle: "From organizing to searching, sharing, and capturing — built around how your mind actually works.",
+      rows: [
+        {
+          pill: "Organize",
+          title: "Keep all your knowledge structured",
+          desc: "With EM-Graph's flexible notebooks and spaces, organize content cleanly and manage your work neatly with integrated tasks.",
+          btn: "Try it free",
+          benefits: ["Notebooks & spaces", "Tags and metadata"],
         },
-        supplyChain: {
-          title: "Case Study: Global Logistics",
-          desc: "Project 'Port Flow': Mitigated a major supply shock during the 2024 port strikes by identifying 12 critical bottleneck nodes and automatically suggesting alternative shipping routes.",
-          label: "Supply Chain",
-          sub: "Dependency Mapping"
+        {
+          pill: "Search",
+          title: "Find what you need, fast",
+          desc: "Reach the exact note you need the moment you need it, perfectly in sync across your whole garden.",
+          btn: "Try it free",
+          benefits: ["Intent-aware search", "Instant results"],
         },
-        finance: {
-          title: "Case Study: Market Manipulation",
-          desc: "Project 'Watchtower': Detected a complex wash-trading pattern in high-frequency markets, flagging a coordinated group of 20 bots before they could trigger a flash crash.",
-          label: "Finance",
-          sub: "Fraud Detection"
+        {
+          pill: "AI",
+          title: "Make your knowledge smarter with AI",
+          desc: "Experience EM-Graph's AI power with the Copilot. Your second brain only gets sharper.",
+          btn: "Try it free",
+          benefits: ["Auto-summaries", "Linked insights"],
         },
-        biotech: {
-          title: "Case Study: Drug Discovery",
-          desc: "Research 'Alpha-Target': Accelerated the identification of a novel protein inhibitor for Alzheimer's by mapping 10M+ protein interactions, cutting research time by 8 months.",
-          label: "Bio-Tech",
-          sub: "Interaction Graphs"
-        }
-      },
-      complexity: {
-        title: "Built for Extreme Complexity",
-        desc: "EM-Graph's flexible ontology engine scales to any domain requiring deep structural analysis."
-      }
+        {
+          pill: "Share",
+          title: "Start collaborating seamlessly",
+          desc: "Boost teamwork with real-time editing, talk it out with comments, and assign work so everything moves smoothly.",
+          btn: "Try it free",
+          benefits: ["Real-time editing", "Comments & mentions"],
+        },
+        {
+          pill: "Capture",
+          title: "Save anything, in any form",
+          desc: "Record, transcribe, scan, or clip — however you collect information, EM-Graph keeps it safe.",
+          btn: "Capture an idea now",
+          benefits: ["Files & spreadsheets", "Web & resource clips"],
+        },
+      ],
+    },
+    experience: {
+      title: "Explore your knowledge as a living graph",
+      subtitle: "From notes to networks — see how EM-Graph turns connected data into interactive graphs.",
+      goToSlide: "Go to slide",
+      slides: [
+        { title: "Knowledge Garden & Ontology Graph", desc: "Connect notes and entities into a living, navigable knowledge graph." },
+        { title: "Supply Chain Network Analysis", desc: "Map multi-tier suppliers and logistics to spot risks across the network." },
+        { title: "Financial Transaction Graph", desc: "Trace transaction flows and surface anomalies and fraud patterns." },
+        { title: "Biological Interaction Network", desc: "Model proteins, genes, and pathways to accelerate discovery." },
+      ],
+    },
+    engine: {
+      badge: "Advanced graph & data engine",
+      plugin: "Plugin",
+      pluginNote: "This feature is available as an optional plugin.",
+      title: "Turn raw data into living graphs",
+      subtitle: "Beyond notes — EM-Graph's data engine preprocesses, models, and analyzes your data as connected graphs.",
+      items: [
+        { title: "Data Preprocessing Pipeline", desc: "Build visual, node-based workflows to join, filter, and transform data with a live preview." },
+        { title: "Data-driven Graph Generation", desc: "Automatically generate network structures from your tables, with node size and color mapped to data fields." },
+        { title: "ERD Data View", desc: "Visualize your database schema as an entity-relationship diagram with tables and relationships." },
+        { title: "Graph Theory Analysis", desc: "Run centrality analysis (degree, closeness, betweenness) to surface the most important nodes." },
+        { title: "Node & Edge Configuration", desc: "Dynamically size and color nodes and edges based on quantitative data fields." },
+        { title: "Database & Natural Language Query", desc: "Manage tables and run queries with SQL or plain-language instructions." },
+      ],
     },
     pricing: {
-      title: "Simple, Transparent Pricing",
-      subtitle: "Choose the plan that best fits your data analysis needs.",
+      title: "Simple, transparent pricing",
+      subtitle: "Choose the plan that best fits how you build your knowledge.",
       starter: {
         name: "Starter",
-        desc: "For individual analysts and hobbyists.",
+        desc: "For individuals getting started.",
         btn: "Get Started",
-        features: ["Up to 1,000 nodes", "Basic Graph Visualizer", "CSV Import", "Community Support"]
+        features: ["Up to 1,000 notes", "Knowledge Garden", "Smart Search", "Community Support"],
       },
       pro: {
         badge: "Most Popular",
         name: "Professional",
         desc: "For small teams and startups.",
         btn: "Start Free Trial",
-        features: ["Up to 100,000 nodes", "Advanced Graph Metrics", "AI-Powered Suggestions", "Team Collaboration (up to 5)", "Priority Email Support"]
+        features: ["Unlimited notes", "AI Copilot", "Team Spaces & Collaboration", "Calendar & Tasks", "Priority Email Support"],
       },
       enterprise: {
         name: "Enterprise",
         desc: "For large organizations and agencies.",
         price: "Custom",
         btn: "Contact Sales",
-        features: ["Unlimited nodes & storage", "On-premise Deployment", "Custom Ontology Design", "Dedicated Success Manager", "SSO & Advanced Security"]
-      }
+        features: ["Unlimited storage", "On-premise Deployment", "Custom Ontology Design", "Dedicated Success Manager", "SSO & Advanced Security"],
+      },
     },
     cta: {
-      title: "Ready to uncover hidden insights?",
-      desc: "Join thousands of analysts using EM-Graph to make sense of their complex data. Start your free trial today.",
+      title: "Ready to grow your knowledge?",
+      desc: "Join teams using EM-Graph as their second brain. Start your free trial today.",
       btnPrimary: "Sign Up",
-      btnSecondary: "Inquiry"
+      btnSecondary: "Inquiry",
     },
     footer: {
-      tagline: "Advanced graph analytics platform for modern data teams.",
+      tagline: "A knowledge garden that turns your notes into living, connected intelligence.",
       product: "Product",
       resources: "Resources",
       company: "Company",
-      copyright: "© 2024 EM-Graph Inc. All rights reserved."
-    }
+      copyright: "© 2024 EM-Graph Inc. All rights reserved.",
+    },
   },
   ko: {
     nav: {
       features: "주요 기능",
-      solutions: "솔루션",
-      cases: "사례",
+      solutions: "활용 사례",
       pricing: "가격",
       login: "로그인",
       getStarted: "시작하기",
     },
     hero: {
-      newBadge: "New: MCP 통합 출시",
-      title: "AI 및 온톨로지 기반",
-      subtitle: "고급 그래프 분석",
-      description: "EM-Graph를 통해 복잡한 관계 네트워크를 신속하게 구축하고 분석하세요. 공급망부터 범죄 수사까지, AI 기반 온톨로지 엔진으로 숨겨진 인사이트를 발견할 수 있습니다.",
-      startBtn: "지금 분석 시작하기",
+      newBadge: "지식이 자라나는 곳",
+      titleLine: "당신의 두 번째 두뇌,",
+      subtitle: "지식 정원",
+      description: "모든 노트와 자료, 아이디어를 한곳에 모으고, AI와 그래프로 연결해 살아 숨 쉬는 지식으로 키워보세요.",
+      startBtn: "무료로 시작하기",
       demoBtn: "데모 보기",
+      loginPrompt: "이미 계정이 있으신가요?",
+      loginLink: "로그인",
+      preview: {
+        breadcrumb: "지식 정원 / PET필름 분석",
+        noteTitle: "PET필름 라인 생산성 분석 노트",
+        noteBody: "구미공장 PET필름 #3 라인 가동률 92% 도달. 전월 대비 4.2%p 개선, 주요 원인은 압출 온도 최적화.",
+        tag1: "필름사업부",
+        tag2: "생산성",
+        aiTitle: "AI 요약",
+        aiBody: "연관 노트 3건 발견. 3주 연속 생산성 상승 추세입니다.",
+        chipSearch: "인텔리 검색",
+        chipLink: "연결 12개",
+        chipNote: "노트 1,247개",
+        steps: ["노트 추가", "관계망 생성", "AI에게 질문"],
+        typePlaceholder: "지식 정원에 노트를 작성하세요…",
+        saved: "지식 정원에 저장됨",
+        connections: "연결 12개 발견",
+        chatPrompt: "이 노트와 연결된 인사이트는?",
+        chatAnswer: "연결된 노트 3건을 분석한 결과, 압출 온도 최적화 덕분에 3주 연속 생산성이 상승하고 있어요.",
+      },
     },
-    features: {
-      title: "왜 EM-Graph인가요?",
-      description: "복잡한 데이터 관계를 위해 설계되었습니다. 전통적인 그래프 이론과 현대적인 AI 기능을 결합했습니다.",
-      ai: {
-        title: "AI & MCP 통합",
-        desc: "Model Context Protocol (MCP)을 통해 외부 데이터 소스를 연결하고 AI를 활용하여 패턴과 이상 징후를 자동으로 감지합니다."
-      },
-      ontology: {
-        title: "온톨로지 중심 설계",
-        desc: "유연한 온톨로지 빌더로 엄격한 데이터 구조를 정의하세요. 전체 데이터셋의 일관성을 보장합니다."
-      },
-      metrics: {
-        title: "그래프 메트릭",
-        desc: "Degree, PageRank, Betweenness Centrality 등 내장 알고리즘을 통해 핵심 인물과 숨겨진 병목 구간을 식별합니다."
-      },
-      collab: {
-        title: "시각적 협업",
-        desc: "실시간으로 협업하세요. 그래프를 공유하고, 보고서를 내보내고, 기업급 보안으로 팀 권한을 관리할 수 있습니다."
-      }
+    grid: {
+      title: "아이디어와 시간을 최대한 활용하세요",
+      subtitle: "과거, 현재, 미래의 중요한 모든 것을 한곳에 모아 언제 어디서든 꺼내 쓰세요.",
+      items: [
+        { title: "지식 정원", desc: "흩어진 노트를 서로 연결해 살아 있는 지식 지도로 키워보세요." },
+        { title: "노트북 & 스페이스", desc: "아이디어를 체계적인 노트북과 팀 공용 스페이스로 정리하세요." },
+        { title: "인텔리 검색", desc: "의도를 이해하는 똑똑한 검색으로 필요한 노트를 몇 초 만에 찾으세요." },
+        { title: "작업 관리", desc: "할 일과 프로젝트를 관련 노트 옆에서 함께 관리하세요." },
+        { title: "캘린더", desc: "노트와 업무에 연결된 마감일과 일정을 한눈에 확인하세요." },
+        { title: "리소스 저장", desc: "파일, 스프레드시트, 클립 등 무엇이든 안전하게 저장하세요." },
+        { title: "팀 협업", desc: "댓글, 멘션, 공용 스페이스로 팀과 실시간으로 협업하세요." },
+        { title: "AI 코파일럿", desc: "AI가 지식을 요약하고 연결해 인사이트를 찾아드립니다." },
+      ],
     },
-    creation: {
-      badge: "손쉬운 제작",
-      title: "며칠이 아닌, 몇 분 만에 복잡한 네트워크 구축",
-      desc: "수동 코딩과 복잡한 스크립트는 이제 안녕. 드래그 앤 드롭 빌더와 AI 노드 연결 지원을 통해 직관적으로 복잡한 관계망을 구축할 수 있습니다. 데이터만 가져오세요, 연결은 저희가 합니다.",
-      list: [
-        {
-          title: "비주얼 빌더",
-          desc: "코드 한 줄 없이 드래그 앤 드롭으로 노드와 엣지를 정의하는 직관적인 인터페이스를 제공합니다.",
-          benefits: [
-            "코딩 없이 제작 가능",
-            "실시간 시각적 피드백"
-          ]
-        },
-        {
-          title: "AI 기반 제안",
-          desc: "스마트 알고리즘이 잠재적인 관계를 자동으로 제안하고 스키마 불일치를 감지합니다.",
-          benefits: [
-            "숨겨진 관계 자동 감지",
-            "스키마 오류 사전 방지"
-          ]
-        },
-        {
-          title: "원클릭 데이터 임포트",
-          desc: "지능형 필드 매핑 및 검증 기능을 통해 CSV, JSON, SQL 데이터를 원활하게 수집합니다.",
-          benefits: [
-            "CSV, JSON, SQL 지원",
-            "스마트 필드 매핑"
-          ]
-        }
-      ]
+    band: {
+      title: "생산성을 극대화하세요",
+      desc: "EM-Graph의 강력한 AI 코파일럿이 당신의 두 번째 두뇌를 한 단계 끌어올립니다.",
+      btn: "더 알아보기",
     },
-    solutions: {
-      title: "복잡한 도메인에 최적화",
-      subtitle: "EM-Graph는 관계 분석이 중요한 산업 분야에 특화된 도구를 제공합니다.",
-      cards: {
-        investigation: {
-          title: "케이스 스터디: 사이버 범죄 조직",
-          desc: "'나이트셰이드' 작전: 5,000개 이상의 익명 지갑과 3개의 역외 페이퍼 컴퍼니 간의 연결 고리를 시각화하여 5천만 달러 규모의 암호화폐 자금 세탁 조직을 적발했습니다.",
-          label: "수사",
-          sub: "링크 분석"
+    highlights: {
+      title: "명확하게 생각하는 데 필요한 모든 것",
+      subtitle: "정리부터 검색, 공유, 캡처까지 — 당신의 사고 방식에 맞춰 설계했습니다.",
+      rows: [
+        {
+          pill: "정리",
+          title: "모든 지식을 체계적으로 정리하세요",
+          desc: "EM-Graph의 유연한 노트북과 스페이스로 콘텐츠를 깔끔하게 정리하고, 통합된 작업 기능으로 모든 일을 깔끔하게 관리하세요.",
+          btn: "무료로 사용해보세요",
+          benefits: ["노트북 & 스페이스", "태그와 메타데이터"],
         },
-        supplyChain: {
-          title: "케이스 스터디: 글로벌 물류 위기",
-          desc: "'포트 플로우' 프로젝트: 2024년 항만 파업 중 12개의 핵심 병목 지점을 식별하고 대체 운송 경로를 자동 제안하여 주요 공급 충격을 완화했습니다.",
-          label: "공급망",
-          sub: "의존성 매핑"
+        {
+          pill: "검색",
+          title: "필요한 정보를 빠르게 찾으세요",
+          desc: "필요한 순간에 바로, 정원 전체에서 완벽하게 동기화된 노트를 손쉽게 찾으세요.",
+          btn: "무료로 사용해보세요",
+          benefits: ["의도 기반 검색", "즉각적인 결과"],
         },
-        finance: {
-          title: "케이스 스터디: 시장 조작 탐지",
-          desc: "'와치타워' 프로젝트: 고빈도 매매 시장에서 복잡한 자전 거래 패턴을 감지하여, 플래시 크래시를 유발하기 전 20개의 조직적 봇 그룹을 사전 차단했습니다.",
-          label: "금융",
-          sub: "사기 탐지"
+        {
+          pill: "AI",
+          title: "AI로 지식을 한층 더 똑똑하게",
+          desc: "EM-Graph의 AI 파워를 코파일럿으로 경험해보세요. 두 번째 두뇌가 한층 더 똑똑해집니다.",
+          btn: "무료로 사용해보세요",
+          benefits: ["자동 요약", "연관 인사이트"],
         },
-        biotech: {
-          title: "케이스 스터디: 신약 개발 가속화",
-          desc: "'알파-타겟' 연구: 1,000만 개 이상의 단백질 상호작용을 매핑하여 알츠하이머 신규 단백질 억제제 식별을 가속화하고, 연구 기간을 8개월 단축했습니다.",
-          label: "바이오",
-          sub: "상호작용 그래프"
-        }
-      },
-      complexity: {
-        title: "극도의 복잡성을 위한 설계",
-        desc: "EM-Graph의 유연한 온톨로지 엔진은 깊이 있는 구조 분석이 필요한 모든 도메인으로 확장 가능합니다."
-      }
+        {
+          pill: "공유",
+          title: "원활한 협업을 시작하세요",
+          desc: "실시간 편집으로 팀워크를 높이고, 댓글로 소통하며, 작업을 할당해 모든 일이 순조롭게 진행되도록 하세요.",
+          btn: "무료로 사용해보세요",
+          benefits: ["실시간 편집", "댓글 & 멘션"],
+        },
+        {
+          pill: "캡처",
+          title: "모든 것을, 어떤 형태로든 저장하세요",
+          desc: "녹음, 전사, 스캔, 클립 — 정보를 어떻게 수집하든, EM-Graph가 안전하게 보관해 드립니다.",
+          btn: "지금 아이디어 저장하기",
+          benefits: ["파일 & 스프레드시트", "웹 & 리소스 클립"],
+        },
+      ],
+    },
+    experience: {
+      title: "살아 있는 그래프로 지식을 탐험하세요",
+      subtitle: "노트에서 네트워크까지 — 연결된 데이터가 인터랙티브 그래프로 살아납니다.",
+      goToSlide: "슬라이드로 이동",
+      slides: [
+        { title: "지식 정원 & 온톨로지 그래프", desc: "노트와 개체를 연결해 탐색 가능한 살아 있는 지식 그래프로 만드세요." },
+        { title: "공급망 네트워크 분석", desc: "다단계 공급사와 물류를 매핑해 네트워크 전반의 리스크를 포착하세요." },
+        { title: "금융 거래 그래프 & 이상 탐지", desc: "거래 흐름을 추적하고 이상 징후와 사기 패턴을 찾아내세요." },
+        { title: "생물학적 상호작용 네트워크", desc: "단백질·유전자·경로를 모델링해 연구 발견을 가속화하세요." },
+      ],
+    },
+    engine: {
+      badge: "고급 그래프 & 데이터 엔진",
+      plugin: "플러그인",
+      pluginNote: "이 기능은 선택형 플러그인으로 제공됩니다.",
+      title: "원시 데이터를 살아 있는 그래프로",
+      subtitle: "노트를 넘어 — EM-Graph의 데이터 엔진이 데이터를 전처리하고 모델링하며 연결된 그래프로 분석합니다.",
+      items: [
+        { title: "데이터 전처리 빌더", desc: "노드 기반 비주얼 워크플로우로 데이터를 조인·필터·변환하고 실시간으로 미리 보세요." },
+        { title: "데이터 기반 그래프 생성", desc: "테이블로부터 네트워크 구조를 자동 생성하고, 노드 크기와 색상을 데이터 필드에 매핑하세요." },
+        { title: "ERD 기반 데이터 뷰", desc: "데이터베이스 스키마를 테이블과 관계가 담긴 ERD로 시각화하세요." },
+        { title: "그래프 이론 분석", desc: "중심성 분석(연결·근접·매개)으로 가장 중요한 노드를 찾아내세요." },
+        { title: "노드/엣지 속성 설정", desc: "정량 데이터 필드를 기준으로 노드와 엣지의 크기·색상을 동적으로 설정하세요." },
+        { title: "데이터베이스 & 자연어 쿼리", desc: "SQL이나 자연어 명령으로 테이블을 관리하고 쿼리를 실행하세요." },
+      ],
     },
     pricing: {
       title: "단순하고 투명한 가격",
-      subtitle: "데이터 분석 니즈에 가장 잘 맞는 플랜을 선택하세요.",
+      subtitle: "지식을 쌓아가는 방식에 가장 잘 맞는 플랜을 선택하세요.",
       starter: {
         name: "스타터",
-        desc: "개인 분석가 및 취미 사용자용",
+        desc: "처음 시작하는 개인 사용자용",
         btn: "시작하기",
-        features: ["최대 1,000 노드", "기본 그래프 시각화", "CSV 임포트", "커뮤니티 지원"]
+        features: ["최대 1,000개 노트", "지식 정원", "인텔리 검색", "커뮤니티 지원"],
       },
       pro: {
         badge: "인기 플랜",
         name: "프로페셔널",
         desc: "소규모 팀 및 스타트업용",
         btn: "무료 체험 시작",
-        features: ["최대 100,000 노드", "고급 그래프 메트릭", "AI 기반 제안", "팀 협업 (최대 5명)", "우선 이메일 지원"]
+        features: ["무제한 노트", "AI 코파일럿", "팀 스페이스 & 협업", "캘린더 & 작업", "우선 이메일 지원"],
       },
       enterprise: {
         name: "엔터프라이즈",
         desc: "대규모 조직 및 에이전시용",
         price: "문의",
         btn: "영업팀 문의",
-        features: ["무제한 노드 및 스토리지", "온프레미스 배포", "커스텀 온톨로지 설계", "전담 성공 매니저", "SSO 및 고급 보안"]
-      }
+        features: ["무제한 스토리지", "온프레미스 배포", "커스텀 온톨로지 설계", "전담 성공 매니저", "SSO 및 고급 보안"],
+      },
     },
     cta: {
-      title: "숨겨진 인사이트를 발견할 준비가 되셨나요?",
-      desc: "수천 명의 분석가들이 EM-Graph를 사용하여 복잡한 데이터를 이해하고 있습니다. 오늘 무료 체험을 시작하세요.",
+      title: "지식을 키워나갈 준비가 되셨나요?",
+      desc: "EM-Graph를 두 번째 두뇌로 활용하는 팀들과 함께하세요. 오늘 무료 체험을 시작하세요.",
       btnPrimary: "회원가입",
-      btnSecondary: "도입문의"
+      btnSecondary: "도입문의",
     },
     footer: {
-      tagline: "현대적인 데이터 팀을 위한 고급 그래프 분석 플랫폼.",
+      tagline: "노트를 살아 있는 연결된 지식으로 키워주는 지식 정원.",
       product: "제품",
       resources: "리소스",
       company: "회사",
-      copyright: "© 2024 EM-Graph Inc. All rights reserved."
-    }
-  }
+      copyright: "© 2024 EM-Graph Inc. All rights reserved.",
+    },
+  },
 };
