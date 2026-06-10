@@ -97,6 +97,19 @@ export const translations = {
         { title: "AI Copilot", desc: "Let AI summarize and connect everything you know.", btn: "Meet Copilot" },
       ],
     },
+    engine: {
+      badge: "Advanced graph & data engine",
+      title: "Turn raw data into living graphs",
+      subtitle: "Beyond notes — EM-Graph's data engine preprocesses, models, and analyzes your data as connected graphs.",
+      items: [
+        { title: "Data Preprocessing Pipeline", desc: "Build visual, node-based workflows to join, filter, and transform data with a live preview." },
+        { title: "Data-driven Graph Generation", desc: "Automatically generate network structures from your tables, with node size and color mapped to data fields." },
+        { title: "ERD Data View", desc: "Visualize your database schema as an entity-relationship diagram with tables and relationships." },
+        { title: "Graph Theory Analysis", desc: "Run centrality analysis (degree, closeness, betweenness) to surface the most important nodes." },
+        { title: "Node & Edge Configuration", desc: "Dynamically size and color nodes and edges based on quantitative data fields." },
+        { title: "Database & Natural Language Query", desc: "Manage tables and run queries with SQL or plain-language instructions." },
+      ],
+    },
     pricing: {
       title: "Simple, transparent pricing",
       subtitle: "Choose the plan that best fits how you build your knowledge.",
@@ -231,6 +244,19 @@ export const translations = {
         { title: "지식 정원", desc: "연결된 살아 있는 지도로 당신의 지식을 탐험하세요.", btn: "정원 둘러보기" },
         { title: "인텔리 검색", desc: "워크스페이스 전체에서 어떤 노트든 몇 초 만에 찾으세요.", btn: "검색 체험하기" },
         { title: "AI 코파일럿", desc: "AI가 당신이 아는 모든 것을 요약하고 연결합니다.", btn: "코파일럿 만나기" },
+      ],
+    },
+    engine: {
+      badge: "고급 그래프 & 데이터 엔진",
+      title: "원시 데이터를 살아 있는 그래프로",
+      subtitle: "노트를 넘어 — EM-Graph의 데이터 엔진이 데이터를 전처리하고 모델링하며 연결된 그래프로 분석합니다.",
+      items: [
+        { title: "데이터 전처리 빌더", desc: "노드 기반 비주얼 워크플로우로 데이터를 조인·필터·변환하고 실시간으로 미리 보세요." },
+        { title: "데이터 기반 그래프 생성", desc: "테이블로부터 네트워크 구조를 자동 생성하고, 노드 크기와 색상을 데이터 필드에 매핑하세요." },
+        { title: "ERD 기반 데이터 뷰", desc: "데이터베이스 스키마를 테이블과 관계가 담긴 ERD로 시각화하세요." },
+        { title: "그래프 이론 분석", desc: "중심성 분석(연결·근접·매개)으로 가장 중요한 노드를 찾아내세요." },
+        { title: "노드/엣지 속성 설정", desc: "정량 데이터 필드를 기준으로 노드와 엣지의 크기·색상을 동적으로 설정하세요." },
+        { title: "데이터베이스 & 자연어 쿼리", desc: "SQL이나 자연어 명령으로 테이블을 관리하고 쿼리를 실행하세요." },
       ],
     },
     pricing: {

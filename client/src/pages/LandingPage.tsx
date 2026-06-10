@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Scissors, Users, Network, FileText, Link2,
-  Tag, Globe as GlobeIcon,
+  Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
 } from "lucide-react";
 import { useState } from "react";
 import { translations } from "@/lib/translations";
@@ -41,6 +41,16 @@ const experienceStyles = [
   "bg-blue-100 text-blue-600",
   "bg-purple-100 text-purple-600",
   "bg-violet-100 text-violet-600",
+];
+
+const engineIcons = [Workflow, Network, Table2, Share2, SlidersHorizontal, Database];
+const engineStyles = [
+  "bg-blue-100 text-blue-600",
+  "bg-purple-100 text-purple-600",
+  "bg-indigo-100 text-indigo-600",
+  "bg-violet-100 text-violet-600",
+  "bg-sky-100 text-sky-600",
+  "bg-blue-100 text-blue-600",
 ];
 
 const float = (delay: number, distance = 12) => ({
@@ -404,6 +414,43 @@ export default function LandingPage() {
                       {card.btn} <ArrowRight className="w-4 h-4" />
                     </Button>
                   </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Graph & Data Engine */}
+      <section id="engine" className="py-24 bg-gradient-to-br from-blue-50/60 via-white to-purple-50/50">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center rounded-full border border-transparent bg-primary/10 text-primary px-3 py-1 text-xs font-semibold mb-4">
+              <Network className="w-3.5 h-3.5 mr-1.5" />
+              {t.engine.badge}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-engine-title">{t.engine.title}</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {t.engine.items.map((item, i) => {
+              const Icon = engineIcons[i];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: (i % 3) * 0.08 }}
+                  className="bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all p-6"
+                  data-testid={`card-engine-${i}`}
+                >
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${engineStyles[i]}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-base font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                 </motion.div>
               );
             })}
