@@ -5,15 +5,23 @@ import {
   Calendar, Scissors, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { motion } from "framer-motion";
+import {
+  Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 import organizeImage from '../assets/generated_images/abstract_database_ontology_illustration.png';
 import searchImage from '../assets/generated_images/abstract_graph_analytics_illustration.png';
 import aiImage from '../assets/generated_images/abstract_ai_brain_network_illustration.png';
 import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
 import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
+import gardenShot from '@assets/image_1781068791021.png';
+import supplyShot from '../assets/generated_images/global_supply_chain_network_with_logistics_nodes.png';
+import financeShot from '../assets/generated_images/financial_transaction_graph_with_fraud_anomaly.png';
+import bioShot from '../assets/generated_images/biological_protein_interaction_network_graph.png';
 
 const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Scissors, Users, Brain];
 const gridIconStyles = [
@@ -36,12 +44,7 @@ const highlightAccents = [
   { pill: "bg-emerald-100 text-emerald-700", icon: Scissors, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
 ];
 
-const experienceIcons = [Sprout, Search, Brain];
-const experienceStyles = [
-  "bg-blue-100 text-blue-600",
-  "bg-purple-100 text-purple-600",
-  "bg-violet-100 text-violet-600",
-];
+const experienceSlides = [gardenShot, supplyShot, financeShot, bioShot];
 
 const engineIcons = [Workflow, Network, Table2, Share2, SlidersHorizontal, Database];
 const engineStyles = [
@@ -63,6 +66,16 @@ export default function LandingPage() {
   const t = translations[lang];
 
   const toggleLanguage = () => setLang(prev => (prev === 'en' ? 'ko' : 'en'));
+
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  useEffect(() => {
+    if (!carouselApi) return;
+    setCurrentSlide(carouselApi.selectedScrollSnap());
+    const onSelect = () => setCurrentSlide(carouselApi.selectedScrollSnap());
+    carouselApi.on("select", onSelect);
+    return () => { carouselApi.off("select", onSelect); };
+  }, [carouselApi]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -385,38 +398,47 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Experience cards */}
+      {/* Graph sample slideshow */}
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{t.experience.title}</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-experience-title">{t.experience.title}</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.experience.subtitle}</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {t.experience.cards.map((card, i) => {
-              const Icon = experienceIcons[i];
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all p-8 flex flex-col"
-                  data-testid={`card-experience-${i}`}
-                >
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${experienceStyles[i]}`}>
-                    <Icon className="w-6 h-6" />
+
+          <Carousel setApi={setCarouselApi} opts={{ loop: true }} className="max-w-5xl mx-auto">
+            <CarouselContent>
+              {t.experience.slides.map((slide, i) => (
+                <CarouselItem key={i} data-testid={`slide-experience-${i}`}>
+                  <div className="relative rounded-2xl overflow-hidden border shadow-lg bg-white">
+                    <img
+                      src={experienceSlides[i]}
+                      alt={slide.title}
+                      className="w-full aspect-[16/9] object-cover"
+                      data-testid={`img-experience-${i}`}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/85 via-slate-900/40 to-transparent p-6 sm:p-8">
+                      <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{slide.title}</h3>
+                      <p className="text-sm text-slate-200 max-w-xl leading-relaxed">{slide.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{card.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6 flex-1">{card.desc}</p>
-                  <Link href="/organization-select">
-                    <Button variant="outline" className="w-full gap-2" data-testid={`button-experience-${i}`}>
-                      {card.btn} <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                </motion.div>
-              );
-            })}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex -left-5" data-testid="button-experience-prev" />
+            <CarouselNext className="hidden sm:flex -right-5" data-testid="button-experience-next" />
+          </Carousel>
+
+          <div className="flex items-center justify-center gap-2 mt-6">
+            {t.experience.slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => carouselApi?.scrollTo(i)}
+                aria-label={`${t.experience.goToSlide} ${i + 1}`}
+                className={`h-2 rounded-full transition-all ${currentSlide === i ? 'w-6 bg-primary' : 'w-2 bg-slate-300 hover:bg-slate-400'}`}
+                data-testid={`dot-experience-${i}`}
+              />
+            ))}
           </div>
         </div>
       </section>

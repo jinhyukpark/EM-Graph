@@ -90,11 +90,14 @@ export const translations = {
       ],
     },
     experience: {
-      title: "Experience your second brain today",
-      cards: [
-        { title: "Knowledge Garden", desc: "Explore your knowledge as a living, connected map.", btn: "Open the garden" },
-        { title: "Smart Search", desc: "Find any note across your whole workspace in seconds.", btn: "Try search" },
-        { title: "AI Copilot", desc: "Let AI summarize and connect everything you know.", btn: "Meet Copilot" },
+      title: "Explore your knowledge as a living graph",
+      subtitle: "From notes to networks — see how EM-Graph turns connected data into interactive graphs.",
+      goToSlide: "Go to slide",
+      slides: [
+        { title: "Knowledge Garden & Ontology Graph", desc: "Connect notes and entities into a living, navigable knowledge graph." },
+        { title: "Supply Chain Network Analysis", desc: "Map multi-tier suppliers and logistics to spot risks across the network." },
+        { title: "Financial Transaction Graph", desc: "Trace transaction flows and surface anomalies and fraud patterns." },
+        { title: "Biological Interaction Network", desc: "Model proteins, genes, and pathways to accelerate discovery." },
       ],
     },
     engine: {
@@ -239,11 +242,14 @@ export const translations = {
       ],
     },
     experience: {
-      title: "오늘, 두 번째 두뇌를 경험해보세요",
-      cards: [
-        { title: "지식 정원", desc: "연결된 살아 있는 지도로 당신의 지식을 탐험하세요.", btn: "정원 둘러보기" },
-        { title: "인텔리 검색", desc: "워크스페이스 전체에서 어떤 노트든 몇 초 만에 찾으세요.", btn: "검색 체험하기" },
-        { title: "AI 코파일럿", desc: "AI가 당신이 아는 모든 것을 요약하고 연결합니다.", btn: "코파일럿 만나기" },
+      title: "살아 있는 그래프로 지식을 탐험하세요",
+      subtitle: "노트에서 네트워크까지 — 연결된 데이터가 인터랙티브 그래프로 살아납니다.",
+      goToSlide: "슬라이드로 이동",
+      slides: [
+        { title: "지식 정원 & 온톨로지 그래프", desc: "노트와 개체를 연결해 탐색 가능한 살아 있는 지식 그래프로 만드세요." },
+        { title: "공급망 네트워크 분석", desc: "다단계 공급사와 물류를 매핑해 네트워크 전반의 리스크를 포착하세요." },
+        { title: "금융 거래 그래프 & 이상 탐지", desc: "거래 흐름을 추적하고 이상 징후와 사기 패턴을 찾아내세요." },
+        { title: "생물학적 상호작용 네트워크", desc: "단백질·유전자·경로를 모델링해 연구 발견을 가속화하세요." },
       ],
     },
     engine: {
