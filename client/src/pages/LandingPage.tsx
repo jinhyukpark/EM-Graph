@@ -203,30 +203,36 @@ function HeroDemo({ p }: { p: PreviewT }) {
                       <motion.line
                         key={i}
                         x1="50%" y1="50%" x2={n.cx} y2={n.cy}
-                        stroke="#c7d2fe" strokeWidth="2"
+                        stroke="#a5b4fc" strokeWidth="2" strokeLinecap="round"
                         initial={{ pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.5 + i * 0.35 }}
                       />
                     ))}
                   </svg>
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.1 }}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg z-10"
-                  >
-                    <Network className="w-5 h-5" />
-                  </motion.div>
-                  {GRAPH_NODES.map((n, i) => (
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                     <motion.div
-                      key={i}
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 320, damping: 18, delay: 0.7 + i * 0.35 }}
-                      className={`absolute w-7 h-7 rounded-full shadow-md ${n.color}`}
-                      style={{ left: n.cx, top: n.cy, transform: "translate(-50%, -50%)" }}
-                    />
+                      transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.1 }}
+                      className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg"
+                    >
+                      <Network className="w-5 h-5" />
+                    </motion.div>
+                  </div>
+                  {GRAPH_NODES.map((n, i) => (
+                    <div
+                      key={i}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
+                      style={{ left: n.cx, top: n.cy }}
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 320, damping: 18, delay: 0.7 + i * 0.35 }}
+                        className={`w-7 h-7 rounded-full shadow-md ${n.color}`}
+                      />
+                    </div>
                   ))}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.6 }}
