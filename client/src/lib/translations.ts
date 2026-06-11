@@ -56,7 +56,7 @@ export const translations = {
     },
     highlights: {
       title: "Everything you need to think clearly",
-      subtitle: "Organize, search, share, capture — every piece designed around the way your mind actually works.",
+      subtitle: "Organize, search, share, store — every piece designed around the way your mind actually works.",
       rows: [
         {
           pill: "Organize",
@@ -80,11 +80,11 @@ export const translations = {
           benefits: ["Auto-summaries", "Linked insights"],
         },
         {
-          pill: "Collaborate",
-          title: "Bring your team into the flow",
-          desc: "Edit together in real time, talk it through with comments, and hand off work so nothing slips.",
-          btn: "Try it free",
-          benefits: ["Real-time editing", "Comments & mentions"],
+          pill: "Share",
+          title: "Grow your garden beyond your own",
+          desc: "Publish your nodes and graphs to the Brain Market, and bring in the knowledge graphs others have grown — so good ideas keep spreading.",
+          btn: "Explore Brain Market",
+          benefits: ["Publish your graphs", "Subscribe to shared knowledge"],
         },
         {
           pill: "Store",
@@ -205,7 +205,7 @@ export const translations = {
     },
     highlights: {
       title: "명확하게 생각하는 데 필요한 모든 것",
-      subtitle: "정리부터 검색, 협업, 캡처까지 — 당신이 생각하는 방식에 꼭 맞게 설계했습니다.",
+      subtitle: "정리부터 검색, 공유, 저장까지 — 당신이 생각하는 방식에 꼭 맞게 설계했습니다.",
       rows: [
         {
           pill: "정리",
@@ -229,11 +229,11 @@ export const translations = {
           benefits: ["자동 요약", "연관 인사이트"],
         },
         {
-          pill: "협업",
-          title: "팀을 같은 흐름으로 모으세요",
-          desc: "실시간으로 함께 편집하고, 댓글로 소통하며, 업무를 분담해 어떤 것도 놓치지 않도록 하세요.",
-          btn: "무료로 시작하기",
-          benefits: ["실시간 편집", "댓글 & 멘션"],
+          pill: "공유",
+          title: "내 정원을 세상과 나누세요",
+          desc: "내가 만든 노드와 그래프를 브레인 마켓에 공유하고, 다른 사람이 키운 지식 그래프를 받아오세요. 좋은 아이디어가 계속 퍼져 나갑니다.",
+          btn: "브레인 마켓 둘러보기",
+          benefits: ["내 그래프 공유하기", "공유된 지식 받아보기"],
         },
         {
           pill: "저장",
