@@ -509,10 +509,11 @@ export default function LandingPage() {
                   data-testid={`row-highlight-${i}`}
                 >
                   <div className={`flex-1 w-full ${imageLeft ? 'order-2 md:order-1' : 'order-2 md:order-2'}`}>
-                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
-                      <img src={highlightImages[i]} alt={row.title} className="w-full h-auto" />
-                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
-                    </div>
+                    <img
+                      src={highlightImages[i]}
+                      alt={row.title}
+                      className="w-full h-auto drop-shadow-2xl transform hover:-translate-y-1 transition-transform duration-500"
+                    />
                   </div>
                   <div className={`flex-1 space-y-6 ${imageLeft ? 'order-1 md:order-2' : 'order-1 md:order-1'}`}>
                     <span className={`inline-flex items-center text-xs font-bold px-3 py-1 rounded-full ${accent.pill}`}>{row.pill}</span>

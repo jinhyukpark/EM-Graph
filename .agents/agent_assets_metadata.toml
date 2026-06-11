@@ -41,28 +41,28 @@ title = "lee headshot"
 id = "l23snKrvy1lT9u8oKkD-Z"
 uri = "file://client/src/assets/generated_images/highlight_organize_notebooks.png"
 type = "image"
-title = "organize notebooks ui"
+title = "organize notebooks floating"
 
 [[generated]]
 id = "wVWpdpptrxARLVecU_t-y"
 uri = "file://client/src/assets/generated_images/highlight_search_results.png"
 type = "image"
-title = "search results ui"
+title = "search results floating"
 
 [[generated]]
 id = "YpxhdtgzHhA4bs0lucAvj"
 uri = "file://client/src/assets/generated_images/highlight_ai_copilot.png"
 type = "image"
-title = "ai copilot ui"
+title = "ai copilot floating"
 
 [[generated]]
 id = "Kq9NDjdCKdsFPWO6e_BWE"
 uri = "file://client/src/assets/generated_images/highlight_share_brain_market.png"
 type = "image"
-title = "share brain market ui"
+title = "share brain market floating"
 
 [[generated]]
 id = "6KYeLMY_JLRW0hCRcR_P8"
 uri = "file://client/src/assets/generated_images/highlight_store_files.png"
 type = "image"
-title = "store files ui"
+title = "store files floating"
