@@ -4,7 +4,7 @@ import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Scissors, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
-  Send, Plus, Puzzle,
+  Send, Plus, Puzzle, Save,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
@@ -34,7 +34,7 @@ const highlightAccents = [
   { pill: "bg-purple-100 text-purple-700", icon: Search, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
   { pill: "bg-violet-100 text-violet-700", icon: Brain, iconBg: "bg-violet-100 text-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-100" },
   { pill: "bg-indigo-100 text-indigo-700", icon: Users, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
-  { pill: "bg-emerald-100 text-emerald-700", icon: Scissors, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+  { pill: "bg-emerald-100 text-emerald-700", icon: Save, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
 ];
 
 const engineIcons = [Workflow, Network, Table2, Share2, SlidersHorizontal, Database];
