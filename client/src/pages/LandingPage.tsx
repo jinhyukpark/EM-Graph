@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
-  Calendar, Scissors, Users, Network, FileText, Link2,
+  Calendar, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
-  Send, Plus, Puzzle,
+  Send, Plus, Puzzle, Save,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
@@ -16,7 +16,7 @@ import aiImage from '../assets/generated_images/abstract_ai_brain_network_illust
 import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
 import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
 
-const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Scissors, Users, Brain];
+const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Save, Users, Brain];
 const gridIconStyles = [
   "bg-blue-100 text-blue-600",
   "bg-indigo-100 text-indigo-600",
@@ -33,8 +33,8 @@ const highlightAccents = [
   { pill: "bg-blue-100 text-blue-700", icon: BookOpen, iconBg: "bg-blue-100 text-blue-600", chip: "bg-blue-50 text-blue-700 border-blue-100" },
   { pill: "bg-purple-100 text-purple-700", icon: Search, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
   { pill: "bg-violet-100 text-violet-700", icon: Brain, iconBg: "bg-violet-100 text-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-100" },
-  { pill: "bg-indigo-100 text-indigo-700", icon: Users, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
-  { pill: "bg-emerald-100 text-emerald-700", icon: Scissors, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+  { pill: "bg-indigo-100 text-indigo-700", icon: Share2, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
+  { pill: "bg-emerald-100 text-emerald-700", icon: Save, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
 ];
 
 const engineIcons = [Workflow, Network, Table2, Share2, SlidersHorizontal, Database];
@@ -434,7 +434,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-grid-title">{t.grid.title}</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">{t.grid.subtitle}</p>
+            <p className="text-muted-foreground max-w-4xl mx-auto break-keep">{t.grid.subtitle}</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -454,7 +454,7 @@ export default function LandingPage() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed break-keep">{item.desc}</p>
                 </motion.div>
               );
             })}
@@ -556,7 +556,7 @@ export default function LandingPage() {
               </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-engine-title">{t.engine.title}</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-sm text-amber-700" data-testid="text-engine-plugin-note">
               <Puzzle className="w-4 h-4" />
               {t.engine.pluginNote}
@@ -580,7 +580,7 @@ export default function LandingPage() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed break-keep">{item.desc}</p>
                 </motion.div>
               );
             })}
