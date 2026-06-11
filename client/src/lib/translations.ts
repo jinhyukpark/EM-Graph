@@ -171,7 +171,7 @@ export const translations = {
       newBadge: "지식이 자라나는 곳",
       titleLine: "당신의 두 번째 두뇌,",
       subtitle: "지식 정원",
-      description: "모든 노트와 자료, 아이디어를 한곳에 모으고, AI와 그래프로 연결해 살아 숨 쉬는 지식으로 키워보세요.",
+      description: "모든 노트와 자료, 아이디어를 한 곳에 모으고, 그래프로 연결해 살아 있는 나만의 지식 정원으로 키워보세요.",
       startBtn: "무료로 시작하기",
       demoBtn: "데모 보기",
       loginPrompt: "이미 계정이 있으신가요?",
