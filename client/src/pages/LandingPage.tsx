@@ -454,7 +454,7 @@ export default function LandingPage() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed break-keep">{item.desc}</p>
                 </motion.div>
               );
             })}
@@ -580,7 +580,7 @@ export default function LandingPage() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed break-keep">{item.desc}</p>
                 </motion.div>
               );
             })}
