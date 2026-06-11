@@ -4,17 +4,17 @@ import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
-  Send, Plus, Puzzle, Save,
+  Send, Plus, Puzzle, Save, ArrowLeftRight,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { motion, AnimatePresence } from "framer-motion";
 
-import organizeImage from '../assets/generated_images/abstract_database_ontology_illustration.png';
-import searchImage from '../assets/generated_images/abstract_graph_analytics_illustration.png';
-import aiImage from '../assets/generated_images/abstract_ai_brain_network_illustration.png';
-import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
-import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
+import organizeImage from '../assets/generated_images/highlight_organize_notebooks.png';
+import searchImage from '../assets/generated_images/highlight_search_results.png';
+import aiImage from '../assets/generated_images/highlight_ai_copilot.png';
+import shareImage from '../assets/generated_images/highlight_share_brain_market.png';
+import captureImage from '../assets/generated_images/highlight_store_files.png';
 
 const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Save, Users, Brain];
 const gridIconStyles = [
@@ -33,7 +33,7 @@ const highlightAccents = [
   { pill: "bg-blue-100 text-blue-700", icon: BookOpen, iconBg: "bg-blue-100 text-blue-600", chip: "bg-blue-50 text-blue-700 border-blue-100" },
   { pill: "bg-purple-100 text-purple-700", icon: Search, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
   { pill: "bg-violet-100 text-violet-700", icon: Brain, iconBg: "bg-violet-100 text-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-100" },
-  { pill: "bg-indigo-100 text-indigo-700", icon: Users, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
+  { pill: "bg-indigo-100 text-indigo-700", icon: ArrowLeftRight, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
   { pill: "bg-emerald-100 text-emerald-700", icon: Save, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
 ];
 
