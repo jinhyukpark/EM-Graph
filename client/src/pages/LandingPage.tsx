@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
-  Calendar, Scissors, Users, Network, FileText, Link2,
+  Calendar, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
   Send, Plus, Puzzle, Save,
 } from "lucide-react";
@@ -16,7 +16,7 @@ import aiImage from '../assets/generated_images/abstract_ai_brain_network_illust
 import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
 import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
 
-const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Scissors, Users, Brain];
+const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Save, Users, Brain];
 const gridIconStyles = [
   "bg-blue-100 text-blue-600",
   "bg-indigo-100 text-indigo-600",
