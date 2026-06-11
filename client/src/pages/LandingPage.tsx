@@ -556,7 +556,7 @@ export default function LandingPage() {
               </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-engine-title">{t.engine.title}</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">{t.engine.subtitle}</p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-sm text-amber-700" data-testid="text-engine-plugin-note">
               <Puzzle className="w-4 h-4" />
               {t.engine.pluginNote}

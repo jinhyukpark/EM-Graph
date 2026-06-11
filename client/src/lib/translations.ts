@@ -100,7 +100,7 @@ export const translations = {
       plugin: "Plugin",
       pluginNote: "An optional add-on for teams ready to go deeper with their data.",
       title: "Turn raw data into living graphs",
-      subtitle: "Go beyond notes — the data engine cleans, models, and analyzes your data as connected, explorable graphs.",
+      subtitle: "Our advanced graph engine cleans and models your raw data, reshaping it into relationship graphs you can explore connection by connection.",
       items: [
         { title: "Data Preprocessing Builder", desc: "Join, filter, and transform data through a visual, node-based workflow — with a live preview at every step." },
         { title: "Data-driven Graph Generation", desc: "Turn tables into networks automatically, mapping node size and color straight to your data fields." },
@@ -249,7 +249,7 @@ export const translations = {
       plugin: "플러그인",
       pluginNote: "데이터를 더 깊이 다루고 싶은 팀을 위한 선택형 애드온입니다.",
       title: "원본 데이터를 살아 있는 그래프로",
-      subtitle: "노트를 넘어 — 데이터 엔진이 데이터를 정제하고 모델링해, 탐색 가능한 연결된 그래프로 분석합니다.",
+      subtitle: "고급 그래프 엔진이 원본 데이터를 정제하고 모델링하여, 연결 관계를 탐색할 수 있는 관계망 그래프 형태로 재구성합니다.",
       items: [
         { title: "데이터 전처리 빌더", desc: "노드 기반 비주얼 워크플로우로 데이터를 조인·필터·변환하고, 단계마다 실시간으로 미리 보세요." },
         { title: "데이터 기반 그래프 생성", desc: "테이블을 네트워크로 자동 변환하고, 노드 크기와 색상을 데이터 필드에 그대로 매핑하세요." },
