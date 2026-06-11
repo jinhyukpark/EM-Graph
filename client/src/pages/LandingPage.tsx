@@ -434,7 +434,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-grid-title">{t.grid.title}</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">{t.grid.subtitle}</p>
+            <p className="text-muted-foreground max-w-4xl mx-auto break-keep">{t.grid.subtitle}</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
