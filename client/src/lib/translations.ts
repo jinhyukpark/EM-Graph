@@ -107,7 +107,7 @@ export const translations = {
         { title: "ERD Data View", desc: "See your database schema come to life as a clear entity-relationship diagram." },
         { title: "Graph Theory Analysis", desc: "Run centrality analysis — degree, closeness, betweenness — to reveal the nodes that matter most." },
         { title: "Node & Edge Styling", desc: "Size and color nodes and edges dynamically, driven by the data behind them." },
-        { title: "Database & Natural Language Query", desc: "Manage tables and pull answers using SQL — or just ask in plain language." },
+        { title: "Database & Natural Language Query", desc: "Manage tables with SQL, or edit them easily using plain language." },
       ],
     },
     pricing: {
@@ -256,7 +256,7 @@ export const translations = {
         { title: "ERD 데이터 뷰", desc: "데이터베이스 스키마를 한눈에 들어오는 ERD로 시각화하세요." },
         { title: "그래프 이론 분석", desc: "중심성 분석(연결·근접·매개)으로 가장 중요한 노드를 찾아내세요." },
         { title: "노드 & 엣지 스타일링", desc: "데이터에 따라 노드와 엣지의 크기·색상을 동적으로 표현하세요." },
-        { title: "데이터베이스 & 자연어 쿼리", desc: "SQL로 테이블을 관리하거나, 자연어로 편리하게 수정하세요." },
+        { title: "데이터베이스 & 자연어 쿼리", desc: "SQL로 테이블을 관리하거나, 자연어로 간편하게 수정하세요." },
       ],
     },
     pricing: {
