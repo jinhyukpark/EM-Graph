@@ -4,17 +4,17 @@ import {
   ArrowRight, Brain, Check, Sprout, BookOpen, Search, ListChecks,
   Calendar, Users, Network, FileText, Link2,
   Tag, Globe as GlobeIcon, Workflow, Table2, Share2, SlidersHorizontal, Database,
-  Send, Plus, Puzzle, Save, ArrowLeftRight,
+  Send, Plus, Puzzle, Save,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { motion, AnimatePresence } from "framer-motion";
 
-import organizeImage from '../assets/generated_images/highlight_organize_notebooks.png';
-import searchImage from '../assets/generated_images/highlight_search_results.png';
-import aiImage from '../assets/generated_images/highlight_ai_copilot.png';
-import shareImage from '../assets/generated_images/highlight_share_brain_market.png';
-import captureImage from '../assets/generated_images/highlight_store_files.png';
+import organizeImage from '../assets/generated_images/abstract_database_ontology_illustration.png';
+import searchImage from '../assets/generated_images/abstract_graph_analytics_illustration.png';
+import aiImage from '../assets/generated_images/abstract_ai_brain_network_illustration.png';
+import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
+import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
 
 const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Save, Users, Brain];
 const gridIconStyles = [
@@ -33,7 +33,7 @@ const highlightAccents = [
   { pill: "bg-blue-100 text-blue-700", icon: BookOpen, iconBg: "bg-blue-100 text-blue-600", chip: "bg-blue-50 text-blue-700 border-blue-100" },
   { pill: "bg-purple-100 text-purple-700", icon: Search, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
   { pill: "bg-violet-100 text-violet-700", icon: Brain, iconBg: "bg-violet-100 text-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-100" },
-  { pill: "bg-indigo-100 text-indigo-700", icon: ArrowLeftRight, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
+  { pill: "bg-indigo-100 text-indigo-700", icon: Users, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
   { pill: "bg-emerald-100 text-emerald-700", icon: Save, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
 ];
 
@@ -509,11 +509,10 @@ export default function LandingPage() {
                   data-testid={`row-highlight-${i}`}
                 >
                   <div className={`flex-1 w-full ${imageLeft ? 'order-2 md:order-1' : 'order-2 md:order-2'}`}>
-                    <img
-                      src={highlightImages[i]}
-                      alt={row.title}
-                      className="w-full h-auto drop-shadow-2xl transform hover:-translate-y-1 transition-transform duration-500"
-                    />
+                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
+                      <img src={highlightImages[i]} alt={row.title} className="w-full h-auto" />
+                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
+                    </div>
                   </div>
                   <div className={`flex-1 space-y-6 ${imageLeft ? 'order-1 md:order-2' : 'order-1 md:order-1'}`}>
                     <span className={`inline-flex items-center text-xs font-bold px-3 py-1 rounded-full ${accent.pill}`}>{row.pill}</span>

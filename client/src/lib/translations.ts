@@ -80,11 +80,11 @@ export const translations = {
           benefits: ["Auto-summaries", "Linked insights"],
         },
         {
-          pill: "Share",
-          title: "Exchange knowledge, grow together",
-          desc: "Share your own notes and graphs to the Brain Market, and bring in others' knowledge gardens too — so every second brain grows together.",
+          pill: "Collaborate",
+          title: "Bring your team into the flow",
+          desc: "Edit together in real time, talk it through with comments, and hand off work so nothing slips.",
           btn: "Try it free",
-          benefits: ["Exchange on Brain Market", "Share with a link"],
+          benefits: ["Real-time editing", "Comments & mentions"],
         },
         {
           pill: "Store",
@@ -229,11 +229,11 @@ export const translations = {
           benefits: ["자동 요약", "연관 인사이트"],
         },
         {
-          pill: "공유",
-          title: "지식을 주고받으며 함께 키우세요",
-          desc: "내 노트와 지식 그래프는 브레인 마켓에 공유하고, 다른 사람의 지식 정원도 공유 받아 서로의 두 번째 두뇌를 함께 키우세요.",
+          pill: "협업",
+          title: "팀을 같은 흐름으로 모으세요",
+          desc: "실시간으로 함께 편집하고, 댓글로 소통하며, 업무를 분담해 어떤 것도 놓치지 않도록 하세요.",
           btn: "무료로 시작하기",
-          benefits: ["브레인 마켓에서 주고받기", "링크로 간편 공유"],
+          benefits: ["실시간 편집", "댓글 & 멘션"],
         },
         {
           pill: "저장",
