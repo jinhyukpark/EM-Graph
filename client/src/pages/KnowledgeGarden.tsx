@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
-  FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, 
+  FileText, Folder, FolderOpen, Plus, Search, MoreHorizontal, GripVertical, 
   ChevronRight, ChevronDown, Edit3, Share2, MessageSquare, 
   Sparkles, Maximize2, X, Send, Paperclip, Mic, Globe,
   Newspaper, Smile, Layout as LayoutIcon, BadgeCheck, User, Users, TrendingUp,
@@ -36,7 +36,7 @@ import "@xyflow/react/dist/style.css";
 import ImageNode from "@/components/graph/ImageNode";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -632,10 +632,24 @@ const INITIAL_SESSIONS = [
 // --- Components ---
 
 function GraphLegend() {
+    const dragControls = useDragControls();
     return (
-        <div className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20">
-                <span className="text-xs font-semibold text-muted-foreground">Views</span>
+        <motion.div
+            drag
+            dragControls={dragControls}
+            dragListener={false}
+            dragMomentum={false}
+            dragElastic={0}
+            className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden"
+        >
+            <div
+                onPointerDown={(e) => dragControls.start(e)}
+                className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20 cursor-move touch-none select-none"
+            >
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                    <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60" />
+                    Views
+                </span>
                 <div className="flex gap-4 text-xs font-semibold text-muted-foreground">
                     <span>Count</span>
                     <span>Ratio(%)</span>
@@ -665,7 +679,7 @@ function GraphLegend() {
                     </div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     )
 }
 
