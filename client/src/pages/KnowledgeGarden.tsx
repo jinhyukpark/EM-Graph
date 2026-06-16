@@ -300,15 +300,15 @@ const INITIAL_FILE_TREE = [
     name: "Knowledge Garden",
     type: "root",
     children: [
-      { id: "f1", name: "Test Folder 1", type: "folder", children: [] },
-      { id: "f2", name: "New Folder 2", type: "folder", children: [] },
-      { id: "f3", name: "New Folder", type: "folder", children: [] },
-      { id: "f4", name: "Research", type: "folder", children: [
-        { id: "n1", name: "Note 1", type: "note", tags: ["EM", "BOX"], createdAt: "2026-05-10" },
-        { id: "n2", name: "Note 2", type: "note", sharedByMe: true, sharedWith: ["김대리", "이과장"], tags: ["CRM", "apply"], createdAt: "2026-05-12" },
-        { id: "n3", name: "Note 3", type: "note", isNew: true, tags: ["EM 아이디어", "IR"], createdAt: "2026-05-17" }
+      { id: "f1", name: "경쟁사 분석", type: "folder", children: [] },
+      { id: "f2", name: "시장 조사", type: "folder", children: [] },
+      { id: "f3", name: "특허 리서치", type: "folder", children: [] },
+      { id: "f4", name: "산업 동향 리서치", type: "folder", children: [
+        { id: "n1", name: "2차전지 소재 시장 동향", type: "note", tags: ["2차전지", "소재"], createdAt: "2026-05-10" },
+        { id: "n2", name: "글로벌 공급망 리스크 점검", type: "note", sharedByMe: true, sharedWith: ["김대리", "이과장"], tags: ["공급망", "리스크"], createdAt: "2026-05-12" },
+        { id: "n3", name: "신규 사업 기회 발굴", type: "note", isNew: true, tags: ["신사업", "IR"], createdAt: "2026-05-17" }
       ]},
-      { id: "f5", name: "Test", type: "folder", children: [] },
+      { id: "f5", name: "주간 회의록", type: "folder", children: [] },
       { id: "f6", name: "2024 Analysis", type: "folder", children: [
          { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, sharedByMe: true, sharedWith: ["전략기획팀", "법무팀"], tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
       ]}
