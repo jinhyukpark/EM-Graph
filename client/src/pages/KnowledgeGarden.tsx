@@ -584,38 +584,44 @@ const CHAT_HISTORY = [
   {
     role: "user",
     content: "Summarize the key patents in this document.",
-    time: "Today"
+    contentKo: "이 문서의 핵심 특허를 요약해줘.",
+    time: "Today",
+    timeKo: "오늘"
   },
   {
     role: "assistant",
     content: "Based on the recent patent trends analysis of LG Energy Solution and SK Innovation, both companies are focusing on developing technology to improve battery safety and lifespan. LG Energy Solution is particularly prominent in patent applications related to high-nickel cathode materials and silicon anode materials, while SK Innovation is identified as securing numerous patents related to separator technology and battery recycling technology. Competition is also intensifying to secure next-generation battery technologies such as solid-state batteries. This document suggests changes in market share and potential technical disputes based on these technological trends.",
+    contentKo: "최근 LG에너지솔루션과 SK이노베이션의 특허 동향 분석 결과, 두 회사 모두 배터리 안전성과 수명을 개선하는 기술 개발에 집중하고 있습니다. LG에너지솔루션은 하이니켈 양극재와 실리콘 음극재 관련 특허 출원이 특히 두드러지며, SK이노베이션은 분리막 기술과 배터리 재활용 기술 관련 특허를 다수 확보한 것으로 파악됩니다. 전고체 배터리와 같은 차세대 배터리 기술 확보 경쟁도 치열해지고 있습니다. 본 문서는 이러한 기술 동향을 바탕으로 시장 점유율 변화와 잠재적 기술 분쟁 가능성을 시사합니다.",
     tool: "MCP Tool • Patent_search",
     sources: [
-      { id: "note-1", title: "LG Energy Solution Patent Portfolio", date: "2024-12-01" },
-      { id: "note-2", title: "SK Innovation Battery Tech Analysis", date: "2024-11-20" },
-      { id: "note-3", title: "Meeting Notes: Cross-licensing Strategy", date: "2024-10-15" }
+      { id: "note-1", title: "LG Energy Solution Patent Portfolio", titleKo: "LG에너지솔루션 특허 포트폴리오", date: "2024-12-01" },
+      { id: "note-2", title: "SK Innovation Battery Tech Analysis", titleKo: "SK이노베이션 배터리 기술 분석", date: "2024-11-20" },
+      { id: "note-3", title: "Meeting Notes: Cross-licensing Strategy", titleKo: "회의록: 크로스 라이선싱 전략", date: "2024-10-15" }
     ],
     data: [
-      { id: "Electronic Times", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", date: "2024-12-15" },
-      { id: "ZDNet Korea", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", date: "2024-12-10" },
-      { id: "Investing.com", title: "Korean Stock Market | 1983-2025 Data | 2026-2027 Forecast - Economic Indicators", date: "2024-12-08" },
-      { id: "Investing.com", title: "Korean Stock Market - Investing.com", date: "2024-12-08" },
-      { id: "KRX Info System", title: "Korea Exchange | Information Data System", date: "2024-12-05" },
-      { id: "Korea Economic Daily", title: "Market Summary | Korea Economic Daily", date: "2024-12-01" },
-      { id: "KCIF", title: "2024 Domestic Stock Market Conditions Outlook and Evaluation", date: "2024-11-28" },
-      { id: "Hankyoreh", title: "KOSPI & KOSDAQ Both Down 3%, Bitcoin Below $90k", date: "2024-11-25" },
-      { id: "Maeil Business", title: "KOSPI & KOSDAQ Close Lower... Market Cools Down on Trump Remarks", date: "2024-11-22" },
-      { id: "KyungHyang", title: "Breaking: KOSPI 3900 Line Collapses... KOSPI/KOSDAQ Plunge Over 3%", date: "2024-11-20" }
+      { id: "Electronic Times", idKo: "전자신문", title: "[Analysis] LG Energy Solution vs SK Innovation, Patent Dispute Intensity Increases", titleKo: "[분석] LG에너지솔루션 vs SK이노베이션, 특허 분쟁 격화", date: "2024-12-15" },
+      { id: "ZDNet Korea", idKo: "지디넷코리아", title: "Battery Industry 'Solid-state Battery' Technology Competition Intensifies", titleKo: "배터리 업계 '전고체 배터리' 기술 경쟁 심화", date: "2024-12-10" },
+      { id: "Investing.com", idKo: "인베스팅닷컴", title: "Korean Stock Market | 1983-2025 Data | 2026-2027 Forecast - Economic Indicators", titleKo: "한국 증시 | 1983-2025 데이터 | 2026-2027 전망 - 경제 지표", date: "2024-12-08" },
+      { id: "Investing.com", idKo: "인베스팅닷컴", title: "Korean Stock Market - Investing.com", titleKo: "한국 증시 - 인베스팅닷컴", date: "2024-12-08" },
+      { id: "KRX Info System", idKo: "KRX 정보데이터시스템", title: "Korea Exchange | Information Data System", titleKo: "한국거래소 | 정보데이터시스템", date: "2024-12-05" },
+      { id: "Korea Economic Daily", idKo: "한국경제", title: "Market Summary | Korea Economic Daily", titleKo: "시황 요약 | 한국경제", date: "2024-12-01" },
+      { id: "KCIF", idKo: "국제금융센터", title: "2024 Domestic Stock Market Conditions Outlook and Evaluation", titleKo: "2024년 국내 증시 여건 전망과 평가", date: "2024-11-28" },
+      { id: "Hankyoreh", idKo: "한겨레", title: "KOSPI & KOSDAQ Both Down 3%, Bitcoin Below $90k", titleKo: "코스피·코스닥 동반 3% 하락, 비트코인 9만 달러 붕괴", date: "2024-11-25" },
+      { id: "Maeil Business", idKo: "매일경제", title: "KOSPI & KOSDAQ Close Lower... Market Cools Down on Trump Remarks", titleKo: "코스피·코스닥 하락 마감… 트럼프 발언에 시장 위축", date: "2024-11-22" },
+      { id: "KyungHyang", idKo: "경향신문", title: "Breaking: KOSPI 3900 Line Collapses... KOSPI/KOSDAQ Plunge Over 3%", titleKo: "속보: 코스피 3900선 붕괴… 코스피·코스닥 3% 넘게 급락", date: "2024-11-20" }
     ]
   },
   {
     role: "user",
     content: "Find related cases in the US market.",
-    time: "Today"
+    contentKo: "미국 시장의 관련 사례를 찾아줘.",
+    time: "Today",
+    timeKo: "오늘"
   },
   {
     role: "assistant",
     content: "Searching for related lawsuits in US District Courts...",
+    contentKo: "미국 연방지방법원의 관련 소송을 검색 중...",
     tool: "MCP Tool • Legal_search"
   }
 ];
@@ -624,11 +630,13 @@ const INITIAL_SESSIONS = [
   {
     id: 's1',
     title: 'Patent Analysis',
+    titleKo: '특허 분석',
     messages: CHAT_HISTORY
   },
   {
     id: 's2',
     title: 'Legal Review',
+    titleKo: '법률 검토',
     messages: []
   }
 ];
@@ -988,6 +996,7 @@ const FileTreeNode = ({
 
 const SourceList = ({ data }: { data: any[] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { language } = useLanguage();
 
   if (!data || data.length === 0) return null;
 
@@ -999,7 +1008,7 @@ const SourceList = ({ data }: { data: any[] }) => {
       >
         <div className="flex items-center gap-2 text-muted-foreground">
              <FileText className="w-3.5 h-3.5 text-orange-500" />
-             <span>Source {data.length}</span>
+             <span>{language === 'en' ? 'Source' : '출처'} {data.length}</span>
         </div>
         <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
       </button>
@@ -1019,10 +1028,10 @@ const SourceList = ({ data }: { data: any[] }) => {
                     <FileText className="w-3.5 h-3.5 text-orange-500 mt-0.5 shrink-0" />
                     <div className="space-y-1 min-w-0 flex-1">
                       <div className="text-sm text-foreground/90 font-medium leading-snug group-hover:text-blue-600 group-hover:underline decoration-blue-600/30 underline-offset-4">
-                        {item.title}
+                        {language === 'en' ? item.title : (item.titleKo ?? item.title)}
                       </div>
                       <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                        <span className="font-medium text-foreground/70">{item.id}</span>
+                        <span className="font-medium text-foreground/70">{language === 'en' ? item.id : (item.idKo ?? item.id)}</span>
                         {item.date && <span>{item.date}</span>}
                       </div>
                     </div>
@@ -1039,6 +1048,7 @@ const SourceList = ({ data }: { data: any[] }) => {
 
 const NewsResultList = ({ data }: { data: any[] }) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { language } = useLanguage();
 
   if (!data || data.length === 0) return null;
 
@@ -1050,7 +1060,7 @@ const NewsResultList = ({ data }: { data: any[] }) => {
       >
         <div className="flex items-center gap-2 text-muted-foreground">
              <Globe className="w-3.5 h-3.5 text-blue-500" />
-             <span>News Results {data.length}</span>
+             <span>{language === 'en' ? 'News Results' : '뉴스 결과'} {data.length}</span>
         </div>
         <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform duration-200", !isExpanded && "-rotate-90")} />
       </button>
@@ -1070,10 +1080,10 @@ const NewsResultList = ({ data }: { data: any[] }) => {
                     <Globe className="w-3.5 h-3.5 text-blue-500 mt-0.5 shrink-0" />
                     <div className="space-y-1 min-w-0">
                       <div className="text-sm text-foreground/90 font-medium leading-snug group-hover:text-blue-600 group-hover:underline decoration-blue-600/30 underline-offset-4">
-                        {item.title}
+                        {language === 'en' ? item.title : (item.titleKo ?? item.title)}
                       </div>
                       <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                        <span className="font-medium text-foreground/70">{item.id}</span>
+                        <span className="font-medium text-foreground/70">{language === 'en' ? item.id : (item.idKo ?? item.id)}</span>
                         {item.date && <span>{item.date}</span>}
                       </div>
                     </div>
@@ -1386,6 +1396,7 @@ export default function KnowledgeGarden() {
     const newSession = {
       id: newId,
       title: 'New Chat',
+      titleKo: '새 대화',
       messages: []
     };
     setChatSessions([...chatSessions, newSession]);
@@ -1405,7 +1416,7 @@ export default function KnowledgeGarden() {
       if (newSessions.length === 0) {
           // If all deleted, add a new empty one
           const newId = `s${Date.now()}`;
-          setChatSessions([{ id: newId, title: 'New Chat', messages: [] }]);
+          setChatSessions([{ id: newId, title: 'New Chat', titleKo: '새 대화', messages: [] }]);
           setActiveSessionId(newId);
       } else {
           setChatSessions(newSessions);
@@ -3715,7 +3726,7 @@ export default function KnowledgeGarden() {
                                      )}
                                    >
                                      <MessageSquare className={cn("w-3.5 h-3.5", isActive ? "text-blue-500" : "text-muted-foreground")} />
-                                     <span className="max-w-[120px] truncate">{session.title}</span>
+                                     <span className="max-w-[120px] truncate">{language === 'en' ? session.title : ((session as any).titleKo ?? session.title)}</span>
                                      <button
                                        type="button"
                                        onClick={(e) => handleDeleteSession(session.id, e)}
@@ -3739,7 +3750,7 @@ export default function KnowledgeGarden() {
                                type="button"
                                onClick={handleAddSession}
                                data-testid="button-add-copilot-tab"
-                               title="새 대화"
+                               title={language === 'en' ? 'New chat' : '새 대화'}
                                className="flex items-center justify-center w-10 text-muted-foreground hover:text-foreground hover:bg-background/60 transition-colors border-l border-border shrink-0"
                              >
                                <Plus className="w-4 h-4" />
@@ -3750,14 +3761,14 @@ export default function KnowledgeGarden() {
                            {activeSession.messages.length === 0 ? (
                              <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-xs">
                                <Bot className="w-8 h-8 mb-2 opacity-20" />
-                               <p>Start a new conversation</p>
+                               <p>{language === 'en' ? 'Start a new conversation' : '새 대화를 시작하세요'}</p>
                              </div>
                            ) : (
                              activeSession.messages.map((msg, i) => (
                              <div key={i} className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? 'Me' : 'Nexus AI'}</span>
-                                   {msg.time && <span className="text-[10px] text-muted-foreground">{msg.time}</span>}
+                                   <span className="text-[10px] font-bold text-muted-foreground uppercase">{msg.role === 'user' ? (language === 'en' ? 'Me' : '나') : 'Nexus AI'}</span>
+                                   {msg.time && <span className="text-[10px] text-muted-foreground">{language === 'en' ? msg.time : ((msg as any).timeKo ?? msg.time)}</span>}
                                 </div>
                                 
                                 {msg.tool && (
@@ -3801,7 +3812,7 @@ export default function KnowledgeGarden() {
                                           "min-h-[40px] w-full resize-none border-0 bg-transparent shadow-none p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0",
                                           editingMessage?.sessionId === activeSessionId && editingMessage?.index === i ? "text-foreground p-3 min-h-[80px]" : "text-foreground cursor-pointer pointer-events-none"
                                         )}
-                                        value={msg.content}
+                                        value={language === 'en' ? msg.content : ((msg as any).contentKo ?? msg.content)}
                                         readOnly={!(editingMessage?.sessionId === activeSessionId && editingMessage?.index === i)}
                                         onChange={(e) => {
                                           const newSessions = [...chatSessions];
@@ -3854,22 +3865,22 @@ export default function KnowledgeGarden() {
                                       )}
                                     </div>
                                   ) : (
-                                    msg.content
+                                    language === 'en' ? msg.content : ((msg as any).contentKo ?? msg.content)
                                   )}
                                 </div>
                                 {msg.role === 'assistant' && (
                                     <div className="flex justify-between mt-1 items-center">
-                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Rollback">
+                                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={language === 'en' ? 'Rollback' : '되돌리기'}>
                                             <RotateCcw className="w-3.5 h-3.5" />
                                         </Button>
                                         <div className="flex gap-1">
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title="Ontology">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-transparent text-blue-500 hover:text-blue-600" title={language === 'en' ? 'Ontology' : '온톨로지'}>
                                                 <Share2 className="w-4 h-4" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title="Copy text">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-primary" title={language === 'en' ? 'Copy text' : '텍스트 복사'}>
                                                 <Copy className="w-3.5 h-3.5" />
                                             </Button>
-                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title="Delete message">
+                                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-full hover:bg-secondary text-muted-foreground hover:text-red-500" title={language === 'en' ? 'Delete message' : '메시지 삭제'}>
                                                 <Trash2 className="w-3.5 h-3.5" />
                                             </Button>
                                         </div>
@@ -3913,13 +3924,13 @@ export default function KnowledgeGarden() {
                                    transition={{ duration: 1, repeat: Infinity, delay: 0.6 }}
                                  />
                                </div>
-                               <span className="text-sm font-medium text-foreground">Working.</span>
+                               <span className="text-sm font-medium text-foreground">{language === 'en' ? 'Working.' : '처리 중.'}</span>
                              </motion.div>
                           )}
 
                           <div className="relative border border-blue-500 rounded-xl shadow-sm bg-background focus-within:ring-1 focus-within:ring-blue-600 focus-within:border-blue-600 transition-all">
                             <Textarea 
-                              placeholder="Ask anything..." 
+                              placeholder={language === 'en' ? 'Ask anything...' : '무엇이든 물어보세요...'} 
                               className="min-h-[60px] max-h-[200px] w-full resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none p-3 text-sm placeholder:text-muted-foreground/60" 
                             />
                             
