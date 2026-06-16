@@ -26,31 +26,36 @@ import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import heroBanner from "@assets/generated_images/modern_abstract_hero_banner_for_marketing.png";
-import userAvatar from "@assets/generated_images/user_avatar_professional_headshot.png";
+import supplyChainImg from "@assets/generated_images/global_supply_chain_network_with_logistics_nodes.png";
+import semiconductorImg from "@assets/generated_images/semiconductor_supply_chain_network.png";
+import stockChartImg from "@assets/generated_images/financial_stock_market_charts_and_data_visualization.png";
+import rareEarthImg from "@assets/generated_images/rare_earth_mining_map.png";
+import graphAnalyticsImg from "@assets/generated_images/abstract_graph_analytics_illustration.png";
 
 // Mock Data
 const INITIAL_RESOURCES = [
-  { id: 1, name: "logo-white.svg", type: "image", ext: "svg", size: "12 KB", date: "2024-03-15", folder: "Branding", url: null },
-  { id: 2, name: "hero-banner.jpg", type: "image", ext: "jpg", size: "2.4 MB", date: "2024-03-14", folder: "Marketing", url: heroBanner },
-  { id: 3, name: "Q1_Report.pdf", type: "document", ext: "pdf", size: "4.1 MB", date: "2024-03-10", folder: "Reports", url: null },
-  { id: 4, name: "dataset_v1.csv", type: "document", ext: "csv", size: "850 KB", date: "2024-03-08", folder: "Data", url: null },
-  { id: 5, name: "intro_video.mp4", type: "media", ext: "mp4", size: "45.2 MB", date: "2024-03-05", folder: "Marketing", url: null },
-  { id: 6, name: "crime_stats_2023.xlsx", type: "document", ext: "xlsx", size: "1.2 MB", date: "2024-03-01", folder: "Data", url: null },
-  { id: 7, name: "user_avatar_01.png", type: "image", ext: "png", size: "450 KB", date: "2024-02-28", folder: "Users", url: userAvatar },
-  { id: 8, name: "meeting_notes.txt", type: "document", ext: "txt", size: "2 KB", date: "2024-02-28", folder: "Notes", url: null },
-  { id: 9, name: "background_texture.png", type: "image", ext: "png", size: "3.5 MB", date: "2024-02-25", folder: "Assets", url: heroBanner }, // Using hero banner as placeholder for failed generation
-  { id: 10, name: "system_config.json", type: "code", ext: "json", size: "4 KB", date: "2024-02-20", folder: "Config", url: null },
-  { id: 11, name: "chart_style.css", type: "code", ext: "css", size: "8 KB", date: "2024-02-18", folder: "Styles", url: null },
-  { id: 12, name: "alert_sound.mp3", type: "media", ext: "mp3", size: "1.2 MB", date: "2024-02-15", folder: "Assets", url: null },
+  { id: 1, name: "2차전지_공급망_네트워크.png", type: "image", ext: "png", size: "3.2 MB", date: "2026-06-12", folder: "리서치 자료", url: supplyChainImg },
+  { id: 2, name: "반도체_밸류체인_다이어그램.png", type: "image", ext: "png", size: "2.8 MB", date: "2026-06-10", folder: "리서치 자료", url: semiconductorImg },
+  { id: 3, name: "2025_2차전지_시장전망_보고서.pdf", type: "document", ext: "pdf", size: "5.4 MB", date: "2026-06-09", folder: "리서치 자료", url: null },
+  { id: 4, name: "코스피_반도체_섹터_차트.png", type: "image", ext: "png", size: "1.9 MB", date: "2026-06-05", folder: "시장 분석", url: stockChartImg },
+  { id: 5, name: "글로벌_공급망_리스크_점검.pptx", type: "document", ext: "pptx", size: "8.7 MB", date: "2026-06-03", folder: "발표 자료", url: null },
+  { id: 6, name: "코스피_반도체_종목_데이터.xlsx", type: "document", ext: "xlsx", size: "2.2 MB", date: "2026-05-30", folder: "시장 분석", url: null },
+  { id: 7, name: "핵심광물_생산국_분포도.png", type: "image", ext: "png", size: "4.1 MB", date: "2026-05-28", folder: "리서치 자료", url: rareEarthImg },
+  { id: 8, name: "경쟁사_특허_분석_요약.docx", type: "document", ext: "docx", size: "1.3 MB", date: "2026-05-26", folder: "리서치 자료", url: null },
+  { id: 9, name: "지식그래프_분석_대시보드.png", type: "image", ext: "png", size: "2.5 MB", date: "2026-05-22", folder: "발표 자료", url: graphAnalyticsImg },
+  { id: 10, name: "산업동향_원천데이터.csv", type: "document", ext: "csv", size: "6.1 MB", date: "2026-05-20", folder: "데이터셋", url: null },
+  { id: 11, name: "IR_컨퍼런스_발표영상.mp4", type: "media", ext: "mp4", size: "184 MB", date: "2026-05-18", folder: "발표 자료", url: null },
+  { id: 12, name: "전문가_인터뷰_녹음.mp3", type: "media", ext: "mp3", size: "32 MB", date: "2026-05-15", folder: "리서치 자료", url: null },
+  { id: 13, name: "온톨로지_스키마.json", type: "code", ext: "json", size: "18 KB", date: "2026-05-12", folder: "설정", url: null },
+  { id: 14, name: "데이터_매핑_규칙.json", type: "code", ext: "json", size: "9 KB", date: "2026-05-10", folder: "설정", url: null },
 ];
 
 const INITIAL_CATEGORIES = [
-  { id: "all", label: "All Resources", icon: Folder, count: 12 },
-  { id: "image", label: "Images", icon: FileImage, count: 4 },
-  { id: "document", label: "Documents", icon: FileText, count: 4 },
-  { id: "media", label: "Media", icon: FileVideo, count: 2 },
-  { id: "code", label: "Code & Config", icon: File, count: 2 },
+  { id: "all", label: "전체 리소스", icon: Folder, count: 14 },
+  { id: "image", label: "이미지", icon: FileImage, count: 5 },
+  { id: "document", label: "문서", icon: FileText, count: 5 },
+  { id: "media", label: "미디어", icon: FileVideo, count: 2 },
+  { id: "code", label: "코드 & 설정", icon: File, count: 2 },
 ];
 
 export default function ResourcesManager() {
