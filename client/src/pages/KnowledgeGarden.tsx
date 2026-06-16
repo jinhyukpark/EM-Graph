@@ -36,7 +36,7 @@ import "@xyflow/react/dist/style.css";
 import ImageNode from "@/components/graph/ImageNode";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
-import { motion, AnimatePresence, useDragControls } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -632,18 +632,46 @@ const INITIAL_SESSIONS = [
 // --- Components ---
 
 function GraphLegend() {
-    const dragControls = useDragControls();
+    const [offset, setOffset] = useState({ x: 0, y: 0 });
+    const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+
+    const handlePointerDown = (e: React.PointerEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        dragState.current = {
+            startX: e.clientX,
+            startY: e.clientY,
+            baseX: offset.x,
+            baseY: offset.y,
+        };
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent) => {
+        if (!dragState.current) return;
+        e.stopPropagation();
+        setOffset({
+            x: dragState.current.baseX + (e.clientX - dragState.current.startX),
+            y: dragState.current.baseY + (e.clientY - dragState.current.startY),
+        });
+    };
+
+    const handlePointerUp = (e: React.PointerEvent) => {
+        if (!dragState.current) return;
+        e.stopPropagation();
+        dragState.current = null;
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    };
+
     return (
-        <motion.div
-            drag
-            dragControls={dragControls}
-            dragListener={false}
-            dragMomentum={false}
-            dragElastic={0}
+        <div
             className="absolute bottom-6 right-6 z-20 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-lg w-64 overflow-hidden"
+            style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
         >
             <div
-                onPointerDown={(e) => dragControls.start(e)}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
                 className="flex items-center justify-between px-3 py-2 border-b border-border bg-muted/20 cursor-move touch-none select-none"
             >
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
@@ -679,7 +707,7 @@ function GraphLegend() {
                     </div>
                 ))}
             </div>
-        </motion.div>
+        </div>
     )
 }
 
