@@ -297,50 +297,54 @@ function DocTemplateContent({ id }: { id: DocTemplateId }) {
 const INITIAL_FILE_TREE = [
   {
     id: "root",
-    name: "Knowledge Garden",
+    name: "지식 정원",
+    nameEn: "Knowledge Garden",
     type: "root",
     children: [
-      { id: "f1", name: "경쟁사 분석", type: "folder", children: [] },
-      { id: "f2", name: "시장 조사", type: "folder", children: [] },
-      { id: "f3", name: "특허 리서치", type: "folder", children: [] },
-      { id: "f4", name: "산업 동향 리서치", type: "folder", children: [
-        { id: "n1", name: "2차전지 소재 시장 동향", type: "note", tags: ["2차전지", "소재"], createdAt: "2026-05-10" },
-        { id: "n2", name: "글로벌 공급망 리스크 점검", type: "note", sharedByMe: true, sharedWith: ["김대리", "이과장"], tags: ["공급망", "리스크"], createdAt: "2026-05-12" },
-        { id: "n3", name: "신규 사업 기회 발굴", type: "note", isNew: true, tags: ["신사업", "IR"], createdAt: "2026-05-17" }
+      { id: "f1", name: "경쟁사 분석", nameEn: "Competitor Analysis", type: "folder", children: [] },
+      { id: "f2", name: "시장 조사", nameEn: "Market Research", type: "folder", children: [] },
+      { id: "f3", name: "특허 리서치", nameEn: "Patent Research", type: "folder", children: [] },
+      { id: "f4", name: "산업 동향 리서치", nameEn: "Industry Trend Research", type: "folder", children: [
+        { id: "n1", name: "2차전지 소재 시장 동향", nameEn: "Battery Materials Market Trends", type: "note", tags: ["2차전지", "소재"], createdAt: "2026-05-10" },
+        { id: "n2", name: "글로벌 공급망 리스크 점검", nameEn: "Global Supply Chain Risk Review", type: "note", sharedByMe: true, sharedWith: ["김대리", "이과장"], tags: ["공급망", "리스크"], createdAt: "2026-05-12" },
+        { id: "n3", name: "신규 사업 기회 발굴", nameEn: "New Business Opportunities", type: "note", isNew: true, tags: ["신사업", "IR"], createdAt: "2026-05-17" }
       ]},
-      { id: "f5", name: "주간 회의록", type: "folder", children: [] },
-      { id: "f6", name: "2024 Analysis", type: "folder", children: [
-         { id: "n4", name: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, sharedByMe: true, sharedWith: ["전략기획팀", "법무팀"], tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
+      { id: "f5", name: "주간 회의록", nameEn: "Weekly Meeting Notes", type: "folder", children: [] },
+      { id: "f6", name: "2024 분석", nameEn: "2024 Analysis", type: "folder", children: [
+         { id: "n4", name: "LG에너지솔루션 & SK이노베이션", nameEn: "LG Energy Solution & SK Innovation", type: "note", active: true, isNew: true, sharedByMe: true, sharedWith: ["전략기획팀", "법무팀"], tags: ["Battery", "EV", "Patent"], createdAt: "2026-05-15" }
       ]}
     ]
   },
   {
     id: "shared-root",
-    name: "Shared with me",
+    name: "공유받은 항목",
+    nameEn: "Shared with me",
     type: "shared-root",
     subscribed: true,
     children: [
       {
         id: "sf1",
         name: "주식 투자 인사이트",
+        nameEn: "Stock Investment Insights",
         type: "folder",
         subscribed: true,
         owner: "박투자",
         children: [
-          { id: "sn1", name: "2024 코스피 반도체 섹터 전망", type: "note", subscribed: true, owner: "박투자", tags: ["반도체", "코스피"], createdAt: "2026-04-22" },
-          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["반도체", "IR"], createdAt: "2026-05-14" },
-          { id: "sn3", name: "배터리 3사 투자 포인트", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["Battery", "EV"], createdAt: "2026-05-16" },
+          { id: "sn1", name: "2024 코스피 반도체 섹터 전망", nameEn: "2024 KOSPI Semiconductor Sector Outlook", type: "note", subscribed: true, owner: "박투자", tags: ["반도체", "코스피"], createdAt: "2026-04-22" },
+          { id: "sn2", name: "삼성전자 vs SK하이닉스 비교 분석", nameEn: "Samsung vs SK Hynix Comparison", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["반도체", "IR"], createdAt: "2026-05-14" },
+          { id: "sn3", name: "배터리 3사 투자 포인트", nameEn: "Battery Big 3 Investment Points", type: "note", subscribed: true, owner: "박투자", isNew: true, tags: ["Battery", "EV"], createdAt: "2026-05-16" },
         ]
       },
       {
         id: "sf2",
         name: "글로벌 매크로 리포트",
+        nameEn: "Global Macro Report",
         type: "folder",
         subscribed: true,
         owner: "김애널",
         children: [
-          { id: "sn4", name: "美 연준 금리 시나리오", type: "note", subscribed: true, owner: "김애널", isNew: true, tags: ["매크로", "금리"], createdAt: "2026-05-17" },
-          { id: "sn5", name: "원/달러 환율 주간 노트", type: "note", subscribed: true, owner: "김애널", tags: ["매크로", "환율"], createdAt: "2026-04-05" },
+          { id: "sn4", name: "美 연준 금리 시나리오", nameEn: "US Fed Rate Scenarios", type: "note", subscribed: true, owner: "김애널", isNew: true, tags: ["매크로", "금리"], createdAt: "2026-05-17" },
+          { id: "sn5", name: "원/달러 환율 주간 노트", nameEn: "USD/KRW Weekly FX Note", type: "note", subscribed: true, owner: "김애널", tags: ["매크로", "환율"], createdAt: "2026-04-05" },
         ]
       }
     ]
@@ -715,35 +719,38 @@ const AVAILABLE_SUBSCRIPTIONS: any[] = [
   {
     id: "sf-avail-1",
     name: "ESG 투자 트렌드",
+    nameEn: "ESG Investment Trends",
     type: "folder",
     subscribed: true,
     owner: "이ESG",
     children: [
-      { id: "sn-avail-1a", name: "탄소 배출권 시장 분석", type: "note", subscribed: true, owner: "이ESG" },
-      { id: "sn-avail-1b", name: "그린본드 발행 현황", type: "note", subscribed: true, owner: "이ESG" },
+      { id: "sn-avail-1a", name: "탄소 배출권 시장 분석", nameEn: "Carbon Credit Market Analysis", type: "note", subscribed: true, owner: "이ESG" },
+      { id: "sn-avail-1b", name: "그린본드 발행 현황", nameEn: "Green Bond Issuance Status", type: "note", subscribed: true, owner: "이ESG" },
     ],
   },
   {
     id: "sf-avail-2",
     name: "美 빅테크 실적 모음",
+    nameEn: "US Big Tech Earnings",
     type: "folder",
     subscribed: true,
     owner: "정퀀트",
     children: [
-      { id: "sn-avail-2a", name: "Apple Q4 실적 노트", type: "note", subscribed: true, owner: "정퀀트" },
-      { id: "sn-avail-2b", name: "NVIDIA 데이터센터 매출", type: "note", subscribed: true, owner: "정퀀트" },
-      { id: "sn-avail-2c", name: "Meta 광고 트렌드", type: "note", subscribed: true, owner: "정퀀트" },
+      { id: "sn-avail-2a", name: "Apple Q4 실적 노트", nameEn: "Apple Q4 Earnings Note", type: "note", subscribed: true, owner: "정퀀트" },
+      { id: "sn-avail-2b", name: "NVIDIA 데이터센터 매출", nameEn: "NVIDIA Data Center Revenue", type: "note", subscribed: true, owner: "정퀀트" },
+      { id: "sn-avail-2c", name: "Meta 광고 트렌드", nameEn: "Meta Ad Trends", type: "note", subscribed: true, owner: "정퀀트" },
     ],
   },
   {
     id: "sf-avail-3",
     name: "암호화폐 온체인 분석",
+    nameEn: "Crypto On-chain Analysis",
     type: "folder",
     subscribed: true,
     owner: "최체인",
     children: [
-      { id: "sn-avail-3a", name: "비트코인 고래 지갑 추적", type: "note", subscribed: true, owner: "최체인" },
-      { id: "sn-avail-3b", name: "이더리움 스테이킹 리포트", type: "note", subscribed: true, owner: "최체인" },
+      { id: "sn-avail-3a", name: "비트코인 고래 지갑 추적", nameEn: "Bitcoin Whale Wallet Tracking", type: "note", subscribed: true, owner: "최체인" },
+      { id: "sn-avail-3b", name: "이더리움 스테이킹 리포트", nameEn: "Ethereum Staking Report", type: "note", subscribed: true, owner: "최체인" },
     ],
   },
 ];
@@ -789,6 +796,8 @@ const FileTreeNode = ({
   viewMode: TreeViewMode;
 }) => {
   const [expanded, setExpanded] = useState(true);
+  const { language } = useLanguage();
+  const displayName = language === 'en' ? (node.nameEn ?? node.name) : node.name;
   const isSubscribed = !!node.subscribed;
   const isSharedRoot = node.type === 'shared-root';
   const isSubscribedFolder = isSubscribed && !isSharedRoot && node.type === 'folder';
@@ -836,7 +845,7 @@ const FileTreeNode = ({
           <FileText className={cn("w-4 h-4", fileIconColor)} />
         )}
         <span className={cn("truncate", isSharedRoot && "font-semibold text-indigo-600 dark:text-indigo-300 uppercase tracking-wide text-xs")}>
-          {node.name}
+          {displayName}
         </span>
 
         {isFolderLike && viewMode.showNoteCount && (
@@ -941,7 +950,7 @@ const FileTreeNode = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel className="text-xs truncate">{node.name}</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs truncate">{displayName}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => onRemoveSubscription?.(node.id)}
@@ -1261,7 +1270,7 @@ const WikiLink = ({ children }: { children: string }) => {
 export default function KnowledgeGarden() {
   console.log("[KnowledgeGarden] Component rendering...");
 
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -1640,12 +1649,12 @@ export default function KnowledgeGarden() {
     if (noFilters) return nodes;
     const walk = (node: any): any | null => {
       if (node.type === 'note') {
-        const nameMatches = !q || (node.name || "").toLowerCase().includes(q);
+        const nameMatches = !q || `${node.name || ""} ${node.nameEn || ""}`.toLowerCase().includes(q);
         if (nameMatches && noteMatchesFilters(node)) return { ...node };
         return null;
       }
       const filteredChildren = (node.children || []).map(walk).filter(Boolean);
-      const selfNameMatches = !!q && (node.name || "").toLowerCase().includes(q);
+      const selfNameMatches = !!q && `${node.name || ""} ${node.nameEn || ""}`.toLowerCase().includes(q);
       if (filteredChildren.length > 0 || (selfNameMatches && selectedTags.length === 0 && dateFilter === 'all' && shareFilter === 'all')) {
         return { ...node, children: filteredChildren };
       }
@@ -1740,11 +1749,12 @@ export default function KnowledgeGarden() {
 
   const allNotesFlat = (() => {
     const out: Array<{ id: string; name: string; path: string[]; createdAt?: string; subscribed?: boolean }> = [];
+    const pickName = (node: any) => (language === 'en' ? (node.nameEn ?? node.name) : node.name);
     const walk = (n: any, path: string[]) => {
       if (n.type === 'note') {
-        out.push({ id: n.id, name: n.name, path, createdAt: n.createdAt, subscribed: n.subscribed });
+        out.push({ id: n.id, name: pickName(n), path, createdAt: n.createdAt, subscribed: n.subscribed });
       }
-      (n.children || []).forEach((c: any) => walk(c, n.type === 'root' || n.type === 'shared-root' ? [n.name] : [...path, n.name]));
+      (n.children || []).forEach((c: any) => walk(c, n.type === 'root' || n.type === 'shared-root' ? [pickName(n)] : [...path, pickName(n)]));
     };
     fileTree.forEach((n: any) => walk(n, []));
     return out;
@@ -4141,6 +4151,8 @@ function SubscriptionManageDialog({
   onAdd: (item: any) => void;
   onRemove: (id: string) => void;
 }) {
+  const { language } = useLanguage();
+  const pickName = (node: any) => (language === 'en' ? (node.nameEn ?? node.name) : node.name);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
@@ -4179,7 +4191,7 @@ function SubscriptionManageDialog({
                     <div key={sub.id} className="flex items-start gap-3 p-3 hover:bg-muted/30 transition-colors">
                       <Folder className="w-4 h-4 text-indigo-400 mt-1 shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{sub.name}</div>
+                        <div className="text-sm font-medium truncate">{pickName(sub)}</div>
                         <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
                           <Share2 className="w-2.5 h-2.5" />
                           {sub.owner} · {sub.children?.length ?? 0} notes
@@ -4223,7 +4235,7 @@ function SubscriptionManageDialog({
                     <div key={sub.id} className="flex items-start gap-3 p-3 hover:bg-muted/30 transition-colors">
                       <Folder className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{sub.name}</div>
+                        <div className="text-sm font-medium truncate">{pickName(sub)}</div>
                         <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
                           <Share2 className="w-2.5 h-2.5" />
                           {sub.owner} · {sub.children?.length ?? 0} notes
