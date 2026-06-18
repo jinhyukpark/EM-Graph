@@ -885,10 +885,10 @@ export default function Settings() {
 
              {/* License Change Preview Modal */}
              <Dialog open={changeOpen} onOpenChange={setChangeOpen}>
-               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-50/80" data-testid="dialog-change-preview">
+               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-muted/30" data-testid="dialog-change-preview">
                  <DialogHeader>
-                   <div className="flex items-start justify-between gap-4">
-                     <div className="space-y-1 pr-4">
+                   <div className="flex items-start justify-between gap-4 pr-8">
+                     <div className="space-y-1">
                        <DialogTitle className="flex items-center gap-2 text-xl">
                          <Zap className="w-5 h-5 text-primary" />
                          {t("stChangePreviewTitle")}
