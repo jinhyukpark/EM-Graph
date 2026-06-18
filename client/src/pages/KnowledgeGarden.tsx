@@ -16,7 +16,7 @@ import {
   Play, Pause, ChevronsLeft, ChevronsRight, ChevronLeft, ZoomIn, ZoomOut, Filter, Infinity as InfinityIcon,
   Heading1, Heading2, Heading3, Bold, Italic, List, ListOrdered, CheckSquare, Link2, Table as TableIcon, ImagePlus, Undo2, Redo2, Palette, Check,
   Brain, ShoppingBag, DollarSign, CheckCircle2, Info, Lock, Upload, Loader2,
-  Hexagon, ToggleLeft, BarChart3,
+  Hexagon, ToggleLeft, BarChart3, Lightbulb, Mail, Target, ListChecks, CalendarClock,
   Pencil, Eraser, Highlighter, Paintbrush, Minus
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,7 +137,7 @@ const TEXT_COLORS = [
   { id: 'orange', name: '오렌지', value: '#f97316' },
 ];
 
-type DocTemplateId = 'meeting' | 'report' | 'summary' | 'proposal' | 'action';
+type DocTemplateId = 'meeting' | 'report' | 'planning' | 'email';
 
 const DOC_TEMPLATES: {
   id: DocTemplateId;
@@ -145,12 +145,78 @@ const DOC_TEMPLATES: {
   desc: string;
   icon: typeof FileText;
   accent: string;
+  overview: string;
+  insights: string[];
+  benefits: string[];
 }[] = [
-  { id: 'meeting', label: '회의록', desc: '일시·참석자·안건·결정사항 형식으로 재작성', icon: Users, accent: 'text-blue-600 bg-blue-50 border-blue-200' },
-  { id: 'report', label: '보고서', desc: '개요·배경·분석·결론·권고 형식의 정식 보고서', icon: FileText, accent: 'text-violet-600 bg-violet-50 border-violet-200' },
-  { id: 'summary', label: '핵심 요약', desc: '한 페이지 경영진용 요약 (Executive Summary)', icon: LayoutTemplate, accent: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-  { id: 'proposal', label: '제안서', desc: '제안 배경·목표·실행방안·기대효과 구성', icon: Edit3, accent: 'text-amber-600 bg-amber-50 border-amber-200' },
-  { id: 'action', label: '액션 아이템', desc: '담당자·기한이 포함된 실행 과제 체크리스트', icon: CheckSquare, accent: 'text-rose-600 bg-rose-50 border-rose-200' },
+  {
+    id: 'meeting',
+    label: '회의록',
+    desc: '논의 내용을 배경, 주요 논의, 결정사항, 액션아이템 중심으로 정리합니다.',
+    icon: Edit3,
+    accent: 'text-blue-600 bg-blue-50 border-blue-200',
+    overview: '회의 내용을 일시·참석자·안건의 머리글과 함께 배경, 주요 논의, 결정사항, 액션 아이템 순서로 구조화합니다. 누가 무엇을 언제까지 하기로 했는지가 한눈에 드러나도록 정리합니다.',
+    insights: [
+      '결정사항과 단순 논의를 분리해 회의의 결론이 명확해집니다.',
+      '담당자·기한이 붙은 액션 아이템으로 후속 실행이 누락되지 않습니다.',
+      '배경 요약으로 참석하지 않은 동료도 맥락을 빠르게 파악합니다.',
+    ],
+    benefits: [
+      '회의 후 공유·보고 시간을 단축',
+      '실행 책임 소재를 명확히 기록',
+    ],
+  },
+  {
+    id: 'report',
+    label: '보고서',
+    desc: '분석 대상의 배경, 범위, 주요 발견, 결론과 제언을 보고서 형태로 정리합니다.',
+    icon: BarChart3,
+    accent: 'text-violet-600 bg-violet-50 border-violet-200',
+    overview: '분석 대상을 개요·배경·분석·결론 및 권고의 정식 보고서 흐름으로 재구성합니다. 근거와 발견을 단계적으로 제시하고 마지막에 의사결정을 위한 제언으로 마무리합니다.',
+    insights: [
+      '발견과 결론을 논리적 순서로 배치해 설득력이 높아집니다.',
+      '핵심 쟁점이 분석 섹션에 정리되어 검토가 쉬워집니다.',
+      '권고 섹션이 다음 의사결정의 출발점이 됩니다.',
+    ],
+    benefits: [
+      '경영진 보고에 바로 활용 가능한 형식',
+      '근거 기반의 일관된 문서 구조',
+    ],
+  },
+  {
+    id: 'planning',
+    label: '기획서',
+    desc: '아이디어나 요구사항을 목표, 문제정의, 범위, 요구사항, 일정, 성공 지표로 정리합니다.',
+    icon: Lightbulb,
+    accent: 'text-amber-600 bg-amber-50 border-amber-200',
+    overview: '아이디어와 요구사항을 목표·문제정의·범위·요구사항·일정·성공 지표의 기획 프레임으로 정리합니다. 무엇을 왜 만들고 어떻게 성공을 측정할지가 한 문서에 담깁니다.',
+    insights: [
+      '문제정의와 목표를 분리해 기획의 방향이 또렷해집니다.',
+      '범위와 요구사항을 명시해 과업의 경계가 분명해집니다.',
+      '성공 지표가 있어 완료 기준을 미리 합의할 수 있습니다.',
+    ],
+    benefits: [
+      '이해관계자 합의를 빠르게 도출',
+      '실행 일정과 우선순위를 한눈에 정리',
+    ],
+  },
+  {
+    id: 'email',
+    label: '이메일',
+    desc: '문서 내용을 수신자에게 공유하기 좋은 업무 이메일 형식으로 바꿉니다.',
+    icon: Mail,
+    accent: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+    overview: '문서의 핵심을 수신자·제목·인사·본문·맺음말을 갖춘 업무 이메일로 변환합니다. 바쁜 수신자가 빠르게 요점과 요청사항을 파악할 수 있도록 간결하게 정리합니다.',
+    insights: [
+      '요점을 앞단에 배치해 수신자가 핵심을 먼저 봅니다.',
+      '요청사항과 기한이 분명해 회신율이 높아집니다.',
+      '정중한 업무 어조로 그대로 발송할 수 있습니다.',
+    ],
+    benefits: [
+      '문서를 즉시 공유 가능한 메일로 전환',
+      '커뮤니케이션 작성 시간을 절약',
+    ],
+  },
 ];
 
 function DocTemplateContent({ id }: { id: DocTemplateId }) {
@@ -221,76 +287,227 @@ function DocTemplateContent({ id }: { id: DocTemplateId }) {
       </>
     );
   }
-  if (id === 'summary') {
+  if (id === 'planning') {
     return (
       <>
-        <div className="not-prose rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 mb-6">
-          <div className="flex items-center gap-2 mb-3 text-emerald-700 font-semibold text-sm">
-            <LayoutTemplate className="w-4 h-4" /> 핵심 요약 (Executive Summary)
-          </div>
-          <ul className="space-y-2.5 text-sm text-foreground/90">
-            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> LG에너지솔루션 vs SK이노베이션 배터리 특허·영업비밀 분쟁.</li>
-            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 핵심 쟁점: CCS 분리막 기술 유출, 하이니켈 양극재 공정 침해.</li>
-            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 분쟁 특허 4건 검토 — 모두 공개 상태, 청구항 범위가 관건.</li>
-            <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">•</span> 권고: 선행기술 방어 + 크로스 라이선싱 협상 병행.</li>
-          </ul>
-        </div>
-        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">한눈에 보기</h3>
+        <p className="lead text-lg text-foreground/80 mb-8 leading-relaxed tracking-wide">
+          LG-SK 배터리 분쟁 대응을 위한 사내 분석 플랫폼 고도화 기획안. 분쟁 데이터를 한 곳에서 추적·분석하기 위한 목표와 범위를 정의한다.
+        </p>
+        <h3 className="mt-8 mb-4 text-base font-bold text-foreground">1. 목표</h3>
         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
-          <p className="mb-3">분쟁의 본질은 기술 유출 여부 입증에 있으며, 단기적으로는 협상, 장기적으로는 특허 무효 심판 대응이 핵심 변수다.</p>
+          <p className="mb-3">분쟁 관련 특허·소송·기술 자료를 통합 관리하고, 대응 전략 수립 시간을 50% 단축한다.</p>
         </div>
-      </>
-    );
-  }
-  if (id === 'proposal') {
-    return (
-      <>
-        <h3 className="mt-2 mb-4 text-base font-bold text-foreground">1. 제안 배경</h3>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 문제 정의</h3>
         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
-          <p className="mb-3">장기 소송에 따른 비용·불확실성을 줄이기 위해 분쟁 조기 종결 전략을 제안한다.</p>
+          <p className="mb-3">자료가 팀별로 흩어져 있어 쟁점 파악과 의사결정이 지연되고, 동일 분석이 반복된다.</p>
         </div>
-        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">2. 목표</h3>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 범위 / 요구사항</h3>
         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
           <ul className="list-disc pl-5 space-y-2 text-foreground/90">
-            <li>2026년 상반기 내 협상 타결 또는 핵심 특허 방어 확정.</li>
-            <li>핵심 기술 자산 보호 및 추가 유출 리스크 차단.</li>
+            <li>특허 4건 및 법원 제출 자료 통합 인덱싱.</li>
+            <li>쟁점별 타임라인 및 담당자 매핑 기능.</li>
+            <li>권한 기반 열람 및 변경 이력 추적.</li>
           </ul>
         </div>
-        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">3. 실행 방안</h3>
+        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 일정 / 성공 지표</h3>
         <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
-          <ol className="list-decimal pl-5 space-y-2 text-foreground/90 marker:text-muted-foreground marker:font-medium">
-            <li>선행기술 조사로 상대 특허 무효 가능성 확보.</li>
-            <li>크로스 라이선싱 협상 카드 마련.</li>
-            <li>대외 커뮤니케이션 및 IR 메시지 정렬.</li>
-          </ol>
-        </div>
-        <h3 className="mt-10 mb-4 text-base font-bold text-foreground">4. 기대 효과</h3>
-        <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
-          <p className="mb-3">소송 비용 절감, 기술 자산 보호, 시장 신뢰 유지의 3대 효과를 기대할 수 있다.</p>
+          <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+            <li>1분기 파일럿 → 2분기 전사 확산.</li>
+            <li>성공 지표: 자료 검색 시간 50% 단축, 중복 분석 0건.</li>
+          </ul>
         </div>
       </>
     );
   }
   return (
     <>
-      <p className="lead text-base text-foreground/80 mb-6 leading-relaxed">분쟁 대응을 위한 실행 과제 목록. 담당자와 기한을 기준으로 진행 상황을 관리한다.</p>
-      <div className="not-prose space-y-2.5">
-        {[
-          { done: true, task: '초기 법원 제출 자료 검토', owner: '김애널', due: '완료 2024-12-01' },
-          { done: false, task: 'SK 배터리 모듈 기술 도면 분석', owner: '최기술', due: '2025-12-22' },
-          { done: false, task: '크로스 라이선싱 대응안 초안 작성', owner: '박법무', due: '2025-12-26' },
-          { done: false, task: '손해배상/로열티 모델 시나리오 작성', owner: '이전략', due: '2025-12-29' },
-          { done: false, task: '선행기술 방어 전략 유효성 검증', owner: '최기술', due: '2025-12-31' },
-        ].map((item, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
-            <input type="checkbox" checked={item.done} readOnly className="h-4 w-4 rounded border-gray-300 text-blue-600 accent-blue-600 cursor-default shrink-0" />
-            <span className={cn("flex-1 text-sm", item.done ? "line-through text-muted-foreground" : "text-foreground/90")}>{item.task}</span>
-            <Badge variant="secondary" className="text-[10px] font-normal shrink-0">{item.owner}</Badge>
-            <span className="text-xs text-muted-foreground shrink-0 w-28 text-right">{item.due}</span>
-          </div>
-        ))}
+      <div className="not-prose mb-8 rounded-xl border border-border bg-muted/20 p-5">
+        <div className="grid grid-cols-1 gap-y-2.5 text-sm">
+          <div><span className="text-muted-foreground w-16 inline-block">받는 사람</span><span className="font-medium text-foreground">전략기획팀, 법무팀</span></div>
+          <div><span className="text-muted-foreground w-16 inline-block">제목</span><span className="font-medium text-foreground">[공유] LG-SK 배터리 특허 분쟁 대응 방향 정리</span></div>
+        </div>
       </div>
+      <p className="mb-4">안녕하세요, 전략기획팀 김애널입니다.</p>
+      <p className="mb-4">LG-SK 배터리 특허 분쟁 관련 회의 내용을 아래와 같이 공유드립니다. 주요 결정사항과 요청사항을 먼저 확인 부탁드립니다.</p>
+      <h3 className="mt-8 mb-3 text-base font-bold text-foreground">핵심 요약</h3>
+      <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+        <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+          <li>CCS 분리막·하이니켈 양극재 공정이 핵심 쟁점입니다.</li>
+          <li>선행기술 방어와 크로스 라이선싱 협상을 병행합니다.</li>
+        </ul>
+      </div>
+      <h3 className="mt-8 mb-3 text-base font-bold text-foreground">요청 사항</h3>
+      <div className="pl-6 border-l-2 border-transparent hover:border-muted transition-colors">
+        <ul className="list-disc pl-5 space-y-2 text-foreground/90">
+          <li>법무팀: 크로스 라이선싱 대응안 초안 검토 (~12/26)</li>
+          <li>전략기획팀: 손해배상 모델 시나리오 회신 (~12/29)</li>
+        </ul>
+      </div>
+      <p className="mt-6 mb-1">감사합니다.</p>
+      <p className="text-muted-foreground">김애널 드림</p>
     </>
+  );
+}
+
+function TemplateConvertDialog({
+  open,
+  onOpenChange,
+  applied,
+  onApply,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  applied: DocTemplateId[];
+  onApply: (id: DocTemplateId) => void;
+}) {
+  const [selectedId, setSelectedId] = useState<DocTemplateId>(DOC_TEMPLATES[0].id);
+  const [tab, setTab] = useState<'overview' | 'preview'>('overview');
+
+  useEffect(() => {
+    if (open) {
+      setSelectedId(DOC_TEMPLATES[0].id);
+      setTab('overview');
+    }
+  }, [open]);
+
+  const selected = DOC_TEMPLATES.find((t) => t.id === selectedId) ?? DOC_TEMPLATES[0];
+  const SelectedIcon = selected.icon;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden" data-testid="dialog-templatize">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+          <DialogTitle className="text-lg font-bold">AI 문서 정리 스타일 선택</DialogTitle>
+          <DialogDescription>
+            원본 문서를 선택한 스타일로 재정리합니다. 정리된 문서는 노트 상단에 탭으로 추가됩니다.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex h-[460px]">
+          {/* Left: style presets */}
+          <div className="w-72 shrink-0 border-r border-border bg-muted/20 flex flex-col">
+            <div className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              스타일 프리셋
+            </div>
+            <ScrollArea className="flex-1">
+              <div className="p-3 pt-1 space-y-2">
+                {DOC_TEMPLATES.map((tpl) => {
+                  const Icon = tpl.icon;
+                  const isActive = tpl.id === selectedId;
+                  const isApplied = applied.includes(tpl.id);
+                  return (
+                    <button
+                      key={tpl.id}
+                      onClick={() => setSelectedId(tpl.id)}
+                      data-testid={`card-template-${tpl.id}`}
+                      className={cn(
+                        "group relative w-full flex items-start gap-3 rounded-xl border p-3 text-left transition-all",
+                        isActive
+                          ? "border-primary bg-primary/5 shadow-sm"
+                          : "border-border bg-card hover:border-primary/40 hover:shadow-sm"
+                      )}
+                    >
+                      <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", tpl.accent)}>
+                        <Icon className="w-4.5 h-4.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-sm text-foreground">{tpl.label}</span>
+                          {isApplied && <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />}
+                        </div>
+                        <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed line-clamp-2">{tpl.desc}</p>
+                      </div>
+                      {isActive && (
+                        <Badge className="absolute top-2 right-2 h-5 px-1.5 text-[10px] font-medium" data-testid={`badge-selected-${tpl.id}`}>
+                          선택됨
+                        </Badge>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          </div>
+
+          {/* Right: tabs panel */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            <Tabs value={tab} onValueChange={(v) => setTab(v as 'overview' | 'preview')} className="flex flex-col flex-1 min-h-0">
+              <div className="px-5 pt-4">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="overview" data-testid="tab-template-overview">템플릿 개요 및 인사이트</TabsTrigger>
+                  <TabsTrigger value="preview" data-testid="tab-template-preview">템플릿 미리보기</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="overview" className="flex-1 min-h-0 m-0">
+                <ScrollArea className="h-full">
+                  <div className="px-6 py-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg border", selected.accent)}>
+                        <SelectedIcon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-foreground">{selected.label}</div>
+                        <div className="text-xs text-muted-foreground">AI 문서 정리 스타일</div>
+                      </div>
+                    </div>
+
+                    <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground mb-2">
+                      <Info className="w-4 h-4 text-primary" /> 템플릿 개요
+                    </h4>
+                    <p className="text-sm text-foreground/80 leading-relaxed mb-6">{selected.overview}</p>
+
+                    <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground mb-2">
+                      <Lightbulb className="w-4 h-4 text-amber-500" /> 이렇게 정리하면
+                    </h4>
+                    <ul className="space-y-2 mb-6">
+                      {selected.insights.map((it, i) => (
+                        <li key={i} className="flex gap-2 text-sm text-foreground/80 leading-relaxed">
+                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground mb-2">
+                      <TrendingUp className="w-4 h-4 text-emerald-500" /> 기대 효과
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selected.benefits.map((b, i) => (
+                        <Badge key={i} variant="secondary" className="font-normal">{b}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="preview" className="flex-1 min-h-0 m-0">
+                <ScrollArea className="h-full">
+                  <div className="px-6 py-5">
+                    <div className="rounded-xl border border-border bg-card p-6">
+                      <h2 className="text-xl font-bold text-foreground mb-1">{selected.label}</h2>
+                      <p className="text-xs text-muted-foreground mb-5">LG에너지솔루션 &amp; SK이노베이션 · 예시 미리보기</p>
+                      <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:scroll-mt-4">
+                        <DocTemplateContent id={selected.id} />
+                      </div>
+                    </div>
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+
+        <DialogFooter className="px-6 py-4 border-t border-border">
+          <Button variant="outline" onClick={() => onOpenChange(false)} data-testid="button-template-cancel">
+            취소
+          </Button>
+          <Button onClick={() => onApply(selectedId)} data-testid="button-template-apply">
+            <Sparkles className="w-4 h-4 mr-1.5" /> 이 스타일로 정리 실행
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -3994,45 +4211,12 @@ export default function KnowledgeGarden() {
             open={showShareNotebookDialog}
             onOpenChange={setShowShareNotebookDialog}
           />
-          <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
-            <DialogContent className="max-w-2xl" data-testid="dialog-templatize">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <LayoutTemplate className="w-5 h-5 text-primary" />
-                  문서 템플릿으로 변환
-                </DialogTitle>
-                <DialogDescription>
-                  원본 문서를 선택한 형식으로 재작성합니다. 변환된 문서는 노트 상단에 탭으로 추가되어 자유롭게 전환할 수 있습니다.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-3 py-2">
-                {DOC_TEMPLATES.map((tpl) => {
-                  const Icon = tpl.icon;
-                  const added = docTemplates.includes(tpl.id);
-                  return (
-                    <button
-                      key={tpl.id}
-                      onClick={() => applyDocTemplate(tpl.id)}
-                      data-testid={`card-template-${tpl.id}`}
-                      className={cn(
-                        "group relative flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-all hover:shadow-md hover:border-primary/40",
-                        added ? "border-primary/40 bg-primary/5" : "border-border bg-card"
-                      )}
-                    >
-                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg border", tpl.accent)}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                        {tpl.label}
-                        {added && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{tpl.desc}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <TemplateConvertDialog
+            open={showTemplateDialog}
+            onOpenChange={setShowTemplateDialog}
+            applied={docTemplates}
+            onApply={applyDocTemplate}
+          />
           <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
             <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" data-testid="dialog-search">
               <DialogHeader className="sr-only">
