@@ -59,6 +59,7 @@ export default function Settings() {
   const [detailPlugin, setDetailPlugin] = useState<PluginInfo | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailSubscribed, setDetailSubscribed] = useState(false);
+  const [pluginTab, setPluginTab] = useState("subscribed");
   const openPluginDetail = (plugin: PluginInfo, subscribed: boolean) => {
     setDetailPlugin(plugin);
     setDetailSubscribed(subscribed);
@@ -1108,16 +1109,20 @@ export default function Settings() {
              </div>
 
              <Card className="mb-6">
-               <CardHeader>
-                 <CardTitle className="text-lg" data-testid="text-active-plugins-title">{t("stActivePlugins")}</CardTitle>
-                 <CardDescription>{t("stActivePluginsDesc")}</CardDescription>
-               </CardHeader>
-               <CardContent>
-                 {subscribedPlugins.length === 0 ? (
-                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
-                 ) : (
-                   <div className="space-y-3">
-                     {subscribedPlugins.map((p) => (
+               <CardContent className="pt-6">
+                 <Tabs value={pluginTab} onValueChange={setPluginTab} className="space-y-4">
+                   <TabsList className="grid w-full grid-cols-2 sm:max-w-md">
+                     <TabsTrigger value="subscribed" data-testid="tab-plugins-subscribed">{t("stActivePlugins")}</TabsTrigger>
+                     <TabsTrigger value="notSubscribed" data-testid="tab-plugins-not-subscribed">{t("stPluginNotSubscribed")}</TabsTrigger>
+                   </TabsList>
+
+                   <TabsContent value="subscribed" className="space-y-4 mt-2">
+                     <p className="text-sm text-muted-foreground" data-testid="text-active-plugins-desc">{t("stActivePluginsDesc")}</p>
+                     {subscribedPlugins.length === 0 ? (
+                       <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
+                     ) : (
+                       <div className="space-y-3">
+                         {subscribedPlugins.map((p) => (
                        <div
                          key={p.id}
                          className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
@@ -1195,15 +1200,10 @@ export default function Settings() {
                      ))}
                    </div>
                  )}
-               </CardContent>
-             </Card>
+                   </TabsContent>
 
-             <Card className="mb-6">
-               <CardHeader>
-                 <CardTitle className="text-lg" data-testid="text-not-subscribed-plugins-title">{t("stPluginNotSubscribed")}</CardTitle>
-                 <CardDescription>{t("stPluginNotSubscribedDesc")}</CardDescription>
-               </CardHeader>
-               <CardContent>
+                   <TabsContent value="notSubscribed" className="space-y-4 mt-2">
+                     <p className="text-sm text-muted-foreground" data-testid="text-not-subscribed-plugins-desc">{t("stPluginNotSubscribedDesc")}</p>
                  {notSubscribedPlugins.length === 0 ? (
                    <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneNotSubscribed")}</p>
                  ) : (
@@ -1242,6 +1242,8 @@ export default function Settings() {
                      ))}
                    </div>
                  )}
+                   </TabsContent>
+                 </Tabs>
                </CardContent>
              </Card>
 
