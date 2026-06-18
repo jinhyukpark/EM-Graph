@@ -13,13 +13,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye } from "lucide-react";
+import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
+import PaymentModal from "@/components/settings/PaymentModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
 import { useOrgLogo } from "@/lib/orgLogo";
 import { useRef } from "react";
 import { Building2, Upload, X as XIcon } from "lucide-react";
+
+interface PaymentContext {
+  title: string;
+  subtitle: string;
+  itemName: string;
+  itemDescription?: string;
+  itemPrice: number;
+  changeTypeLabel: string;
+  billingTimingLabel: string;
+  isImmediate: boolean;
+  paymentLineLabel: string;
+  footerNote: string;
+  confirmLabel: string;
+  formatAmount: (n: number) => string;
+  onConfirm: () => void;
+}
 
 export default function Settings() {
   const { language, setLanguage, t } = useLanguage();
@@ -46,15 +64,39 @@ export default function Settings() {
   };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
-  const [subscribedPlugins, setSubscribedPlugins] = useState([
-    { id: "p1", name: "Graph AI Copilot", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답 AI 어시스턴트", price: 29, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", canceled: false },
-    { id: "p2", name: "Snowflake Connector", desc: "Snowflake 웨어하우스 실시간 데이터 동기화", price: 49, Icon: Database, iconColor: "text-sky-600 bg-sky-50", canceled: false },
-    { id: "p6", name: "Slack Alerts", desc: "그래프 변동을 실시간으로 슬랙 채널에 알림", price: 9, Icon: Zap, iconColor: "text-fuchsia-600 bg-fuchsia-50", canceled: false },
-    { id: "p10", name: "Audit & Compliance", desc: "그래프 변경 이력 추적 및 감사 보고서 생성", price: 39, Icon: Shield, iconColor: "text-red-600 bg-red-50", canceled: false },
+  const [subscribedPlugins, setSubscribedPlugins] = useState<PluginInfo[]>([
+    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false },
   ]);
+  const [notSubscribedPlugins, setNotSubscribedPlugins] = useState<PluginInfo[]>([
+    { id: "p1", name: "Graph AI Copilot", vendor: "EM-Graph Labs", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.", category: "AI", price: 29000, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", badge: "Editor", rating: 5.0, reviews: 312, downloads: "12.4K" },
+    { id: "p2", name: "Snowflake Connector", vendor: "EM-Graph", desc: "Snowflake 웨어하우스에서 실시간으로 데이터를 동기화합니다.", category: "Data", price: 49000, Icon: Database, iconColor: "text-sky-600 bg-sky-50", badge: "Best", rating: 4.8, reviews: 145, downloads: "8.2K" },
+    { id: "p6", name: "Slack Alerts", vendor: "Pioneera", desc: "그래프 노드/엣지 변동을 실시간으로 슬랙 채널에 알립니다.", category: "Integrations", price: 9000, Icon: Zap, iconColor: "text-fuchsia-600 bg-fuchsia-50", badge: "Best", rating: 4.9, reviews: 220, downloads: "15.8K" },
+    { id: "p10", name: "Audit & Compliance", vendor: "SafeTrace", desc: "모든 그래프 변경 이력을 추적하고 감사 보고서를 생성합니다.", category: "Security", price: 39000, Icon: Shield, iconColor: "text-red-600 bg-red-50", badge: "Editor", rating: 4.8, reviews: 119, downloads: "4.7K" },
+  ]);
+  const [detailPlugin, setDetailPlugin] = useState<PluginInfo | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailSubscribed, setDetailSubscribed] = useState(false);
+  const [pluginTab, setPluginTab] = useState("subscribed");
+  const openPluginDetail = (plugin: PluginInfo, subscribed: boolean) => {
+    setDetailPlugin(plugin);
+    setDetailSubscribed(subscribed);
+    setDetailOpen(true);
+  };
   const cancelPluginSub = (id: string) => {
     setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: true } : p)));
     toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") });
+  };
+  const subscribePlugin = (id: string) => {
+    const moved = notSubscribedPlugins.find((p) => p.id === id);
+    if (moved) {
+      setNotSubscribedPlugins((prev) => prev.filter((p) => p.id !== id));
+      setSubscribedPlugins((prev) => [...prev, { ...moved, canceled: false }]);
+    } else {
+      setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: false } : p)));
+    }
+    setDetailSubscribed(true);
+    setDetailOpen(false);
+    toast({ title: t("stPluginSubscribedToast"), description: t("stPluginSubscribedToastDesc") });
   };
 
   const [coupons, setCoupons] = useState([
@@ -145,6 +187,72 @@ export default function Settings() {
       title: t("stLinkCopied"),
       description: t("stLinkCopiedDesc"),
     });
+  };
+
+  // --- Payment modal (license changes + subscriptions) ---
+  const PLAN_PRICES: Record<string, number> = { Free: 0, Pro: 100000, Premium: 300000 };
+  const CURRENT_PLAN = "Pro";
+  const fmtWon = (n: number) => `₩${n.toLocaleString("en-US")}`;
+
+  const planNameLabel = (p: string) =>
+    p === "Free" ? t("stFree") : p === "Pro" ? t("stPro") : t("stPremium");
+  const planDescLabel = (p: string) =>
+    p === "Free" ? t("stFreeDesc") : p === "Pro" ? t("stProDesc") : t("stPremiumDesc");
+
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [paymentCtx, setPaymentCtx] = useState<PaymentContext | null>(null);
+
+  const openChangeModal = (target: "Free" | "Pro" | "Premium") => {
+    const price = PLAN_PRICES[target];
+    const isUpgrade = price > PLAN_PRICES[CURRENT_PLAN];
+    const changeTypeLabel = isUpgrade ? t("stChangeTypeNew") : t("stChangeTypeDowngrade");
+    const billingTimingLabel = isUpgrade ? t("stBillingImmediate") : t("stBillingNextCycle");
+    setPaymentCtx({
+      title: t("stChangePreviewTitle"),
+      subtitle: t("stChangePreviewSubtitle").replace("{plan}", planNameLabel(target)),
+      itemName: planNameLabel(target),
+      itemDescription: planDescLabel(target),
+      itemPrice: price,
+      changeTypeLabel,
+      billingTimingLabel,
+      isImmediate: isUpgrade,
+      paymentLineLabel: t("stLicensePayment").replace("{plan}", planNameLabel(target)),
+      footerNote: t("stChangeFooterNote").replace("{type}", changeTypeLabel).replace("{timing}", billingTimingLabel),
+      confirmLabel: t("stExecuteChange"),
+      formatAmount: fmtWon,
+      onConfirm: () =>
+        toast({
+          title: t("stChangeExecuted"),
+          description: t("stChangeExecutedDesc").replace("{plan}", planNameLabel(target)),
+        }),
+    });
+    setPaymentOpen(true);
+  };
+
+  const openPluginPayment = (plugin: PluginInfo) => {
+    setPaymentCtx({
+      title: t("stSubscribePaymentTitle"),
+      subtitle: t("stSubscribePaymentSubtitle").replace("{name}", plugin.name),
+      itemName: plugin.name,
+      itemDescription: plugin.desc,
+      itemPrice: plugin.price,
+      changeTypeLabel: t("stChangeTypeNew"),
+      billingTimingLabel: t("stBillingImmediate"),
+      isImmediate: true,
+      paymentLineLabel: t("stSubscribePaymentLine").replace("{name}", plugin.name),
+      footerNote: t("stChangeFooterNote").replace("{type}", t("stChangeTypeNew")).replace("{timing}", t("stBillingImmediate")),
+      confirmLabel: t("stSubscribeConfirm"),
+      formatAmount: fmtWon,
+      onConfirm: () => subscribePlugin(plugin.id),
+    });
+    setPaymentOpen(true);
+  };
+
+  const requestPluginSubscribe = (id: string) => {
+    const plugin = notSubscribedPlugins.find((p) => p.id === id) || subscribedPlugins.find((p) => p.id === id);
+    if (!plugin) return;
+    setDetailOpen(false);
+    openPluginPayment(plugin);
   };
 
   return (
@@ -718,13 +826,7 @@ export default function Settings() {
                    </div>
                  </CardContent>
                  <CardFooter>
-                   <Button variant="outline" className="w-full" onClick={() => {
-                     toast({
-                       variant: "destructive",
-                       title: t("stDowngradeFailed"),
-                       description: t("stDowngradeFailedDesc"),
-                     });
-                   }}>{t("stSelectFreePlan")}</Button>
+                   <Button variant="outline" className="w-full" onClick={() => openChangeModal("Free")} data-testid="button-select-free">{t("stSelectFreePlan")}</Button>
                  </CardFooter>
                </Card>
 
@@ -805,18 +907,37 @@ export default function Settings() {
                    <Button 
                      variant="secondary" 
                      className="w-full hover:bg-white hover:text-slate-900"
-                     onClick={() => {
-                       toast({
-                         title: t("stUpgradeInitiated"),
-                         description: t("stUpgradeInitiatedDesc"),
-                       });
-                     }}
+                     onClick={() => openChangeModal("Premium")}
+                     data-testid="button-upgrade-premium"
                    >
                      {t("stUpgradeToPremium")}
                    </Button>
                  </CardFooter>
                </Card>
              </div>
+
+             {/* Payment Modal (license changes + plugin subscriptions) */}
+             {paymentCtx && (
+               <PaymentModal
+                 open={paymentOpen}
+                 onOpenChange={setPaymentOpen}
+                 title={paymentCtx.title}
+                 subtitle={paymentCtx.subtitle}
+                 itemName={paymentCtx.itemName}
+                 itemDescription={paymentCtx.itemDescription}
+                 itemPrice={paymentCtx.itemPrice}
+                 changeTypeLabel={paymentCtx.changeTypeLabel}
+                 billingTimingLabel={paymentCtx.billingTimingLabel}
+                 isImmediate={paymentCtx.isImmediate}
+                 paymentLineLabel={paymentCtx.paymentLineLabel}
+                 footerNote={paymentCtx.footerNote}
+                 confirmLabel={paymentCtx.confirmLabel}
+                 coupons={coupons}
+                 paymentMethods={paymentMethods}
+                 formatAmount={paymentCtx.formatAmount}
+                 onConfirm={paymentCtx.onConfirm}
+               />
+             )}
 
              {/* Custom Solutions Section */}
              <Card className="mt-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 border-indigo-500/30">
@@ -844,16 +965,20 @@ export default function Settings() {
              </div>
 
              <Card className="mb-6">
-               <CardHeader>
-                 <CardTitle className="text-lg" data-testid="text-active-plugins-title">{t("stActivePlugins")}</CardTitle>
-                 <CardDescription>{t("stActivePluginsDesc")}</CardDescription>
-               </CardHeader>
-               <CardContent>
-                 {subscribedPlugins.length === 0 ? (
-                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
-                 ) : (
-                   <div className="space-y-3">
-                     {subscribedPlugins.map((p) => (
+               <CardContent className="pt-6">
+                 <Tabs value={pluginTab} onValueChange={setPluginTab} className="space-y-4">
+                   <TabsList className="grid w-full grid-cols-2 sm:max-w-md">
+                     <TabsTrigger value="subscribed" data-testid="tab-plugins-subscribed">{t("stActivePlugins")}</TabsTrigger>
+                     <TabsTrigger value="notSubscribed" data-testid="tab-plugins-not-subscribed">{t("stPluginNotSubscribed")}</TabsTrigger>
+                   </TabsList>
+
+                   <TabsContent value="subscribed" className="space-y-4 mt-2">
+                     <p className="text-sm text-muted-foreground" data-testid="text-active-plugins-desc">{t("stActivePluginsDesc")}</p>
+                     {subscribedPlugins.length === 0 ? (
+                       <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
+                     ) : (
+                       <div className="space-y-3">
+                         {subscribedPlugins.map((p) => (
                        <div
                          key={p.id}
                          className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
@@ -871,12 +996,15 @@ export default function Settings() {
                            </div>
                            <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
                          </div>
-                         <div className="text-right shrink-0">
-                           <div className="font-semibold">
-                             ${p.price}
-                             <span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span>
-                           </div>
-                         </div>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           className="shrink-0 gap-1.5"
+                           onClick={() => openPluginDetail(p, true)}
+                           data-testid={`button-plugin-detail-${p.id}`}
+                         >
+                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                         </Button>
                          {p.canceled ? (
                            <Button variant="ghost" size="icon" disabled className="shrink-0 h-8 w-8">
                              <MoreHorizontal className="w-4 h-4" />
@@ -928,6 +1056,50 @@ export default function Settings() {
                      ))}
                    </div>
                  )}
+                   </TabsContent>
+
+                   <TabsContent value="notSubscribed" className="space-y-4 mt-2">
+                     <p className="text-sm text-muted-foreground" data-testid="text-not-subscribed-plugins-desc">{t("stPluginNotSubscribedDesc")}</p>
+                 {notSubscribedPlugins.length === 0 ? (
+                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneNotSubscribed")}</p>
+                 ) : (
+                   <div className="space-y-3">
+                     {notSubscribedPlugins.map((p) => (
+                       <div
+                         key={p.id}
+                         className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                         data-testid={`card-plugin-unsub-${p.id}`}
+                       >
+                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                           <p.Icon className="w-5 h-5" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                           <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                         </div>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           className="shrink-0 gap-1.5"
+                           onClick={() => openPluginDetail(p, false)}
+                           data-testid={`button-plugin-detail-${p.id}`}
+                         >
+                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                         </Button>
+                         <Button
+                           size="sm"
+                           className="shrink-0"
+                           onClick={() => requestPluginSubscribe(p.id)}
+                           data-testid={`button-plugin-subscribe-${p.id}`}
+                         >
+                           {t("stPluginSubscribe")}
+                         </Button>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+                   </TabsContent>
+                 </Tabs>
                </CardContent>
              </Card>
 
@@ -1422,6 +1594,14 @@ export default function Settings() {
       </div>
         </div>
       </div>
+      <PluginDetailModal
+        plugin={detailPlugin}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        subscribed={detailSubscribed}
+        onSubscribe={requestPluginSubscribe}
+        onCancel={cancelPluginSub}
+      />
     </Layout>
   );
 }
