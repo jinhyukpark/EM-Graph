@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -933,23 +932,30 @@ export default function Settings() {
                          </div>
                        ) : (
                          <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
-                           {applicableCoupons.map((c) => (
-                             <label
-                               key={c.id}
-                               htmlFor={`change-coupon-${c.id}`}
-                               className={`flex items-center gap-3 p-2.5 border rounded-lg cursor-pointer transition-colors ${selectedCouponIds.includes(c.id) ? "border-primary bg-primary/5" : "hover:bg-muted/40"}`}
-                               data-testid={`change-coupon-${c.id}`}
-                             >
-                               <Checkbox
-                                 id={`change-coupon-${c.id}`}
-                                 checked={selectedCouponIds.includes(c.id)}
-                                 onCheckedChange={() => toggleCoupon(c.id)}
-                                 data-testid={`checkbox-coupon-${c.id}`}
-                               />
-                               <Badge variant="secondary" className="font-mono text-xs shrink-0">{c.code}</Badge>
-                               <span className="text-sm font-medium text-emerald-600">{c.discount}% {t("stDiscount")}</span>
-                             </label>
-                           ))}
+                           {applicableCoupons.map((c) => {
+                             const isSelected = selectedCouponIds.includes(c.id);
+                             return (
+                               <button
+                                 type="button"
+                                 key={c.id}
+                                 onClick={() => toggleCoupon(c.id)}
+                                 aria-pressed={isSelected}
+                                 className={`relative w-full flex items-center gap-3 p-2.5 pr-8 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40 hover:border-muted-foreground/30"}`}
+                                 data-testid={`change-coupon-${c.id}`}
+                               >
+                                 <Badge variant="secondary" className="font-mono text-xs shrink-0">{c.code}</Badge>
+                                 <span className="text-sm font-medium text-emerald-600">{c.discount}% {t("stDiscount")}</span>
+                                 {isSelected && (
+                                   <span
+                                     className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                                     data-testid={`check-coupon-${c.id}`}
+                                   >
+                                     <Check className="w-3 h-3" />
+                                   </span>
+                                 )}
+                               </button>
+                             );
+                           })}
                          </div>
                        )}
                      </div>
