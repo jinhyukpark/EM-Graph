@@ -940,19 +940,17 @@ export default function Settings() {
                                  key={c.id}
                                  onClick={() => toggleCoupon(c.id)}
                                  aria-pressed={isSelected}
-                                 className={`relative w-full flex items-center gap-3 p-2.5 pr-8 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-emerald-100 bg-background hover:bg-emerald-50"}`}
+                                 className={`w-full flex items-center gap-3 p-2.5 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-emerald-100 bg-background hover:bg-emerald-50"}`}
                                  data-testid={`change-coupon-${c.id}`}
                                >
                                  <Badge variant="secondary" className="font-mono text-xs shrink-0">{c.code}</Badge>
                                  <span className="text-sm font-medium text-emerald-600">{c.discount}% {t("stDiscount")}</span>
-                                 {isSelected && (
-                                   <span
-                                     className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                                     data-testid={`check-coupon-${c.id}`}
-                                   >
-                                     <Check className="w-3 h-3" />
-                                   </span>
-                                 )}
+                                 <span
+                                   className={`ml-auto shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? "border-primary" : "border-muted-foreground/30"}`}
+                                   data-testid={`radio-coupon-${c.id}`}
+                                 >
+                                   {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
+                                 </span>
                                </button>
                              );
                            })}
