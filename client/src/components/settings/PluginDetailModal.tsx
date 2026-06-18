@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import {
   Star,
   ChevronLeft,
@@ -24,6 +25,7 @@ import {
   Mail,
   Shield,
   Sparkles,
+  CreditCard,
 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
@@ -63,15 +65,42 @@ export default function PluginDetailModal({
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"overview" | "pricing" | "terms">("overview");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [payOpen, setPayOpen] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [payMethod, setPayMethod] = useState("pm-shinhan");
 
   useEffect(() => {
     if (open) {
       setActiveTab("overview");
       setBillingCycle("monthly");
+    } else {
+      setPayOpen(false);
     }
   }, [open, plugin?.id]);
 
+  useEffect(() => {
+    if (payOpen) {
+      setCouponInput("");
+      setCouponApplied(false);
+      setPayMethod("pm-shinhan");
+    }
+  }, [payOpen, plugin?.id]);
+
   if (!plugin) return null;
+
+  const PAYMENT_METHODS = [
+    { id: "pm-shinhan", label: "신한카드", last4: "4242", isDefault: true },
+    { id: "pm-kb", label: "KB국민카드", last4: "8810", isDefault: false },
+  ];
+  const discountRate = couponApplied ? 0.1 : 0;
+  const discountAmount = Math.round(plugin.price * discountRate);
+  const vat = Math.round((plugin.price - discountAmount) * 0.1);
+  const payTotal = plugin.price - discountAmount + vat;
+  const handleConfirmPayment = () => {
+    setPayOpen(false);
+    onSubscribe(plugin.id);
+  };
 
   const YEARLY_DISCOUNT = 0.2;
   const PRICING_TIERS = [
@@ -119,6 +148,7 @@ export default function PluginDetailModal({
   ];
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0" data-testid="dialog-plugin-detail">
         <DialogTitle className="sr-only">{plugin.name}</DialogTitle>
@@ -179,7 +209,7 @@ export default function PluginDetailModal({
                 <Button
                   size="lg"
                   className="gap-2 shadow-sm"
-                  onClick={() => onSubscribe(plugin.id)}
+                  onClick={() => setPayOpen(true)}
                   data-testid="button-detail-subscribe"
                 >
                   <Download className="w-4 h-4" />
@@ -470,5 +500,126 @@ export default function PluginDetailModal({
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Payment Popup */}
+    <Dialog open={payOpen} onOpenChange={setPayOpen}>
+      <DialogContent className="max-w-md" data-testid="dialog-plugin-payment">
+        <DialogTitle>구독 결제</DialogTitle>
+        <DialogDescription>{plugin.name} 구독을 시작합니다.</DialogDescription>
+
+        <div className="space-y-5 pt-2">
+          {/* Order summary */}
+          <Card className="p-4 border-border/60 flex items-center gap-3">
+            <div className={`w-11 h-11 rounded-xl inline-flex items-center justify-center shrink-0 ${plugin.iconColor}`}>
+              <plugin.Icon className="w-5 h-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="font-semibold text-sm text-foreground truncate">{plugin.name}</div>
+              <div className="text-xs text-muted-foreground">월간 구독 · {plugin.vendor}</div>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-sm font-bold text-foreground">₩{plugin.price.toLocaleString("ko-KR")}</div>
+              <div className="text-[11px] text-muted-foreground">/ 월</div>
+            </div>
+          </Card>
+
+          {/* Coupon */}
+          <div>
+            <div className="text-xs font-medium text-foreground mb-1.5">할인 코드</div>
+            <div className="flex gap-2">
+              <Input
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value)}
+                placeholder="쿠폰 코드를 입력하세요"
+                className="h-9"
+                data-testid="input-payment-coupon"
+              />
+              <Button
+                variant="outline"
+                className="h-9 shrink-0"
+                disabled={!couponInput.trim()}
+                onClick={() => setCouponApplied(true)}
+                data-testid="button-payment-apply-coupon"
+              >
+                적용
+              </Button>
+            </div>
+            {couponApplied && (
+              <p className="text-[11px] text-emerald-600 mt-1.5" data-testid="text-payment-coupon-applied">
+                쿠폰이 적용되어 10% 할인되었습니다.
+              </p>
+            )}
+          </div>
+
+          {/* Payment method */}
+          <div>
+            <div className="text-xs font-medium text-foreground mb-1.5">결제 수단</div>
+            <div className="space-y-2">
+              {PAYMENT_METHODS.map((pm) => (
+                <button
+                  key={pm.id}
+                  onClick={() => setPayMethod(pm.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border text-left transition-colors ${
+                    payMethod === pm.id ? "border-blue-500 bg-blue-50/50" : "border-border hover:bg-secondary/50"
+                  }`}
+                  data-testid={`button-payment-method-${pm.id}`}
+                >
+                  <CreditCard className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <span className="text-sm text-foreground flex-1">
+                    {pm.label} •••• {pm.last4}
+                  </span>
+                  {pm.isDefault && (
+                    <Badge variant="outline" className="text-[10px] font-normal">기본</Badge>
+                  )}
+                  {payMethod === pm.id && <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Total breakdown */}
+          <div className="space-y-1.5 text-sm border-t border-border pt-4">
+            <div className="flex justify-between text-muted-foreground">
+              <span>상품 금액</span>
+              <span>₩{plugin.price.toLocaleString("ko-KR")}</span>
+            </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-emerald-600">
+                <span>할인</span>
+                <span>-₩{discountAmount.toLocaleString("ko-KR")}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-muted-foreground">
+              <span>부가세 (VAT 10%)</span>
+              <span>₩{vat.toLocaleString("ko-KR")}</span>
+            </div>
+            <div className="flex justify-between items-baseline font-bold text-foreground pt-1">
+              <span>총 결제 금액</span>
+              <span className="text-lg" data-testid="text-payment-total">₩{payTotal.toLocaleString("ko-KR")}</span>
+            </div>
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setPayOpen(false)}
+              data-testid="button-payment-cancel"
+            >
+              취소
+            </Button>
+            <Button
+              className="flex-1 gap-2"
+              onClick={handleConfirmPayment}
+              data-testid="button-payment-confirm"
+            >
+              <CreditCard className="w-4 h-4" />
+              ₩{payTotal.toLocaleString("ko-KR")} 결제하기
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
