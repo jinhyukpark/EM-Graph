@@ -42,6 +42,17 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog';
+import PaymentModal from '@/components/settings/PaymentModal';
+
+// Mock coupons & payment methods so the payment popup behaves like the license modal
+const MOCK_COUPONS = [
+    { id: 'c1', code: 'WELCOME10', discount: 10, expiresAt: '2026-12-31', used: false },
+    { id: 'c3', code: 'SPRING15', discount: 15, expiresAt: '2026-12-31', used: false },
+    { id: 'c6', code: 'LOYAL25', discount: 25, expiresAt: '2027-03-15', used: false },
+];
+const MOCK_PAYMENT_METHODS = [
+    { id: 'pm1', brand: 'VISA', last4: '4242' },
+];
 
 // Import Generated Images
 import semiconductorImg from '@/assets/generated_images/global_supply_chain_network_with_logistics_nodes.png';
@@ -326,6 +337,15 @@ export default function BrainMarket() {
     const [userReviews, setUserReviews] = useState<Record<string, { id: number; user: string; role: string; rating: number; date: string; comment: string }[]>>({});
     const [newReviewRating, setNewReviewRating] = useState(5);
     const [newReviewComment, setNewReviewComment] = useState('');
+    const [paymentOpen, setPaymentOpen] = useState(false);
+    const [paymentBrain, setPaymentBrain] = useState<typeof BRAINS[0] | null>(null);
+
+    const fmtUsd = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    const openBrainPayment = (brain: typeof BRAINS[0]) => {
+        setPaymentBrain(brain);
+        setPaymentOpen(true);
+    };
     const submitReview = () => {
         if (!selectedBrain) return;
         const comment = newReviewComment.trim();
@@ -523,7 +543,7 @@ export default function BrainMarket() {
                                             {t("subscribed")}
                                         </Button>
                                     ) : (
-                                        <Button className="flex-1 text-xs h-9 gap-2 shadow-sm" data-testid={`button-subscribe-${brain.id}`}>
+                                        <Button className="flex-1 text-xs h-9 gap-2 shadow-sm" onClick={() => openBrainPayment(brain)} data-testid={`button-subscribe-${brain.id}`}>
                                             {t("subscribe")}
                                             <ArrowRight className="w-3 h-3" />
                                         </Button>
@@ -848,7 +868,7 @@ export default function BrainMarket() {
                                     </div>
                                     <div className="flex gap-3 w-full sm:w-auto">
                                         <Button variant="outline" size="lg" onClick={() => setSelectedBrain(null)}>Close</Button>
-                                        <Button size="lg" className="gap-2 px-8">
+                                        <Button size="lg" className="gap-2 px-8" onClick={() => { const b = selectedBrain; setSelectedBrain(null); openBrainPayment(b); }} data-testid={`button-subscribe-detail-${selectedBrain.id}`}>
                                             Subscribe Now
                                             <ArrowRight className="w-4 h-4" />
                                         </Button>
@@ -859,6 +879,28 @@ export default function BrainMarket() {
                     )}
                 </DialogContent>
             </Dialog>
+
+            {paymentBrain && (
+                <PaymentModal
+                    open={paymentOpen}
+                    onOpenChange={setPaymentOpen}
+                    title={t("stSubscribePaymentTitle")}
+                    subtitle={t("stSubscribePaymentSubtitle").replace("{name}", paymentBrain.title)}
+                    itemName={paymentBrain.title}
+                    itemDescription={paymentBrain.description}
+                    itemPrice={paymentBrain.price}
+                    changeTypeLabel={t("stChangeTypeNew")}
+                    billingTimingLabel={t("stBillingImmediate")}
+                    isImmediate={true}
+                    paymentLineLabel={t("stSubscribePaymentLine").replace("{name}", paymentBrain.title)}
+                    footerNote={t("stChangeFooterNote").replace("{type}", t("stChangeTypeNew")).replace("{timing}", t("stBillingImmediate"))}
+                    confirmLabel={t("stSubscribeConfirm")}
+                    coupons={MOCK_COUPONS}
+                    paymentMethods={MOCK_PAYMENT_METHODS}
+                    formatAmount={fmtUsd}
+                    onConfirm={() => toast({ title: t("bmSubscribeSuccess"), description: t("bmSubscribeSuccessDesc").replace("{name}", paymentBrain.title) })}
+                />
+            )}
         </Layout>
     );
 }

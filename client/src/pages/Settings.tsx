@@ -15,12 +15,29 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye } from "lucide-react";
 import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
+import PaymentModal from "@/components/settings/PaymentModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
 import { useOrgLogo } from "@/lib/orgLogo";
 import { useRef } from "react";
 import { Building2, Upload, X as XIcon } from "lucide-react";
+
+interface PaymentContext {
+  title: string;
+  subtitle: string;
+  itemName: string;
+  itemDescription?: string;
+  itemPrice: number;
+  changeTypeLabel: string;
+  billingTimingLabel: string;
+  isImmediate: boolean;
+  paymentLineLabel: string;
+  footerNote: string;
+  confirmLabel: string;
+  formatAmount: (n: number) => string;
+  onConfirm: () => void;
+}
 
 export default function Settings() {
   const { language, setLanguage, t } = useLanguage();
@@ -172,78 +189,70 @@ export default function Settings() {
     });
   };
 
-  // --- License change preview modal ---
+  // --- Payment modal (license changes + subscriptions) ---
   const PLAN_PRICES: Record<string, number> = { Free: 0, Pro: 100000, Premium: 300000 };
   const CURRENT_PLAN = "Pro";
-  const [changeOpen, setChangeOpen] = useState(false);
-  const [changeTarget, setChangeTarget] = useState<"Free" | "Pro" | "Premium">("Premium");
-  const [selectedCouponIds, setSelectedCouponIds] = useState<string[]>([]);
-  const [changePm, setChangePm] = useState("default");
-  const [recalcKey, setRecalcKey] = useState(0);
-
-  const applicableCoupons = (() => {
-    const now = new Date();
-    return coupons.filter((c) => !c.used && new Date(c.expiresAt) >= now);
-  })();
-
-  const openChangeModal = (target: "Free" | "Pro" | "Premium") => {
-    setChangeTarget(target);
-    setSelectedCouponIds([]);
-    setChangePm("default");
-    setRecalcKey(0);
-    setChangeOpen(true);
-  };
+  const fmtWon = (n: number) => `₩${n.toLocaleString("en-US")}`;
 
   const planNameLabel = (p: string) =>
     p === "Free" ? t("stFree") : p === "Pro" ? t("stPro") : t("stPremium");
   const planDescLabel = (p: string) =>
     p === "Free" ? t("stFreeDesc") : p === "Pro" ? t("stProDesc") : t("stPremiumDesc");
 
-  const targetPrice = PLAN_PRICES[changeTarget];
-  const isUpgrade = targetPrice > PLAN_PRICES[CURRENT_PLAN];
-  const discountAmount = Math.min(
-    targetPrice,
-    Math.round(
-      selectedCouponIds.reduce((sum, id) => {
-        const c = coupons.find((x) => x.id === id);
-        return sum + (c ? (targetPrice * c.discount) / 100 : 0);
-      }, 0),
-    ),
-  );
-  const finalAmount = Math.max(0, targetPrice - discountAmount);
-  const fmtWon = (n: number) => `₩${n.toLocaleString("en-US")}`;
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [paymentCtx, setPaymentCtx] = useState<PaymentContext | null>(null);
 
-  const nextBillingDate = (() => {
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return language === "ko"
-      ? `${y}. ${m}. ${day}. 오전 12:00`
-      : `${m}/${day}/${y}, 12:00 AM`;
-  })();
-
-  const changeTypeLabel = isUpgrade ? t("stChangeTypeNew") : t("stChangeTypeDowngrade");
-  const billingTimingLabel = isUpgrade ? t("stBillingImmediate") : t("stBillingNextCycle");
-
-  const toggleCoupon = (id: string) => {
-    setSelectedCouponIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
-  };
-
-  const recalcAmounts = () => {
-    setRecalcKey((k) => k + 1);
-    toast({ title: t("stRecalculated"), description: t("stRecalculatedDesc") });
-  };
-
-  const executeChange = () => {
-    setChangeOpen(false);
-    toast({
-      title: t("stChangeExecuted"),
-      description: t("stChangeExecutedDesc").replace("{plan}", planNameLabel(changeTarget)),
+  const openChangeModal = (target: "Free" | "Pro" | "Premium") => {
+    const price = PLAN_PRICES[target];
+    const isUpgrade = price > PLAN_PRICES[CURRENT_PLAN];
+    const changeTypeLabel = isUpgrade ? t("stChangeTypeNew") : t("stChangeTypeDowngrade");
+    const billingTimingLabel = isUpgrade ? t("stBillingImmediate") : t("stBillingNextCycle");
+    setPaymentCtx({
+      title: t("stChangePreviewTitle"),
+      subtitle: t("stChangePreviewSubtitle").replace("{plan}", planNameLabel(target)),
+      itemName: planNameLabel(target),
+      itemDescription: planDescLabel(target),
+      itemPrice: price,
+      changeTypeLabel,
+      billingTimingLabel,
+      isImmediate: isUpgrade,
+      paymentLineLabel: t("stLicensePayment").replace("{plan}", planNameLabel(target)),
+      footerNote: t("stChangeFooterNote").replace("{type}", changeTypeLabel).replace("{timing}", billingTimingLabel),
+      confirmLabel: t("stExecuteChange"),
+      formatAmount: fmtWon,
+      onConfirm: () =>
+        toast({
+          title: t("stChangeExecuted"),
+          description: t("stChangeExecutedDesc").replace("{plan}", planNameLabel(target)),
+        }),
     });
+    setPaymentOpen(true);
+  };
+
+  const openPluginPayment = (plugin: PluginInfo) => {
+    setPaymentCtx({
+      title: t("stSubscribePaymentTitle"),
+      subtitle: t("stSubscribePaymentSubtitle").replace("{name}", plugin.name),
+      itemName: plugin.name,
+      itemDescription: plugin.desc,
+      itemPrice: plugin.price,
+      changeTypeLabel: t("stChangeTypeNew"),
+      billingTimingLabel: t("stBillingImmediate"),
+      isImmediate: true,
+      paymentLineLabel: t("stSubscribePaymentLine").replace("{name}", plugin.name),
+      footerNote: t("stChangeFooterNote").replace("{type}", t("stChangeTypeNew")).replace("{timing}", t("stBillingImmediate")),
+      confirmLabel: t("stSubscribeConfirm"),
+      formatAmount: fmtWon,
+      onConfirm: () => subscribePlugin(plugin.id),
+    });
+    setPaymentOpen(true);
+  };
+
+  const requestPluginSubscribe = (id: string) => {
+    const plugin = notSubscribedPlugins.find((p) => p.id === id) || subscribedPlugins.find((p) => p.id === id);
+    if (!plugin) return;
+    setDetailOpen(false);
+    openPluginPayment(plugin);
   };
 
   return (
@@ -907,181 +916,28 @@ export default function Settings() {
                </Card>
              </div>
 
-             {/* License Change Preview Modal */}
-             <Dialog open={changeOpen} onOpenChange={setChangeOpen}>
-               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background" data-testid="dialog-change-preview">
-                 <DialogHeader>
-                   <div className="flex items-start justify-between gap-4 pr-8">
-                     <div className="space-y-1">
-                       <DialogTitle className="flex items-center gap-2 text-xl">
-                         <Zap className="w-5 h-5 text-primary" />
-                         {t("stChangePreviewTitle")}
-                       </DialogTitle>
-                       <DialogDescription className="text-sm">
-                         {t("stChangePreviewSubtitle").replace("{plan}", planNameLabel(changeTarget))}
-                       </DialogDescription>
-                     </div>
-                     <Button
-                       variant="outline"
-                       size="sm"
-                       className="shrink-0 gap-2 bg-background"
-                       onClick={recalcAmounts}
-                       data-testid="button-recalculate"
-                     >
-                       <RefreshCw className="w-4 h-4" />
-                       {t("stRecalculate")}
-                     </Button>
-                   </div>
-                 </DialogHeader>
-
-                 <div className="grid gap-4 md:grid-cols-2 mt-2">
-                   {/* Left column */}
-                   <div className="space-y-4">
-                     {/* Selected plan */}
-                     <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">
-                       <div className="text-xs text-muted-foreground mb-1">{t("stSelectedPlan")}</div>
-                       <div className="text-2xl font-bold" data-testid="text-selected-plan-name">{planNameLabel(changeTarget)}</div>
-                       <div className="text-sm text-muted-foreground mt-1">{planDescLabel(changeTarget)}</div>
-                       <div className="text-sm mt-3">
-                         {t("stMonthlyFee")} <span className="font-semibold">{fmtWon(targetPrice)}</span>
-                       </div>
-                     </div>
-
-                     {/* Coupon selection */}
-                     <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
-                       <div className="font-medium text-sm">{t("stCouponSelect")}</div>
-                       <div className="text-xs text-muted-foreground mt-0.5 mb-3">{t("stCouponSelectDesc")}</div>
-                       {applicableCoupons.length === 0 ? (
-                         <div className="text-sm text-muted-foreground py-5 text-center border border-dashed rounded-lg" data-testid="text-no-applicable-coupons">
-                           {t("stNoApplicableCoupons")}
-                         </div>
-                       ) : (
-                         <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
-                           {applicableCoupons.map((c) => {
-                             const isSelected = selectedCouponIds.includes(c.id);
-                             return (
-                               <button
-                                 type="button"
-                                 key={c.id}
-                                 onClick={() => toggleCoupon(c.id)}
-                                 aria-pressed={isSelected}
-                                 className={`w-full flex items-center gap-3 p-2.5 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-emerald-100 bg-background hover:bg-emerald-50"}`}
-                                 data-testid={`change-coupon-${c.id}`}
-                               >
-                                 <Badge variant="secondary" className="font-mono text-xs shrink-0">{c.code}</Badge>
-                                 <span className="text-sm font-medium text-emerald-600">{c.discount}% {t("stDiscount")}</span>
-                                 <span
-                                   className={`ml-auto shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? "border-primary" : "border-muted-foreground/30"}`}
-                                   data-testid={`radio-coupon-${c.id}`}
-                                 >
-                                   {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
-                                 </span>
-                               </button>
-                             );
-                           })}
-                         </div>
-                       )}
-                     </div>
-
-                     {/* Payment method */}
-                     <div className="rounded-xl border border-sky-100 bg-sky-50/60 p-4">
-                       <div className="font-medium text-sm mb-3">{t("stPaymentMethodSelect")}</div>
-                       <Select value={changePm} onValueChange={setChangePm}>
-                         <SelectTrigger data-testid="select-change-payment">
-                           <SelectValue />
-                         </SelectTrigger>
-                         <SelectContent>
-                           <SelectItem value="default">{t("stUseDefaultPayment")}</SelectItem>
-                           {paymentMethods.map((pm) => (
-                             <SelectItem key={pm.id} value={pm.id}>
-                               {pm.brand} · {t("stCardEnding")} {pm.last4}
-                             </SelectItem>
-                           ))}
-                         </SelectContent>
-                       </Select>
-                       <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{t("stPaymentMethodHelp")}</p>
-                     </div>
-                   </div>
-
-                   {/* Right column */}
-                   <div className="space-y-4">
-                     <div className="grid grid-cols-2 gap-4">
-                       <div className="rounded-xl border border-violet-100 bg-violet-50/60 p-4">
-                         <div className="text-xs text-muted-foreground mb-1">{t("stChangeType")}</div>
-                         <div className="text-lg font-semibold" data-testid="text-change-type">{changeTypeLabel}</div>
-                       </div>
-                       <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-4">
-                         <div className="text-xs text-muted-foreground mb-1">{t("stBillingTiming")}</div>
-                         <div className="text-lg font-semibold flex items-center gap-1.5" data-testid="text-billing-timing">
-                           <RefreshCw className="w-4 h-4 text-muted-foreground" />
-                           {billingTimingLabel}
-                         </div>
-                       </div>
-                     </div>
-
-                     <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-4">
-                       <div className="space-y-1">
-                         <div className="text-sm text-muted-foreground">{isUpgrade ? t("stImmediateProceed") : t("stScheduledProceed")}</div>
-                         <div className="text-sm">{t("stNextBillingDate")} <span className="font-medium">{nextBillingDate}</span></div>
-                       </div>
-
-                       <div className="grid grid-cols-3 gap-3">
-                         <div className="rounded-lg border bg-background p-3">
-                           <div className="text-[11px] text-muted-foreground mb-1">{t("stAmountBeforeDiscount")}</div>
-                           <div className="text-base font-bold" data-testid="text-amount-before">{fmtWon(targetPrice)}</div>
-                         </div>
-                         <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
-                           <div className="text-[11px] text-muted-foreground mb-1">{t("stTotalDiscount")}</div>
-                           <div className="text-base font-bold text-emerald-600" data-testid="text-total-discount">-{fmtWon(discountAmount)}</div>
-                         </div>
-                         <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
-                           <div className="text-[11px] text-muted-foreground mb-1">{t("stFinalAmount")}</div>
-                           <div className="text-base font-bold text-primary" data-testid="text-final-amount">{fmtWon(finalAmount)}</div>
-                         </div>
-                       </div>
-
-                       <Separator />
-
-                       <div className="space-y-2">
-                         <div className="font-medium text-sm">{t("stAmountDetail")}</div>
-                         <div className="flex items-center justify-between text-sm">
-                           <span className="text-muted-foreground">{t("stLicensePayment").replace("{plan}", planNameLabel(changeTarget))}</span>
-                           <span className="font-medium">{fmtWon(targetPrice)}</span>
-                         </div>
-                         {selectedCouponIds.map((id) => {
-                           const c = coupons.find((x) => x.id === id);
-                           if (!c) return null;
-                           return (
-                             <div key={id} className="flex items-center justify-between text-sm" data-testid={`detail-coupon-${id}`}>
-                               <span className="text-muted-foreground flex items-center gap-2">
-                                 <Badge variant="outline" className="font-mono text-[10px]">{c.code}</Badge>
-                                 {c.discount}% {t("stDiscount")}
-                               </span>
-                               <span className="font-medium text-emerald-600">-{fmtWon(Math.round((targetPrice * c.discount) / 100))}</span>
-                             </div>
-                           );
-                         })}
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-
-                 <DialogFooter className="mt-2 sm:justify-between gap-3 flex-col-reverse sm:flex-row items-center">
-                   <p className="text-xs text-muted-foreground">
-                     {t("stChangeFooterNote").replace("{type}", changeTypeLabel).replace("{timing}", billingTimingLabel)}
-                   </p>
-                   <div className="flex gap-2">
-                     <Button variant="outline" onClick={() => setChangeOpen(false)} data-testid="button-cancel-change">
-                       {t("stCancelSelection")}
-                     </Button>
-                     <Button className="gap-2" onClick={executeChange} data-testid="button-execute-change">
-                       <CreditCard className="w-4 h-4" />
-                       {t("stExecuteChange")}
-                     </Button>
-                   </div>
-                 </DialogFooter>
-               </DialogContent>
-             </Dialog>
+             {/* Payment Modal (license changes + plugin subscriptions) */}
+             {paymentCtx && (
+               <PaymentModal
+                 open={paymentOpen}
+                 onOpenChange={setPaymentOpen}
+                 title={paymentCtx.title}
+                 subtitle={paymentCtx.subtitle}
+                 itemName={paymentCtx.itemName}
+                 itemDescription={paymentCtx.itemDescription}
+                 itemPrice={paymentCtx.itemPrice}
+                 changeTypeLabel={paymentCtx.changeTypeLabel}
+                 billingTimingLabel={paymentCtx.billingTimingLabel}
+                 isImmediate={paymentCtx.isImmediate}
+                 paymentLineLabel={paymentCtx.paymentLineLabel}
+                 footerNote={paymentCtx.footerNote}
+                 confirmLabel={paymentCtx.confirmLabel}
+                 coupons={coupons}
+                 paymentMethods={paymentMethods}
+                 formatAmount={paymentCtx.formatAmount}
+                 onConfirm={paymentCtx.onConfirm}
+               />
+             )}
 
              {/* Custom Solutions Section */}
              <Card className="mt-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 border-indigo-500/30">
@@ -1233,7 +1089,7 @@ export default function Settings() {
                          <Button
                            size="sm"
                            className="shrink-0"
-                           onClick={() => subscribePlugin(p.id)}
+                           onClick={() => requestPluginSubscribe(p.id)}
                            data-testid={`button-plugin-subscribe-${p.id}`}
                          >
                            {t("stPluginSubscribe")}
@@ -1743,7 +1599,7 @@ export default function Settings() {
         open={detailOpen}
         onOpenChange={setDetailOpen}
         subscribed={detailSubscribed}
-        onSubscribe={subscribePlugin}
+        onSubscribe={requestPluginSubscribe}
         onCancel={cancelPluginSub}
       />
     </Layout>
