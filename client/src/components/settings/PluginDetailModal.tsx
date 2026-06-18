@@ -149,7 +149,7 @@ export default function PluginDetailModal({
 
   return (
     <>
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open && !payOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0" data-testid="dialog-plugin-detail">
         <DialogTitle className="sr-only">{plugin.name}</DialogTitle>
         <DialogDescription className="sr-only">{plugin.desc}</DialogDescription>
@@ -602,11 +602,12 @@ export default function PluginDetailModal({
           <div className="flex gap-2 pt-1">
             <Button
               variant="outline"
-              className="flex-1"
+              className="flex-1 gap-1"
               onClick={() => setPayOpen(false)}
-              data-testid="button-payment-cancel"
+              data-testid="button-payment-back"
             >
-              취소
+              <ChevronLeft className="w-4 h-4" />
+              뒤로
             </Button>
             <Button
               className="flex-1 gap-2"
