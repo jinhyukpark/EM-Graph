@@ -13,7 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye } from "lucide-react";
+import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, type Language } from "@/lib/i18n";
@@ -46,15 +47,38 @@ export default function Settings() {
   };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
-  const [subscribedPlugins, setSubscribedPlugins] = useState([
-    { id: "p1", name: "Graph AI Copilot", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답 AI 어시스턴트", price: 29, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", canceled: false },
-    { id: "p2", name: "Snowflake Connector", desc: "Snowflake 웨어하우스 실시간 데이터 동기화", price: 49, Icon: Database, iconColor: "text-sky-600 bg-sky-50", canceled: false },
-    { id: "p6", name: "Slack Alerts", desc: "그래프 변동을 실시간으로 슬랙 채널에 알림", price: 9, Icon: Zap, iconColor: "text-fuchsia-600 bg-fuchsia-50", canceled: false },
-    { id: "p10", name: "Audit & Compliance", desc: "그래프 변경 이력 추적 및 감사 보고서 생성", price: 39, Icon: Shield, iconColor: "text-red-600 bg-red-50", canceled: false },
+  const [subscribedPlugins, setSubscribedPlugins] = useState<PluginInfo[]>([
+    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false },
   ]);
+  const [notSubscribedPlugins, setNotSubscribedPlugins] = useState<PluginInfo[]>([
+    { id: "p1", name: "Graph AI Copilot", vendor: "EM-Graph Labs", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.", category: "AI", price: 29000, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", badge: "Editor", rating: 5.0, reviews: 312, downloads: "12.4K" },
+    { id: "p2", name: "Snowflake Connector", vendor: "EM-Graph", desc: "Snowflake 웨어하우스에서 실시간으로 데이터를 동기화합니다.", category: "Data", price: 49000, Icon: Database, iconColor: "text-sky-600 bg-sky-50", badge: "Best", rating: 4.8, reviews: 145, downloads: "8.2K" },
+    { id: "p6", name: "Slack Alerts", vendor: "Pioneera", desc: "그래프 노드/엣지 변동을 실시간으로 슬랙 채널에 알립니다.", category: "Integrations", price: 9000, Icon: Zap, iconColor: "text-fuchsia-600 bg-fuchsia-50", badge: "Best", rating: 4.9, reviews: 220, downloads: "15.8K" },
+    { id: "p10", name: "Audit & Compliance", vendor: "SafeTrace", desc: "모든 그래프 변경 이력을 추적하고 감사 보고서를 생성합니다.", category: "Security", price: 39000, Icon: Shield, iconColor: "text-red-600 bg-red-50", badge: "Editor", rating: 4.8, reviews: 119, downloads: "4.7K" },
+  ]);
+  const [detailPlugin, setDetailPlugin] = useState<PluginInfo | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailSubscribed, setDetailSubscribed] = useState(false);
+  const openPluginDetail = (plugin: PluginInfo, subscribed: boolean) => {
+    setDetailPlugin(plugin);
+    setDetailSubscribed(subscribed);
+    setDetailOpen(true);
+  };
   const cancelPluginSub = (id: string) => {
     setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: true } : p)));
     toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") });
+  };
+  const subscribePlugin = (id: string) => {
+    const moved = notSubscribedPlugins.find((p) => p.id === id);
+    if (moved) {
+      setNotSubscribedPlugins((prev) => prev.filter((p) => p.id !== id));
+      setSubscribedPlugins((prev) => [...prev, { ...moved, canceled: false }]);
+    } else {
+      setSubscribedPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, canceled: false } : p)));
+    }
+    setDetailSubscribed(true);
+    setDetailOpen(false);
+    toast({ title: t("stPluginSubscribedToast"), description: t("stPluginSubscribedToastDesc") });
   };
 
   const [coupons, setCoupons] = useState([
@@ -1111,12 +1135,15 @@ export default function Settings() {
                            </div>
                            <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
                          </div>
-                         <div className="text-right shrink-0">
-                           <div className="font-semibold">
-                             ${p.price}
-                             <span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span>
-                           </div>
-                         </div>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           className="shrink-0 gap-1.5"
+                           onClick={() => openPluginDetail(p, true)}
+                           data-testid={`button-plugin-detail-${p.id}`}
+                         >
+                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                         </Button>
                          {p.canceled ? (
                            <Button variant="ghost" size="icon" disabled className="shrink-0 h-8 w-8">
                              <MoreHorizontal className="w-4 h-4" />
@@ -1164,6 +1191,53 @@ export default function Settings() {
                              </AlertDialogContent>
                            </AlertDialog>
                          )}
+                       </div>
+                     ))}
+                   </div>
+                 )}
+               </CardContent>
+             </Card>
+
+             <Card className="mb-6">
+               <CardHeader>
+                 <CardTitle className="text-lg" data-testid="text-not-subscribed-plugins-title">{t("stPluginNotSubscribed")}</CardTitle>
+                 <CardDescription>{t("stPluginNotSubscribedDesc")}</CardDescription>
+               </CardHeader>
+               <CardContent>
+                 {notSubscribedPlugins.length === 0 ? (
+                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneNotSubscribed")}</p>
+                 ) : (
+                   <div className="space-y-3">
+                     {notSubscribedPlugins.map((p) => (
+                       <div
+                         key={p.id}
+                         className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                         data-testid={`card-plugin-unsub-${p.id}`}
+                       >
+                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                           <p.Icon className="w-5 h-5" />
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                           <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                         </div>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           className="shrink-0 gap-1.5"
+                           onClick={() => openPluginDetail(p, false)}
+                           data-testid={`button-plugin-detail-${p.id}`}
+                         >
+                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                         </Button>
+                         <Button
+                           size="sm"
+                           className="shrink-0"
+                           onClick={() => subscribePlugin(p.id)}
+                           data-testid={`button-plugin-subscribe-${p.id}`}
+                         >
+                           {t("stPluginSubscribe")}
+                         </Button>
                        </div>
                      ))}
                    </div>
@@ -1662,6 +1736,14 @@ export default function Settings() {
       </div>
         </div>
       </div>
+      <PluginDetailModal
+        plugin={detailPlugin}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        subscribed={detailSubscribed}
+        onSubscribe={subscribePlugin}
+        onCancel={cancelPluginSub}
+      />
     </Layout>
   );
 }
