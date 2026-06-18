@@ -884,7 +884,7 @@ export default function Settings() {
 
              {/* License Change Preview Modal */}
              <Dialog open={changeOpen} onOpenChange={setChangeOpen}>
-               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-muted/30" data-testid="dialog-change-preview">
+               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background" data-testid="dialog-change-preview">
                  <DialogHeader>
                    <div className="flex items-start justify-between gap-4 pr-8">
                      <div className="space-y-1">
@@ -913,7 +913,7 @@ export default function Settings() {
                    {/* Left column */}
                    <div className="space-y-4">
                      {/* Selected plan */}
-                     <div className="rounded-xl border bg-background p-4">
+                     <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">
                        <div className="text-xs text-muted-foreground mb-1">{t("stSelectedPlan")}</div>
                        <div className="text-2xl font-bold" data-testid="text-selected-plan-name">{planNameLabel(changeTarget)}</div>
                        <div className="text-sm text-muted-foreground mt-1">{planDescLabel(changeTarget)}</div>
@@ -923,7 +923,7 @@ export default function Settings() {
                      </div>
 
                      {/* Coupon selection */}
-                     <div className="rounded-xl border bg-background p-4">
+                     <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
                        <div className="font-medium text-sm">{t("stCouponSelect")}</div>
                        <div className="text-xs text-muted-foreground mt-0.5 mb-3">{t("stCouponSelectDesc")}</div>
                        {applicableCoupons.length === 0 ? (
@@ -940,7 +940,7 @@ export default function Settings() {
                                  key={c.id}
                                  onClick={() => toggleCoupon(c.id)}
                                  aria-pressed={isSelected}
-                                 className={`relative w-full flex items-center gap-3 p-2.5 pr-8 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40 hover:border-muted-foreground/30"}`}
+                                 className={`relative w-full flex items-center gap-3 p-2.5 pr-8 border rounded-lg cursor-pointer transition-colors text-left ${isSelected ? "border-primary bg-primary/5" : "border-emerald-100 bg-background hover:bg-emerald-50"}`}
                                  data-testid={`change-coupon-${c.id}`}
                                >
                                  <Badge variant="secondary" className="font-mono text-xs shrink-0">{c.code}</Badge>
@@ -961,7 +961,7 @@ export default function Settings() {
                      </div>
 
                      {/* Payment method */}
-                     <div className="rounded-xl border bg-background p-4">
+                     <div className="rounded-xl border border-sky-100 bg-sky-50/60 p-4">
                        <div className="font-medium text-sm mb-3">{t("stPaymentMethodSelect")}</div>
                        <Select value={changePm} onValueChange={setChangePm}>
                          <SelectTrigger data-testid="select-change-payment">
@@ -983,11 +983,11 @@ export default function Settings() {
                    {/* Right column */}
                    <div className="space-y-4">
                      <div className="grid grid-cols-2 gap-4">
-                       <div className="rounded-xl border bg-background p-4">
+                       <div className="rounded-xl border border-violet-100 bg-violet-50/60 p-4">
                          <div className="text-xs text-muted-foreground mb-1">{t("stChangeType")}</div>
                          <div className="text-lg font-semibold" data-testid="text-change-type">{changeTypeLabel}</div>
                        </div>
-                       <div className="rounded-xl border bg-background p-4">
+                       <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-4">
                          <div className="text-xs text-muted-foreground mb-1">{t("stBillingTiming")}</div>
                          <div className="text-lg font-semibold flex items-center gap-1.5" data-testid="text-billing-timing">
                            <RefreshCw className="w-4 h-4 text-muted-foreground" />
@@ -996,18 +996,18 @@ export default function Settings() {
                        </div>
                      </div>
 
-                     <div className="rounded-xl border bg-background p-4 space-y-4">
+                     <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-4">
                        <div className="space-y-1">
                          <div className="text-sm text-muted-foreground">{isUpgrade ? t("stImmediateProceed") : t("stScheduledProceed")}</div>
                          <div className="text-sm">{t("stNextBillingDate")} <span className="font-medium">{nextBillingDate}</span></div>
                        </div>
 
                        <div className="grid grid-cols-3 gap-3">
-                         <div className="rounded-lg bg-muted/40 p-3">
+                         <div className="rounded-lg border bg-background p-3">
                            <div className="text-[11px] text-muted-foreground mb-1">{t("stAmountBeforeDiscount")}</div>
                            <div className="text-base font-bold" data-testid="text-amount-before">{fmtWon(targetPrice)}</div>
                          </div>
-                         <div className="rounded-lg bg-muted/40 p-3">
+                         <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
                            <div className="text-[11px] text-muted-foreground mb-1">{t("stTotalDiscount")}</div>
                            <div className="text-base font-bold text-emerald-600" data-testid="text-total-discount">-{fmtWon(discountAmount)}</div>
                          </div>
