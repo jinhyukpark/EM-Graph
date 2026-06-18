@@ -10,11 +10,6 @@ import { useState, useEffect } from "react";
 import { translations } from "@/lib/translations";
 import { motion, AnimatePresence } from "framer-motion";
 
-import organizeImage from '../assets/generated_images/abstract_database_ontology_illustration.png';
-import searchImage from '../assets/generated_images/abstract_graph_analytics_illustration.png';
-import aiImage from '../assets/generated_images/abstract_ai_brain_network_illustration.png';
-import shareImage from '../assets/generated_images/abstract_collaboration_network_illustration.png';
-import captureImage from '../assets/generated_images/data_import_and_mapping_ui.png';
 
 const gridIcons = [Sprout, BookOpen, Search, ListChecks, Calendar, Save, Users, Brain];
 const gridIconStyles = [
@@ -28,13 +23,11 @@ const gridIconStyles = [
   "bg-violet-100 text-violet-600",
 ];
 
-const highlightImages = [organizeImage, searchImage, aiImage, shareImage, captureImage];
 const highlightAccents = [
   { pill: "bg-blue-100 text-blue-700", icon: BookOpen, iconBg: "bg-blue-100 text-blue-600", chip: "bg-blue-50 text-blue-700 border-blue-100" },
-  { pill: "bg-purple-100 text-purple-700", icon: Search, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
+  { pill: "bg-purple-100 text-purple-700", icon: Network, iconBg: "bg-purple-100 text-purple-600", chip: "bg-purple-50 text-purple-700 border-purple-100" },
   { pill: "bg-violet-100 text-violet-700", icon: Brain, iconBg: "bg-violet-100 text-violet-600", chip: "bg-violet-50 text-violet-700 border-violet-100" },
-  { pill: "bg-indigo-100 text-indigo-700", icon: Share2, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
-  { pill: "bg-emerald-100 text-emerald-700", icon: Save, iconBg: "bg-emerald-100 text-emerald-600", chip: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+  { pill: "bg-indigo-100 text-indigo-700", icon: Users, iconBg: "bg-indigo-100 text-indigo-600", chip: "bg-indigo-50 text-indigo-700 border-indigo-100" },
 ];
 
 const engineIcons = [Workflow, Network, Table2, Share2, SlidersHorizontal, Database];
@@ -288,6 +281,250 @@ function HeroDemo({ p }: { p: PreviewT }) {
   );
 }
 
+// ─── HIGHLIGHT MOCK 1: Explorer + Editor ────────────────────────────────────
+const TREE_DATA = [
+  { depth: 0, label: "Knowledge Garden", isFolder: true, active: false, isNew: false, highlight: false, count: 0 },
+  { depth: 1, label: "Competitor Analysis", isFolder: true, count: 4, active: false, isNew: false, highlight: false },
+  { depth: 1, label: "Market Research", isFolder: true, count: 3, active: false, isNew: false, highlight: false },
+  { depth: 1, label: "Patent Research", isFolder: true, count: 9, active: true, isNew: false, highlight: false },
+  { depth: 2, label: "Industry Trend Research", isFolder: false, isNew: true, active: false, highlight: false, count: 0 },
+  { depth: 2, label: "Battery Materials Market Trends", isFolder: false, active: false, isNew: false, highlight: false, count: 0 },
+  { depth: 2, label: "LG Energy Solution & SK Innovation", isFolder: false, isNew: true, active: true, highlight: true, count: 0 },
+];
+
+function MockExplorer() {
+  const [visible, setVisible] = useState(4);
+  useEffect(() => {
+    const t = setInterval(() => setVisible(v => (v < TREE_DATA.length ? v + 1 : v)), 380);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden text-left">
+      <div className="h-8 bg-slate-50 border-b flex items-center px-3 gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-400" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <span className="ml-2 text-[11px] text-slate-400 truncate">Knowledge Garden / Patent Research</span>
+      </div>
+      <div className="flex" style={{ height: 300 }}>
+        <div className="w-44 border-r bg-slate-50/70 overflow-hidden shrink-0 py-1">
+          <div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-400">탐색기</div>
+          {TREE_DATA.slice(0, visible).map((item, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+              className={`flex items-center gap-1.5 py-[3px] pr-2 rounded-sm text-[11px] cursor-pointer ${item.highlight ? "bg-primary/10 text-primary font-semibold" : item.active ? "text-slate-800 font-medium" : "text-slate-500"}`}
+              style={{ paddingLeft: `${6 + item.depth * 10}px` }}>
+              {item.isFolder
+                ? <BookOpen className="w-3 h-3 shrink-0 text-blue-500 opacity-80" />
+                : <FileText className="w-3 h-3 shrink-0 text-slate-400 opacity-70" />}
+              <span className="truncate flex-1">{item.label}</span>
+              {item.isNew && <span className="shrink-0 text-[8px] bg-blue-100 text-blue-600 font-bold px-1 rounded">NEW</span>}
+              {item.count > 0 && !item.isNew && <span className="shrink-0 text-[9px] text-slate-400">{item.count}</span>}
+            </motion.div>
+          ))}
+        </div>
+        <div className="flex-1 p-3 overflow-hidden flex flex-col gap-2">
+          <div className="text-[9px] text-slate-400">LG Energy Solution & SK Innovation</div>
+          <div className="text-xs font-bold text-slate-800 leading-snug">Patent Dispute Analysis: LG Energy Solution vs SK Innovation</div>
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] bg-amber-50 text-amber-600 border border-amber-100 rounded px-1.5 py-0.5 flex items-center gap-1">
+              <Brain className="w-2.5 h-2.5 inline" /> AI 생성 · Oct 12, 2025
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-600 leading-relaxed line-clamp-4">전기차 배터리 제조사 간 진행 중인 특허 분쟁에 대한 종합 분석. 주요 특허, 법적 주장, 잠재적 시장 영향을 검토합니다.</p>
+          <div className="mt-auto flex items-center gap-3">
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 2.6 }}
+              className="inline-flex items-center gap-1 text-[9px] text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1">
+              <FileText className="w-2.5 h-2.5" /> 1,247 노트
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 2.9 }}
+              className="inline-flex items-center gap-1 text-[9px] text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-1">
+              <Link2 className="w-2.5 h-2.5" /> 12 연결
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── HIGHLIGHT MOCK 2: Graph Visualization ──────────────────────────────────
+const GV_NODES = [
+  { id: 0, label: "LG에너지솔루션", x: 50, y: 22, r: 22, fill: "#a78bfa" },
+  { id: 1, label: "SK이노베이션", x: 80, y: 50, r: 17, fill: "#60a5fa" },
+  { id: 2, label: "특허분쟁", x: 22, y: 58, r: 15, fill: "#818cf8" },
+  { id: 3, label: "배터리셀", x: 68, y: 78, r: 13, fill: "#38bdf8" },
+  { id: 4, label: "이차전지", x: 16, y: 30, r: 11, fill: "#c084fc" },
+  { id: 5, label: "양극재", x: 50, y: 68, r: 10, fill: "#7dd3fc" },
+];
+const GV_EDGES = [[0,1],[0,2],[1,3],[2,3],[0,4],[3,5],[1,5]];
+
+function MockGraphViz() {
+  const [shownNodes, setShownNodes] = useState(0);
+  const [shownEdges, setShownEdges] = useState(0);
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    GV_NODES.forEach((_, i) => timers.push(setTimeout(() => setShownNodes(i + 1), 300 + i * 320)));
+    GV_EDGES.forEach((_, i) => timers.push(setTimeout(() => setShownEdges(i + 1), 300 + GV_NODES.length * 320 + 200 + i * 230)));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden text-left">
+      <div className="h-8 bg-slate-50 border-b flex items-center px-3 gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-400" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <span className="ml-2 text-[11px] text-slate-400">그래프 뷰 — Patent Analysis</span>
+      </div>
+      <div className="relative bg-slate-50/40" style={{ height: 300 }}>
+        <svg className="absolute inset-0 w-full h-full" aria-hidden>
+          {GV_EDGES.slice(0, shownEdges).map(([a, b], i) => (
+            <motion.line key={i}
+              x1={`${GV_NODES[a].x}%`} y1={`${GV_NODES[a].y}%`}
+              x2={`${GV_NODES[b].x}%`} y2={`${GV_NODES[b].y}%`}
+              stroke="#c7d2fe" strokeWidth="1.5" strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.45 }}
+            />
+          ))}
+        </svg>
+        {GV_NODES.slice(0, shownNodes).map((node, i) => (
+          <motion.div key={i} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 350, damping: 18 }}
+            className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5 z-10"
+            style={{ left: `${node.x}%`, top: `${node.y}%` }}>
+            <div className="rounded-full shadow-md flex items-center justify-center text-white font-bold"
+              style={{ width: node.r * 2, height: node.r * 2, background: node.fill, fontSize: node.r * 0.55 }}>
+              {node.label[0]}
+            </div>
+            <span className="text-[9px] text-slate-600 font-medium bg-white/85 rounded px-1 whitespace-nowrap shadow-sm">{node.label}</span>
+          </motion.div>
+        ))}
+        {shownEdges >= GV_EDGES.length && (
+          <motion.div initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: "spring" }}
+            className="absolute top-3 right-3 flex items-center gap-1.5 bg-white border border-emerald-100 shadow-sm rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 z-20">
+            <Link2 className="w-3.5 h-3.5 text-emerald-500" /> 12 connections
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── HIGHLIGHT MOCK 3: AI Copilot Chat ──────────────────────────────────────
+function MockAIChat() {
+  const [phase, setPhase] = useState(0);
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPhase(1), 700),
+      setTimeout(() => setPhase(2), 2300),
+      setTimeout(() => setPhase(3), 3500),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+  const AI_ANS = "3건의 핵심 특허를 확인했습니다: ① 양극재 특허(2025-11-18) ② 배터리 모듈 특허(2025-11-12) ③ 배터리 관리 시스템 특허(2025-11-12)";
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden text-left">
+      <div className="h-8 bg-slate-50 border-b flex items-center px-3 gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-400" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <span className="ml-2 text-[11px] text-slate-400">AI Copilot</span>
+        <div className="ml-auto flex items-center gap-1">
+          <span className="text-[9px] bg-primary/10 text-primary font-semibold rounded px-2 py-0.5">특허 분석</span>
+          <span className="text-[9px] text-slate-400 px-1.5 py-0.5">법률 검토</span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2.5 p-3" style={{ minHeight: 220 }}>
+        <AnimatePresence>
+          {phase >= 1 && (
+            <motion.div key="user" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+              className="self-end max-w-[82%] bg-primary text-primary-foreground rounded-xl rounded-br-sm px-3 py-2 text-[11px]">
+              이 문서의 핵심 특허를 요약해줘
+            </motion.div>
+          )}
+          {phase === 2 && (
+            <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="self-start flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shrink-0">
+                <Brain className="w-3.5 h-3.5 text-white" />
+              </div>
+              <div className="bg-slate-100 rounded-xl rounded-tl-sm px-3 py-2 flex gap-1 items-center">
+                {[0,1,2].map(i => (
+                  <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-400"
+                    animate={{ y: [0,-4,0] }} transition={{ duration: 0.55, repeat: Infinity, delay: i * 0.15 }} />
+                ))}
+              </div>
+            </motion.div>
+          )}
+          {phase >= 3 && (
+            <motion.div key="ai" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="self-start flex gap-1.5 max-w-[92%]">
+              <div className="w-6 h-6 shrink-0 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+                <Brain className="w-3.5 h-3.5 text-white" />
+              </div>
+              <div className="bg-slate-100 text-slate-700 rounded-xl rounded-tl-sm px-3 py-2 text-[11px] leading-relaxed">
+                <Typewriter text={AI_ANS} speed={22} startDelay={80} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <div className="px-3 pb-3 mt-auto">
+        <div className="flex items-center gap-2 border rounded-lg px-2.5 py-1.5 bg-slate-50 text-[11px] text-slate-400">
+          <span className="flex-1">Ask anything...</span>
+          <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center shrink-0">
+            <Send className="w-3 h-3 text-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── HIGHLIGHT MOCK 4: Shared With Me ───────────────────────────────────────
+const SHARED_DOCS = [
+  { initials: "JK", name: "Stock Investment Insights", sub: "3 notes", color: "bg-blue-500", isNew: false },
+  { initials: "SH", name: "2024 KOSPI Semiconductor Sector Outlook", sub: "기업연구", color: "bg-purple-500", isNew: false },
+  { initials: "MR", name: "Samsung vs SK Hynix Comparison", sub: "비교분석", color: "bg-indigo-500", isNew: true },
+  { initials: "BG", name: "Battery Big 3 Investment Points", sub: "투자분석", color: "bg-violet-500", isNew: true },
+  { initials: "JO", name: "USD/KRW Weekly FX Note", sub: "FX 리서치", color: "bg-sky-500", isNew: true },
+];
+
+function MockSharedWithMe() {
+  const [visible, setVisible] = useState(0);
+  useEffect(() => {
+    const timers = SHARED_DOCS.map((_, i) => setTimeout(() => setVisible(i + 1), i * 430 + 300));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden text-left">
+      <div className="h-8 bg-slate-50 border-b flex items-center px-3 gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-400" /><div className="w-2.5 h-2.5 rounded-full bg-yellow-400" /><div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <span className="ml-2 text-[11px] text-slate-400">Shared With Me</span>
+      </div>
+      <div className="p-3">
+        <div className="flex items-center gap-2 mb-3">
+          <Users className="w-3.5 h-3.5 text-primary" />
+          <span className="text-[11px] font-semibold text-slate-700">공유된 지식 정원</span>
+          <motion.span animate={{ opacity: 1 }} initial={{ opacity: 0 }}
+            className="ml-auto text-[9px] bg-primary/10 text-primary rounded-full px-2 py-0.5 font-semibold">
+            {visible}명 연결
+          </motion.span>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          {SHARED_DOCS.slice(0, visible).map((doc, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", stiffness: 340, damping: 22 }}
+              className="flex items-center gap-2.5 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+              <div className={`w-7 h-7 rounded-full ${doc.color} text-white text-[10px] font-bold flex items-center justify-center shrink-0`}>
+                {doc.initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] font-medium text-slate-700 truncate">{doc.name}</div>
+                <div className="text-[9px] text-slate-400">{doc.sub}</div>
+              </div>
+              {doc.isNew && <span className="text-[8px] bg-blue-100 text-blue-600 font-bold px-1.5 py-0.5 rounded shrink-0">NEW</span>}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const HIGHLIGHT_MOCKS = [MockExplorer, MockGraphViz, MockAIChat, MockSharedWithMe];
+
 export default function LandingPage() {
   const [lang, setLang] = useState<'en' | 'ko'>('en');
   const t = translations[lang];
@@ -509,9 +746,8 @@ export default function LandingPage() {
                   data-testid={`row-highlight-${i}`}
                 >
                   <div className={`flex-1 w-full ${imageLeft ? 'order-2 md:order-1' : 'order-2 md:order-2'}`}>
-                    <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 relative group transform hover:-translate-y-1 transition-transform duration-500">
-                      <img src={highlightImages[i]} alt={row.title} className="w-full h-auto" />
-                      <div className="absolute inset-0 bg-indigo-900/5 group-hover:bg-transparent transition-colors" />
+                    <div className="transform hover:-translate-y-1 transition-transform duration-500">
+                      {(() => { const Mock = HIGHLIGHT_MOCKS[i]; return <Mock />; })()}
                     </div>
                   </div>
                   <div className={`flex-1 space-y-6 ${imageLeft ? 'order-1 md:order-2' : 'order-1 md:order-1'}`}>
