@@ -869,7 +869,7 @@ const translations = {
     stLicensePayment: "{plan} 라이선스 결제",
     stChangeFooterNote: "{type} / {timing} 기준으로 처리됩니다.",
     stCancelSelection: "선택 취소",
-    stExecuteChange: "구독 변경 실행",
+    stExecuteChange: "플랜 변경 실행",
     stChangeExecuted: "구독 변경이 요청되었습니다",
     stChangeExecutedDesc: "{plan} 플랜으로의 변경이 접수되었습니다.",
     stRecalculated: "금액이 다시 계산되었습니다",
