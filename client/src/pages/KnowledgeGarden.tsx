@@ -145,6 +145,7 @@ const DOC_TEMPLATES: {
   desc: string;
   icon: typeof FileText;
   accent: string;
+  iconColor: string;
   overview: string;
   insights: string[];
   benefits: string[];
@@ -155,6 +156,7 @@ const DOC_TEMPLATES: {
     desc: '논의 내용을 배경, 주요 논의, 결정사항, 액션아이템 중심으로 정리합니다.',
     icon: Edit3,
     accent: 'text-blue-600 bg-blue-50 border-blue-200',
+    iconColor: 'text-blue-600',
     overview: '회의 내용을 일시·참석자·안건의 머리글과 함께 배경, 주요 논의, 결정사항, 액션 아이템 순서로 구조화합니다. 누가 무엇을 언제까지 하기로 했는지가 한눈에 드러나도록 정리합니다.',
     insights: [
       '결정사항과 단순 논의를 분리해 회의의 결론이 명확해집니다.',
@@ -172,6 +174,7 @@ const DOC_TEMPLATES: {
     desc: '분석 대상의 배경, 범위, 주요 발견, 결론과 제언을 보고서 형태로 정리합니다.',
     icon: BarChart3,
     accent: 'text-violet-600 bg-violet-50 border-violet-200',
+    iconColor: 'text-violet-600',
     overview: '분석 대상을 개요·배경·분석·결론 및 권고의 정식 보고서 흐름으로 재구성합니다. 근거와 발견을 단계적으로 제시하고 마지막에 의사결정을 위한 제언으로 마무리합니다.',
     insights: [
       '발견과 결론을 논리적 순서로 배치해 설득력이 높아집니다.',
@@ -189,6 +192,7 @@ const DOC_TEMPLATES: {
     desc: '아이디어나 요구사항을 목표, 문제정의, 범위, 요구사항, 일정, 성공 지표로 정리합니다.',
     icon: Lightbulb,
     accent: 'text-amber-600 bg-amber-50 border-amber-200',
+    iconColor: 'text-amber-600',
     overview: '아이디어와 요구사항을 목표·문제정의·범위·요구사항·일정·성공 지표의 기획 프레임으로 정리합니다. 무엇을 왜 만들고 어떻게 성공을 측정할지가 한 문서에 담깁니다.',
     insights: [
       '문제정의와 목표를 분리해 기획의 방향이 또렷해집니다.',
@@ -206,6 +210,7 @@ const DOC_TEMPLATES: {
     desc: '문서 내용을 수신자에게 공유하기 좋은 업무 이메일 형식으로 바꿉니다.',
     icon: Mail,
     accent: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+    iconColor: 'text-emerald-600',
     overview: '문서의 핵심을 수신자·제목·인사·본문·맺음말을 갖춘 업무 이메일로 변환합니다. 바쁜 수신자가 빠르게 요점과 요청사항을 파악할 수 있도록 간결하게 정리합니다.',
     insights: [
       '요점을 앞단에 배치해 수신자가 핵심을 먼저 봅니다.',
@@ -407,8 +412,8 @@ function TemplateConvertDialog({
                           : "border-border bg-card hover:border-primary/40 hover:shadow-sm"
                       )}
                     >
-                      <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border", tpl.accent)}>
-                        <Icon className="w-4.5 h-4.5" />
+                      <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center", tpl.iconColor)}>
+                        <Icon className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
@@ -443,8 +448,8 @@ function TemplateConvertDialog({
                 <ScrollArea className="h-full">
                   <div className="px-6 py-5">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg border", selected.accent)}>
-                        <SelectedIcon className="w-5 h-5" />
+                      <div className={cn("flex h-8 w-8 items-center justify-center", selected.iconColor)}>
+                        <SelectedIcon className="w-6 h-6" />
                       </div>
                       <div>
                         <div className="font-bold text-foreground">{selected.label}</div>
