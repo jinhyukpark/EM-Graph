@@ -193,21 +193,6 @@ export default function PluginDetailModal({
             </div>
           </div>
 
-          {/* Stats Row */}
-          <div className="grid grid-cols-4 gap-8 mb-8 pb-6 border-b border-border">
-            {[
-              { label: "설치", value: <span className="flex items-center gap-1"><Download className="w-3.5 h-3.5" />{plugin.downloads ?? "1.5K"}</span> },
-              { label: "런칭일", value: "Apr 2025" },
-              { label: "버전 업데이트", value: "3 days ago" },
-              { label: "평가", value: plugin.rating ? <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />{plugin.rating} ({plugin.reviews})</span> : "아직 평가 없음" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-[11px] text-muted-foreground mb-1">{s.label}</div>
-                <div className="text-sm font-medium text-foreground">{s.value}</div>
-              </div>
-            ))}
-          </div>
-
           {/* Screenshots Carousel */}
           <div className="relative mb-8">
             <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-8 h-8 rounded-full bg-white shadow-md border border-border flex items-center justify-center hover:bg-secondary" data-testid="button-detail-screenshot-prev">
@@ -435,16 +420,6 @@ export default function PluginDetailModal({
             {/* Sidebar */}
             {activeTab === "overview" && (
               <aside className="space-y-4">
-                <Card className="p-4 border-border/60">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    <span className="text-sm font-semibold">데이터 보호 인증</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    이 앱은 데이터 보호에 대한 헌신으로 인정받았습니다. 파트너가 제공한 다음 기준 중 하나를 충족한 자격이 있습니다:
-                  </p>
-                </Card>
-
                 <div>
                   <h4 className="text-sm font-bold text-foreground mb-2">{t("stPluginPrivacySecurity")}</h4>
                   <ul className="space-y-1.5 text-sm text-muted-foreground">
