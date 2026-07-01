@@ -64,6 +64,9 @@ export default function Settings() {
   };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
+  // License subscription action state (mock). Change initial value to preview:
+  // "active" (구독중) | "cancelScheduled" (해지 예약됨) | "downgradeScheduled" (변경 예약됨)
+  const [subStatus, setSubStatus] = useState<"active" | "cancelScheduled" | "downgradeScheduled">("active");
   const [subscribedPlugins, setSubscribedPlugins] = useState<PluginInfo[]>([
     { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false },
   ]);
@@ -209,6 +212,8 @@ export default function Settings() {
     seatsTotal: 5,
     autoRenew: true,
     voucherName: "코오롱 파트너 이용권",
+    // When subStatus === "downgradeScheduled", the license reserved for next cycle
+    scheduledPlan: "Free" as "Free" | "Pro" | "Premium",
   };
 
   const fmtDotDate = (d: string) => d.replace(/-/g, ".");
@@ -897,24 +902,65 @@ export default function Settings() {
                      )}
 
                      {canCancel && (
-                       <div className="mt-4 pt-4 border-t">
-                         <AlertDialog>
-                           <AlertDialogTrigger asChild>
-                             <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
-                               {t("stLicCancel")}
-                             </Button>
-                           </AlertDialogTrigger>
-                           <AlertDialogContent data-testid="dialog-cancel-subscription">
-                             <AlertDialogHeader>
-                               <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
-                               <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
-                             </AlertDialogHeader>
-                             <AlertDialogFooter>
-                               <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
-                               <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm">{t("stLicCancelConfirm")}</AlertDialogAction>
-                             </AlertDialogFooter>
-                           </AlertDialogContent>
-                         </AlertDialog>
+                       <div className="mt-4 pt-4 border-t space-y-3">
+                         {subStatus === "cancelScheduled" && (
+                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-cancel-scheduled">
+                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                             <span>{t("stLicCancelScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate))}</span>
+                           </div>
+                         )}
+                         {subStatus === "downgradeScheduled" && (
+                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-change-scheduled">
+                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                             <span>{t("stLicChangeScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate)).replace("{plan}", planNameLabel(s.scheduledPlan))}</span>
+                           </div>
+                         )}
+
+                         {subStatus === "active" && (
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
+                                 {t("stLicCancel")}
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent data-testid="dialog-cancel-subscription">
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
+                                 <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
+                                 <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm" onClick={() => { setSubStatus("cancelScheduled"); toast({ title: t("stLicCancelToast") }); }}>{t("stLicCancelConfirm")}</AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         )}
+
+                         {subStatus === "cancelScheduled" && (
+                           <Button variant="outline" size="sm" data-testid="button-undo-cancel" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoCancelToast") }); }}>
+                             {t("stLicUndoCancel")}
+                           </Button>
+                         )}
+
+                         {subStatus === "downgradeScheduled" && (
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button variant="outline" size="sm" data-testid="button-undo-change">
+                                 {t("stLicUndoChange")}
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent data-testid="dialog-undo-change">
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>{t("stLicUndoChangeTitle")}</AlertDialogTitle>
+                                 <AlertDialogDescription>{t("stLicUndoChangeDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel data-testid="button-undo-change-back">{t("stLicUndoChangeBack")}</AlertDialogCancel>
+                                 <AlertDialogAction data-testid="button-undo-change-confirm" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoChangeToast") }); }}>{t("stLicUndoChangeConfirm")}</AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         )}
                        </div>
                      )}
                    </CardContent>
