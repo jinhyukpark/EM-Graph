@@ -197,6 +197,7 @@ export default function Settings() {
   // --- License subscription status (mock) ---
   // activation: "paid" (결제형) | "free" (무료) | "voucher" (이용권형)
   // Switch these mock values to preview each state.
+  const WORKSPACE_NAME = "코오롱베니트";
   const LICENSE_STATUS = {
     plan: CURRENT_PLAN as "Free" | "Pro" | "Premium",
     activation: "paid" as "paid" | "free" | "voucher",
@@ -826,36 +827,16 @@ export default function Settings() {
                const isFree = s.activation === "free" || s.plan === "Free";
                const isVoucher = s.activation === "voucher";
                const remaining = isFree ? null : daysUntil(s.endDate);
-               const expired = remaining !== null && remaining < 0;
-               const expiring = remaining !== null && remaining >= 0 && remaining <= 14;
-
-               const statusBadge = expired
-                 ? { label: t("stLicStatusExpired"), cls: "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900" }
-                 : expiring
-                 ? { label: t("stLicStatusExpiring"), cls: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900" }
-                 : { label: t("stLicStatusActive"), cls: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900" };
+               const canCancel = !isFree && !isVoucher;
 
                return (
                  <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent" data-testid="card-license-status">
                    <CardHeader className="pb-4">
-                     <div className="flex flex-wrap items-center justify-between gap-3">
-                       <div className="flex items-center gap-3">
-                         <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                           <Shield className="w-5 h-5" />
-                         </div>
-                         <div>
-                           <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
-                           <CardDescription>{t("stLicStatusDesc")}</CardDescription>
-                         </div>
-                       </div>
-                       <Button variant="outline" size="sm" className="gap-1.5" data-testid="button-manage-plan">
-                         <SettingsIcon className="w-4 h-4" />
-                         {t("stLicManagePlan")}
-                       </Button>
-                     </div>
+                     <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
+                     <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
                    </CardHeader>
                    <CardContent>
-                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                        {/* Current license */}
                        <div className="space-y-1.5" data-testid="stat-license-plan">
                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -863,7 +844,6 @@ export default function Settings() {
                          </div>
                          <div className="flex flex-wrap items-center gap-2">
                            <span className="text-lg font-bold" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
-                           <Badge variant="outline" className={statusBadge.cls} data-testid="badge-license-status">{statusBadge.label}</Badge>
                          </div>
                          {isVoucher && (
                            <Badge variant="outline" className="mt-1 bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900" data-testid="badge-license-voucher">
@@ -906,25 +886,6 @@ export default function Settings() {
                            </div>
                          )}
                        </div>
-
-                       {/* Seats + auto renew */}
-                       <div className="space-y-1.5" data-testid="stat-license-seats">
-                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                           <Users className="w-3.5 h-3.5" /> {t("stLicSeats")}
-                         </div>
-                         <span className="text-sm font-medium" data-testid="text-license-seats">{s.seatsUsed} / {s.seatsTotal}{t("stLicSeatsUnit")}</span>
-                         <div className="flex items-center gap-1.5 text-xs">
-                           <RefreshCw className="w-3 h-3 text-muted-foreground" />
-                           <span className="text-muted-foreground">{t("stLicAutoRenew")}:</span>
-                           {isFree || isVoucher ? (
-                             <span className="font-medium text-muted-foreground" data-testid="text-license-autorenew">{t("stLicNotApplicable")}</span>
-                           ) : (
-                             <span className={s.autoRenew ? "font-medium text-emerald-600 dark:text-emerald-400" : "font-medium text-muted-foreground"} data-testid="text-license-autorenew">
-                               {s.autoRenew ? t("stLicAutoRenewOn") : t("stLicAutoRenewOff")}
-                             </span>
-                           )}
-                         </div>
-                       </div>
                      </div>
 
                      {isVoucher && (
@@ -932,6 +893,28 @@ export default function Settings() {
                          <Ticket className="w-4 h-4 text-violet-500" />
                          <span className="text-muted-foreground">{t("stLicVoucherName")}:</span>
                          <span className="font-medium">{s.voucherName}</span>
+                       </div>
+                     )}
+
+                     {canCancel && (
+                       <div className="mt-4 pt-4 border-t">
+                         <AlertDialog>
+                           <AlertDialogTrigger asChild>
+                             <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
+                               {t("stLicCancel")}
+                             </Button>
+                           </AlertDialogTrigger>
+                           <AlertDialogContent data-testid="dialog-cancel-subscription">
+                             <AlertDialogHeader>
+                               <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
+                               <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                             </AlertDialogHeader>
+                             <AlertDialogFooter>
+                               <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
+                               <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm">{t("stLicCancelConfirm")}</AlertDialogAction>
+                             </AlertDialogFooter>
+                           </AlertDialogContent>
+                         </AlertDialog>
                        </div>
                      )}
                    </CardContent>
