@@ -1005,9 +1005,6 @@ export default function Settings() {
                      </div>
                    </div>
                  </CardContent>
-                 <CardFooter>
-                   <Button variant="outline" className="w-full" onClick={() => openChangeModal("Free")} data-testid="button-select-free">{t("stSelectFreePlan")}</Button>
-                 </CardFooter>
                </Card>
 
                {/* Pro Plan */}
