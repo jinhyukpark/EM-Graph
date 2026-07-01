@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye, Calendar, Ticket, CalendarClock } from "lucide-react";
 import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
 import PaymentModal from "@/components/settings/PaymentModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -193,6 +193,29 @@ export default function Settings() {
   const PLAN_PRICES: Record<string, number> = { Free: 0, Pro: 100000, Premium: 300000 };
   const CURRENT_PLAN = "Pro";
   const fmtWon = (n: number) => `₩${n.toLocaleString("en-US")}`;
+
+  // --- License subscription status (mock) ---
+  // activation: "paid" (결제형) | "free" (무료) | "voucher" (이용권형)
+  // Switch these mock values to preview each state.
+  const LICENSE_STATUS = {
+    plan: CURRENT_PLAN as "Free" | "Pro" | "Premium",
+    activation: "paid" as "paid" | "free" | "voucher",
+    startDate: "2026.03.01",
+    endDate: "2026.09.01",
+    nextBillingDate: "2026.07.01",
+    nextAmount: PLAN_PRICES[CURRENT_PLAN],
+    seatsUsed: 3,
+    seatsTotal: 5,
+    autoRenew: true,
+    voucherName: "코오롱 파트너 이용권",
+  };
+
+  const fmtDotDate = (d: string) => d.replace(/-/g, ".");
+  const daysUntil = (dotDate: string) => {
+    const parsed = new Date(dotDate.replace(/\./g, "-") + "T00:00:00");
+    if (isNaN(parsed.getTime())) return null;
+    return Math.ceil((parsed.getTime() - Date.now()) / 86400000);
+  };
 
   const planNameLabel = (p: string) =>
     p === "Free" ? t("stFree") : p === "Pro" ? t("stPro") : t("stPremium");
@@ -796,6 +819,126 @@ export default function Settings() {
                <h2 className="text-2xl font-bold tracking-tight" data-testid="text-license-title">{t("stLicenseTitle")}</h2>
                <p className="text-sm text-muted-foreground">{t("stLicenseSubtitle")}</p>
              </div>
+
+             {/* Current subscription status */}
+             {(() => {
+               const s = LICENSE_STATUS;
+               const isFree = s.activation === "free" || s.plan === "Free";
+               const isVoucher = s.activation === "voucher";
+               const remaining = isFree ? null : daysUntil(s.endDate);
+               const expired = remaining !== null && remaining < 0;
+               const expiring = remaining !== null && remaining >= 0 && remaining <= 14;
+
+               const statusBadge = expired
+                 ? { label: t("stLicStatusExpired"), cls: "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900" }
+                 : expiring
+                 ? { label: t("stLicStatusExpiring"), cls: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900" }
+                 : { label: t("stLicStatusActive"), cls: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900" };
+
+               return (
+                 <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent" data-testid="card-license-status">
+                   <CardHeader className="pb-4">
+                     <div className="flex flex-wrap items-center justify-between gap-3">
+                       <div className="flex items-center gap-3">
+                         <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                           <Shield className="w-5 h-5" />
+                         </div>
+                         <div>
+                           <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
+                           <CardDescription>{t("stLicStatusDesc")}</CardDescription>
+                         </div>
+                       </div>
+                       <Button variant="outline" size="sm" className="gap-1.5" data-testid="button-manage-plan">
+                         <SettingsIcon className="w-4 h-4" />
+                         {t("stLicManagePlan")}
+                       </Button>
+                     </div>
+                   </CardHeader>
+                   <CardContent>
+                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                       {/* Current license */}
+                       <div className="space-y-1.5" data-testid="stat-license-plan">
+                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                           <Zap className="w-3.5 h-3.5" /> {t("stLicCurrentPlan")}
+                         </div>
+                         <div className="flex flex-wrap items-center gap-2">
+                           <span className="text-lg font-bold" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                           <Badge variant="outline" className={statusBadge.cls} data-testid="badge-license-status">{statusBadge.label}</Badge>
+                         </div>
+                         {isVoucher && (
+                           <Badge variant="outline" className="mt-1 bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900" data-testid="badge-license-voucher">
+                             <Ticket className="w-3 h-3 mr-1" />{t("stLicVoucherBadge")}
+                           </Badge>
+                         )}
+                       </div>
+
+                       {/* Subscription period */}
+                       <div className="space-y-1.5" data-testid="stat-license-period">
+                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                           <Calendar className="w-3.5 h-3.5" /> {t("stLicPeriod")}
+                         </div>
+                         {isFree ? (
+                           <span className="text-sm font-medium text-muted-foreground" data-testid="text-license-period">{t("stLicUnlimited")}</span>
+                         ) : (
+                           <span className="text-sm font-medium" data-testid="text-license-period">{fmtDotDate(s.startDate)} ~ {fmtDotDate(s.endDate)}</span>
+                         )}
+                       </div>
+
+                       {/* Next billing / voucher expiry */}
+                       <div className="space-y-1.5" data-testid="stat-license-billing">
+                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                           {isVoucher ? <CalendarClock className="w-3.5 h-3.5" /> : <CreditCard className="w-3.5 h-3.5" />}
+                           {isVoucher ? t("stLicVoucherExpiry") : t("stLicNextBilling")}
+                         </div>
+                         {isFree ? (
+                           <span className="text-sm font-medium text-muted-foreground" data-testid="text-license-billing">{t("stLicNotApplicable")}</span>
+                         ) : isVoucher ? (
+                           <div>
+                             <span className="text-sm font-medium" data-testid="text-license-billing">{fmtDotDate(s.endDate)}</span>
+                             {remaining !== null && remaining >= 0 && (
+                               <span className="block text-xs text-muted-foreground">{t("stLicDaysLeft").replace("{days}", String(remaining))}</span>
+                             )}
+                           </div>
+                         ) : (
+                           <div>
+                             <span className="text-sm font-medium" data-testid="text-license-billing">{fmtDotDate(s.nextBillingDate)}</span>
+                             <span className="block text-xs text-muted-foreground" data-testid="text-license-amount">{t("stLicNextAmount")}: {fmtWon(s.nextAmount)}</span>
+                           </div>
+                         )}
+                       </div>
+
+                       {/* Seats + auto renew */}
+                       <div className="space-y-1.5" data-testid="stat-license-seats">
+                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                           <Users className="w-3.5 h-3.5" /> {t("stLicSeats")}
+                         </div>
+                         <span className="text-sm font-medium" data-testid="text-license-seats">{s.seatsUsed} / {s.seatsTotal}{t("stLicSeatsUnit")}</span>
+                         <div className="flex items-center gap-1.5 text-xs">
+                           <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                           <span className="text-muted-foreground">{t("stLicAutoRenew")}:</span>
+                           {isFree || isVoucher ? (
+                             <span className="font-medium text-muted-foreground" data-testid="text-license-autorenew">{t("stLicNotApplicable")}</span>
+                           ) : (
+                             <span className={s.autoRenew ? "font-medium text-emerald-600 dark:text-emerald-400" : "font-medium text-muted-foreground"} data-testid="text-license-autorenew">
+                               {s.autoRenew ? t("stLicAutoRenewOn") : t("stLicAutoRenewOff")}
+                             </span>
+                           )}
+                         </div>
+                       </div>
+                     </div>
+
+                     {isVoucher && (
+                       <div className="mt-4 pt-4 border-t flex items-center gap-2 text-sm" data-testid="text-license-voucher-name">
+                         <Ticket className="w-4 h-4 text-violet-500" />
+                         <span className="text-muted-foreground">{t("stLicVoucherName")}:</span>
+                         <span className="font-medium">{s.voucherName}</span>
+                       </div>
+                     )}
+                   </CardContent>
+                 </Card>
+               );
+             })()}
+
              <div className="grid gap-6 lg:grid-cols-3">
                {/* Free Plan */}
                <Card className="border-border/50 relative overflow-hidden">
