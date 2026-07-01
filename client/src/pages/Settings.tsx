@@ -841,53 +841,61 @@ export default function Settings() {
                      <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
                    </CardHeader>
                    <CardContent>
-                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                        {/* Current license */}
-                       <div className="space-y-1.5" data-testid="stat-license-plan">
-                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                           <Zap className="w-3.5 h-3.5" /> {t("stLicCurrentPlan")}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-plan">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
+                             <Zap className="w-4 h-4" />
+                           </span>
+                           {t("stLicCurrentPlan")}
                          </div>
                          <div className="flex flex-wrap items-center gap-2">
-                           <span className="text-lg font-bold" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                           <span className="text-2xl font-bold leading-none tracking-tight" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                           {isVoucher && (
+                             <Badge variant="outline" className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900" data-testid="badge-license-voucher">
+                               <Ticket className="w-3 h-3 mr-1" />{t("stLicVoucherBadge")}
+                             </Badge>
+                           )}
                          </div>
-                         {isVoucher && (
-                           <Badge variant="outline" className="mt-1 bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900" data-testid="badge-license-voucher">
-                             <Ticket className="w-3 h-3 mr-1" />{t("stLicVoucherBadge")}
-                           </Badge>
-                         )}
                        </div>
 
                        {/* Subscription period */}
-                       <div className="space-y-1.5" data-testid="stat-license-period">
-                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                           <Calendar className="w-3.5 h-3.5" /> {t("stLicPeriod")}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-period">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                             <Calendar className="w-4 h-4" />
+                           </span>
+                           {t("stLicPeriod")}
                          </div>
                          {isFree ? (
-                           <span className="text-sm font-medium text-muted-foreground" data-testid="text-license-period">{t("stLicUnlimited")}</span>
+                           <span className="text-base font-semibold text-muted-foreground" data-testid="text-license-period">{t("stLicUnlimited")}</span>
                          ) : (
-                           <span className="text-sm font-medium" data-testid="text-license-period">{fmtDotDate(s.startDate)} ~ {fmtDotDate(s.endDate)}</span>
+                           <span className="text-base font-semibold tabular-nums" data-testid="text-license-period">{fmtDotDate(s.startDate)} ~ {fmtDotDate(s.endDate)}</span>
                          )}
                        </div>
 
                        {/* Next billing / voucher expiry */}
-                       <div className="space-y-1.5" data-testid="stat-license-billing">
-                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                           {isVoucher ? <CalendarClock className="w-3.5 h-3.5" /> : <CreditCard className="w-3.5 h-3.5" />}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-billing">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                             {isVoucher ? <CalendarClock className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
+                           </span>
                            {isVoucher ? t("stLicVoucherExpiry") : t("stLicNextBilling")}
                          </div>
                          {isFree ? (
-                           <span className="text-sm font-medium text-muted-foreground" data-testid="text-license-billing">{t("stLicNotApplicable")}</span>
+                           <span className="text-base font-semibold text-muted-foreground" data-testid="text-license-billing">{t("stLicNotApplicable")}</span>
                          ) : isVoucher ? (
-                           <div>
-                             <span className="text-sm font-medium" data-testid="text-license-billing">{fmtDotDate(s.endDate)}</span>
+                           <div className="flex flex-col gap-0.5">
+                             <span className="text-base font-semibold tabular-nums" data-testid="text-license-billing">{fmtDotDate(s.endDate)}</span>
                              {remaining !== null && remaining >= 0 && (
-                               <span className="block text-xs text-muted-foreground">{t("stLicDaysLeft").replace("{days}", String(remaining))}</span>
+                               <span className="text-xs text-muted-foreground">{t("stLicDaysLeft").replace("{days}", String(remaining))}</span>
                              )}
                            </div>
                          ) : (
-                           <div>
-                             <span className="text-sm font-medium" data-testid="text-license-billing">{fmtDotDate(s.nextBillingDate)}</span>
-                             <span className="block text-xs text-muted-foreground" data-testid="text-license-amount">{t("stLicNextAmount")}: {fmtWon(s.nextAmount)}</span>
+                           <div className="flex flex-col gap-0.5">
+                             <span className="text-base font-semibold tabular-nums" data-testid="text-license-billing">{fmtDotDate(s.nextBillingDate)}</span>
+                             <span className="text-xs text-muted-foreground" data-testid="text-license-amount">{t("stLicNextAmount")}: {fmtWon(s.nextAmount)}</span>
                            </div>
                          )}
                        </div>
