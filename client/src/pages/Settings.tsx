@@ -841,6 +841,25 @@ export default function Settings() {
                      <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
                    </CardHeader>
                    <CardContent>
+                     {isFree ? (
+                       <div className="flex flex-col gap-4 rounded-xl border bg-background/60 p-5 sm:flex-row sm:items-center sm:justify-between" data-testid="license-free-state">
+                         <div className="flex items-start gap-3">
+                           <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
+                             <Zap className="w-5 h-5" />
+                           </span>
+                           <div className="flex flex-col gap-1">
+                             <div className="flex flex-wrap items-center gap-2">
+                               <span className="text-lg font-bold leading-none tracking-tight" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                               <span className="text-sm font-medium text-muted-foreground">{t("stLicFreeHeadline")}</span>
+                             </div>
+                             <p className="text-sm text-muted-foreground max-w-md" data-testid="text-license-free-message">{t("stLicFreeMessage")}</p>
+                           </div>
+                         </div>
+                         <Button className="shrink-0 shadow-sm" onClick={() => openChangeModal("Pro")} data-testid="button-license-upgrade">
+                           <Zap className="w-4 h-4 mr-1.5" />{t("stLicFreeUpgrade")}
+                         </Button>
+                       </div>
+                     ) : (
                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                        {/* Current license */}
                        <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-plan">
@@ -900,6 +919,7 @@ export default function Settings() {
                          )}
                        </div>
                      </div>
+                     )}
 
                      {isVoucher && (
                        <div className="mt-4 pt-4 border-t flex items-center gap-2 text-sm" data-testid="text-license-voucher-name">
