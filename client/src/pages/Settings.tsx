@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye, Calendar, Ticket, CalendarClock } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, Share2, Eye, Calendar, Ticket, CalendarClock, ChevronDown } from "lucide-react";
 import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
 import PaymentModal from "@/components/settings/PaymentModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -67,8 +67,11 @@ export default function Settings() {
   // License subscription action state (mock). Change initial value to preview:
   // "active" (구독중) | "cancelScheduled" (해지 예약됨) | "downgradeScheduled" (변경 예약됨)
   const [subStatus, setSubStatus] = useState<"active" | "cancelScheduled" | "downgradeScheduled">("active");
+  const [expandedPlugins, setExpandedPlugins] = useState<Record<string, boolean>>({});
+  const togglePluginExpand = (id: string) =>
+    setExpandedPlugins((prev) => ({ ...prev, [id]: !prev[id] }));
   const [subscribedPlugins, setSubscribedPlugins] = useState<PluginInfo[]>([
-    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false },
+    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false, startDate: "2026.03.01", endDate: "2026.09.01", nextBillingDate: "2026.07.01" },
   ]);
   const [notSubscribedPlugins, setNotSubscribedPlugins] = useState<PluginInfo[]>([
     { id: "p1", name: "Graph AI Copilot", vendor: "EM-Graph Labs", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.", category: "AI", price: 29000, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", badge: "Editor", rating: 5.0, reviews: 312, downloads: "12.4K" },
@@ -1178,76 +1181,120 @@ export default function Settings() {
                          {subscribedPlugins.map((p) => (
                        <div
                          key={p.id}
-                         className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                         className="border rounded-lg overflow-hidden"
                          data-testid={`card-plugin-sub-${p.id}`}
                        >
-                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
-                           <p.Icon className="w-5 h-5" />
+                         <div className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors">
+                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                             <p.Icon className="w-5 h-5" />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                             <div className="flex items-center gap-2 flex-wrap">
+                               <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                               {p.canceled && (
+                                 <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+                               )}
+                             </div>
+                             <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                           </div>
+                           <Button
+                             variant="outline"
+                             size="sm"
+                             className="shrink-0 gap-1.5"
+                             onClick={() => openPluginDetail(p, true)}
+                             data-testid={`button-plugin-detail-${p.id}`}
+                           >
+                             <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                           </Button>
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
+                             onClick={() => togglePluginExpand(p.id)}
+                             aria-expanded={!!expandedPlugins[p.id]}
+                             data-testid={`button-plugin-expand-${p.id}`}
+                           >
+                             <ChevronDown className={`w-4 h-4 transition-transform ${expandedPlugins[p.id] ? "rotate-180" : ""}`} />
+                           </Button>
                          </div>
-                         <div className="flex-1 min-w-0">
-                           <div className="flex items-center gap-2 flex-wrap">
-                             <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
-                             {p.canceled && (
-                               <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+
+                         {expandedPlugins[p.id] && (
+                           <div className="border-t bg-muted/20 px-4 py-4 space-y-4" data-testid={`panel-plugin-detail-${p.id}`}>
+                             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                               {/* Subscription period */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                                     <Calendar className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicPeriod")}
+                                 </div>
+                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-period-${p.id}`}>{p.startDate && p.endDate ? `${fmtDotDate(p.startDate)} ~ ${fmtDotDate(p.endDate)}` : t("stLicNotApplicable")}</span>
+                               </div>
+
+                               {/* Next billing */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                     <CreditCard className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicNextBilling")}
+                                 </div>
+                                 {p.canceled ? (
+                                   <span className="text-base font-semibold text-muted-foreground" data-testid={`text-plugin-billing-${p.id}`}>{t("stLicNotApplicable")}</span>
+                                 ) : (
+                                   <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-billing-${p.id}`}>{p.nextBillingDate ? fmtDotDate(p.nextBillingDate) : t("stLicNotApplicable")}</span>
+                                 )}
+                               </div>
+
+                               {/* Amount */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
+                                     <Zap className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicNextAmount")}
+                                 </div>
+                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-amount-${p.id}`}>{fmtWon(p.price)}<span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span></span>
+                               </div>
+                             </div>
+
+                             {p.canceled ? (
+                               <div className="flex items-start gap-2 text-sm text-muted-foreground" data-testid={`notice-plugin-canceled-${p.id}`}>
+                                 <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                                 <span>{t("stPluginCanceledNotice")}</span>
+                               </div>
+                             ) : (
+                               <AlertDialog>
+                                 <AlertDialogTrigger asChild>
+                                   <Button
+                                     variant="outline"
+                                     size="sm"
+                                     className="gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40"
+                                     data-testid={`button-plugin-cancel-${p.id}`}
+                                   >
+                                     <Trash2 className="w-3.5 h-3.5" /> {t("stPluginCancel")}
+                                   </Button>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent>
+                                   <AlertDialogHeader>
+                                     <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
+                                     <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
+                                   </AlertDialogHeader>
+                                   <AlertDialogFooter>
+                                     <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
+                                     <AlertDialogAction
+                                       onClick={() => cancelPluginSub(p.id)}
+                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                       data-testid={`button-confirm-cancel-plugin-${p.id}`}
+                                     >
+                                       {t("stPluginCancelConfirm")}
+                                     </AlertDialogAction>
+                                   </AlertDialogFooter>
+                                 </AlertDialogContent>
+                               </AlertDialog>
                              )}
                            </div>
-                           <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
-                         </div>
-                         <Button
-                           variant="outline"
-                           size="sm"
-                           className="shrink-0 gap-1.5"
-                           onClick={() => openPluginDetail(p, true)}
-                           data-testid={`button-plugin-detail-${p.id}`}
-                         >
-                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
-                         </Button>
-                         {p.canceled ? (
-                           <Button variant="ghost" size="icon" disabled className="shrink-0 h-8 w-8">
-                             <MoreHorizontal className="w-4 h-4" />
-                           </Button>
-                         ) : (
-                           <AlertDialog>
-                             <DropdownMenu>
-                               <DropdownMenuTrigger asChild>
-                                 <Button
-                                   variant="ghost"
-                                   size="icon"
-                                   className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
-                                   data-testid={`button-plugin-menu-${p.id}`}
-                                 >
-                                   <MoreHorizontal className="w-4 h-4" />
-                                 </Button>
-                               </DropdownMenuTrigger>
-                               <DropdownMenuContent align="end">
-                                 <AlertDialogTrigger asChild>
-                                   <DropdownMenuItem
-                                     className="text-destructive focus:text-destructive gap-2"
-                                     onSelect={(e) => e.preventDefault()}
-                                     data-testid={`menuitem-cancel-plugin-${p.id}`}
-                                   >
-                                     <Trash2 className="w-4 h-4" /> {t("stPluginCancel")}
-                                   </DropdownMenuItem>
-                                 </AlertDialogTrigger>
-                               </DropdownMenuContent>
-                             </DropdownMenu>
-                             <AlertDialogContent>
-                               <AlertDialogHeader>
-                                 <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
-                                 <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
-                               </AlertDialogHeader>
-                               <AlertDialogFooter>
-                                 <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
-                                 <AlertDialogAction
-                                   onClick={() => cancelPluginSub(p.id)}
-                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                   data-testid={`button-confirm-cancel-plugin-${p.id}`}
-                                 >
-                                   {t("stPluginCancelConfirm")}
-                                 </AlertDialogAction>
-                               </AlertDialogFooter>
-                             </AlertDialogContent>
-                           </AlertDialog>
                          )}
                        </div>
                      ))}
