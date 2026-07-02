@@ -1184,7 +1184,15 @@ export default function Settings() {
                          className="border rounded-lg overflow-hidden"
                          data-testid={`card-plugin-sub-${p.id}`}
                        >
-                         <div className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors">
+                         <div
+                           className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors cursor-pointer select-none"
+                           onClick={() => togglePluginExpand(p.id)}
+                           role="button"
+                           tabIndex={0}
+                           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePluginExpand(p.id); } }}
+                           aria-expanded={!!expandedPlugins[p.id]}
+                           data-testid={`row-plugin-toggle-${p.id}`}
+                         >
                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
                              <p.Icon className="w-5 h-5" />
                            </div>
@@ -1201,7 +1209,7 @@ export default function Settings() {
                              variant="outline"
                              size="sm"
                              className="shrink-0 gap-1.5"
-                             onClick={() => openPluginDetail(p, true)}
+                             onClick={(e) => { e.stopPropagation(); openPluginDetail(p, true); }}
                              data-testid={`button-plugin-detail-${p.id}`}
                            >
                              <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
@@ -1210,7 +1218,7 @@ export default function Settings() {
                              variant="ghost"
                              size="icon"
                              className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
-                             onClick={() => togglePluginExpand(p.id)}
+                             onClick={(e) => { e.stopPropagation(); togglePluginExpand(p.id); }}
                              aria-expanded={!!expandedPlugins[p.id]}
                              data-testid={`button-plugin-expand-${p.id}`}
                            >
