@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, MoreHorizontal, Share2, Eye } from "lucide-react";
+import { Check, Copy, CreditCard, Globe, Key, Lock, Mail, Plus, Server, Shield, Trash2, UserPlus, Users, Zap, Settings as SettingsIcon, Download, FileText, RefreshCw, Pencil, Activity, Database, LayoutGrid, Bot, Share2, Eye, Calendar, Ticket, CalendarClock, ChevronDown } from "lucide-react";
 import PluginDetailModal, { type PluginInfo } from "@/components/settings/PluginDetailModal";
 import PaymentModal from "@/components/settings/PaymentModal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -64,8 +64,14 @@ export default function Settings() {
   };
   const [inviteLink] = useState("https://em-graph.ai/join/x8d9f2k");
   const [activeTab, setActiveTab] = useState("account");
+  // License subscription action state (mock). Change initial value to preview:
+  // "active" (구독중) | "cancelScheduled" (해지 예약됨) | "downgradeScheduled" (변경 예약됨)
+  const [subStatus, setSubStatus] = useState<"active" | "cancelScheduled" | "downgradeScheduled">("active");
+  const [expandedPlugins, setExpandedPlugins] = useState<Record<string, boolean>>({});
+  const togglePluginExpand = (id: string) =>
+    setExpandedPlugins((prev) => ({ ...prev, [id]: !prev[id] }));
   const [subscribedPlugins, setSubscribedPlugins] = useState<PluginInfo[]>([
-    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false },
+    { id: "pn1", name: "Graph Network", vendor: "EM-Graph", desc: "사람·조직·자재 간 관계망을 시각적으로 그리고 탐색하는 인터랙티브 네트워크 빌더.", category: "Collaboration", price: 49000, Icon: Share2, iconColor: "text-indigo-600 bg-indigo-50", badge: "Editor", rating: 4.9, reviews: 287, downloads: "14.2K", canceled: false, startDate: "2026.03.01", endDate: "2026.09.01", nextBillingDate: "2026.07.01" },
   ]);
   const [notSubscribedPlugins, setNotSubscribedPlugins] = useState<PluginInfo[]>([
     { id: "p1", name: "Graph AI Copilot", vendor: "EM-Graph Labs", desc: "그래프 패턴 자동 발견 및 자연어 질의 응답을 제공하는 AI 어시스턴트.", category: "AI", price: 29000, Icon: Bot, iconColor: "text-violet-600 bg-violet-50", badge: "Editor", rating: 5.0, reviews: 312, downloads: "12.4K" },
@@ -193,6 +199,32 @@ export default function Settings() {
   const PLAN_PRICES: Record<string, number> = { Free: 0, Pro: 100000, Premium: 300000 };
   const CURRENT_PLAN = "Pro";
   const fmtWon = (n: number) => `₩${n.toLocaleString("en-US")}`;
+
+  // --- License subscription status (mock) ---
+  // activation: "paid" (결제형) | "free" (무료) | "voucher" (이용권형)
+  // Switch these mock values to preview each state.
+  const WORKSPACE_NAME = "코오롱베니트";
+  const LICENSE_STATUS = {
+    plan: CURRENT_PLAN as "Free" | "Pro" | "Premium",
+    activation: "paid" as "paid" | "free" | "voucher",
+    startDate: "2026.03.01",
+    endDate: "2026.09.01",
+    nextBillingDate: "2026.07.01",
+    nextAmount: PLAN_PRICES[CURRENT_PLAN],
+    seatsUsed: 3,
+    seatsTotal: 5,
+    autoRenew: true,
+    voucherName: "코오롱 파트너 이용권",
+    // When subStatus === "downgradeScheduled", the license reserved for next cycle
+    scheduledPlan: "Free" as "Free" | "Pro" | "Premium",
+  };
+
+  const fmtDotDate = (d: string) => d.replace(/-/g, ".");
+  const daysUntil = (dotDate: string) => {
+    const parsed = new Date(dotDate.replace(/\./g, "-") + "T00:00:00");
+    if (isNaN(parsed.getTime())) return null;
+    return Math.ceil((parsed.getTime() - Date.now()) / 86400000);
+  };
 
   const planNameLabel = (p: string) =>
     p === "Free" ? t("stFree") : p === "Pro" ? t("stPro") : t("stPremium");
@@ -796,6 +828,177 @@ export default function Settings() {
                <h2 className="text-2xl font-bold tracking-tight" data-testid="text-license-title">{t("stLicenseTitle")}</h2>
                <p className="text-sm text-muted-foreground">{t("stLicenseSubtitle")}</p>
              </div>
+
+             {/* Current subscription status */}
+             {(() => {
+               const s = LICENSE_STATUS;
+               const isFree = s.activation === "free" || s.plan === "Free";
+               const isVoucher = s.activation === "voucher";
+               const remaining = isFree ? null : daysUntil(s.endDate);
+               const canCancel = !isFree && !isVoucher;
+
+               return (
+                 <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent" data-testid="card-license-status">
+                   <CardHeader className="pb-4">
+                     <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
+                     <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
+                   </CardHeader>
+                   <CardContent>
+                     {isFree ? (
+                       <div className="flex flex-col gap-4 rounded-xl border bg-background/60 p-5 sm:flex-row sm:items-center sm:justify-between" data-testid="license-free-state">
+                         <div className="flex items-start gap-3">
+                           <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
+                             <Zap className="w-5 h-5" />
+                           </span>
+                           <div className="flex flex-col gap-1">
+                             <div className="flex flex-wrap items-center gap-2">
+                               <span className="text-lg font-bold leading-none tracking-tight" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                               <span className="text-sm font-medium text-muted-foreground">{t("stLicFreeHeadline")}</span>
+                             </div>
+                             <p className="text-sm text-muted-foreground max-w-md" data-testid="text-license-free-message">{t("stLicFreeMessage")}</p>
+                           </div>
+                         </div>
+                         <Button className="shrink-0 shadow-sm" onClick={() => openChangeModal("Pro")} data-testid="button-license-upgrade">
+                           <Zap className="w-4 h-4 mr-1.5" />{t("stLicFreeUpgrade")}
+                         </Button>
+                       </div>
+                     ) : (
+                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                       {/* Current license */}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-plan">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
+                             <Zap className="w-4 h-4" />
+                           </span>
+                           {t("stLicCurrentPlan")}
+                         </div>
+                         <div className="flex flex-wrap items-center gap-2">
+                           <span className="text-2xl font-bold leading-none tracking-tight" data-testid="text-license-plan-name">{planNameLabel(s.plan)}</span>
+                           {isVoucher && (
+                             <Badge variant="outline" className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900" data-testid="badge-license-voucher">
+                               <Ticket className="w-3 h-3 mr-1" />{t("stLicVoucherBadge")}
+                             </Badge>
+                           )}
+                         </div>
+                       </div>
+
+                       {/* Subscription period */}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-period">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                             <Calendar className="w-4 h-4" />
+                           </span>
+                           {t("stLicPeriod")}
+                         </div>
+                         {isFree ? (
+                           <span className="text-base font-semibold text-muted-foreground" data-testid="text-license-period">{t("stLicUnlimited")}</span>
+                         ) : (
+                           <span className="text-base font-semibold tabular-nums" data-testid="text-license-period">{fmtDotDate(s.startDate)} ~ {fmtDotDate(s.endDate)}</span>
+                         )}
+                       </div>
+
+                       {/* Next billing / voucher expiry */}
+                       <div className="relative overflow-hidden rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5 transition-colors hover:border-primary/40" data-testid="stat-license-billing">
+                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                             {isVoucher ? <CalendarClock className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
+                           </span>
+                           {isVoucher ? t("stLicVoucherExpiry") : t("stLicNextBilling")}
+                         </div>
+                         {isFree ? (
+                           <span className="text-base font-semibold text-muted-foreground" data-testid="text-license-billing">{t("stLicNotApplicable")}</span>
+                         ) : isVoucher ? (
+                           <div className="flex flex-col gap-0.5">
+                             <span className="text-base font-semibold tabular-nums" data-testid="text-license-billing">{fmtDotDate(s.endDate)}</span>
+                             {remaining !== null && remaining >= 0 && (
+                               <span className="text-xs text-muted-foreground">{t("stLicDaysLeft").replace("{days}", String(remaining))}</span>
+                             )}
+                           </div>
+                         ) : (
+                           <div className="flex flex-col gap-0.5">
+                             <span className="text-base font-semibold tabular-nums" data-testid="text-license-billing">{fmtDotDate(s.nextBillingDate)}</span>
+                             <span className="text-xs text-muted-foreground" data-testid="text-license-amount">{t("stLicNextAmount")}: {fmtWon(s.nextAmount)}</span>
+                           </div>
+                         )}
+                       </div>
+                     </div>
+                     )}
+
+                     {isVoucher && (
+                       <div className="mt-4 pt-4 border-t flex items-center gap-2 text-sm" data-testid="text-license-voucher-name">
+                         <Ticket className="w-4 h-4 text-violet-500" />
+                         <span className="text-muted-foreground">{t("stLicVoucherName")}:</span>
+                         <span className="font-medium">{s.voucherName}</span>
+                       </div>
+                     )}
+
+                     {canCancel && (
+                       <div className="mt-4 pt-4 border-t space-y-3">
+                         {subStatus === "cancelScheduled" && (
+                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-cancel-scheduled">
+                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                             <span>{t("stLicCancelScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate))}</span>
+                           </div>
+                         )}
+                         {subStatus === "downgradeScheduled" && (
+                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-change-scheduled">
+                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                             <span>{t("stLicChangeScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate)).replace("{plan}", planNameLabel(s.scheduledPlan))}</span>
+                           </div>
+                         )}
+
+                         {subStatus === "active" && (
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
+                                 {t("stLicCancel")}
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent data-testid="dialog-cancel-subscription">
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
+                                 <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
+                                 <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm" onClick={() => { setSubStatus("cancelScheduled"); toast({ title: t("stLicCancelToast") }); }}>{t("stLicCancelConfirm")}</AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         )}
+
+                         {subStatus === "cancelScheduled" && (
+                           <Button variant="outline" size="sm" data-testid="button-undo-cancel" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoCancelToast") }); }}>
+                             {t("stLicUndoCancel")}
+                           </Button>
+                         )}
+
+                         {subStatus === "downgradeScheduled" && (
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button variant="outline" size="sm" data-testid="button-undo-change">
+                                 {t("stLicUndoChange")}
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent data-testid="dialog-undo-change">
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>{t("stLicUndoChangeTitle")}</AlertDialogTitle>
+                                 <AlertDialogDescription>{t("stLicUndoChangeDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel data-testid="button-undo-change-back">{t("stLicUndoChangeBack")}</AlertDialogCancel>
+                                 <AlertDialogAction data-testid="button-undo-change-confirm" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoChangeToast") }); }}>{t("stLicUndoChangeConfirm")}</AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         )}
+                       </div>
+                     )}
+                   </CardContent>
+                 </Card>
+               );
+             })()}
+
              <div className="grid gap-6 lg:grid-cols-3">
                {/* Free Plan */}
                <Card className="border-border/50 relative overflow-hidden">
@@ -825,9 +1028,6 @@ export default function Settings() {
                      </div>
                    </div>
                  </CardContent>
-                 <CardFooter>
-                   <Button variant="outline" className="w-full" onClick={() => openChangeModal("Free")} data-testid="button-select-free">{t("stSelectFreePlan")}</Button>
-                 </CardFooter>
                </Card>
 
                {/* Pro Plan */}
@@ -981,76 +1181,120 @@ export default function Settings() {
                          {subscribedPlugins.map((p) => (
                        <div
                          key={p.id}
-                         className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                         className="border rounded-lg overflow-hidden"
                          data-testid={`card-plugin-sub-${p.id}`}
                        >
-                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
-                           <p.Icon className="w-5 h-5" />
+                         <div className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors">
+                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                             <p.Icon className="w-5 h-5" />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                             <div className="flex items-center gap-2 flex-wrap">
+                               <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                               {p.canceled && (
+                                 <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+                               )}
+                             </div>
+                             <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                           </div>
+                           <Button
+                             variant="outline"
+                             size="sm"
+                             className="shrink-0 gap-1.5"
+                             onClick={() => openPluginDetail(p, true)}
+                             data-testid={`button-plugin-detail-${p.id}`}
+                           >
+                             <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                           </Button>
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
+                             onClick={() => togglePluginExpand(p.id)}
+                             aria-expanded={!!expandedPlugins[p.id]}
+                             data-testid={`button-plugin-expand-${p.id}`}
+                           >
+                             <ChevronDown className={`w-4 h-4 transition-transform ${expandedPlugins[p.id] ? "rotate-180" : ""}`} />
+                           </Button>
                          </div>
-                         <div className="flex-1 min-w-0">
-                           <div className="flex items-center gap-2 flex-wrap">
-                             <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
-                             {p.canceled && (
-                               <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+
+                         {expandedPlugins[p.id] && (
+                           <div className="border-t bg-muted/20 px-4 py-4 space-y-4" data-testid={`panel-plugin-detail-${p.id}`}>
+                             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                               {/* Subscription period */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                                     <Calendar className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicPeriod")}
+                                 </div>
+                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-period-${p.id}`}>{p.startDate && p.endDate ? `${fmtDotDate(p.startDate)} ~ ${fmtDotDate(p.endDate)}` : t("stLicNotApplicable")}</span>
+                               </div>
+
+                               {/* Next billing */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                     <CreditCard className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicNextBilling")}
+                                 </div>
+                                 {p.canceled ? (
+                                   <span className="text-base font-semibold text-muted-foreground" data-testid={`text-plugin-billing-${p.id}`}>{t("stLicNotApplicable")}</span>
+                                 ) : (
+                                   <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-billing-${p.id}`}>{p.nextBillingDate ? fmtDotDate(p.nextBillingDate) : t("stLicNotApplicable")}</span>
+                                 )}
+                               </div>
+
+                               {/* Amount */}
+                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
+                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
+                                     <Zap className="w-4 h-4" />
+                                   </span>
+                                   {t("stLicNextAmount")}
+                                 </div>
+                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-amount-${p.id}`}>{fmtWon(p.price)}<span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span></span>
+                               </div>
+                             </div>
+
+                             {p.canceled ? (
+                               <div className="flex items-start gap-2 text-sm text-muted-foreground" data-testid={`notice-plugin-canceled-${p.id}`}>
+                                 <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
+                                 <span>{t("stPluginCanceledNotice")}</span>
+                               </div>
+                             ) : (
+                               <AlertDialog>
+                                 <AlertDialogTrigger asChild>
+                                   <Button
+                                     variant="outline"
+                                     size="sm"
+                                     className="gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40"
+                                     data-testid={`button-plugin-cancel-${p.id}`}
+                                   >
+                                     <Trash2 className="w-3.5 h-3.5" /> {t("stPluginCancel")}
+                                   </Button>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent>
+                                   <AlertDialogHeader>
+                                     <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
+                                     <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
+                                   </AlertDialogHeader>
+                                   <AlertDialogFooter>
+                                     <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
+                                     <AlertDialogAction
+                                       onClick={() => cancelPluginSub(p.id)}
+                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                       data-testid={`button-confirm-cancel-plugin-${p.id}`}
+                                     >
+                                       {t("stPluginCancelConfirm")}
+                                     </AlertDialogAction>
+                                   </AlertDialogFooter>
+                                 </AlertDialogContent>
+                               </AlertDialog>
                              )}
                            </div>
-                           <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
-                         </div>
-                         <Button
-                           variant="outline"
-                           size="sm"
-                           className="shrink-0 gap-1.5"
-                           onClick={() => openPluginDetail(p, true)}
-                           data-testid={`button-plugin-detail-${p.id}`}
-                         >
-                           <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
-                         </Button>
-                         {p.canceled ? (
-                           <Button variant="ghost" size="icon" disabled className="shrink-0 h-8 w-8">
-                             <MoreHorizontal className="w-4 h-4" />
-                           </Button>
-                         ) : (
-                           <AlertDialog>
-                             <DropdownMenu>
-                               <DropdownMenuTrigger asChild>
-                                 <Button
-                                   variant="ghost"
-                                   size="icon"
-                                   className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
-                                   data-testid={`button-plugin-menu-${p.id}`}
-                                 >
-                                   <MoreHorizontal className="w-4 h-4" />
-                                 </Button>
-                               </DropdownMenuTrigger>
-                               <DropdownMenuContent align="end">
-                                 <AlertDialogTrigger asChild>
-                                   <DropdownMenuItem
-                                     className="text-destructive focus:text-destructive gap-2"
-                                     onSelect={(e) => e.preventDefault()}
-                                     data-testid={`menuitem-cancel-plugin-${p.id}`}
-                                   >
-                                     <Trash2 className="w-4 h-4" /> {t("stPluginCancel")}
-                                   </DropdownMenuItem>
-                                 </AlertDialogTrigger>
-                               </DropdownMenuContent>
-                             </DropdownMenu>
-                             <AlertDialogContent>
-                               <AlertDialogHeader>
-                                 <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
-                                 <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
-                               </AlertDialogHeader>
-                               <AlertDialogFooter>
-                                 <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
-                                 <AlertDialogAction
-                                   onClick={() => cancelPluginSub(p.id)}
-                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                   data-testid={`button-confirm-cancel-plugin-${p.id}`}
-                                 >
-                                   {t("stPluginCancelConfirm")}
-                                 </AlertDialogAction>
-                               </AlertDialogFooter>
-                             </AlertDialogContent>
-                           </AlertDialog>
                          )}
                        </div>
                      ))}

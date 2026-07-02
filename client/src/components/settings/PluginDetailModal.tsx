@@ -43,6 +43,9 @@ export interface PluginInfo {
   reviews?: number;
   downloads?: string;
   canceled?: boolean;
+  startDate?: string;
+  endDate?: string;
+  nextBillingDate?: string;
 }
 
 interface PluginDetailModalProps {
