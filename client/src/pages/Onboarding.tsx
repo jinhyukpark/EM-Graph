@@ -151,9 +151,9 @@ export default function Onboarding() {
         <div className="absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      {/* Header: progress + skip */}
+      {/* Header: logo + progress */}
       <header className="relative z-10 flex items-center justify-between gap-4 px-6 py-5 md:px-10">
-        <div className="flex items-center gap-2 text-sm font-semibold">
+        <div className="flex w-24 items-center gap-2 text-sm font-semibold">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Network className="h-4 w-4" />
           </div>
@@ -188,15 +188,8 @@ export default function Onboarding() {
           ))}
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground"
-          onClick={handleSkip}
-          data-testid="button-skip"
-        >
-          {t("obSkip")}
-        </Button>
+        {/* Spacer to keep the step indicator centered */}
+        <div className="w-24" aria-hidden />
       </header>
 
       {/* Content */}
@@ -233,20 +226,22 @@ export default function Onboarding() {
       </main>
 
       {/* Footer nav */}
-      <footer className="relative z-10 flex items-center justify-between gap-4 px-6 py-5 md:px-10">
-        <Button
-          variant="ghost"
-          onClick={goBack}
-          disabled={step === 0 && featureSub === 0}
-          className={cn(step === 0 && featureSub === 0 && "invisible")}
-          data-testid="button-back"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t("obBack")}
-        </Button>
+      <footer className="relative z-10 flex flex-col items-center gap-3 px-6 pb-8 pt-2 md:px-10">
+        {/* Back button - tucked to the bottom-left, out of the centered stack */}
+        {!(step === 0 && featureSub === 0) && (
+          <Button
+            variant="ghost"
+            onClick={goBack}
+            className="absolute bottom-8 left-6 text-muted-foreground md:left-10"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("obBack")}</span>
+          </Button>
+        )}
 
         {/* Substep dots for feature step */}
-        {step === 2 ? (
+        {step === 2 && (
           <div className="flex items-center gap-1.5" data-testid="feature-substep-dots">
             {Array.from({ length: FEATURE_SUBSTEPS }).map((_, i) => (
               <div
@@ -258,17 +253,25 @@ export default function Onboarding() {
               />
             ))}
           </div>
-        ) : (
-          <div />
         )}
 
-        {!isLastStep ? (
-          <Button onClick={goNext} data-testid="button-next">
-            {step === 0 ? t("obGetStarted") : t("obNext")}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        ) : (
-          <div className="w-[88px]" />
+        {/* Primary action + skip, centered at the bottom */}
+        {!isLastStep && (
+          <div className="flex flex-col items-center gap-2">
+            <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
+              {step === 0 ? t("obGetStarted") : t("obNext")}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground"
+              onClick={handleSkip}
+              data-testid="button-skip"
+            >
+              {t("obSkip")}
+            </Button>
+          </div>
         )}
       </footer>
     </div>
