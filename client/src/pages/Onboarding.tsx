@@ -56,6 +56,8 @@ export default function Onboarding() {
 
   const [authPhase, setAuthPhase] = useState<"signup" | "login" | "done">("signup");
   const [showWorkspace, setShowWorkspace] = useState(false);
+  const [showFirstNote, setShowFirstNote] = useState(false);
+  const [workspaceName, setWorkspaceName] = useState("");
   const [step, setStep] = useState(0);
   const [featureSub, setFeatureSub] = useState(0);
   const [purpose, setPurpose] = useState<PurposeId | null>(null);
@@ -117,17 +119,29 @@ export default function Onboarding() {
     setShowWorkspace(true);
   }, [purpose]);
 
-  const handleCreateWorkspace = useCallback(
-    (name: string) => {
-      console.log("onboarding_workspace_create", { name });
+  const handleCreateWorkspace = useCallback((name: string) => {
+    console.log("onboarding_workspace_create", { name });
+    setWorkspaceName(name);
+    setShowWorkspace(false);
+    setShowFirstNote(true);
+  }, []);
+
+  const handleWorkspaceBack = useCallback(() => {
+    setShowWorkspace(false);
+  }, []);
+
+  const handleCreateFirstNote = useCallback(
+    (title: string) => {
+      console.log("onboarding_first_note_create", { title });
       markOnboardingComplete();
       setLocation("/knowledge-garden");
     },
     [setLocation]
   );
 
-  const handleWorkspaceBack = useCallback(() => {
-    setShowWorkspace(false);
+  const handleFirstNoteBack = useCallback(() => {
+    setShowFirstNote(false);
+    setShowWorkspace(true);
   }, []);
 
   const handleLater = useCallback(() => {
@@ -154,8 +168,8 @@ export default function Onboarding() {
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Auth / workspace screens have their own controls — no wizard nav there.
-      if (authPhase !== "done" || showWorkspace) return;
+      // Auth / workspace / first-note screens have their own controls — no wizard nav there.
+      if (authPhase !== "done" || showWorkspace || showFirstNote) return;
       // Don't hijack Enter when the user is focused on an interactive control
       // (buttons, links, inputs) — let that control handle it instead.
       const el = document.activeElement as HTMLElement | null;
@@ -177,12 +191,17 @@ export default function Onboarding() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, goNext, goBack, authPhase, showWorkspace]);
+  }, [step, goNext, goBack, authPhase, showWorkspace, showFirstNote]);
 
   // Log workspace screen view
   useEffect(() => {
     if (showWorkspace) console.log("onboarding_workspace_view");
   }, [showWorkspace]);
+
+  // Log first-note screen view
+  useEffect(() => {
+    if (showFirstNote) console.log("onboarding_first_note_view");
+  }, [showFirstNote]);
 
   const isLastStep = step === TOTAL_STEPS - 1;
   const contentKey = step === 2 ? `2-${featureSub}` : `${step}`;
@@ -205,6 +224,13 @@ export default function Onboarding() {
         />
       ) : showWorkspace ? (
         <WorkspaceScreen t={t} onCreate={handleCreateWorkspace} onBack={handleWorkspaceBack} />
+      ) : showFirstNote ? (
+        <FirstNoteScreen
+          t={t}
+          workspaceName={workspaceName}
+          onCreate={handleCreateFirstNote}
+          onBack={handleFirstNoteBack}
+        />
       ) : (
       <>
       {/* Header: logo + progress */}
@@ -558,6 +584,137 @@ function WorkspaceScreen({
             className="text-muted-foreground"
             onClick={onBack}
             data-testid="button-workspace-back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("obBack")}
+          </Button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function FirstNoteScreen({
+  t,
+  workspaceName,
+  onCreate,
+  onBack,
+}: {
+  t: TFn;
+  workspaceName: string;
+  onCreate: (title: string) => void;
+  onBack: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const trimmed = title.trim();
+
+  const suggestions = [t("obNoteSuggest1"), t("obNoteSuggest2"), t("obNoteSuggest3")];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trimmed) return;
+    onCreate(trimmed);
+  };
+
+  // Heading references the workspace name, split around the {name} token so the
+  // name itself can be highlighted regardless of language word order.
+  const [headBefore, headAfter] = t("obNoteHeading").split("{name}");
+
+  return (
+    <div className="relative z-10 flex flex-1 items-center justify-center overflow-y-auto px-6 py-8" data-testid="first-note-screen">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-lg"
+      >
+        {/* Hero */}
+        <div className="mb-8 flex flex-col items-center text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.05, type: "spring", stiffness: 200, damping: 16 }}
+            className="relative mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-xl shadow-primary/25"
+          >
+            <PenLine className="h-7 w-7" />
+            <motion.span
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 260, damping: 12 }}
+              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-background text-primary shadow-md"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+            </motion.span>
+          </motion.div>
+
+          <Badge variant="secondary" className="mb-3 gap-1.5" data-testid="badge-first-note">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            {t("obNoteBadge")}
+          </Badge>
+
+          <h1 className="text-2xl font-bold leading-snug tracking-tight md:text-3xl" data-testid="text-first-note-title">
+            {headBefore}
+            <span className="text-primary">{workspaceName}</span>
+            {headAfter}
+          </h1>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">{t("obNoteSubtitle")}</p>
+        </div>
+
+        <Card className="p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="note-title">{t("obNoteTitleLabel")}</Label>
+              <div className="relative">
+                <FileText className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="note-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder={t("obNoteTitlePlaceholder")}
+                  className="pl-9"
+                  autoFocus
+                  data-testid="input-first-note-title"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-xs font-medium text-muted-foreground">{t("obNoteSuggestLabel")}</span>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setTitle(s)}
+                    className="rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary/40 hover:bg-primary/5"
+                    data-testid={`chip-note-suggest-${i}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-1 w-full"
+              disabled={!trimmed}
+              data-testid="button-create-first-note"
+            >
+              {t("obNoteCreateCta")}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </form>
+        </Card>
+
+        <div className="mt-4 flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground"
+            onClick={onBack}
+            data-testid="button-first-note-back"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("obBack")}
