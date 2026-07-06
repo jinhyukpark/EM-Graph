@@ -193,7 +193,7 @@ export default function Onboarding() {
       </header>
 
       {/* Content */}
-      <main className="relative z-10 flex flex-1 items-center justify-center overflow-y-auto px-6 py-4 md:px-10">
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-4 md:px-10">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={contentKey}
@@ -223,26 +223,10 @@ export default function Onboarding() {
             {step === 3 && <FinalStep t={t} onPrimary={handleStartGarden} onSecondary={handleLater} />}
           </motion.div>
         </AnimatePresence>
-      </main>
-
-      {/* Footer nav */}
-      <footer className="relative z-10 flex flex-col items-center gap-3 px-6 pb-8 pt-2 md:px-10">
-        {/* Back button - tucked to the bottom-left, out of the centered stack */}
-        {!(step === 0 && featureSub === 0) && (
-          <Button
-            variant="ghost"
-            onClick={goBack}
-            className="absolute bottom-8 left-6 text-muted-foreground md:left-10"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("obBack")}</span>
-          </Button>
-        )}
 
         {/* Substep dots for feature step */}
         {step === 2 && (
-          <div className="flex items-center gap-1.5" data-testid="feature-substep-dots">
+          <div className="mt-8 flex items-center gap-1.5" data-testid="feature-substep-dots">
             {Array.from({ length: FEATURE_SUBSTEPS }).map((_, i) => (
               <div
                 key={i}
@@ -255,9 +239,9 @@ export default function Onboarding() {
           </div>
         )}
 
-        {/* Primary action + skip, centered at the bottom */}
+        {/* Primary action + skip, placed right below the content */}
         {!isLastStep && (
-          <div className="flex flex-col items-center gap-2">
+          <div className={cn("flex flex-col items-center gap-2", step === 2 ? "mt-6" : "mt-10")}>
             <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
               {step === 0 ? t("obGetStarted") : t("obNext")}
               <ArrowRight className="h-4 w-4" />
@@ -273,7 +257,20 @@ export default function Onboarding() {
             </Button>
           </div>
         )}
-      </footer>
+      </main>
+
+      {/* Back button - tucked to the bottom-left */}
+      {!(step === 0 && featureSub === 0) && (
+        <Button
+          variant="ghost"
+          onClick={goBack}
+          className="absolute bottom-6 left-6 z-10 text-muted-foreground md:left-10"
+          data-testid="button-back"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">{t("obBack")}</span>
+        </Button>
+      )}
     </div>
   );
 }
