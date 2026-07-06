@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
+import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
 import {
   Sparkles,
   Building2,
@@ -19,8 +20,6 @@ import {
   ArrowLeft,
   Check,
 } from "lucide-react";
-
-type PurposeId = "enterprise" | "research" | "archive" | "exploring";
 
 const TOTAL_STEPS = 4;
 const FEATURE_SUBSTEPS = 3;
@@ -218,7 +217,13 @@ export default function Onboarding() {
                 t={t}
                 options={purposeOptions}
                 selected={purpose}
-                onSelect={(id) => setPurpose((cur) => (cur === id ? null : id))}
+                onSelect={(id) =>
+                  setPurpose((cur) => {
+                    const next = cur === id ? null : id;
+                    persistPurpose(next);
+                    return next;
+                  })
+                }
               />
             )}
             {step === 2 && <FeatureStep t={t} sub={featureSub} />}
