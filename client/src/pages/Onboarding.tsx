@@ -26,6 +26,7 @@ import {
   User,
   UserPlus,
   LogIn,
+  Boxes,
 } from "lucide-react";
 
 const TOTAL_STEPS = 4;
@@ -54,6 +55,7 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
 
   const [authPhase, setAuthPhase] = useState<"signup" | "login" | "done">("signup");
+  const [showWorkspace, setShowWorkspace] = useState(false);
   const [step, setStep] = useState(0);
   const [featureSub, setFeatureSub] = useState(0);
   const [purpose, setPurpose] = useState<PurposeId | null>(null);
@@ -112,9 +114,21 @@ export default function Onboarding() {
 
   const handleStartGarden = useCallback(() => {
     console.log("onboarding_complete", { purpose, cta: "knowledge_garden" });
-    markOnboardingComplete();
-    setLocation("/knowledge-garden");
-  }, [purpose, setLocation]);
+    setShowWorkspace(true);
+  }, [purpose]);
+
+  const handleCreateWorkspace = useCallback(
+    (name: string) => {
+      console.log("onboarding_workspace_create", { name });
+      markOnboardingComplete();
+      setLocation("/knowledge-garden");
+    },
+    [setLocation]
+  );
+
+  const handleWorkspaceBack = useCallback(() => {
+    setShowWorkspace(false);
+  }, []);
 
   const handleLater = useCallback(() => {
     console.log("onboarding_complete", { purpose, cta: "later" });
@@ -140,8 +154,8 @@ export default function Onboarding() {
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Auth screens have their own controls — don't run wizard nav there.
-      if (authPhase !== "done") return;
+      // Auth / workspace screens have their own controls — no wizard nav there.
+      if (authPhase !== "done" || showWorkspace) return;
       // Don't hijack Enter when the user is focused on an interactive control
       // (buttons, links, inputs) — let that control handle it instead.
       const el = document.activeElement as HTMLElement | null;
@@ -163,7 +177,12 @@ export default function Onboarding() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, goNext, goBack, authPhase]);
+  }, [step, goNext, goBack, authPhase, showWorkspace]);
+
+  // Log workspace screen view
+  useEffect(() => {
+    if (showWorkspace) console.log("onboarding_workspace_view");
+  }, [showWorkspace]);
 
   const isLastStep = step === TOTAL_STEPS - 1;
   const contentKey = step === 2 ? `2-${featureSub}` : `${step}`;
@@ -184,6 +203,8 @@ export default function Onboarding() {
           onLogin={handleLogin}
           onSwitch={(m) => setAuthPhase(m)}
         />
+      ) : showWorkspace ? (
+        <WorkspaceScreen t={t} onCreate={handleCreateWorkspace} onBack={handleWorkspaceBack} />
       ) : (
       <>
       {/* Header: logo + progress */}
@@ -439,6 +460,108 @@ function AuthScreen({
           </p>
         </motion.div>
       </AnimatePresence>
+    </div>
+  );
+}
+
+function WorkspaceScreen({
+  t,
+  onCreate,
+  onBack,
+}: {
+  t: TFn;
+  onCreate: (name: string) => void;
+  onBack: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+  const trimmed = name.trim();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trimmed) return;
+    onCreate(trimmed);
+  };
+
+  return (
+    <div className="relative z-10 flex flex-1 items-center justify-center overflow-y-auto px-6 py-8" data-testid="workspace-screen">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md"
+      >
+        {/* Brand */}
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
+            <Boxes className="h-6 w-6" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl" data-testid="text-workspace-title">
+            {t("obWsTitle")}
+          </h1>
+          <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">{t("obWsSubtitle")}</p>
+        </div>
+
+        <Card className="p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ws-name">{t("obWsName")}</Label>
+              <div className="relative">
+                <Boxes className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="ws-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("obWsNamePlaceholder")}
+                  className="pl-9"
+                  autoFocus
+                  data-testid="input-workspace-name"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ws-desc">{t("obWsDesc")}</Label>
+              <Input
+                id="ws-desc"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder={t("obWsDescPlaceholder")}
+                data-testid="input-workspace-desc"
+              />
+            </div>
+
+            <div className="mt-1 flex items-start gap-2 rounded-lg bg-primary/5 p-3 text-sm text-muted-foreground">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <span>{t("obWsHint")}</span>
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-1 w-full"
+              disabled={!trimmed}
+              data-testid="button-create-workspace"
+            >
+              {t("obWsCreateCta")}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </form>
+        </Card>
+
+        <div className="mt-4 flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground"
+            onClick={onBack}
+            data-testid="button-workspace-back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("obBack")}
+          </Button>
+        </div>
+      </motion.div>
     </div>
   );
 }
