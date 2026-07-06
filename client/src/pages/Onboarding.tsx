@@ -266,13 +266,12 @@ export default function Onboarding() {
                 t={t}
                 options={purposeOptions}
                 selected={purpose}
-                onSelect={(id) =>
-                  setPurpose((cur) => {
-                    const next = cur === id ? null : id;
-                    persistPurpose(next);
-                    return next;
-                  })
-                }
+                onSelect={(id) => {
+                  setPurpose(id);
+                  persistPurpose(id);
+                  // Auto-advance to the next step after showing the selection briefly
+                  window.setTimeout(() => goNext(), 220);
+                }}
               />
             )}
             {step === 2 && <FeatureStep t={t} sub={featureSub} />}
@@ -298,10 +297,13 @@ export default function Onboarding() {
         {/* Primary action + skip, placed right below the content */}
         {!isLastStep && (
           <div className={cn("flex flex-col items-center gap-2", step === 2 ? "mt-6" : "mt-10")}>
-            <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
-              {step === 0 ? t("obGetStarted") : t("obNext")}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            {/* Purpose step (1) auto-advances on card click, so no Next button */}
+            {step !== 1 && (
+              <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
+                {step === 0 ? t("obGetStarted") : t("obNext")}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
