@@ -27,11 +27,13 @@ import TodoList from "@/pages/TodoList";
 import CalendarPage from "@/pages/CalendarPage";
 import Onboarding, { hasCompletedOnboarding } from "@/pages/Onboarding";
 
-function RootRoute() {
+// After login, first-time users are sent to the onboarding tour once.
+// Returning users (onboarding already completed/skipped) see the dashboard.
+function DashboardRoute() {
   if (!hasCompletedOnboarding()) {
     return <Redirect to="/onboarding" />;
   }
-  return <LandingPage />;
+  return <Home />;
 }
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
@@ -72,10 +74,10 @@ function AppRouter() {
   return (
     <WouterRouter hook={useHashLocation}>
       <Switch>
-        <Route path="/" component={RootRoute} />
+        <Route path="/" component={LandingPage} />
         <Route path="/signup" component={SignUp} />
         <Route path="/organization-select" component={OrganizationSelect} />
-        <Route path="/dashboard" component={Home} />
+        <Route path="/dashboard" component={DashboardRoute} />
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
         <Route path="/todo-list" component={TodoList} />
