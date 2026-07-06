@@ -25,6 +25,24 @@ type PurposeId = "enterprise" | "research" | "archive" | "exploring";
 const TOTAL_STEPS = 4;
 const FEATURE_SUBSTEPS = 3;
 
+export const ONBOARDING_DONE_KEY = "em-graph-onboarding-complete";
+
+export function hasCompletedOnboarding() {
+  try {
+    return localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function markOnboardingComplete() {
+  try {
+    localStorage.setItem(ONBOARDING_DONE_KEY, "true");
+  } catch {
+    // Ignore storage errors (e.g. private mode); onboarding just shows again.
+  }
+}
+
 export default function Onboarding() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
@@ -81,16 +99,19 @@ export default function Onboarding() {
 
   const handleSkip = useCallback(() => {
     console.log("onboarding_skip", { step, featureSub: step === 2 ? featureSub : undefined });
+    markOnboardingComplete();
     setLocation("/dashboard");
   }, [step, featureSub, setLocation]);
 
   const handleStartGarden = useCallback(() => {
     console.log("onboarding_complete", { purpose, cta: "knowledge_garden" });
+    markOnboardingComplete();
     setLocation("/knowledge-garden");
   }, [purpose, setLocation]);
 
   const handleLater = useCallback(() => {
     console.log("onboarding_complete", { purpose, cta: "later" });
+    markOnboardingComplete();
     setLocation("/dashboard");
   }, [purpose, setLocation]);
 

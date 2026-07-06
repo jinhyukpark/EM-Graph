@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Redirect, Router as WouterRouter } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -25,7 +25,14 @@ import Chatbot from "@/pages/Chatbot";
 import Plugins from "@/pages/Plugins";
 import TodoList from "@/pages/TodoList";
 import CalendarPage from "@/pages/CalendarPage";
-import Onboarding from "@/pages/Onboarding";
+import Onboarding, { hasCompletedOnboarding } from "@/pages/Onboarding";
+
+function RootRoute() {
+  if (!hasCompletedOnboarding()) {
+    return <Redirect to="/onboarding" />;
+  }
+  return <LandingPage />;
+}
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
 // but don't affect the actual functionality of the application.
@@ -65,7 +72,7 @@ function AppRouter() {
   return (
     <WouterRouter hook={useHashLocation}>
       <Switch>
-        <Route path="/" component={LandingPage} />
+        <Route path="/" component={RootRoute} />
         <Route path="/signup" component={SignUp} />
         <Route path="/organization-select" component={OrganizationSelect} />
         <Route path="/dashboard" component={Home} />
