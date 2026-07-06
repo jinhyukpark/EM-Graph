@@ -25,6 +25,7 @@ import Chatbot from "@/pages/Chatbot";
 import Plugins from "@/pages/Plugins";
 import TodoList from "@/pages/TodoList";
 import CalendarPage from "@/pages/CalendarPage";
+import Onboarding from "@/pages/Onboarding";
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
 // but don't affect the actual functionality of the application.
@@ -83,6 +84,7 @@ function AppRouter() {
         <Route path="/intelligence/search" component={IntelliSearch} />
         <Route path="/intelligence/chatbot" component={Chatbot} />
         <Route path="/plugins" component={Plugins} />
+        <Route path="/onboarding" component={Onboarding} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
