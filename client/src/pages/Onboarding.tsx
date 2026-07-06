@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
@@ -19,6 +21,11 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  Mail,
+  Lock,
+  User,
+  UserPlus,
+  LogIn,
 } from "lucide-react";
 
 const TOTAL_STEPS = 4;
@@ -46,6 +53,7 @@ export default function Onboarding() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
 
+  const [authPhase, setAuthPhase] = useState<"signup" | "login" | "done">("signup");
   const [step, setStep] = useState(0);
   const [featureSub, setFeatureSub] = useState(0);
   const [purpose, setPurpose] = useState<PurposeId | null>(null);
@@ -114,9 +122,26 @@ export default function Onboarding() {
     setLocation("/dashboard");
   }, [purpose, setLocation]);
 
+  const handleSignup = useCallback(() => {
+    console.log("onboarding_signup");
+    setAuthPhase("login");
+  }, []);
+
+  const handleLogin = useCallback(() => {
+    console.log("onboarding_login");
+    setAuthPhase("done");
+  }, []);
+
+  // Log auth screen views
+  useEffect(() => {
+    if (authPhase !== "done") console.log("onboarding_auth_view", { screen: authPhase });
+  }, [authPhase]);
+
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Auth screens have their own controls — don't run wizard nav there.
+      if (authPhase !== "done") return;
       // Don't hijack Enter when the user is focused on an interactive control
       // (buttons, links, inputs) — let that control handle it instead.
       const el = document.activeElement as HTMLElement | null;
@@ -138,7 +163,7 @@ export default function Onboarding() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, goNext, goBack]);
+  }, [step, goNext, goBack, authPhase]);
 
   const isLastStep = step === TOTAL_STEPS - 1;
   const contentKey = step === 2 ? `2-${featureSub}` : `${step}`;
@@ -151,6 +176,16 @@ export default function Onboarding() {
         <div className="absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-accent/10 blur-3xl" />
       </div>
 
+      {authPhase !== "done" ? (
+        <AuthScreen
+          t={t}
+          mode={authPhase}
+          onSignup={handleSignup}
+          onLogin={handleLogin}
+          onSwitch={(m) => setAuthPhase(m)}
+        />
+      ) : (
+      <>
       {/* Header: logo + progress */}
       <header className="relative z-10 flex items-center justify-between gap-4 px-6 py-5 md:px-10">
         <div className="flex w-24 items-center gap-2 text-sm font-semibold">
@@ -271,11 +306,142 @@ export default function Onboarding() {
           <span className="hidden sm:inline">{t("obBack")}</span>
         </Button>
       )}
+      </>
+      )}
     </div>
   );
 }
 
 type TFn = ReturnType<typeof useLanguage>["t"];
+
+function AuthScreen({
+  t,
+  mode,
+  onSignup,
+  onLogin,
+  onSwitch,
+}: {
+  t: TFn;
+  mode: "signup" | "login";
+  onSignup: () => void;
+  onLogin: () => void;
+  onSwitch: (m: "signup" | "login") => void;
+}) {
+  const isSignup = mode === "signup";
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSignup) onSignup();
+    else onLogin();
+  };
+
+  return (
+    <div className="relative z-10 flex flex-1 items-center justify-center overflow-y-auto px-6 py-8">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -16 }}
+          transition={{ duration: 0.3 }}
+          className="w-full max-w-sm"
+          data-testid={`auth-${mode}`}
+        >
+          {/* Brand */}
+          <div className="mb-8 flex flex-col items-center text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
+              <Network className="h-6 w-6" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight" data-testid="text-auth-title">
+              {isSignup ? t("obAuthSignupTitle") : t("obAuthLoginTitle")}
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              {isSignup ? t("obAuthSignupSubtitle") : t("obAuthLoginSubtitle")}
+            </p>
+          </div>
+
+          <Card className="p-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {isSignup && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="auth-name">{t("obAuthName")}</Label>
+                  <div className="relative">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id="auth-name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder={t("obAuthNamePlaceholder")}
+                      className="pl-9"
+                      data-testid="input-auth-name"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="auth-email">{t("obAuthEmail")}</Label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="auth-email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder={t("obAuthEmailPlaceholder")}
+                    className="pl-9"
+                    data-testid="input-auth-email"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="auth-password">{t("obAuthPassword")}</Label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="auth-password"
+                    type="password"
+                    autoComplete={isSignup ? "new-password" : "current-password"}
+                    placeholder={t("obAuthPasswordPlaceholder")}
+                    className="pl-9"
+                    data-testid="input-auth-password"
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" size="lg" className="mt-1 w-full" data-testid="button-auth-submit">
+                {isSignup ? (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    {t("obAuthSignupCta")}
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-4 w-4" />
+                    {t("obAuthLoginCta")}
+                  </>
+                )}
+              </Button>
+            </form>
+          </Card>
+
+          {/* Switch mode */}
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            {isSignup ? t("obAuthHaveAccount") : t("obAuthNoAccount")}{" "}
+            <button
+              type="button"
+              onClick={() => onSwitch(isSignup ? "login" : "signup")}
+              className="font-semibold text-primary hover:underline"
+              data-testid="link-auth-switch"
+            >
+              {isSignup ? t("obAuthLoginCta") : t("obAuthSignupCta")}
+            </button>
+          </p>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function WelcomeStep({ t }: { t: TFn }) {
   return (
