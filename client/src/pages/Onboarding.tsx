@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,17 @@ export default function Onboarding() {
   const [purpose, setPurpose] = useState<PurposeId | null>(null);
   const [direction, setDirection] = useState(1);
 
+  // Single-flight timer for the purpose step's auto-advance, so rapid clicks
+  // can't schedule multiple advances or fire after the user navigates away.
+  const advanceTimerRef = useRef<number | null>(null);
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current !== null) {
+      window.clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+  }, []);
+  useEffect(() => clearAdvanceTimer, [clearAdvanceTimer]);
+
   const purposeOptions: {
     id: PurposeId;
     icon: typeof Building2;
@@ -90,11 +101,12 @@ export default function Onboarding() {
     }
     if (step < TOTAL_STEPS - 1) {
       setDirection(1);
-      setStep((s) => s + 1);
+      setStep((s) => Math.min(TOTAL_STEPS - 1, s + 1));
     }
   }, [step, featureSub]);
 
   const goBack = useCallback(() => {
+    clearAdvanceTimer();
     if (step === 2 && featureSub > 0) {
       setDirection(-1);
       setFeatureSub((s) => s - 1);
@@ -106,13 +118,14 @@ export default function Onboarding() {
       setStep(prev);
       if (prev === 2) setFeatureSub(FEATURE_SUBSTEPS - 1);
     }
-  }, [step, featureSub]);
+  }, [step, featureSub, clearAdvanceTimer]);
 
   const handleSkip = useCallback(() => {
+    clearAdvanceTimer();
     console.log("onboarding_skip", { step, featureSub: step === 2 ? featureSub : undefined });
     markOnboardingComplete();
     setLocation("/dashboard");
-  }, [step, featureSub, setLocation]);
+  }, [step, featureSub, setLocation, clearAdvanceTimer]);
 
   const handleStartGarden = useCallback(() => {
     console.log("onboarding_complete", { purpose, cta: "knowledge_garden" });
@@ -293,10 +306,15 @@ export default function Onboarding() {
                 options={purposeOptions}
                 selected={purpose}
                 onSelect={(id) => {
+                  // Ignore extra clicks while an auto-advance is already pending.
+                  if (advanceTimerRef.current !== null) return;
                   setPurpose(id);
                   persistPurpose(id);
                   // Auto-advance to the next step after showing the selection briefly
-                  window.setTimeout(() => goNext(), 220);
+                  advanceTimerRef.current = window.setTimeout(() => {
+                    advanceTimerRef.current = null;
+                    goNext();
+                  }, 220);
                 }}
               />
             )}
