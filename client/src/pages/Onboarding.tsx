@@ -686,12 +686,12 @@ function FirstNoteScreen({
             {t("obNoteBadge")}
           </Badge>
 
-          <h1 className="text-2xl font-bold leading-snug tracking-tight md:text-3xl" data-testid="text-first-note-title">
+          <h1 className="whitespace-nowrap text-2xl font-bold leading-snug tracking-tight md:text-3xl" data-testid="text-first-note-title">
             {headBefore}
             <span className="text-primary">{workspaceName}</span>
             {headAfter}
           </h1>
-          <p className="mt-2 max-w-md text-sm text-muted-foreground">{t("obNoteSubtitle")}</p>
+          <p className="mt-2 whitespace-nowrap text-sm text-muted-foreground">{t("obNoteSubtitle")}</p>
         </div>
 
         <Card className="p-6">
