@@ -600,11 +600,6 @@ function WorkspaceScreen({
               />
             </div>
 
-            <div className="mt-1 flex items-start gap-2 rounded-lg bg-primary/5 p-3 text-sm text-muted-foreground">
-              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <span>{t("obWsHint")}</span>
-            </div>
-
             <Button
               type="submit"
               size="lg"
