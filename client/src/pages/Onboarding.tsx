@@ -1014,10 +1014,10 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
         <div className="mb-3 text-sm font-semibold text-primary">
           {sub + 1} / {FEATURE_SUBSTEPS}
         </div>
-        <h2 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl" data-testid="text-feature-title">
+        <h2 className="mb-4 break-keep text-2xl font-bold tracking-tight md:text-3xl" data-testid="text-feature-title">
           {f.title}
         </h2>
-        <p className="text-base leading-relaxed text-muted-foreground">{f.desc}</p>
+        <p className="whitespace-pre-line break-keep text-base leading-relaxed text-muted-foreground">{f.desc}</p>
       </div>
       <div className="order-1 md:order-2">
         <Card className="relative flex h-64 items-center justify-center overflow-hidden p-6 md:h-72">
