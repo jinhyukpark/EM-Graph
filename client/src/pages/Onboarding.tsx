@@ -338,25 +338,26 @@ export default function Onboarding() {
           </div>
         )}
 
-        {/* Primary action + skip, placed right below the content */}
-        {!isLastStep && (
+        {/* Primary action + skip, placed right below the content.
+            The purpose step (1) auto-advances on card click, so it has no footer. */}
+        {!isLastStep && step !== 1 && (
           <div className={cn("flex flex-col items-center gap-2", step === 2 ? "mt-6" : "mt-10")}>
-            {/* Purpose step (1) auto-advances on card click, so no Next button */}
-            {step !== 1 && (
-              <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
-                {step === 0 ? t("obGetStarted") : t("obNext")}
-                <ArrowRight className="h-4 w-4" />
+            <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
+              {step === 0 ? t("obGetStarted") : t("obNext")}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            {/* Skip is only offered on the very first (welcome) step */}
+            {step === 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground"
+                onClick={handleSkip}
+                data-testid="button-skip"
+              >
+                {t("obSkip")}
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground"
-              onClick={handleSkip}
-              data-testid="button-skip"
-            >
-              {t("obSkip")}
-            </Button>
           </div>
         )}
       </main>
