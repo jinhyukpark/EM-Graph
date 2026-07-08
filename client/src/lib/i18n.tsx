@@ -1524,7 +1524,7 @@ const translations = {
     obStepFeatures: "기능 소개",
     obStepStart: "시작",
     obWelcomeTitle: "EM Graph에 오신 걸 환영합니다",
-    obWelcomeSubtitle: "EM Graph는 여러분이 가진 데이터를 한층 더 다양하고 전문적으로\n사용할 수 있는 서비스입니다.",
+    obWelcomeSubtitle: "EM Graph는 여러분이 가진 데이터를 한층 더 다양하고 전문적으로\n활용할 수 있는 서비스입니다.",
     obWelcomeBadge: "시작하기",
     obPurposeTitle: "EM Graph를 어떤 목적으로 사용하시나요?",
     obPurposeSubtitle: "더 맞는 경험을 준비하는 데 도움이 됩니다. 건너뛰어도 괜찮아요.",
