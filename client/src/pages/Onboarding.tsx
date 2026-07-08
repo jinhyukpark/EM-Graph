@@ -798,39 +798,143 @@ function WelcomeStep({ t }: { t: TFn }) {
       </Badge>
 
       {/* Knowledge garden visual */}
-      <div className="relative mb-8 flex h-56 w-full max-w-md items-center justify-center">
-        <div className="absolute h-40 w-40 rounded-full bg-primary/10" />
-        <div className="absolute h-64 w-64 rounded-full border border-primary/15" />
-        <div className="absolute h-52 w-52 rounded-full border border-accent/15" />
+      <div className="relative mb-8 flex h-60 w-full max-w-md items-center justify-center">
+        {/* soft colorful glow */}
+        <div className="absolute h-48 w-48 rounded-full bg-gradient-to-br from-primary/25 via-violet-400/15 to-emerald-400/15 blur-2xl" />
+
+        {/* orbit rings (slowly rotating) */}
+        <motion.div
+          className="absolute h-64 w-64 rounded-full border border-dashed border-primary/30"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+        >
+          <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-primary shadow-sm" />
+          <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-amber-400" />
+        </motion.div>
+        <motion.div
+          className="absolute h-48 w-48 rounded-full border border-accent/25"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
+        >
+          <span className="absolute left-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-emerald-400" />
+          <span className="absolute right-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-violet-400" />
+        </motion.div>
+        <div className="absolute h-36 w-36 rounded-full border border-primary/15 bg-primary/5" />
+
+        {/* faint connecting lines from center */}
+        <svg className="absolute inset-0 h-full w-full" aria-hidden="true">
+          {[
+            { x2: "22%", y2: "16%" },
+            { x2: "80%", y2: "22%" },
+            { x2: "26%", y2: "84%" },
+            { x2: "76%", y2: "80%" },
+          ].map((l, i) => (
+            <motion.line
+              key={i}
+              x1="50%"
+              y1="50%"
+              x2={l.x2}
+              y2={l.y2}
+              stroke="currentColor"
+              className="text-primary/25"
+              strokeWidth={1.2}
+              strokeDasharray="3 4"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
+            />
+          ))}
+        </svg>
+
+        {/* floating note tiles with varied colors */}
         {[
-          { icon: FileText, cls: "-top-2 left-10 text-primary", delay: 0 },
-          { icon: PenLine, cls: "top-6 right-6 text-accent", delay: 0.15 },
-          { icon: FileText, cls: "bottom-2 left-16 text-accent", delay: 0.3 },
-          { icon: FileText, cls: "bottom-6 right-14 text-primary", delay: 0.45 },
+          {
+            icon: FileText,
+            pos: "top-1 left-12",
+            tile: "bg-sky-50 text-sky-600 border-sky-200/70 dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/25",
+            delay: 0,
+            float: 3.2,
+          },
+          {
+            icon: PenLine,
+            pos: "top-7 right-8",
+            tile: "bg-amber-50 text-amber-600 border-amber-200/70 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/25",
+            delay: 0.15,
+            float: 3.8,
+          },
+          {
+            icon: Network,
+            pos: "bottom-3 left-16",
+            tile: "bg-violet-50 text-violet-600 border-violet-200/70 dark:bg-violet-500/10 dark:text-violet-400 dark:border-violet-500/25",
+            delay: 0.3,
+            float: 3.5,
+          },
+          {
+            icon: FileText,
+            pos: "bottom-8 right-14",
+            tile: "bg-emerald-50 text-emerald-600 border-emerald-200/70 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/25",
+            delay: 0.45,
+            float: 4.1,
+          },
         ].map((n, i) => {
           const Icon = n.icon;
           return (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 + n.delay, duration: 0.4 }}
+              animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
+              transition={{
+                opacity: { delay: 0.2 + n.delay, duration: 0.4 },
+                scale: { delay: 0.2 + n.delay, duration: 0.4 },
+                y: { delay: 0.6 + n.delay, duration: n.float, repeat: Infinity, ease: "easeInOut" },
+              }}
               className={cn(
-                "absolute flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm",
-                n.cls
+                "absolute flex h-11 w-11 items-center justify-center rounded-xl border shadow-sm backdrop-blur-sm",
+                n.pos,
+                n.tile
               )}
             >
               <Icon className="h-5 w-5" />
             </motion.div>
           );
         })}
+
+        {/* scattered accent dots */}
+        {[
+          { pos: "top-10 left-2", color: "bg-rose-400/70", size: "h-1.5 w-1.5", delay: 0 },
+          { pos: "top-2 right-20", color: "bg-emerald-400/70", size: "h-2 w-2", delay: 0.8 },
+          { pos: "bottom-12 left-6", color: "bg-amber-400/70", size: "h-2 w-2", delay: 1.4 },
+          { pos: "bottom-1 right-6", color: "bg-sky-400/70", size: "h-1.5 w-1.5", delay: 0.4 },
+        ].map((d, i) => (
+          <motion.span
+            key={i}
+            className={cn("absolute rounded-full", d.pos, d.color, d.size)}
+            animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.3, 1] }}
+            transition={{ delay: d.delay, duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
+
+        {/* center emblem with gradient + pulse */}
         <motion.div
           initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg"
+          className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary to-accent text-primary-foreground shadow-xl shadow-primary/30"
         >
-          <Sparkles className="h-9 w-9" />
+          <motion.span
+            className="absolute inset-0 rounded-2xl bg-primary/30"
+            animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <Sparkles className="relative h-9 w-9" />
+          <motion.span
+            initial={{ scale: 0, rotate: -30 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 12 }}
+            className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-background text-amber-500 shadow-md"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+          </motion.span>
         </motion.div>
       </div>
 
