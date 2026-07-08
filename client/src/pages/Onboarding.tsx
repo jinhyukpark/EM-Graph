@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -60,30 +60,49 @@ export default function Onboarding() {
   const [workspaceName, setWorkspaceName] = useState("");
   const [step, setStep] = useState(0);
   const [featureSub, setFeatureSub] = useState(0);
-  const [purpose, setPurpose] = useState<PurposeId | null>(null);
+  const [purposes, setPurposes] = useState<PurposeId[]>([]);
   const [direction, setDirection] = useState(1);
-
-  // Single-flight timer for the purpose step's auto-advance, so rapid clicks
-  // can't schedule multiple advances or fire after the user navigates away.
-  const advanceTimerRef = useRef<number | null>(null);
-  const clearAdvanceTimer = useCallback(() => {
-    if (advanceTimerRef.current !== null) {
-      window.clearTimeout(advanceTimerRef.current);
-      advanceTimerRef.current = null;
-    }
-  }, []);
-  useEffect(() => clearAdvanceTimer, [clearAdvanceTimer]);
 
   const purposeOptions: {
     id: PurposeId;
     icon: typeof Building2;
     title: string;
     desc: string;
+    iconCls: string;
+    activeIconCls: string;
   }[] = [
-    { id: "enterprise", icon: Building2, title: t("obPurposeEnterprise"), desc: t("obPurposeEnterpriseDesc") },
-    { id: "research", icon: FlaskConical, title: t("obPurposeResearch"), desc: t("obPurposeResearchDesc") },
-    { id: "archive", icon: Archive, title: t("obPurposeArchive"), desc: t("obPurposeArchiveDesc") },
-    { id: "exploring", icon: Compass, title: t("obPurposeExploring"), desc: t("obPurposeExploringDesc") },
+    {
+      id: "enterprise",
+      icon: Building2,
+      title: t("obPurposeEnterprise"),
+      desc: t("obPurposeEnterpriseDesc"),
+      iconCls: "bg-sky-50 text-sky-600 dark:bg-sky-500/10 dark:text-sky-400",
+      activeIconCls: "bg-sky-500 text-white",
+    },
+    {
+      id: "research",
+      icon: FlaskConical,
+      title: t("obPurposeResearch"),
+      desc: t("obPurposeResearchDesc"),
+      iconCls: "bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400",
+      activeIconCls: "bg-violet-500 text-white",
+    },
+    {
+      id: "archive",
+      icon: Archive,
+      title: t("obPurposeArchive"),
+      desc: t("obPurposeArchiveDesc"),
+      iconCls: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
+      activeIconCls: "bg-amber-500 text-white",
+    },
+    {
+      id: "exploring",
+      icon: Compass,
+      title: t("obPurposeExploring"),
+      desc: t("obPurposeExploringDesc"),
+      iconCls: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400",
+      activeIconCls: "bg-emerald-500 text-white",
+    },
   ];
 
   const stepLabels = [t("obStepWelcome"), t("obStepPurpose"), t("obStepFeatures"), t("obStepStart")];
@@ -106,7 +125,6 @@ export default function Onboarding() {
   }, [step, featureSub]);
 
   const goBack = useCallback(() => {
-    clearAdvanceTimer();
     if (step === 2 && featureSub > 0) {
       setDirection(-1);
       setFeatureSub((s) => s - 1);
@@ -118,19 +136,18 @@ export default function Onboarding() {
       setStep(prev);
       if (prev === 2) setFeatureSub(FEATURE_SUBSTEPS - 1);
     }
-  }, [step, featureSub, clearAdvanceTimer]);
+  }, [step, featureSub]);
 
   const handleSkip = useCallback(() => {
-    clearAdvanceTimer();
     console.log("onboarding_skip", { step, featureSub: step === 2 ? featureSub : undefined });
     markOnboardingComplete();
     setLocation("/dashboard");
-  }, [step, featureSub, setLocation, clearAdvanceTimer]);
+  }, [step, featureSub, setLocation]);
 
   const handleStartGarden = useCallback(() => {
-    console.log("onboarding_complete", { purpose, cta: "knowledge_garden" });
+    console.log("onboarding_complete", { purposes, cta: "knowledge_garden" });
     setShowWorkspace(true);
-  }, [purpose]);
+  }, [purposes]);
 
   const handleCreateWorkspace = useCallback((name: string) => {
     console.log("onboarding_workspace_create", { name });
@@ -158,10 +175,10 @@ export default function Onboarding() {
   }, []);
 
   const handleLater = useCallback(() => {
-    console.log("onboarding_complete", { purpose, cta: "later" });
+    console.log("onboarding_complete", { purposes, cta: "later" });
     markOnboardingComplete();
     setLocation("/dashboard");
-  }, [purpose, setLocation]);
+  }, [purposes, setLocation]);
 
   const handleSignup = useCallback(() => {
     console.log("onboarding_signup");
@@ -188,12 +205,14 @@ export default function Onboarding() {
       const el = document.activeElement as HTMLElement | null;
       const onInteractive =
         !!el && (el.tagName === "BUTTON" || el.tagName === "A" || el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+      // The purpose step requires at least one selection before advancing.
+      const nextBlocked = step === TOTAL_STEPS - 1 || (step === 1 && purposes.length === 0);
       if (e.key === "ArrowRight") {
-        if (step === TOTAL_STEPS - 1) return;
+        if (nextBlocked) return;
         e.preventDefault();
         goNext();
       } else if (e.key === "Enter") {
-        if (step === TOTAL_STEPS - 1 || onInteractive) return;
+        if (nextBlocked || onInteractive) return;
         e.preventDefault();
         goNext();
       } else if (e.key === "ArrowLeft") {
@@ -204,7 +223,7 @@ export default function Onboarding() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, goNext, goBack, authPhase, showWorkspace, showFirstNote]);
+  }, [step, goNext, goBack, authPhase, showWorkspace, showFirstNote, purposes]);
 
   // Log workspace screen view
   useEffect(() => {
@@ -304,17 +323,15 @@ export default function Onboarding() {
               <PurposeStep
                 t={t}
                 options={purposeOptions}
-                selected={purpose}
-                onSelect={(id) => {
-                  // Ignore extra clicks while an auto-advance is already pending.
-                  if (advanceTimerRef.current !== null) return;
-                  setPurpose(id);
-                  persistPurpose(id);
-                  // Auto-advance to the next step after showing the selection briefly
-                  advanceTimerRef.current = window.setTimeout(() => {
-                    advanceTimerRef.current = null;
-                    goNext();
-                  }, 220);
+                selected={purposes}
+                onToggle={(id) => {
+                  const next = purposes.includes(id)
+                    ? purposes.filter((p) => p !== id)
+                    : [...purposes, id];
+                  setPurposes(next);
+                  // Home personalization reads a single purpose — keep the first
+                  // selected option as the representative one.
+                  persistPurpose(next[0] ?? null);
                 }}
               />
             )}
@@ -338,11 +355,16 @@ export default function Onboarding() {
           </div>
         )}
 
-        {/* Primary action + skip, placed right below the content.
-            The purpose step (1) auto-advances on card click, so it has no footer. */}
-        {!isLastStep && step !== 1 && (
-          <div className={cn("flex flex-col items-center gap-2", step === 2 ? "mt-6" : "mt-10")}>
-            <Button size="lg" onClick={goNext} className="min-w-[220px]" data-testid="button-next">
+        {/* Primary action + skip, placed right below the content. */}
+        {!isLastStep && (
+          <div className={cn("flex flex-col items-center gap-2", step === 2 ? "mt-6" : step === 1 ? "mt-8" : "mt-10")}>
+            <Button
+              size="lg"
+              onClick={goNext}
+              disabled={step === 1 && purposes.length === 0}
+              className="min-w-[220px]"
+              data-testid="button-next"
+            >
               {step === 0 ? t("obGetStarted") : t("obNext")}
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -905,12 +927,19 @@ function PurposeStep({
   t,
   options,
   selected,
-  onSelect,
+  onToggle,
 }: {
   t: TFn;
-  options: { id: PurposeId; icon: typeof Building2; title: string; desc: string }[];
-  selected: PurposeId | null;
-  onSelect: (id: PurposeId) => void;
+  options: {
+    id: PurposeId;
+    icon: typeof Building2;
+    title: string;
+    desc: string;
+    iconCls: string;
+    activeIconCls: string;
+  }[];
+  selected: PurposeId[];
+  onToggle: (id: PurposeId) => void;
 }) {
   return (
     <div className="flex flex-col items-center">
@@ -924,11 +953,12 @@ function PurposeStep({
       <div className="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
         {options.map((opt) => {
           const Icon = opt.icon;
-          const isActive = selected === opt.id;
+          const isActive = selected.includes(opt.id);
           return (
             <button
               key={opt.id}
-              onClick={() => onSelect(opt.id)}
+              onClick={() => onToggle(opt.id)}
+              aria-pressed={isActive}
               data-testid={`card-purpose-${opt.id}`}
               className={cn(
                 "group flex items-start gap-4 rounded-xl border p-5 text-left transition-all hover-elevate",
@@ -938,7 +968,7 @@ function PurposeStep({
               <div
                 className={cn(
                   "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-colors",
-                  isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  isActive ? opt.activeIconCls : opt.iconCls
                 )}
               >
                 <Icon className="h-5 w-5" />
