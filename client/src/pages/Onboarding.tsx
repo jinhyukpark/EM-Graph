@@ -27,6 +27,7 @@ import {
   UserPlus,
   LogIn,
   Boxes,
+  Plus,
 } from "lucide-react";
 
 const TOTAL_STEPS = 4;
@@ -627,7 +628,21 @@ function FirstNoteScreen({
   const [title, setTitle] = useState("");
   const trimmed = title.trim();
 
-  const suggestions = [t("obNoteSuggest1"), t("obNoteSuggest2"), t("obNoteSuggest3")];
+  // User-added suggestion chips (via the "+" button)
+  const [customChips, setCustomChips] = useState<string[]>([]);
+  const [addingChip, setAddingChip] = useState(false);
+  const [chipDraft, setChipDraft] = useState("");
+
+  const suggestions = [t("obNoteSuggest1"), t("obNoteSuggest2"), t("obNoteSuggest3"), ...customChips];
+
+  const commitChip = () => {
+    const value = chipDraft.trim();
+    if (value && !suggestions.includes(value)) {
+      setCustomChips((chips) => [...chips, value]);
+    }
+    setChipDraft("");
+    setAddingChip(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -699,7 +714,7 @@ function FirstNoteScreen({
 
             <div className="flex flex-col gap-2">
               <span className="text-xs font-medium text-muted-foreground">{t("obNoteSuggestLabel")}</span>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {suggestions.map((s, i) => (
                   <button
                     key={i}
@@ -711,6 +726,36 @@ function FirstNoteScreen({
                     {s}
                   </button>
                 ))}
+                {addingChip ? (
+                  <input
+                    autoFocus
+                    value={chipDraft}
+                    onChange={(e) => setChipDraft(e.target.value)}
+                    onBlur={commitChip}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        commitChip();
+                      } else if (e.key === "Escape") {
+                        setChipDraft("");
+                        setAddingChip(false);
+                      }
+                    }}
+                    placeholder={t("obNoteAddChipPlaceholder")}
+                    className="w-32 rounded-full border border-primary/40 bg-background px-3 py-1.5 text-xs outline-none placeholder:text-muted-foreground/60 focus:border-primary"
+                    data-testid="input-note-custom-chip"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setAddingChip(true)}
+                    aria-label={t("obNoteAddChip")}
+                    className="flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                    data-testid="button-add-note-chip"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
             </div>
 
