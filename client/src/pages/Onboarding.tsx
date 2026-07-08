@@ -791,7 +791,7 @@ function WelcomeStep({ t }: { t: TFn }) {
       <h1 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl" data-testid="text-welcome-title">
         {t("obWelcomeTitle")}
       </h1>
-      <p className="max-w-xl text-base text-muted-foreground md:text-lg">{t("obWelcomeSubtitle")}</p>
+      <p className="max-w-xl whitespace-pre-line text-base text-muted-foreground md:text-lg">{t("obWelcomeSubtitle")}</p>
     </div>
   );
 }
