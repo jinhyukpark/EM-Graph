@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
+import logoImg from "@assets/로고_1783557652552.png";
 import {
   Sparkles,
   Building2,
@@ -886,19 +887,19 @@ function WelcomeStep({ t }: { t: TFn }) {
           />
         ))}
 
-        {/* center emblem with gradient + pulse */}
+        {/* center emblem: brand logo on a light card */}
         <motion.div
           initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary to-accent text-primary-foreground shadow-xl shadow-primary/30"
+          className="relative flex items-center justify-center rounded-2xl border border-border bg-white px-5 py-4 shadow-xl shadow-primary/20 dark:bg-zinc-100"
         >
           <motion.span
-            className="absolute inset-0 rounded-2xl bg-primary/30"
-            animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0, 0.5] }}
+            className="absolute inset-0 rounded-2xl bg-primary/20"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0, 0.4] }}
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
           />
-          <Sparkles className="relative h-9 w-9" />
+          <img src={logoImg} alt="EM Graph" className="relative h-9 w-auto" data-testid="img-welcome-logo" />
           <motion.span
             initial={{ scale: 0, rotate: -30 }}
             animate={{ scale: 1, rotate: 0 }}
