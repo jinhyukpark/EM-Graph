@@ -1036,10 +1036,8 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
         </h2>
         <p className="whitespace-pre-line break-keep text-base leading-relaxed text-muted-foreground">{f.desc}</p>
       </div>
-      <div className="order-1 md:order-2">
-        <Card className="relative flex h-64 items-center justify-center overflow-hidden p-6 md:h-72">
-          {f.visual}
-        </Card>
+      <div className="order-1 flex h-64 items-center justify-center md:order-2 md:h-72">
+        {f.visual}
       </div>
     </div>
   );
