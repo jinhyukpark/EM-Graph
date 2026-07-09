@@ -268,11 +268,8 @@ export default function Onboarding() {
       <>
       {/* Header: logo + progress */}
       <header className="relative z-10 flex items-center justify-between gap-4 px-6 py-5 md:px-10">
-        <div className="flex w-24 items-center gap-2 text-sm font-semibold">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Network className="h-4 w-4" />
-          </div>
-          <span className="hidden sm:inline">EM Graph</span>
+        <div className="flex w-32 items-center">
+          <img src={logoImg} alt="EM Graph" className="h-6 w-auto dark:invert" data-testid="img-header-logo" />
         </div>
 
         {/* Step indicator */}
@@ -304,7 +301,7 @@ export default function Onboarding() {
         </div>
 
         {/* Spacer to keep the step indicator centered */}
-        <div className="w-24" aria-hidden />
+        <div className="hidden w-32 sm:block" aria-hidden />
       </header>
 
       {/* Content */}
