@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
-import logoImg from "@assets/로고_1783557652552.png";
+import logoImg from "@assets/로고svg_1783561501600.svg";
 import {
   Sparkles,
   Building2,
