@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
 import logoImg from "@assets/로고svg_1783561501600.svg";
+import featureGardenImg from "@assets/지식정원1_1783572771154.svg";
+import featureNetworkImg from "@assets/네트워크연결2_1783572772639.svg";
+import featureAiImg from "@assets/ai3_1783572774559.svg";
 import {
   Sparkles,
   Building2,
@@ -986,17 +989,38 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
     {
       title: t("obFeatureGardenTitle"),
       desc: t("obFeatureGardenDesc"),
-      visual: <GardenVisual />,
+      visual: (
+        <img
+          src={featureGardenImg}
+          alt={t("obFeatureGardenTitle")}
+          className="h-full w-full object-contain"
+          data-testid="img-feature-garden"
+        />
+      ),
     },
     {
       title: t("obFeatureNoteTitle"),
       desc: t("obFeatureNoteDesc"),
-      visual: <GraphVisual badge={t("obPluginBadge")} />,
+      visual: (
+        <img
+          src={featureNetworkImg}
+          alt={t("obFeatureNoteTitle")}
+          className="h-full w-full object-contain"
+          data-testid="img-feature-network"
+        />
+      ),
     },
     {
       title: t("obFeatureAiTitle"),
       desc: t("obFeatureAiDesc"),
-      visual: <AiVisual badge={t("obFeatureAiBadge")} items={[t("obFeatureAiItem1"), t("obFeatureAiItem2")]} />,
+      visual: (
+        <img
+          src={featureAiImg}
+          alt={t("obFeatureAiTitle")}
+          className="h-full w-full object-contain"
+          data-testid="img-feature-ai"
+        />
+      ),
     },
   ];
   const f = features[sub];
@@ -1021,114 +1045,8 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
   );
 }
 
-function GardenVisual() {
-  return (
-    <div className="relative flex h-full w-full items-center justify-center">
-      <div className="grid grid-cols-3 gap-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.35 }}
-            className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-lg border border-border bg-background/60"
-          >
-            <FileText className="h-5 w-5 text-primary/70" />
-            <div className="h-1 w-8 rounded-full bg-muted-foreground/20" />
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function AiVisual({ badge, items }: { badge: string; items: string[] }) {
-  return (
-    <div className="flex h-full w-full max-w-xs flex-col justify-center gap-4">
-      <div className="flex items-center gap-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Sparkles className="h-4 w-4" />
-        </span>
-        <Badge variant="secondary" data-testid="badge-ai">
-          {badge}
-        </Badge>
-      </div>
-      <div className="flex flex-col">
-        {items.map((item, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 + i * 0.15, duration: 0.4 }}
-            className="flex items-center gap-3 border-b border-border py-3 last:border-b-0"
-            data-testid={`row-ai-item-${i}`}
-          >
-            <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background">
-              <Check className="h-3 w-3 text-muted-foreground" />
-            </span>
-            <span className="text-sm font-medium text-primary">{item}</span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function GraphVisual({ badge }: { badge: string }) {
-  const nodes = [
-    { x: 50, y: 50 },
-    { x: 18, y: 22 },
-    { x: 82, y: 26 },
-    { x: 20, y: 78 },
-    { x: 80, y: 76 },
-  ];
-  const edges = [
-    [0, 1],
-    [0, 2],
-    [0, 3],
-    [0, 4],
-  ];
-  return (
-    <div className="relative h-full w-full">
-      <Badge className="absolute right-1 top-1 z-10 gap-1" data-testid="badge-plugin">
-        <Sparkles className="h-3 w-3" />
-        {badge}
-      </Badge>
-      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-        {edges.map(([a, b], i) => (
-          <motion.line
-            key={i}
-            x1={`${nodes[a].x}%`}
-            y1={`${nodes[a].y}%`}
-            x2={`${nodes[b].x}%`}
-            y2={`${nodes[b].y}%`}
-            stroke="hsl(var(--primary))"
-            strokeOpacity={0.35}
-            strokeWidth={1.5}
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ delay: 0.2 + i * 0.15, duration: 0.5 }}
-          />
-        ))}
-      </svg>
-      {nodes.map((n, i) => (
-        <motion.div
-          key={i}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: i * 0.1, duration: 0.35 }}
-          className={cn(
-            "absolute flex items-center justify-center rounded-full",
-            i === 0 ? "h-12 w-12 bg-primary text-primary-foreground" : "h-8 w-8 bg-accent/15 text-accent"
-          )}
-          style={{ left: `${n.x}%`, top: `${n.y}%`, transform: "translate(-50%, -50%)" }}
-        >
-          {i === 0 ? <Network className="h-5 w-5" /> : <FileText className="h-3.5 w-3.5" />}
-        </motion.div>
-      ))}
-    </div>
-  );
-}
 
 function FinalStep({
   t,
