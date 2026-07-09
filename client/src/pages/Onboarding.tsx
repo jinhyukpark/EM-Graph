@@ -1027,7 +1027,7 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
 
   return (
     <div className="grid w-full items-center gap-8 md:grid-cols-2 md:gap-12">
-      <div className="order-2 md:order-1">
+      <div className="order-2">
         <div className="mb-3 text-sm font-semibold text-primary">
           {sub + 1} / {FEATURE_SUBSTEPS}
         </div>
@@ -1036,7 +1036,7 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
         </h2>
         <p className="whitespace-pre-line break-keep text-base leading-relaxed text-muted-foreground">{f.desc}</p>
       </div>
-      <div className="order-1 flex h-64 items-center justify-center md:order-2 md:h-72">
+      <div className="order-1 flex h-64 items-center justify-center md:h-72">
         {f.visual}
       </div>
     </div>
