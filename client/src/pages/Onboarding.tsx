@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n";
 import { setPurpose as persistPurpose, type PurposeId } from "@/lib/onboardingPurpose";
 import logoImg from "@assets/로고svg_1783561501600.svg";
-import featureGardenImg from "@assets/지식정원1_1783572771154.svg";
-import featureNetworkImg from "@assets/네트워크연결2_1783572772639.svg";
-import featureAiImg from "@assets/ai3_1783572774559.svg";
+import featureGardenImg from "@assets/지식정원1_1783574384812.png";
+import featureNetworkImg from "@assets/네트워크연결2_1783574384813.png";
+import featureAiImg from "@assets/ai3_1783574384813.png";
 import {
   Sparkles,
   Building2,
