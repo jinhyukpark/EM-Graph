@@ -991,12 +991,12 @@ function FeatureStep({ t, sub }: { t: TFn; sub: number }) {
     {
       title: t("obFeatureNoteTitle"),
       desc: t("obFeatureNoteDesc"),
-      visual: <NoteVisual />,
+      visual: <GraphVisual badge={t("obPluginBadge")} />,
     },
     {
-      title: t("obFeatureGraphTitle"),
-      desc: t("obFeatureGraphDesc"),
-      visual: <GraphVisual badge={t("obPluginBadge")} />,
+      title: t("obFeatureAiTitle"),
+      desc: t("obFeatureAiDesc"),
+      visual: <AiVisual badge={t("obFeatureAiBadge")} items={[t("obFeatureAiItem1"), t("obFeatureAiItem2")]} />,
     },
   ];
   const f = features[sub];
@@ -1042,25 +1042,33 @@ function GardenVisual() {
   );
 }
 
-function NoteVisual() {
+function AiVisual({ badge, items }: { badge: string; items: string[] }) {
   return (
-    <div className="flex h-full w-full max-w-xs flex-col justify-center gap-3">
+    <div className="flex h-full w-full max-w-xs flex-col justify-center gap-4">
       <div className="flex items-center gap-2">
-        <PenLine className="h-4 w-4 text-primary" />
-        <div className="h-3 w-28 rounded-full bg-foreground/70" />
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <Sparkles className="h-4 w-4" />
+        </span>
+        <Badge variant="secondary" data-testid="badge-ai">
+          {badge}
+        </Badge>
       </div>
-      {[80, 95, 70, 88].map((w, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: `${w}%` }}
-          transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
-          className="h-2.5 rounded-full bg-muted-foreground/20"
-        />
-      ))}
-      <div className="mt-2 flex gap-2">
-        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">#분석</span>
-        <span className="rounded-md bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">#리서치</span>
+      <div className="flex flex-col">
+        {items.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 + i * 0.15, duration: 0.4 }}
+            className="flex items-center gap-3 border-b border-border py-3 last:border-b-0"
+            data-testid={`row-ai-item-${i}`}
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full border border-border bg-background">
+              <Check className="h-3 w-3 text-muted-foreground" />
+            </span>
+            <span className="text-sm font-medium text-primary">{item}</span>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
