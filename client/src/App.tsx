@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Redirect, Router as WouterRouter } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -25,6 +25,16 @@ import Chatbot from "@/pages/Chatbot";
 import Plugins from "@/pages/Plugins";
 import TodoList from "@/pages/TodoList";
 import CalendarPage from "@/pages/CalendarPage";
+import Onboarding, { hasCompletedOnboarding } from "@/pages/Onboarding";
+
+// After login, first-time users are sent to the onboarding tour once.
+// Returning users (onboarding already completed/skipped) see the dashboard.
+function DashboardRoute() {
+  if (!hasCompletedOnboarding()) {
+    return <Redirect to="/onboarding" />;
+  }
+  return <Home />;
+}
 
 // Suppress specific errors that are common in iframe environments like Replit Preview
 // but don't affect the actual functionality of the application.
@@ -67,7 +77,7 @@ function AppRouter() {
         <Route path="/" component={LandingPage} />
         <Route path="/signup" component={SignUp} />
         <Route path="/organization-select" component={OrganizationSelect} />
-        <Route path="/dashboard" component={Home} />
+        <Route path="/dashboard" component={DashboardRoute} />
         <Route path="/projects" component={Projects} />
         <Route path="/knowledge-garden" component={KnowledgeGarden} />
         <Route path="/todo-list" component={TodoList} />
@@ -83,6 +93,7 @@ function AppRouter() {
         <Route path="/intelligence/search" component={IntelliSearch} />
         <Route path="/intelligence/chatbot" component={Chatbot} />
         <Route path="/plugins" component={Plugins} />
+        <Route path="/onboarding" component={Onboarding} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>

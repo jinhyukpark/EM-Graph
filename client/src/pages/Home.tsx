@@ -32,7 +32,7 @@ import {
   LayoutTemplate, Eye, EyeOff, GripVertical, RotateCcw, Save, Sparkle,
   Settings2, Pencil, Columns2, Columns4, Rows3, PieChart as PieIcon, LineChart as LineIcon, BarChart2,
   Tag, ListChecks, CalendarDays, Circle,
-  NotebookPen, Trash2, Maximize2
+  NotebookPen, Trash2, Maximize2, Compass
 } from "lucide-react";
 import {
   Area, AreaChart, Bar, BarChart, Cell, Line, LineChart,
@@ -40,6 +40,7 @@ import {
 } from "recharts";
 import { useLanguage } from "@/lib/i18n";
 import type { TranslationKey } from "@/lib/i18n";
+import { usePurpose, type PurposeId } from "@/lib/onboardingPurpose";
 
 type Role = "admin" | "manager" | "viewer";
 
@@ -474,10 +475,30 @@ function FeedBadge({ source, t }: { source: "comment" | "mention" | "share" | "s
   );
 }
 
+const PURPOSE_BANNER: Record<
+  PurposeId,
+  { icon: typeof Building2; titleKey: TranslationKey; descKey: TranslationKey; ctaKey: TranslationKey; route: string }
+> = {
+  enterprise: { icon: Share2, titleKey: "ovPurposeBannerEnterpriseTitle", descKey: "ovPurposeBannerEnterpriseDesc", ctaKey: "ovPurposeBannerEnterpriseCta", route: "/graph-builder" },
+  research: { icon: Sparkles, titleKey: "ovPurposeBannerResearchTitle", descKey: "ovPurposeBannerResearchDesc", ctaKey: "ovPurposeBannerResearchCta", route: "/knowledge-garden" },
+  archive: { icon: FileBox, titleKey: "ovPurposeBannerArchiveTitle", descKey: "ovPurposeBannerArchiveDesc", ctaKey: "ovPurposeBannerArchiveCta", route: "/resources" },
+  exploring: { icon: Compass, titleKey: "ovPurposeBannerExploringTitle", descKey: "ovPurposeBannerExploringDesc", ctaKey: "ovPurposeBannerExploringCta", route: "/brain-market" },
+};
+
+const PURPOSE_BANNER_DISMISS_KEY = "em-graph-purpose-banner-dismissed";
+
 export default function Home() {
   const [, setLocation] = useLocation();
   const { t, language } = useLanguage();
   const [role] = useState<Role>("admin");
+  const [purpose] = usePurpose();
+  const [purposeBannerDismissed, setPurposeBannerDismissed] = useState<boolean>(() => {
+    try { return localStorage.getItem(PURPOSE_BANNER_DISMISS_KEY) === "true"; } catch { return false; }
+  });
+  const dismissPurposeBanner = () => {
+    setPurposeBannerDismissed(true);
+    try { localStorage.setItem(PURPOSE_BANNER_DISMISS_KEY, "true"); } catch { /* ignore */ }
+  };
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [feedFilter, setFeedFilter] = useState<"all" | "comment" | "mention" | "share" | "system">("all");
   const [feedItems, setFeedItems] = useState(ISSUE_FEED_DATA);
@@ -680,6 +701,52 @@ export default function Home() {
             </Button>
           </div>
         </div>
+
+        {purpose && !purposeBannerDismissed && !editMode && (() => {
+          const cfg = PURPOSE_BANNER[purpose];
+          const BannerIcon = cfg.icon;
+          return (
+            <Card
+              className="relative overflow-hidden border-primary/30 bg-gradient-to-r from-primary/[0.07] to-accent/[0.05]"
+              data-testid={`banner-purpose-${purpose}`}
+            >
+              <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                    <BannerIcon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-base font-semibold text-foreground" data-testid="text-purpose-banner-title">
+                      {t(cfg.titleKey)}
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">{t(cfg.descKey)}</p>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
+                  <Button
+                    size="sm"
+                    className="gap-1.5"
+                    onClick={() => setLocation(cfg.route)}
+                    data-testid="button-purpose-banner-cta"
+                  >
+                    {t(cfg.ctaKey)}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground"
+                    onClick={dismissPurposeBanner}
+                    aria-label={t("ovPurposeBannerDismiss")}
+                    data-testid="button-purpose-banner-dismiss"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {visibleBlocks.length === 0 ? (
             <Card className="bg-card/60 border-dashed border-border" data-testid="card-empty-template">
