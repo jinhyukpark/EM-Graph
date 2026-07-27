@@ -139,11 +139,12 @@ export default function Settings() {
       ],
     },
   ];
+  const memberGraphLimit = 10;
   const usageMembers = [
-    { name: "John Doe", email: "john@kolon.com", roleKo: "소유자", roleEn: "Owner", projects: 5, baseStorageGb: 1.2, graphStorageGb: 0.8, aiTokens: "420K", lastLoginKo: "방금 전", lastLoginEn: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
-    { name: "Alice Smith", email: "alice@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 4, baseStorageGb: 1.5, graphStorageGb: 0.6, aiTokens: "510K", lastLoginKo: "3시간 전", lastLoginEn: "3 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
-    { name: "Sarah Lee", email: "sarah@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 3, baseStorageGb: 0.5, graphStorageGb: 0.4, aiTokens: "290K", lastLoginKo: "어제", lastLoginEn: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
-    { name: "Mike Kim", email: "mike@kolon.com", roleKo: "뷰어", roleEn: "Viewer", projects: 0, baseStorageGb: 0.1, graphStorageGb: 0, aiTokens: "20K", lastLoginKo: "초대 대기", lastLoginEn: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
+    { name: "John Doe", email: "john@kolon.com", roleKo: "소유자", roleEn: "Owner", projects: 5, graphCount: 8, baseStorageGb: 1.2, graphStorageGb: 0.8, aiTokens: "420K", lastLoginKo: "방금 전", lastLoginEn: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
+    { name: "Alice Smith", email: "alice@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 4, graphCount: 6, baseStorageGb: 1.5, graphStorageGb: 0.6, aiTokens: "510K", lastLoginKo: "3시간 전", lastLoginEn: "3 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+    { name: "Sarah Lee", email: "sarah@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 3, graphCount: 4, baseStorageGb: 0.5, graphStorageGb: 0.4, aiTokens: "290K", lastLoginKo: "어제", lastLoginEn: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
+    { name: "Mike Kim", email: "mike@kolon.com", roleKo: "뷰어", roleEn: "Viewer", projects: 0, graphCount: 0, baseStorageGb: 0.1, graphStorageGb: 0, aiTokens: "20K", lastLoginKo: "초대 대기", lastLoginEn: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
   ];
 
   const [coupons, setCoupons] = useState([
@@ -1805,6 +1806,9 @@ export default function Settings() {
                       <TableHead className="text-right">{language === "ko" ? "프로젝트" : "Projects"}</TableHead>
                       <TableHead className="text-right">{language === "ko" ? "기본 스토리지" : "Base Storage"}</TableHead>
                       {graphPluginOn && (
+                        <TableHead className="text-right">{language === "ko" ? "그래프 개수" : "Graphs"}</TableHead>
+                      )}
+                      {graphPluginOn && (
                         <TableHead className="text-right">{language === "ko" ? "그래프 스토리지" : "Graph Storage"}</TableHead>
                       )}
                       <TableHead className="text-right">{language === "ko" ? "AI 토큰" : "AI Tokens"}</TableHead>
@@ -1834,6 +1838,21 @@ export default function Settings() {
                           </TableCell>
                           <TableCell className="text-right font-medium">{m.projects}</TableCell>
                           <TableCell className="text-right font-medium">{m.baseStorageGb.toFixed(1)} GB</TableCell>
+                          {graphPluginOn && (
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <span className={`text-sm font-medium ${m.graphCount / memberGraphLimit >= 0.8 ? "text-orange-600" : ""}`}>
+                                  {m.graphCount} / {memberGraphLimit}
+                                </span>
+                                <div className="h-1.5 w-16 bg-secondary rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${m.graphCount / memberGraphLimit >= 0.8 ? "bg-orange-500" : "bg-sky-500"}`}
+                                    style={{ width: `${Math.min((m.graphCount / memberGraphLimit) * 100, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                          )}
                           {graphPluginOn && (
                             <TableCell className="text-right font-medium">{m.graphStorageGb.toFixed(1)} GB</TableCell>
                           )}
