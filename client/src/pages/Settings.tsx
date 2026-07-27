@@ -82,7 +82,6 @@ export default function Settings() {
   const [detailPlugin, setDetailPlugin] = useState<PluginInfo | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailSubscribed, setDetailSubscribed] = useState(false);
-  const [pluginTab, setPluginTab] = useState("subscribed");
   const openPluginDetail = (plugin: PluginInfo, subscribed: boolean) => {
     setDetailPlugin(plugin);
     setDetailSubscribed(subscribed);
@@ -104,6 +103,47 @@ export default function Settings() {
     setDetailOpen(false);
     toast({ title: t("stPluginSubscribedToast"), description: t("stPluginSubscribedToastDesc") });
   };
+
+  // --- Usage tab (mock data) ---
+  const [storageBreakdownOpen, setStorageBreakdownOpen] = useState(false);
+  const graphPluginOn = subscribedPlugins.some((p) => p.name === "Graph Network" && !p.canceled);
+  const usageMemberCount = 8;
+  const usageQuotas = [
+    { id: "seats", labelKo: "좌석", labelEn: "Seats", Icon: Users, used: usageMemberCount, limit: 10, usedText: `${usageMemberCount}`, limitText: "10", subKo: "워크스페이스 멤버", subEn: "Workspace members", barColor: "bg-primary" },
+    { id: "aiTokens", labelKo: "AI 토큰", labelEn: "AI Tokens", Icon: Bot, used: 1.24, limit: 3, usedText: "1.24M", limitText: "3M", subKo: "월간 갱신 · 매월 1일 초기화", subEn: "Monthly cycle · resets on the 1st", barColor: "bg-violet-500" },
+    { id: "s3", labelKo: "S3", labelEn: "S3", Icon: Database, used: 3.2, limit: 5, usedText: "3.2 GB", limitText: "5.0 GB", subKo: "파일·업로드 스토리지", subEn: "File & upload storage", barColor: "bg-indigo-500" },
+    { id: "garden", labelKo: "지식정원", labelEn: "Knowledge Garden", Icon: LayoutGrid, used: 2.1, limit: 0.5 * usageMemberCount, usedText: "2.1 GB", limitText: `${(0.5 * usageMemberCount).toFixed(1)} GB`, subKo: `한도 0.5 GB × 멤버 ${usageMemberCount}명`, subEn: `0.5 GB limit × ${usageMemberCount} members`, barColor: "bg-emerald-500" },
+    ...(graphPluginOn
+      ? [{ id: "graphDb", labelKo: "Graph DB", labelEn: "Graph DB", Icon: Share2, used: 1.8, limit: 4, usedText: "1.8 GB", limitText: "4.0 GB", subKo: "프로젝트 12개", subEn: "12 projects", barColor: "bg-sky-500" }]
+      : []),
+  ];
+  const usageStorageGroups = [
+    {
+      id: "base",
+      labelKo: "기본 라이선스",
+      labelEn: "Base License",
+      items: [
+        { id: "s3", labelKo: "S3", labelEn: "S3", used: 3.2, limit: 5, usedText: "3.2 GB", limitText: "5.0 GB", barColor: "bg-indigo-500" },
+        { id: "kMongo", labelKo: "Knowledge Mongo", labelEn: "Knowledge Mongo", used: 1.7, limit: 2, usedText: "1.7 GB", limitText: "2.0 GB", barColor: "bg-emerald-500" },
+      ],
+    },
+    {
+      id: "graph",
+      labelKo: "그래프 플러그인",
+      labelEn: "Graph Plugin",
+      items: [
+        { id: "gMongo", labelKo: "Graph Mongo", labelEn: "Graph Mongo", used: 1.8, limit: 4, usedText: "1.8 GB", limitText: "4.0 GB", barColor: "bg-sky-500" },
+        { id: "gProject", labelKo: "프로젝트", labelEn: "Projects", used: 12, limit: 20, usedText: "12", limitText: "20", barColor: "bg-primary" },
+      ],
+    },
+  ];
+  const memberGraphLimit = 10;
+  const usageMembers = [
+    { name: "John Doe", email: "john@kolon.com", roleKo: "소유자", roleEn: "Owner", projects: 5, graphCount: 8, baseStorageGb: 1.2, graphStorageGb: 0.8, aiTokens: "420K", lastLoginKo: "방금 전", lastLoginEn: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
+    { name: "Alice Smith", email: "alice@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 4, graphCount: 6, baseStorageGb: 1.5, graphStorageGb: 0.6, aiTokens: "510K", lastLoginKo: "3시간 전", lastLoginEn: "3 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+    { name: "Sarah Lee", email: "sarah@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 3, graphCount: 4, baseStorageGb: 0.5, graphStorageGb: 0.4, aiTokens: "290K", lastLoginKo: "어제", lastLoginEn: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
+    { name: "Mike Kim", email: "mike@kolon.com", roleKo: "뷰어", roleEn: "Viewer", projects: 0, graphCount: 0, baseStorageGb: 0.1, graphStorageGb: 0, aiTokens: "20K", lastLoginKo: "초대 대기", lastLoginEn: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
+  ];
 
   const [coupons, setCoupons] = useState([
     { id: "c1", code: "WELCOME10", discount: 10, expiresAt: "2026-05-22", used: false },
@@ -840,7 +880,7 @@ export default function Settings() {
                return (
                  <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent" data-testid="card-license-status">
                    <CardHeader className="pb-4">
-                     <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
+                     <CardTitle className="text-lg">{language === "ko" ? "현재 플랜 구독 상태" : "Current Plan Subscription"}</CardTitle>
                      <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
                    </CardHeader>
                    <CardContent>
@@ -924,6 +964,178 @@ export default function Settings() {
                      </div>
                      )}
 
+                     {/* Cancel / undo buttons — bottom-right of stat cards */}
+                     {canCancel && (
+                       <div className="flex flex-col items-end gap-2 mt-3">
+                         {subStatus === "cancelScheduled" && (
+                           <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300 w-full" data-testid="notice-cancel-scheduled">
+                             <CalendarClock className="w-4 h-4 shrink-0" />
+                             <span>{t("stLicCancelScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate))}</span>
+                           </div>
+                         )}
+                         {subStatus === "downgradeScheduled" && (
+                           <div className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300 w-full" data-testid="notice-change-scheduled">
+                             <CalendarClock className="w-4 h-4 shrink-0" />
+                             <span>{t("stLicChangeScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate)).replace("{plan}", planNameLabel(s.scheduledPlan))}</span>
+                           </div>
+                         )}
+                         <div className="flex gap-2">
+                           {subStatus === "active" && (
+                             <AlertDialog>
+                               <AlertDialogTrigger asChild>
+                                 <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
+                                   <Trash2 className="w-3.5 h-3.5 mr-1.5" />{t("stLicCancel")}
+                                 </Button>
+                               </AlertDialogTrigger>
+                               <AlertDialogContent data-testid="dialog-cancel-subscription">
+                                 <AlertDialogHeader>
+                                   <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
+                                   <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                   <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
+                                   <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm" onClick={() => { setSubStatus("cancelScheduled"); toast({ title: t("stLicCancelToast") }); }}>{t("stLicCancelConfirm")}</AlertDialogAction>
+                                 </AlertDialogFooter>
+                               </AlertDialogContent>
+                             </AlertDialog>
+                           )}
+                           {subStatus === "cancelScheduled" && (
+                             <Button variant="outline" size="sm" data-testid="button-undo-cancel" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoCancelToast") }); }}>
+                               {t("stLicUndoCancel")}
+                             </Button>
+                           )}
+                           {subStatus === "downgradeScheduled" && (
+                             <AlertDialog>
+                               <AlertDialogTrigger asChild>
+                                 <Button variant="outline" size="sm" data-testid="button-undo-change">{t("stLicUndoChange")}</Button>
+                               </AlertDialogTrigger>
+                               <AlertDialogContent data-testid="dialog-undo-change">
+                                 <AlertDialogHeader>
+                                   <AlertDialogTitle>{t("stLicUndoChangeTitle")}</AlertDialogTitle>
+                                   <AlertDialogDescription>{t("stLicUndoChangeDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                   <AlertDialogCancel data-testid="button-undo-change-back">{t("stLicUndoChangeBack")}</AlertDialogCancel>
+                                   <AlertDialogAction data-testid="button-undo-change-confirm" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoChangeToast") }); }}>{t("stLicUndoChangeConfirm")}</AlertDialogAction>
+                                 </AlertDialogFooter>
+                               </AlertDialogContent>
+                             </AlertDialog>
+                           )}
+                         </div>
+                       </div>
+                     )}
+
+                     {/* Subscription items — upcoming billing at a glance */}
+                     {!isFree && (
+                       <div className="mt-4 pt-4 border-t" data-testid="license-subscription-items">
+                         <div className="text-sm font-semibold mb-3">{language === "ko" ? "플러그인 구독 항목" : "Plugin Subscription Items"}</div>
+                         <div className="rounded-lg border bg-background/60 overflow-hidden">
+                           <Table>
+                             <TableHeader>
+                               <TableRow>
+                                 <TableHead>{language === "ko" ? "항목" : "Item"}</TableHead>
+                                 <TableHead>{language === "ko" ? "구분" : "Type"}</TableHead>
+                                 <TableHead>{language === "ko" ? "구독 기간" : "Period"}</TableHead>
+                                 <TableHead>{language === "ko" ? "다음 결제일" : "Next Billing"}</TableHead>
+                                 <TableHead className="text-right">{language === "ko" ? "결제 예정 금액" : "Amount Due"}</TableHead>
+                                 <TableHead className="text-right w-[110px]">{language === "ko" ? "해지" : "Cancel"}</TableHead>
+                               </TableRow>
+                             </TableHeader>
+                             <TableBody>
+                               <TableRow data-testid="row-sub-plugin-dummy">
+                                 <TableCell className="font-medium">
+                                   <div className="flex items-center gap-2">
+                                     <span className="flex items-center justify-center w-7 h-7 rounded-lg text-violet-600 bg-violet-50 shrink-0">
+                                       <Bot className="w-4 h-4" />
+                                     </span>
+                                     Graph AI Copilot
+                                   </div>
+                                 </TableCell>
+                                 <TableCell>
+                                   <Badge variant="outline" className="font-normal">{language === "ko" ? "플러그인" : "Plugin"}</Badge>
+                                 </TableCell>
+                                 <TableCell className="tabular-nums text-sm">2026.05.01 ~ 2026.11.01</TableCell>
+                                 <TableCell className="tabular-nums text-sm">2026.08.01</TableCell>
+                                 <TableCell className="text-right font-medium tabular-nums">
+                                   {fmtWon(29000)}<span className="text-xs text-muted-foreground font-normal">/{language === "ko" ? "월" : "mo"}</span>
+                                 </TableCell>
+                                 <TableCell className="text-right">
+                                   <AlertDialog>
+                                     <AlertDialogTrigger asChild>
+                                       <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-table-cancel-dummy">
+                                         <Trash2 className="w-3 h-3 mr-1" />{language === "ko" ? "구독 해지" : "Cancel"}
+                                       </Button>
+                                     </AlertDialogTrigger>
+                                     <AlertDialogContent>
+                                       <AlertDialogHeader>
+                                         <AlertDialogTitle>{language === "ko" ? "Graph AI Copilot 구독을 해지할까요?" : "Cancel Graph AI Copilot subscription?"}</AlertDialogTitle>
+                                         <AlertDialogDescription>
+                                           {language === "ko"
+                                             ? "해지 시 2026.11.01까지 이용할 수 있으며, 이후 자동으로 갱신되지 않습니다."
+                                             : "You can keep using it until 2026.11.01. It will not renew afterwards."}
+                                         </AlertDialogDescription>
+                                       </AlertDialogHeader>
+                                       <AlertDialogFooter>
+                                         <AlertDialogCancel>{language === "ko" ? "돌아가기" : "Back"}</AlertDialogCancel>
+                                         <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" onClick={() => toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") })}>{language === "ko" ? "해지하기" : "Cancel Subscription"}</AlertDialogAction>
+                                       </AlertDialogFooter>
+                                     </AlertDialogContent>
+                                   </AlertDialog>
+                                 </TableCell>
+                               </TableRow>
+                               {subscribedPlugins.map((p) => (
+                                 <TableRow key={p.id} data-testid={`row-sub-plugin-${p.id}`}>
+                                   <TableCell className="font-medium">
+                                     <div className="flex items-center gap-2">
+                                       <span className={`flex items-center justify-center w-7 h-7 rounded-lg shrink-0 ${p.iconColor}`}>
+                                         <p.Icon className="w-4 h-4" />
+                                       </span>
+                                       {p.name}
+                                     </div>
+                                   </TableCell>
+                                   <TableCell>
+                                     <Badge variant="outline" className="font-normal">{language === "ko" ? "플러그인" : "Plugin"}</Badge>
+                                   </TableCell>
+                                   <TableCell className="tabular-nums text-sm">{p.startDate} ~ {p.endDate}</TableCell>
+                                   <TableCell className="tabular-nums text-sm">{p.canceled ? "-" : p.nextBillingDate}</TableCell>
+                                   <TableCell className="text-right font-medium tabular-nums">
+                                     {p.canceled ? "-" : <>{fmtWon(p.price)}<span className="text-xs text-muted-foreground font-normal">/{language === "ko" ? "월" : "mo"}</span></>}
+                                   </TableCell>
+                                   <TableCell className="text-right">
+                                     {p.canceled ? (
+                                       <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 font-normal">{language === "ko" ? "해지 예약됨" : "Cancel scheduled"}</Badge>
+                                     ) : (
+                                       <AlertDialog>
+                                         <AlertDialogTrigger asChild>
+                                           <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid={`button-table-cancel-${p.id}`}>
+                                             <Trash2 className="w-3 h-3 mr-1" />{language === "ko" ? "구독 해지" : "Cancel"}
+                                           </Button>
+                                         </AlertDialogTrigger>
+                                         <AlertDialogContent>
+                                           <AlertDialogHeader>
+                                             <AlertDialogTitle>{language === "ko" ? `${p.name} 구독을 해지할까요?` : `Cancel ${p.name} subscription?`}</AlertDialogTitle>
+                                             <AlertDialogDescription>
+                                               {language === "ko"
+                                                 ? `해지 시 ${p.endDate}까지 이용할 수 있으며, 이후 자동으로 갱신되지 않습니다.`
+                                                 : `You can keep using it until ${p.endDate}. It will not renew afterwards.`}
+                                             </AlertDialogDescription>
+                                           </AlertDialogHeader>
+                                           <AlertDialogFooter>
+                                             <AlertDialogCancel>{language === "ko" ? "돌아가기" : "Back"}</AlertDialogCancel>
+                                             <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" onClick={() => cancelPluginSub(p.id)}>{language === "ko" ? "해지하기" : "Cancel Subscription"}</AlertDialogAction>
+                                           </AlertDialogFooter>
+                                         </AlertDialogContent>
+                                       </AlertDialog>
+                                     )}
+                                   </TableCell>
+                                 </TableRow>
+                               ))}
+                             </TableBody>
+                           </Table>
+                         </div>
+                       </div>
+                     )}
+
                      {isVoucher && (
                        <div className="mt-4 pt-4 border-t flex items-center gap-2 text-sm" data-testid="text-license-voucher-name">
                          <Ticket className="w-4 h-4 text-violet-500" />
@@ -932,68 +1144,6 @@ export default function Settings() {
                        </div>
                      )}
 
-                     {canCancel && (
-                       <div className="mt-4 pt-4 border-t space-y-3">
-                         {subStatus === "cancelScheduled" && (
-                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-cancel-scheduled">
-                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
-                             <span>{t("stLicCancelScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate))}</span>
-                           </div>
-                         )}
-                         {subStatus === "downgradeScheduled" && (
-                           <div className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300" data-testid="notice-change-scheduled">
-                             <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
-                             <span>{t("stLicChangeScheduledNotice").replace("{date}", fmtDotDate(s.nextBillingDate)).replace("{plan}", planNameLabel(s.scheduledPlan))}</span>
-                           </div>
-                         )}
-
-                         {subStatus === "active" && (
-                           <AlertDialog>
-                             <AlertDialogTrigger asChild>
-                               <Button variant="outline" size="sm" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-cancel-subscription">
-                                 {t("stLicCancel")}
-                               </Button>
-                             </AlertDialogTrigger>
-                             <AlertDialogContent data-testid="dialog-cancel-subscription">
-                               <AlertDialogHeader>
-                                 <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
-                                 <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
-                               </AlertDialogHeader>
-                               <AlertDialogFooter>
-                                 <AlertDialogCancel data-testid="button-cancel-subscription-back">{t("stLicCancelBack")}</AlertDialogCancel>
-                                 <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" data-testid="button-cancel-subscription-confirm" onClick={() => { setSubStatus("cancelScheduled"); toast({ title: t("stLicCancelToast") }); }}>{t("stLicCancelConfirm")}</AlertDialogAction>
-                               </AlertDialogFooter>
-                             </AlertDialogContent>
-                           </AlertDialog>
-                         )}
-
-                         {subStatus === "cancelScheduled" && (
-                           <Button variant="outline" size="sm" data-testid="button-undo-cancel" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoCancelToast") }); }}>
-                             {t("stLicUndoCancel")}
-                           </Button>
-                         )}
-
-                         {subStatus === "downgradeScheduled" && (
-                           <AlertDialog>
-                             <AlertDialogTrigger asChild>
-                               <Button variant="outline" size="sm" data-testid="button-undo-change">
-                                 {t("stLicUndoChange")}
-                               </Button>
-                             </AlertDialogTrigger>
-                             <AlertDialogContent data-testid="dialog-undo-change">
-                               <AlertDialogHeader>
-                                 <AlertDialogTitle>{t("stLicUndoChangeTitle")}</AlertDialogTitle>
-                                 <AlertDialogDescription>{t("stLicUndoChangeDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
-                               </AlertDialogHeader>
-                               <AlertDialogFooter>
-                                 <AlertDialogCancel data-testid="button-undo-change-back">{t("stLicUndoChangeBack")}</AlertDialogCancel>
-                                 <AlertDialogAction data-testid="button-undo-change-confirm" onClick={() => { setSubStatus("active"); toast({ title: t("stLicUndoChangeToast") }); }}>{t("stLicUndoChangeConfirm")}</AlertDialogAction>
-                               </AlertDialogFooter>
-                             </AlertDialogContent>
-                           </AlertDialog>
-                         )}
-                       </div>
-                     )}
                    </CardContent>
                  </Card>
                );
@@ -1139,24 +1289,6 @@ export default function Settings() {
                />
              )}
 
-             {/* Custom Solutions Section */}
-             <Card className="mt-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 border-indigo-500/30">
-               <CardContent className="flex items-center justify-between p-6">
-                 <div className="space-y-1">
-                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                     <Server className="w-5 h-5 text-indigo-400" />
-                     {t("stCustomSolution")}
-                   </h3>
-                   <p className="text-slate-400 text-sm max-w-2xl">
-                     {t("stCustomSolutionDesc")}
-                   </p>
-                 </div>
-                 <Button className="bg-white text-slate-900 hover:bg-slate-100 shrink-0 ml-4">
-                   {t("stContactSales")}
-                 </Button>
-               </CardContent>
-             </Card>
-
              <Separator className="my-6" />
 
              <div className="space-y-1 mb-4">
@@ -1165,157 +1297,45 @@ export default function Settings() {
              </div>
 
              <Card className="mb-6">
-               <CardContent className="pt-6">
-                 <Tabs value={pluginTab} onValueChange={setPluginTab} className="space-y-4">
-                   <TabsList className="grid w-full grid-cols-2 sm:max-w-md">
-                     <TabsTrigger value="subscribed" data-testid="tab-plugins-subscribed">{t("stActivePlugins")}</TabsTrigger>
-                     <TabsTrigger value="notSubscribed" data-testid="tab-plugins-not-subscribed">{t("stPluginNotSubscribed")}</TabsTrigger>
-                   </TabsList>
-
-                   <TabsContent value="subscribed" className="space-y-4 mt-2">
-                     <p className="text-sm text-muted-foreground" data-testid="text-active-plugins-desc">{t("stActivePluginsDesc")}</p>
-                     {subscribedPlugins.length === 0 ? (
-                       <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
-                     ) : (
+               <CardContent className="pt-6 space-y-4">
+                     <p className="text-sm text-muted-foreground" data-testid="text-plugin-marketplace-desc">
+                       {language === "ko"
+                         ? "플러그인을 둘러보고 구독하세요. 구독 중인 플러그인은 펼쳐서 결제 정보를 확인할 수 있습니다."
+                         : "Browse and subscribe to plugins. Expand subscribed plugins to see billing details."}
+                     </p>
                        <div className="space-y-3">
                          {subscribedPlugins.map((p) => (
-                       <div
-                         key={p.id}
-                         className="border rounded-lg overflow-hidden"
-                         data-testid={`card-plugin-sub-${p.id}`}
-                       >
-                         <div
-                           className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors cursor-pointer select-none"
-                           onClick={() => togglePluginExpand(p.id)}
-                           role="button"
-                           tabIndex={0}
-                           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePluginExpand(p.id); } }}
-                           aria-expanded={!!expandedPlugins[p.id]}
-                           data-testid={`row-plugin-toggle-${p.id}`}
-                         >
-                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
-                             <p.Icon className="w-5 h-5" />
-                           </div>
-                           <div className="flex-1 min-w-0">
-                             <div className="flex items-center gap-2 flex-wrap">
-                               <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
-                               {p.canceled && (
-                                 <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
-                               )}
-                             </div>
-                             <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
-                           </div>
-                           <Button
-                             variant="outline"
-                             size="sm"
-                             className="shrink-0 gap-1.5"
-                             onClick={(e) => { e.stopPropagation(); openPluginDetail(p, true); }}
-                             data-testid={`button-plugin-detail-${p.id}`}
-                           >
-                             <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
-                           </Button>
-                           <Button
-                             variant="ghost"
-                             size="icon"
-                             className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
-                             onClick={(e) => { e.stopPropagation(); togglePluginExpand(p.id); }}
-                             aria-expanded={!!expandedPlugins[p.id]}
-                             data-testid={`button-plugin-expand-${p.id}`}
-                           >
-                             <ChevronDown className={`w-4 h-4 transition-transform ${expandedPlugins[p.id] ? "rotate-180" : ""}`} />
-                           </Button>
-                         </div>
-
-                         {expandedPlugins[p.id] && (
-                           <div className="border-t bg-muted/20 px-4 py-4 space-y-4" data-testid={`panel-plugin-detail-${p.id}`}>
-                             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                               {/* Subscription period */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
-                                     <Calendar className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicPeriod")}
-                                 </div>
-                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-period-${p.id}`}>{p.startDate && p.endDate ? `${fmtDotDate(p.startDate)} ~ ${fmtDotDate(p.endDate)}` : t("stLicNotApplicable")}</span>
-                               </div>
-
-                               {/* Next billing */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
-                                     <CreditCard className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicNextBilling")}
-                                 </div>
-                                 {p.canceled ? (
-                                   <span className="text-base font-semibold text-muted-foreground" data-testid={`text-plugin-billing-${p.id}`}>{t("stLicNotApplicable")}</span>
-                                 ) : (
-                                   <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-billing-${p.id}`}>{p.nextBillingDate ? fmtDotDate(p.nextBillingDate) : t("stLicNotApplicable")}</span>
-                                 )}
-                               </div>
-
-                               {/* Amount */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
-                                     <Zap className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicNextAmount")}
-                                 </div>
-                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-amount-${p.id}`}>{fmtWon(p.price)}<span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span></span>
-                               </div>
-                             </div>
-
-                             {p.canceled ? (
-                               <div className="flex items-start gap-2 text-sm text-muted-foreground" data-testid={`notice-plugin-canceled-${p.id}`}>
-                                 <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
-                                 <span>{t("stPluginCanceledNotice")}</span>
-                               </div>
-                             ) : (
-                               <AlertDialog>
-                                 <AlertDialogTrigger asChild>
-                                   <Button
-                                     variant="outline"
-                                     size="sm"
-                                     className="gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40"
-                                     data-testid={`button-plugin-cancel-${p.id}`}
-                                   >
-                                     <Trash2 className="w-3.5 h-3.5" /> {t("stPluginCancel")}
-                                   </Button>
-                                 </AlertDialogTrigger>
-                                 <AlertDialogContent>
-                                   <AlertDialogHeader>
-                                     <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
-                                     <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
-                                   </AlertDialogHeader>
-                                   <AlertDialogFooter>
-                                     <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
-                                     <AlertDialogAction
-                                       onClick={() => cancelPluginSub(p.id)}
-                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                       data-testid={`button-confirm-cancel-plugin-${p.id}`}
-                                     >
-                                       {t("stPluginCancelConfirm")}
-                                     </AlertDialogAction>
-                                   </AlertDialogFooter>
-                                 </AlertDialogContent>
-                               </AlertDialog>
-                             )}
-                           </div>
-                         )}
-                       </div>
-                     ))}
-                   </div>
-                 )}
-                   </TabsContent>
-
-                   <TabsContent value="notSubscribed" className="space-y-4 mt-2">
-                     <p className="text-sm text-muted-foreground" data-testid="text-not-subscribed-plugins-desc">{t("stPluginNotSubscribedDesc")}</p>
-                 {notSubscribedPlugins.length === 0 ? (
-                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneNotSubscribed")}</p>
-                 ) : (
-                   <div className="space-y-3">
+                        <div
+                          key={p.id}
+                          className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                          data-testid={`card-plugin-sub-${p.id}`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                            <p.Icon className="w-5 h-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                              <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1">
+                                <Check className="w-3 h-3" />{language === "ko" ? "구독중" : "Subscribed"}
+                              </Badge>
+                              {p.canceled && (
+                                <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="shrink-0 gap-1.5"
+                            onClick={() => openPluginDetail(p, true)}
+                            data-testid={`button-plugin-detail-${p.id}`}
+                          >
+                            <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                          </Button>
+                        </div>
+                      ))}
                      {notSubscribedPlugins.map((p) => (
                        <div
                          key={p.id}
@@ -1349,9 +1369,6 @@ export default function Settings() {
                        </div>
                      ))}
                    </div>
-                 )}
-                   </TabsContent>
-                 </Tabs>
                </CardContent>
              </Card>
 
@@ -1620,99 +1637,178 @@ export default function Settings() {
 
           {/* Usage Tab */}
           <TabsContent value="usage" className="space-y-6">
-            <Card className="bg-primary/5 border-primary/20">
-              <CardHeader className="flex flex-row items-center justify-between pb-4">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg text-primary flex items-center gap-2">
-                    <Zap className="w-5 h-5" /> {t("stProPlan")}
-                  </CardTitle>
-                  <CardDescription className="text-primary/80">
-                    {t("stProPlanDesc")}
-                  </CardDescription>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
-                    {t("stManageSubscription")}
-                  </Button>
-                  <Button onClick={() => setActiveTab("billing")}>
-                    {t("stUpgradePlan")}
-                  </Button>
-                </div>
-              </CardHeader>
-            </Card>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalProjects")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12 / 20</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t("stProjectsCreatedDesc")}</p>
-                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-[60%]" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalDataUsage")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3.2 GB / 5.0 GB</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t("stStorageUsedDesc")}</p>
-                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 w-[64%]" />
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Quota Cards — workspace totals */}
+            <div className="grid gap-4 md:grid-cols-3">
+              {usageQuotas.map((q) => {
+                const pct = Math.round((q.used / q.limit) * 100);
+                return (
+                  <Card key={q.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <q.Icon className="w-4 h-4" />
+                        {language === "ko" ? q.labelKo : q.labelEn}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {q.usedText} <span className="text-sm font-normal text-muted-foreground">/ {q.limitText}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {language === "ko" ? q.subKo : q.subEn}
+                      </p>
+                      <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${pct >= 80 ? "bg-orange-500" : q.barColor}`}
+                          style={{ width: `${Math.min(pct, 100)}%` }}
+                        />
+                      </div>
+                      {pct >= 80 && (
+                        <p className="text-xs text-orange-600 mt-2 font-medium">
+                          {language === "ko" ? "한도 임박" : "Near limit"} ({pct}%)
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
+            {/* 3. Storage Breakdown (collapsible) */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer select-none"
+                onClick={() => setStorageBreakdownOpen((v) => !v)}
+                data-testid="usage-storage-breakdown-toggle"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Database className="w-4 h-4" />
+                      {language === "ko" ? "스토리지 상세" : "Storage Breakdown"}
+                    </CardTitle>
+                    <CardDescription className="mt-1">
+                      {language === "ko"
+                        ? "라이선스·플러그인별 스토리지 사용 내역"
+                        : "Storage usage by license and plugin"}
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${storageBreakdownOpen ? "rotate-180" : ""}`} />
+                </div>
+              </CardHeader>
+              {storageBreakdownOpen && (
+                <CardContent className="space-y-6 pt-0">
+                  {usageStorageGroups
+                    .filter((g) => g.id !== "graph" || graphPluginOn)
+                    .map((group) => (
+                      <div key={group.id}>
+                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                          {language === "ko" ? group.labelKo : group.labelEn}
+                        </div>
+                        <div className="space-y-4">
+                          {group.items.map((item) => {
+                            const pct = Math.round((item.used / item.limit) * 100);
+                            return (
+                              <div key={item.id}>
+                                <div className="flex items-center justify-between text-sm mb-1.5">
+                                  <span className="font-medium">{language === "ko" ? item.labelKo : item.labelEn}</span>
+                                  <span className="text-muted-foreground flex items-center gap-2">
+                                    {pct >= 80 && (
+                                      <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-200 text-[10px] px-1.5 py-0">
+                                        {language === "ko" ? "한도 임박" : "Near limit"}
+                                      </Badge>
+                                    )}
+                                    {item.usedText} / {item.limitText} · {pct}%
+                                  </span>
+                                </div>
+                                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${pct >= 80 ? "bg-orange-500" : item.barColor}`}
+                                    style={{ width: `${Math.min(pct, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              )}
+            </Card>
+
+            {/* 4. Member Breakdown */}
             <Card>
               <CardHeader>
-                <CardTitle>{t("stUserUsageStats")}</CardTitle>
-                <CardDescription>{t("stUserUsageStatsDesc")}</CardDescription>
+                <CardTitle>{language === "ko" ? "멤버별 사용량" : "Member Breakdown"}</CardTitle>
+                <CardDescription>
+                  {language === "ko" ? "사용량 내림차순 정렬" : "Sorted by usage (desc)"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t("stUser")}</TableHead>
-                      <TableHead>{t("stRole")}</TableHead>
-                      <TableHead className="text-right">{t("stProjectsCreated")}</TableHead>
-                      <TableHead className="text-right">{t("stDataUsage")}</TableHead>
-                      <TableHead className="text-right">{t("stLastActive")}</TableHead>
+                      <TableHead>{language === "ko" ? "멤버" : "Member"}</TableHead>
+                      <TableHead>{language === "ko" ? "역할" : "Role"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "프로젝트" : "Projects"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "기본 스토리지" : "Base Storage"}</TableHead>
+                      {graphPluginOn && (
+                        <TableHead className="text-right">{language === "ko" ? "그래프 개수" : "Graphs"}</TableHead>
+                      )}
+                      {graphPluginOn && (
+                        <TableHead className="text-right">{language === "ko" ? "그래프 스토리지" : "Graph Storage"}</TableHead>
+                      )}
+                      <TableHead className="text-right">{language === "ko" ? "AI 토큰" : "AI Tokens"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "최근 로그인" : "Last Login"}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {[
-                      { name: "John Doe", email: "john@kolon.com", role: t("stOwner"), projects: 5, storage: "1.2 GB", lastActive: t("stJustNow"), avatar: "JD", color: "bg-primary/20 text-primary" },
-                      { name: "Alice Smith", email: "alice@kolon.com", role: t("stEditor"), projects: 4, storage: "1.5 GB", lastActive: t("stHoursAgo"), avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
-                      { name: "Mike Kim", email: "mike@kolon.com", role: t("stViewer"), projects: 0, storage: "0 GB", lastActive: t("stPending"), avatar: "MK", color: "bg-slate-200 text-slate-500" },
-                      { name: "Sarah Lee", email: "sarah@kolon.com", role: t("stEditor"), projects: 3, storage: "500 MB", lastActive: t("stDayAgo"), avatar: "SL", color: "bg-green-500/20 text-green-600" },
-                    ].map((user, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className={`${user.color} text-xs`}>{user.avatar}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium">{user.name}</div>
-                              <div className="text-xs text-muted-foreground">{user.email}</div>
+                    {[...usageMembers]
+                      .sort((a, b) => (b.baseStorageGb + b.graphStorageGb) - (a.baseStorageGb + a.graphStorageGb))
+                      .map((m) => (
+                        <TableRow key={m.email}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className={`${m.color} text-xs`}>{m.avatar}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{m.name}</div>
+                                <div className="text-xs text-muted-foreground">{m.email}</div>
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-normal">
-                            {user.role}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-medium">{user.projects}</TableCell>
-                        <TableCell className="text-right font-medium">{user.storage}</TableCell>
-                        <TableCell className="text-right text-muted-foreground text-sm">{user.lastActive}</TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-normal">
+                              {language === "ko" ? m.roleKo : m.roleEn}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right font-medium">{m.projects}</TableCell>
+                          <TableCell className="text-right font-medium">{m.baseStorageGb.toFixed(1)} GB</TableCell>
+                          {graphPluginOn && (
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <span className={`text-sm font-medium ${m.graphCount / memberGraphLimit >= 0.8 ? "text-orange-600" : ""}`}>
+                                  {m.graphCount} / {memberGraphLimit}
+                                </span>
+                                <div className="h-1.5 w-16 bg-secondary rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${m.graphCount / memberGraphLimit >= 0.8 ? "bg-orange-500" : "bg-sky-500"}`}
+                                    style={{ width: `${Math.min((m.graphCount / memberGraphLimit) * 100, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                          )}
+                          {graphPluginOn && (
+                            <TableCell className="text-right font-medium">{m.graphStorageGb.toFixed(1)} GB</TableCell>
+                          )}
+                          <TableCell className="text-right font-medium">{m.aiTokens}</TableCell>
+                          <TableCell className="text-right text-muted-foreground text-sm">
+                            {language === "ko" ? m.lastLoginKo : m.lastLoginEn}
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </CardContent>
