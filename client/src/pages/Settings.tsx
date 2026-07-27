@@ -107,7 +107,6 @@ export default function Settings() {
 
   // --- Usage tab (mock data) ---
   const [storageBreakdownOpen, setStorageBreakdownOpen] = useState(false);
-  const usagePlan = { planName: "Pro", planCd: "PLAN-PRO-01", graphPluginName: "Graph Network" };
   const graphPluginOn = subscribedPlugins.some((p) => p.name === "Graph Network" && !p.canceled);
   const usageMemberCount = 8;
   const usageQuotas = [
@@ -1662,35 +1661,7 @@ export default function Settings() {
 
           {/* Usage Tab */}
           <TabsContent value="usage" className="space-y-6">
-            {/* 1. Header — plan summary */}
-            <Card className="bg-primary/5 border-primary/20">
-              <CardHeader className="flex flex-row items-center justify-between pb-4">
-                <div className="space-y-1.5">
-                  <CardTitle className="text-lg text-primary flex items-center gap-2">
-                    <Zap className="w-5 h-5" />
-                    {usagePlan.planName}
-                    <span className="text-xs font-mono font-normal text-primary/60 bg-primary/10 rounded px-1.5 py-0.5">{usagePlan.planCd}</span>
-                  </CardTitle>
-                  <CardDescription className="text-primary/80 flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      className={graphPluginOn
-                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1"
-                        : "bg-slate-500/10 text-slate-500 border-slate-200 gap-1"}
-                    >
-                      <Share2 className="w-3 h-3" />
-                      {usagePlan.graphPluginName} · {graphPluginOn ? "ON" : "OFF"}
-                    </Badge>
-                    <span>{language === "ko" ? "워크스페이스 사용량 현황" : "Workspace usage overview"}</span>
-                  </CardDescription>
-                </div>
-                <Button onClick={() => setActiveTab("license")}>
-                  {language === "ko" ? "플랜 관리" : "Manage Plan"}
-                </Button>
-              </CardHeader>
-            </Card>
-
-            {/* 2. Quota Cards — workspace totals */}
+            {/* Quota Cards — workspace totals */}
             <div className="grid gap-4 md:grid-cols-3">
               {usageQuotas.map((q) => {
                 const pct = Math.round((q.used / q.limit) * 100);
