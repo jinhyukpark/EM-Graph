@@ -105,6 +105,47 @@ export default function Settings() {
     toast({ title: t("stPluginSubscribedToast"), description: t("stPluginSubscribedToastDesc") });
   };
 
+  // --- Usage tab (mock data) ---
+  const [storageBreakdownOpen, setStorageBreakdownOpen] = useState(false);
+  const usagePlan = { planName: "Pro", planCd: "PLAN-PRO-01", graphPluginName: "Graph Network" };
+  const graphPluginOn = subscribedPlugins.some((p) => p.name === "Graph Network" && !p.canceled);
+  const usageMemberCount = 8;
+  const usageQuotas = [
+    { id: "seats", labelKo: "좌석", labelEn: "Seats", Icon: Users, used: usageMemberCount, limit: 10, usedText: `${usageMemberCount}`, limitText: "10", subKo: "워크스페이스 멤버", subEn: "Workspace members", barColor: "bg-primary" },
+    { id: "aiTokens", labelKo: "AI 토큰", labelEn: "AI Tokens", Icon: Bot, used: 1.24, limit: 3, usedText: "1.24M", limitText: "3M", subKo: "월간 갱신 · 매월 1일 초기화", subEn: "Monthly cycle · resets on the 1st", barColor: "bg-violet-500" },
+    { id: "s3", labelKo: "S3", labelEn: "S3", Icon: Database, used: 3.2, limit: 5, usedText: "3.2 GB", limitText: "5.0 GB", subKo: "파일·업로드 스토리지", subEn: "File & upload storage", barColor: "bg-indigo-500" },
+    { id: "garden", labelKo: "지식정원", labelEn: "Knowledge Garden", Icon: LayoutGrid, used: 2.1, limit: 0.5 * usageMemberCount, usedText: "2.1 GB", limitText: `${(0.5 * usageMemberCount).toFixed(1)} GB`, subKo: `한도 0.5 GB × 멤버 ${usageMemberCount}명`, subEn: `0.5 GB limit × ${usageMemberCount} members`, barColor: "bg-emerald-500" },
+    ...(graphPluginOn
+      ? [{ id: "graphDb", labelKo: "Graph DB", labelEn: "Graph DB", Icon: Share2, used: 1.8, limit: 4, usedText: "1.8 GB", limitText: "4.0 GB", subKo: "프로젝트 12개", subEn: "12 projects", barColor: "bg-sky-500" }]
+      : []),
+  ];
+  const usageStorageGroups = [
+    {
+      id: "base",
+      labelKo: "기본 라이선스",
+      labelEn: "Base License",
+      items: [
+        { id: "s3", labelKo: "S3", labelEn: "S3", used: 3.2, limit: 5, usedText: "3.2 GB", limitText: "5.0 GB", barColor: "bg-indigo-500" },
+        { id: "kMongo", labelKo: "Knowledge Mongo", labelEn: "Knowledge Mongo", used: 1.7, limit: 2, usedText: "1.7 GB", limitText: "2.0 GB", barColor: "bg-emerald-500" },
+      ],
+    },
+    {
+      id: "graph",
+      labelKo: "그래프 플러그인",
+      labelEn: "Graph Plugin",
+      items: [
+        { id: "gMongo", labelKo: "Graph Mongo", labelEn: "Graph Mongo", used: 1.8, limit: 4, usedText: "1.8 GB", limitText: "4.0 GB", barColor: "bg-sky-500" },
+        { id: "gProject", labelKo: "프로젝트", labelEn: "Projects", used: 12, limit: 20, usedText: "12", limitText: "20", barColor: "bg-primary" },
+      ],
+    },
+  ];
+  const usageMembers = [
+    { name: "John Doe", email: "john@kolon.com", roleKo: "소유자", roleEn: "Owner", projects: 5, baseStorageGb: 1.2, graphStorageGb: 0.8, aiTokens: "420K", lastLoginKo: "방금 전", lastLoginEn: "Just now", avatar: "JD", color: "bg-primary/20 text-primary" },
+    { name: "Alice Smith", email: "alice@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 4, baseStorageGb: 1.5, graphStorageGb: 0.6, aiTokens: "510K", lastLoginKo: "3시간 전", lastLoginEn: "3 hours ago", avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
+    { name: "Sarah Lee", email: "sarah@kolon.com", roleKo: "편집자", roleEn: "Editor", projects: 3, baseStorageGb: 0.5, graphStorageGb: 0.4, aiTokens: "290K", lastLoginKo: "어제", lastLoginEn: "1 day ago", avatar: "SL", color: "bg-green-500/20 text-green-600" },
+    { name: "Mike Kim", email: "mike@kolon.com", roleKo: "뷰어", roleEn: "Viewer", projects: 0, baseStorageGb: 0.1, graphStorageGb: 0, aiTokens: "20K", lastLoginKo: "초대 대기", lastLoginEn: "Pending", avatar: "MK", color: "bg-slate-200 text-slate-500" },
+  ];
+
   const [coupons, setCoupons] = useState([
     { id: "c1", code: "WELCOME10", discount: 10, expiresAt: "2026-05-22", used: false },
     { id: "c2", code: "FLASH5", discount: 5, expiresAt: "2026-05-20", used: true },
@@ -1620,99 +1661,188 @@ export default function Settings() {
 
           {/* Usage Tab */}
           <TabsContent value="usage" className="space-y-6">
+            {/* 1. Header — plan summary */}
             <Card className="bg-primary/5 border-primary/20">
               <CardHeader className="flex flex-row items-center justify-between pb-4">
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <CardTitle className="text-lg text-primary flex items-center gap-2">
-                    <Zap className="w-5 h-5" /> {t("stProPlan")}
+                    <Zap className="w-5 h-5" />
+                    {usagePlan.planName}
+                    <span className="text-xs font-mono font-normal text-primary/60 bg-primary/10 rounded px-1.5 py-0.5">{usagePlan.planCd}</span>
                   </CardTitle>
-                  <CardDescription className="text-primary/80">
-                    {t("stProPlanDesc")}
+                  <CardDescription className="text-primary/80 flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={graphPluginOn
+                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1"
+                        : "bg-slate-500/10 text-slate-500 border-slate-200 gap-1"}
+                    >
+                      <Share2 className="w-3 h-3" />
+                      {usagePlan.graphPluginName} · {graphPluginOn ? "ON" : "OFF"}
+                    </Badge>
+                    <span>{language === "ko" ? "워크스페이스 사용량 현황" : "Workspace usage overview"}</span>
                   </CardDescription>
                 </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary">
-                    {t("stManageSubscription")}
-                  </Button>
-                  <Button onClick={() => setActiveTab("billing")}>
-                    {t("stUpgradePlan")}
-                  </Button>
-                </div>
+                <Button onClick={() => setActiveTab("license")}>
+                  {language === "ko" ? "플랜 관리" : "Manage Plan"}
+                </Button>
               </CardHeader>
             </Card>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalProjects")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12 / 20</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t("stProjectsCreatedDesc")}</p>
-                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-[60%]" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">{t("stTotalDataUsage")}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3.2 GB / 5.0 GB</div>
-                  <p className="text-xs text-muted-foreground mt-1">{t("stStorageUsedDesc")}</p>
-                  <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 w-[64%]" />
-                  </div>
-                </CardContent>
-              </Card>
+            {/* 2. Quota Cards — workspace totals */}
+            <div className="grid gap-4 md:grid-cols-3">
+              {usageQuotas.map((q) => {
+                const pct = Math.round((q.used / q.limit) * 100);
+                return (
+                  <Card key={q.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                        <q.Icon className="w-4 h-4" />
+                        {language === "ko" ? q.labelKo : q.labelEn}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {q.usedText} <span className="text-sm font-normal text-muted-foreground">/ {q.limitText}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {language === "ko" ? q.subKo : q.subEn}
+                      </p>
+                      <div className="mt-4 h-2 w-full bg-secondary rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${pct >= 80 ? "bg-orange-500" : q.barColor}`}
+                          style={{ width: `${Math.min(pct, 100)}%` }}
+                        />
+                      </div>
+                      {pct >= 80 && (
+                        <p className="text-xs text-orange-600 mt-2 font-medium">
+                          {language === "ko" ? "한도 임박" : "Near limit"} ({pct}%)
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
+            {/* 3. Storage Breakdown (collapsible) */}
+            <Card>
+              <CardHeader
+                className="cursor-pointer select-none"
+                onClick={() => setStorageBreakdownOpen((v) => !v)}
+                data-testid="usage-storage-breakdown-toggle"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Database className="w-4 h-4" />
+                      {language === "ko" ? "스토리지 상세" : "Storage Breakdown"}
+                    </CardTitle>
+                    <CardDescription className="mt-1">
+                      {language === "ko"
+                        ? "라이선스·플러그인별 스토리지 사용 내역"
+                        : "Storage usage by license and plugin"}
+                    </CardDescription>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${storageBreakdownOpen ? "rotate-180" : ""}`} />
+                </div>
+              </CardHeader>
+              {storageBreakdownOpen && (
+                <CardContent className="space-y-6 pt-0">
+                  {usageStorageGroups
+                    .filter((g) => g.id !== "graph" || graphPluginOn)
+                    .map((group) => (
+                      <div key={group.id}>
+                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                          {language === "ko" ? group.labelKo : group.labelEn}
+                        </div>
+                        <div className="space-y-4">
+                          {group.items.map((item) => {
+                            const pct = Math.round((item.used / item.limit) * 100);
+                            return (
+                              <div key={item.id}>
+                                <div className="flex items-center justify-between text-sm mb-1.5">
+                                  <span className="font-medium">{language === "ko" ? item.labelKo : item.labelEn}</span>
+                                  <span className="text-muted-foreground flex items-center gap-2">
+                                    {pct >= 80 && (
+                                      <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-200 text-[10px] px-1.5 py-0">
+                                        {language === "ko" ? "한도 임박" : "Near limit"}
+                                      </Badge>
+                                    )}
+                                    {item.usedText} / {item.limitText} · {pct}%
+                                  </span>
+                                </div>
+                                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${pct >= 80 ? "bg-orange-500" : item.barColor}`}
+                                    style={{ width: `${Math.min(pct, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              )}
+            </Card>
+
+            {/* 4. Member Breakdown */}
             <Card>
               <CardHeader>
-                <CardTitle>{t("stUserUsageStats")}</CardTitle>
-                <CardDescription>{t("stUserUsageStatsDesc")}</CardDescription>
+                <CardTitle>{language === "ko" ? "멤버별 사용량" : "Member Breakdown"}</CardTitle>
+                <CardDescription>
+                  {language === "ko" ? "사용량 내림차순 정렬" : "Sorted by usage (desc)"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t("stUser")}</TableHead>
-                      <TableHead>{t("stRole")}</TableHead>
-                      <TableHead className="text-right">{t("stProjectsCreated")}</TableHead>
-                      <TableHead className="text-right">{t("stDataUsage")}</TableHead>
-                      <TableHead className="text-right">{t("stLastActive")}</TableHead>
+                      <TableHead>{language === "ko" ? "멤버" : "Member"}</TableHead>
+                      <TableHead>{language === "ko" ? "역할" : "Role"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "프로젝트" : "Projects"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "기본 스토리지" : "Base Storage"}</TableHead>
+                      {graphPluginOn && (
+                        <TableHead className="text-right">{language === "ko" ? "그래프 스토리지" : "Graph Storage"}</TableHead>
+                      )}
+                      <TableHead className="text-right">{language === "ko" ? "AI 토큰" : "AI Tokens"}</TableHead>
+                      <TableHead className="text-right">{language === "ko" ? "최근 로그인" : "Last Login"}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {[
-                      { name: "John Doe", email: "john@kolon.com", role: t("stOwner"), projects: 5, storage: "1.2 GB", lastActive: t("stJustNow"), avatar: "JD", color: "bg-primary/20 text-primary" },
-                      { name: "Alice Smith", email: "alice@kolon.com", role: t("stEditor"), projects: 4, storage: "1.5 GB", lastActive: t("stHoursAgo"), avatar: "AS", color: "bg-orange-500/20 text-orange-600" },
-                      { name: "Mike Kim", email: "mike@kolon.com", role: t("stViewer"), projects: 0, storage: "0 GB", lastActive: t("stPending"), avatar: "MK", color: "bg-slate-200 text-slate-500" },
-                      { name: "Sarah Lee", email: "sarah@kolon.com", role: t("stEditor"), projects: 3, storage: "500 MB", lastActive: t("stDayAgo"), avatar: "SL", color: "bg-green-500/20 text-green-600" },
-                    ].map((user, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className={`${user.color} text-xs`}>{user.avatar}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className="font-medium">{user.name}</div>
-                              <div className="text-xs text-muted-foreground">{user.email}</div>
+                    {[...usageMembers]
+                      .sort((a, b) => (b.baseStorageGb + b.graphStorageGb) - (a.baseStorageGb + a.graphStorageGb))
+                      .map((m) => (
+                        <TableRow key={m.email}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className={`${m.color} text-xs`}>{m.avatar}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{m.name}</div>
+                                <div className="text-xs text-muted-foreground">{m.email}</div>
+                              </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-normal">
-                            {user.role}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-medium">{user.projects}</TableCell>
-                        <TableCell className="text-right font-medium">{user.storage}</TableCell>
-                        <TableCell className="text-right text-muted-foreground text-sm">{user.lastActive}</TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-normal">
+                              {language === "ko" ? m.roleKo : m.roleEn}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right font-medium">{m.projects}</TableCell>
+                          <TableCell className="text-right font-medium">{m.baseStorageGb.toFixed(1)} GB</TableCell>
+                          {graphPluginOn && (
+                            <TableCell className="text-right font-medium">{m.graphStorageGb.toFixed(1)} GB</TableCell>
+                          )}
+                          <TableCell className="text-right font-medium">{m.aiTokens}</TableCell>
+                          <TableCell className="text-right text-muted-foreground text-sm">
+                            {language === "ko" ? m.lastLoginKo : m.lastLoginEn}
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </CardContent>
