@@ -82,7 +82,6 @@ export default function Settings() {
   const [detailPlugin, setDetailPlugin] = useState<PluginInfo | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailSubscribed, setDetailSubscribed] = useState(false);
-  const [pluginTab, setPluginTab] = useState("subscribed");
   const openPluginDetail = (plugin: PluginInfo, subscribed: boolean) => {
     setDetailPlugin(plugin);
     setDetailSubscribed(subscribed);
@@ -1299,18 +1298,12 @@ export default function Settings() {
              </div>
 
              <Card className="mb-6">
-               <CardContent className="pt-6">
-                 <Tabs value={pluginTab} onValueChange={setPluginTab} className="space-y-4">
-                   <TabsList className="grid w-full grid-cols-2 sm:max-w-md">
-                     <TabsTrigger value="subscribed" data-testid="tab-plugins-subscribed">{t("stActivePlugins")}</TabsTrigger>
-                     <TabsTrigger value="notSubscribed" data-testid="tab-plugins-not-subscribed">{t("stPluginNotSubscribed")}</TabsTrigger>
-                   </TabsList>
-
-                   <TabsContent value="subscribed" className="space-y-4 mt-2">
-                     <p className="text-sm text-muted-foreground" data-testid="text-active-plugins-desc">{t("stActivePluginsDesc")}</p>
-                     {subscribedPlugins.length === 0 ? (
-                       <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneActive")}</p>
-                     ) : (
+               <CardContent className="pt-6 space-y-4">
+                     <p className="text-sm text-muted-foreground" data-testid="text-plugin-marketplace-desc">
+                       {language === "ko"
+                         ? "플러그인을 둘러보고 구독하세요. 구독 중인 플러그인은 펼쳐서 결제 정보를 확인할 수 있습니다."
+                         : "Browse and subscribe to plugins. Expand subscribed plugins to see billing details."}
+                     </p>
                        <div className="space-y-3">
                          {subscribedPlugins.map((p) => (
                        <div
@@ -1333,6 +1326,9 @@ export default function Settings() {
                            <div className="flex-1 min-w-0">
                              <div className="flex items-center gap-2 flex-wrap">
                                <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                               <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1">
+                                 <Check className="w-3 h-3" />{language === "ko" ? "구독중" : "Subscribed"}
+                               </Badge>
                                {p.canceled && (
                                  <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
                                )}
@@ -1440,16 +1436,6 @@ export default function Settings() {
                          )}
                        </div>
                      ))}
-                   </div>
-                 )}
-                   </TabsContent>
-
-                   <TabsContent value="notSubscribed" className="space-y-4 mt-2">
-                     <p className="text-sm text-muted-foreground" data-testid="text-not-subscribed-plugins-desc">{t("stPluginNotSubscribedDesc")}</p>
-                 {notSubscribedPlugins.length === 0 ? (
-                   <p className="text-sm text-muted-foreground py-6 text-center">{t("stPluginNoneNotSubscribed")}</p>
-                 ) : (
-                   <div className="space-y-3">
                      {notSubscribedPlugins.map((p) => (
                        <div
                          key={p.id}
@@ -1483,9 +1469,6 @@ export default function Settings() {
                        </div>
                      ))}
                    </div>
-                 )}
-                   </TabsContent>
-                 </Tabs>
                </CardContent>
              </Card>
 
