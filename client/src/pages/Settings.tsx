@@ -114,10 +114,9 @@ export default function Settings() {
     { id: "seats", labelKo: "좌석", labelEn: "Seats", Icon: Users, used: usageMemberCount, limit: 10, usedText: `${usageMemberCount}`, limitText: "10", subKo: "워크스페이스 멤버", subEn: "Workspace members", barColor: "bg-primary" },
     { id: "aiTokens", labelKo: "AI 토큰", labelEn: "AI Tokens", Icon: Bot, used: 1.24, limit: 3, usedText: "1.24M", limitText: "3M", subKo: "월간 갱신 · 매월 1일 초기화", subEn: "Monthly cycle · resets on the 1st", barColor: "bg-violet-500" },
     { id: "s3", labelKo: "S3", labelEn: "S3", Icon: Database, used: 3.2, limit: 5, usedText: "3.2 GB", limitText: "5.0 GB", subKo: "파일·업로드 스토리지", subEn: "File & upload storage", barColor: "bg-indigo-500" },
-    { id: "garden", labelKo: "지식정원", labelEn: "Knowledge Garden", Icon: LayoutGrid, used: 2.1, limit: 0.5 * usageMemberCount, usedText: "2.1 GB", limitText: `${(0.5 * usageMemberCount).toFixed(1)} GB`, subKo: `한도 0.5 GB × 멤버 ${usageMemberCount}명`, subEn: `0.5 GB limit × ${usageMemberCount} members`, barColor: "bg-emerald-500" },
-    ...(graphPluginOn
-      ? [{ id: "graphDb", labelKo: "Graph DB", labelEn: "Graph DB", Icon: Share2, used: 1.8, limit: 4, usedText: "1.8 GB", limitText: "4.0 GB", subKo: "프로젝트 12개", subEn: "12 projects", barColor: "bg-sky-500" }]
-      : []),
+    graphPluginOn
+      ? { id: "mongo", labelKo: "Mongo DB", labelEn: "Mongo DB", Icon: LayoutGrid, used: 3.5, limit: 6, usedText: "3.5 GB", limitText: "6.0 GB", subKo: "지식정원 1.7 GB + Graph 1.8 GB · 프로젝트 12개", subEn: "Knowledge 1.7 GB + Graph 1.8 GB · 12 projects", barColor: "bg-emerald-500" }
+      : { id: "mongo", labelKo: "Mongo DB", labelEn: "Mongo DB", Icon: LayoutGrid, used: 1.7, limit: 2, usedText: "1.7 GB", limitText: "2.0 GB", subKo: "지식정원 스토리지", subEn: "Knowledge Garden storage", barColor: "bg-emerald-500" },
   ];
   const usageStorageGroups = [
     {
@@ -1690,7 +1689,7 @@ export default function Settings() {
             </Card>
 
             {/* 2. Quota Cards — workspace totals */}
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               {usageQuotas.map((q) => {
                 const pct = Math.round((q.used / q.limit) * 100);
                 return (
