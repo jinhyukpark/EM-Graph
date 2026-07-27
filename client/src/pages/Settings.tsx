@@ -1305,136 +1305,37 @@ export default function Settings() {
                      </p>
                        <div className="space-y-3">
                          {subscribedPlugins.map((p) => (
-                       <div
-                         key={p.id}
-                         className="border rounded-lg overflow-hidden"
-                         data-testid={`card-plugin-sub-${p.id}`}
-                       >
-                         <div
-                           className="flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors cursor-pointer select-none"
-                           onClick={() => togglePluginExpand(p.id)}
-                           role="button"
-                           tabIndex={0}
-                           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); togglePluginExpand(p.id); } }}
-                           aria-expanded={!!expandedPlugins[p.id]}
-                           data-testid={`row-plugin-toggle-${p.id}`}
-                         >
-                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
-                             <p.Icon className="w-5 h-5" />
-                           </div>
-                           <div className="flex-1 min-w-0">
-                             <div className="flex items-center gap-2 flex-wrap">
-                               <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
-                               <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1">
-                                 <Check className="w-3 h-3" />{language === "ko" ? "구독중" : "Subscribed"}
-                               </Badge>
-                               {p.canceled && (
-                                 <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
-                               )}
-                             </div>
-                             <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
-                           </div>
-                           <Button
-                             variant="outline"
-                             size="sm"
-                             className="shrink-0 gap-1.5"
-                             onClick={(e) => { e.stopPropagation(); openPluginDetail(p, true); }}
-                             data-testid={`button-plugin-detail-${p.id}`}
-                           >
-                             <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
-                           </Button>
-                           <Button
-                             variant="ghost"
-                             size="icon"
-                             className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
-                             onClick={(e) => { e.stopPropagation(); togglePluginExpand(p.id); }}
-                             aria-expanded={!!expandedPlugins[p.id]}
-                             data-testid={`button-plugin-expand-${p.id}`}
-                           >
-                             <ChevronDown className={`w-4 h-4 transition-transform ${expandedPlugins[p.id] ? "rotate-180" : ""}`} />
-                           </Button>
-                         </div>
-
-                         {expandedPlugins[p.id] && (
-                           <div className="border-t bg-muted/20 px-4 py-4 space-y-4" data-testid={`panel-plugin-detail-${p.id}`}>
-                             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                               {/* Subscription period */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
-                                     <Calendar className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicPeriod")}
-                                 </div>
-                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-period-${p.id}`}>{p.startDate && p.endDate ? `${fmtDotDate(p.startDate)} ~ ${fmtDotDate(p.endDate)}` : t("stLicNotApplicable")}</span>
-                               </div>
-
-                               {/* Next billing */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
-                                     <CreditCard className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicNextBilling")}
-                                 </div>
-                                 {p.canceled ? (
-                                   <span className="text-base font-semibold text-muted-foreground" data-testid={`text-plugin-billing-${p.id}`}>{t("stLicNotApplicable")}</span>
-                                 ) : (
-                                   <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-billing-${p.id}`}>{p.nextBillingDate ? fmtDotDate(p.nextBillingDate) : t("stLicNotApplicable")}</span>
-                                 )}
-                               </div>
-
-                               {/* Amount */}
-                               <div className="rounded-xl border bg-background/60 p-4 flex flex-col gap-2.5">
-                                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                   <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
-                                     <Zap className="w-4 h-4" />
-                                   </span>
-                                   {t("stLicNextAmount")}
-                                 </div>
-                                 <span className="text-base font-semibold tabular-nums" data-testid={`text-plugin-amount-${p.id}`}>{fmtWon(p.price)}<span className="text-xs font-normal text-muted-foreground">{t("stPluginPerMonth")}</span></span>
-                               </div>
-                             </div>
-
-                             {p.canceled ? (
-                               <div className="flex items-start gap-2 text-sm text-muted-foreground" data-testid={`notice-plugin-canceled-${p.id}`}>
-                                 <CalendarClock className="w-4 h-4 mt-0.5 shrink-0" />
-                                 <span>{t("stPluginCanceledNotice")}</span>
-                               </div>
-                             ) : (
-                               <AlertDialog>
-                                 <AlertDialogTrigger asChild>
-                                   <Button
-                                     variant="outline"
-                                     size="sm"
-                                     className="gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40"
-                                     data-testid={`button-plugin-cancel-${p.id}`}
-                                   >
-                                     <Trash2 className="w-3.5 h-3.5" /> {t("stPluginCancel")}
-                                   </Button>
-                                 </AlertDialogTrigger>
-                                 <AlertDialogContent>
-                                   <AlertDialogHeader>
-                                     <AlertDialogTitle>{t("stPluginCancelConfirmTitle")}</AlertDialogTitle>
-                                     <AlertDialogDescription>{t("stPluginCancelConfirmDesc")}</AlertDialogDescription>
-                                   </AlertDialogHeader>
-                                   <AlertDialogFooter>
-                                     <AlertDialogCancel>{t("stPluginKeepActive")}</AlertDialogCancel>
-                                     <AlertDialogAction
-                                       onClick={() => cancelPluginSub(p.id)}
-                                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                       data-testid={`button-confirm-cancel-plugin-${p.id}`}
-                                     >
-                                       {t("stPluginCancelConfirm")}
-                                     </AlertDialogAction>
-                                   </AlertDialogFooter>
-                                 </AlertDialogContent>
-                               </AlertDialog>
-                             )}
-                           </div>
-                         )}
-                       </div>
-                     ))}
+                        <div
+                          key={p.id}
+                          className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                          data-testid={`card-plugin-sub-${p.id}`}
+                        >
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${p.iconColor}`}>
+                            <p.Icon className="w-5 h-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium" data-testid={`text-plugin-name-${p.id}`}>{p.name}</span>
+                              <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-200 gap-1">
+                                <Check className="w-3 h-3" />{language === "ko" ? "구독중" : "Subscribed"}
+                              </Badge>
+                              {p.canceled && (
+                                <Badge variant="outline" className="text-xs text-muted-foreground">{t("stPluginStatusCanceled")}</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground truncate">{p.desc}</p>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="shrink-0 gap-1.5"
+                            onClick={() => openPluginDetail(p, true)}
+                            data-testid={`button-plugin-detail-${p.id}`}
+                          >
+                            <Eye className="w-3.5 h-3.5" /> {t("stPluginViewDetail")}
+                          </Button>
+                        </div>
+                      ))}
                      {notSubscribedPlugins.map((p) => (
                        <div
                          key={p.id}
