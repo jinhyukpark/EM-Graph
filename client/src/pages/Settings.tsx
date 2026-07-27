@@ -881,7 +881,7 @@ export default function Settings() {
                return (
                  <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent" data-testid="card-license-status">
                    <CardHeader className="pb-4">
-                     <CardTitle className="text-lg">{t("stLicStatusTitle")}</CardTitle>
+                     <CardTitle className="text-lg">{language === "ko" ? "현재 플랜 구독 상태" : "Current Plan Subscription"}</CardTitle>
                      <CardDescription>{t("stLicStatusDesc").replace("{workspace}", WORKSPACE_NAME)}</CardDescription>
                    </CardHeader>
                    <CardContent>
@@ -968,7 +968,7 @@ export default function Settings() {
                      {/* Subscription items — upcoming billing at a glance */}
                      {!isFree && (
                        <div className="mt-4 pt-4 border-t" data-testid="license-subscription-items">
-                         <div className="text-sm font-semibold mb-3">{language === "ko" ? "구독 항목" : "Subscription Items"}</div>
+                         <div className="text-sm font-semibold mb-3">{language === "ko" ? "플러그인 구독 항목" : "Plugin Subscription Items"}</div>
                          <div className="rounded-lg border bg-background/60 overflow-hidden">
                            <Table>
                              <TableHeader>
