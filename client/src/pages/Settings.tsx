@@ -982,47 +982,45 @@ export default function Settings() {
                                </TableRow>
                              </TableHeader>
                              <TableBody>
-                               <TableRow data-testid="row-sub-license">
+                               <TableRow data-testid="row-sub-plugin-dummy">
                                  <TableCell className="font-medium">
                                    <div className="flex items-center gap-2">
-                                     <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary shrink-0">
-                                       <Zap className="w-4 h-4" />
+                                     <span className="flex items-center justify-center w-7 h-7 rounded-lg text-violet-600 bg-violet-50 shrink-0">
+                                       <Bot className="w-4 h-4" />
                                      </span>
-                                     {planNameLabel(s.plan)}
+                                     Graph AI Copilot
                                    </div>
                                  </TableCell>
                                  <TableCell>
-                                   <Badge variant="outline" className="font-normal">{language === "ko" ? "라이선스" : "License"}</Badge>
+                                   <Badge variant="outline" className="font-normal">{language === "ko" ? "플러그인" : "Plugin"}</Badge>
                                  </TableCell>
-                                 <TableCell className="tabular-nums text-sm">{fmtDotDate(s.startDate)} ~ {fmtDotDate(s.endDate)}</TableCell>
-                                 <TableCell className="tabular-nums text-sm">{subStatus === "cancelScheduled" ? "-" : fmtDotDate(s.nextBillingDate)}</TableCell>
+                                 <TableCell className="tabular-nums text-sm">2026.05.01 ~ 2026.11.01</TableCell>
+                                 <TableCell className="tabular-nums text-sm">2026.08.01</TableCell>
                                  <TableCell className="text-right font-medium tabular-nums">
-                                   {subStatus === "cancelScheduled" ? "-" : <>{fmtWon(s.nextAmount)}<span className="text-xs text-muted-foreground font-normal">/{language === "ko" ? "월" : "mo"}</span></>}
+                                   {fmtWon(29000)}<span className="text-xs text-muted-foreground font-normal">/{language === "ko" ? "월" : "mo"}</span>
                                  </TableCell>
                                  <TableCell className="text-right">
-                                   {isVoucher ? (
-                                     <span className="text-xs text-muted-foreground">-</span>
-                                   ) : subStatus === "cancelScheduled" ? (
-                                     <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-200 font-normal">{language === "ko" ? "해지 예약됨" : "Cancel scheduled"}</Badge>
-                                   ) : (
-                                     <AlertDialog>
-                                       <AlertDialogTrigger asChild>
-                                         <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-table-cancel-license">
-                                           <Trash2 className="w-3 h-3 mr-1" />{language === "ko" ? "구독 해지" : "Cancel"}
-                                         </Button>
-                                       </AlertDialogTrigger>
-                                       <AlertDialogContent>
-                                         <AlertDialogHeader>
-                                           <AlertDialogTitle>{t("stLicCancelTitle")}</AlertDialogTitle>
-                                           <AlertDialogDescription>{t("stLicCancelDesc").replace("{date}", fmtDotDate(s.nextBillingDate))}</AlertDialogDescription>
-                                         </AlertDialogHeader>
-                                         <AlertDialogFooter>
-                                           <AlertDialogCancel>{t("stLicCancelBack")}</AlertDialogCancel>
-                                           <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" onClick={() => { setSubStatus("cancelScheduled"); toast({ title: t("stLicCancelToast") }); }}>{t("stLicCancelConfirm")}</AlertDialogAction>
-                                         </AlertDialogFooter>
-                                       </AlertDialogContent>
-                                     </AlertDialog>
-                                   )}
+                                   <AlertDialog>
+                                     <AlertDialogTrigger asChild>
+                                       <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:border-rose-900 dark:hover:bg-rose-950/40" data-testid="button-table-cancel-dummy">
+                                         <Trash2 className="w-3 h-3 mr-1" />{language === "ko" ? "구독 해지" : "Cancel"}
+                                       </Button>
+                                     </AlertDialogTrigger>
+                                     <AlertDialogContent>
+                                       <AlertDialogHeader>
+                                         <AlertDialogTitle>{language === "ko" ? "Graph AI Copilot 구독을 해지할까요?" : "Cancel Graph AI Copilot subscription?"}</AlertDialogTitle>
+                                         <AlertDialogDescription>
+                                           {language === "ko"
+                                             ? "해지 시 2026.11.01까지 이용할 수 있으며, 이후 자동으로 갱신되지 않습니다."
+                                             : "You can keep using it until 2026.11.01. It will not renew afterwards."}
+                                         </AlertDialogDescription>
+                                       </AlertDialogHeader>
+                                       <AlertDialogFooter>
+                                         <AlertDialogCancel>{language === "ko" ? "돌아가기" : "Back"}</AlertDialogCancel>
+                                         <AlertDialogAction className="bg-rose-600 hover:bg-rose-700" onClick={() => toast({ title: t("stPluginCanceledToast"), description: t("stPluginCanceledToastDesc") })}>{language === "ko" ? "해지하기" : "Cancel Subscription"}</AlertDialogAction>
+                                       </AlertDialogFooter>
+                                     </AlertDialogContent>
+                                   </AlertDialog>
                                  </TableCell>
                                </TableRow>
                                {subscribedPlugins.map((p) => (
@@ -1292,24 +1290,6 @@ export default function Settings() {
                  onConfirm={paymentCtx.onConfirm}
                />
              )}
-
-             {/* Custom Solutions Section */}
-             <Card className="mt-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 border-indigo-500/30">
-               <CardContent className="flex items-center justify-between p-6">
-                 <div className="space-y-1">
-                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                     <Server className="w-5 h-5 text-indigo-400" />
-                     {t("stCustomSolution")}
-                   </h3>
-                   <p className="text-slate-400 text-sm max-w-2xl">
-                     {t("stCustomSolutionDesc")}
-                   </p>
-                 </div>
-                 <Button className="bg-white text-slate-900 hover:bg-slate-100 shrink-0 ml-4">
-                   {t("stContactSales")}
-                 </Button>
-               </CardContent>
-             </Card>
 
              <Separator className="my-6" />
 
