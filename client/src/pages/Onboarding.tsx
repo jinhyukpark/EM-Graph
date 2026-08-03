@@ -699,22 +699,28 @@ function FirstNoteScreen({
 
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="note-title">{t("obNoteTitleLabel")}</Label>
-              <div className="relative">
-                <FileText className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="note-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={t("obNoteTitlePlaceholder")}
-                  className="pl-9"
-                  autoFocus
-                  data-testid="input-first-note-title"
-                />
-              </div>
+            {/* AI prompt input */}
+            <div className="relative flex items-start gap-2 rounded-xl border border-border bg-muted/30 px-4 py-3 focus-within:border-primary/60 focus-within:bg-background transition-colors">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <textarea
+                id="note-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (trimmed) onCreate(trimmed);
+                  }
+                }}
+                placeholder={t("obNoteTitlePlaceholder")}
+                rows={2}
+                autoFocus
+                className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                data-testid="input-first-note-title"
+              />
             </div>
 
+            {/* Suggestion chips */}
             <div className="flex flex-col gap-2">
               <span className="text-xs font-medium text-muted-foreground">{t("obNoteSuggestLabel")}</span>
               <div className="flex flex-wrap gap-2">
@@ -735,12 +741,12 @@ function FirstNoteScreen({
             <Button
               type="submit"
               size="lg"
-              className="mt-1 w-full"
+              className="mt-1 w-full gap-2"
               disabled={!trimmed}
               data-testid="button-create-first-note"
             >
+              <Sparkles className="h-4 w-4" />
               {t("obNoteCreateCta")}
-              <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
         </Card>
