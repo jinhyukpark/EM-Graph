@@ -757,10 +757,9 @@ function FirstNoteScreen({
             size="sm"
             className="text-muted-foreground"
             onClick={onBack}
-            data-testid="button-first-note-back"
+            data-testid="button-first-note-skip"
           >
-            <ArrowLeft className="h-4 w-4" />
-            {t("obBack")}
+            {t("obSkip")}
           </Button>
         </div>
       </motion.div>
