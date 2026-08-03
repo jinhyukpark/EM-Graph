@@ -122,6 +122,11 @@ export default function Onboarding() {
       setFeatureSub((s) => s + 1);
       return;
     }
+    // After the last feature substep, show WorkspaceScreen before the final step
+    if (step === 2 && featureSub === FEATURE_SUBSTEPS - 1) {
+      setShowWorkspace(true);
+      return;
+    }
     if (step < TOTAL_STEPS - 1) {
       setDirection(1);
       setStep((s) => Math.min(TOTAL_STEPS - 1, s + 1));
@@ -150,14 +155,16 @@ export default function Onboarding() {
 
   const handleStartGarden = useCallback(() => {
     console.log("onboarding_complete", { purposes, cta: "knowledge_garden" });
-    setShowWorkspace(true);
+    setShowFirstNote(true);
   }, [purposes]);
 
   const handleCreateWorkspace = useCallback((name: string) => {
     console.log("onboarding_workspace_create", { name });
     setWorkspaceName(name);
     setShowWorkspace(false);
-    setShowFirstNote(true);
+    // Advance to the final step ("지식정원 만들어볼까요?") after workspace is created
+    setDirection(1);
+    setStep(TOTAL_STEPS - 1);
   }, []);
 
   const handleWorkspaceBack = useCallback(() => {
@@ -175,7 +182,7 @@ export default function Onboarding() {
 
   const handleFirstNoteBack = useCallback(() => {
     setShowFirstNote(false);
-    setShowWorkspace(true);
+    // Return to the final step ("지식정원 만들어볼까요?"), not WorkspaceScreen
   }, []);
 
   const handleLater = useCallback(() => {
