@@ -122,6 +122,11 @@ export default function Onboarding() {
       setFeatureSub((s) => s + 1);
       return;
     }
+    // After the last feature substep, show WorkspaceScreen before the final step
+    if (step === 2 && featureSub === FEATURE_SUBSTEPS - 1) {
+      setShowWorkspace(true);
+      return;
+    }
     if (step < TOTAL_STEPS - 1) {
       setDirection(1);
       setStep((s) => Math.min(TOTAL_STEPS - 1, s + 1));
@@ -150,14 +155,16 @@ export default function Onboarding() {
 
   const handleStartGarden = useCallback(() => {
     console.log("onboarding_complete", { purposes, cta: "knowledge_garden" });
-    setShowWorkspace(true);
+    setShowFirstNote(true);
   }, [purposes]);
 
   const handleCreateWorkspace = useCallback((name: string) => {
     console.log("onboarding_workspace_create", { name });
     setWorkspaceName(name);
     setShowWorkspace(false);
-    setShowFirstNote(true);
+    // Advance to the final step ("지식정원 만들어볼까요?") after workspace is created
+    setDirection(1);
+    setStep(TOTAL_STEPS - 1);
   }, []);
 
   const handleWorkspaceBack = useCallback(() => {
@@ -175,7 +182,7 @@ export default function Onboarding() {
 
   const handleFirstNoteBack = useCallback(() => {
     setShowFirstNote(false);
-    setShowWorkspace(true);
+    // Return to the final step ("지식정원 만들어볼까요?"), not WorkspaceScreen
   }, []);
 
   const handleLater = useCallback(() => {
@@ -699,22 +706,28 @@ function FirstNoteScreen({
 
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="note-title">{t("obNoteTitleLabel")}</Label>
-              <div className="relative">
-                <FileText className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="note-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={t("obNoteTitlePlaceholder")}
-                  className="pl-9"
-                  autoFocus
-                  data-testid="input-first-note-title"
-                />
-              </div>
+            {/* AI prompt input */}
+            <div className="relative flex items-start gap-2 rounded-xl border border-border bg-muted/30 px-4 py-3 focus-within:border-primary/60 focus-within:bg-background transition-colors">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <textarea
+                id="note-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (trimmed) onCreate(trimmed);
+                  }
+                }}
+                placeholder={t("obNoteTitlePlaceholder")}
+                rows={2}
+                autoFocus
+                className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                data-testid="input-first-note-title"
+              />
             </div>
 
+            {/* Suggestion chips */}
             <div className="flex flex-col gap-2">
               <span className="text-xs font-medium text-muted-foreground">{t("obNoteSuggestLabel")}</span>
               <div className="flex flex-wrap gap-2">
@@ -735,12 +748,12 @@ function FirstNoteScreen({
             <Button
               type="submit"
               size="lg"
-              className="mt-1 w-full"
+              className="mt-1 w-full gap-2"
               disabled={!trimmed}
               data-testid="button-create-first-note"
             >
+              <Sparkles className="h-4 w-4" />
               {t("obNoteCreateCta")}
-              <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
         </Card>
@@ -751,10 +764,9 @@ function FirstNoteScreen({
             size="sm"
             className="text-muted-foreground"
             onClick={onBack}
-            data-testid="button-first-note-back"
+            data-testid="button-first-note-skip"
           >
-            <ArrowLeft className="h-4 w-4" />
-            {t("obBack")}
+            {t("obSkip")}
           </Button>
         </div>
       </motion.div>
