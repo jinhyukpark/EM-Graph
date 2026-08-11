@@ -213,7 +213,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="text-[10px] font-bold text-indigo-700/70 uppercase tracking-wider mb-1">{topLabel}</div>
           {topContent}
         </div>
-        {/* divider with "≡" hint */}
+        {/* divider — identical height used as reference for PlainStackedField spacer */}
         <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-indigo-100/60 border-y border-indigo-200/60">
           <div className="flex-1 h-px bg-indigo-300/40" />
           <span className="text-[9px] font-semibold text-indigo-400 uppercase tracking-widest">노드 고유키</span>
@@ -222,6 +222,37 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         {/* node-level field */}
         <div className="px-2.5 pt-2 pb-2.5">
           <div className="text-[10px] font-medium text-indigo-500/80 mb-1">{bottomLabel}</div>
+          {bottomContent}
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * Plain (no border) column that mirrors PairedField's vertical rhythm exactly:
+   *   top section (pt-2 pb-2) / invisible spacer same height as divider / bottom section (pt-2 pb-2.5)
+   */
+  function PlainStackedField({
+    topLabel, topContent,
+    bottomLabel, bottomContent,
+  }: {
+    topLabel: string; topContent: React.ReactNode;
+    bottomLabel: string; bottomContent: React.ReactNode;
+  }) {
+    return (
+      <div className="flex flex-col">
+        {/* top section — matches PairedField "px-2.5 pt-2 pb-2" */}
+        <div className="pt-2 pb-2">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{topLabel}</div>
+          {topContent}
+        </div>
+        {/* invisible spacer — same structure as PairedField divider so heights match */}
+        <div className="flex items-center py-0.5 border-y border-transparent">
+          <span className="text-[9px] invisible select-none">노드 고유키</span>
+        </div>
+        {/* bottom section — matches PairedField "px-2.5 pt-2 pb-2.5" */}
+        <div className="pt-2 pb-2.5">
+          <div className="text-[10px] text-muted-foreground/60 mb-1">{bottomLabel}</div>
           {bottomContent}
         </div>
       </div>
@@ -252,22 +283,25 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         {/* main grid: [srcTable][PAIRED src][arrow][tgtTable][PAIRED tgt][divider][label][weight] */}
         <div className="flex-1 grid grid-cols-[1fr_1.1fr_20px_1fr_1.1fr_1px_1fr_1fr] gap-x-3 items-stretch">
 
-          {/* SOURCE TABLE (plain) */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-              </SelectContent>
-            </Select>
-            {/* node sub-label: source sheet (read-only) */}
-            <div className="text-[10px] text-muted-foreground/50 mt-1">시작 시트명</div>
-            <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-              {link.sourceTable || <span className="opacity-30">—</span>}
-            </div>
-          </div>
+          {/* SOURCE TABLE (plain stacked — mirrors PairedField rhythm) */}
+          <PlainStackedField
+            topLabel={t("sourceTable")}
+            topContent={
+              <Select defaultValue={link.sourceTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            bottomLabel="시작 시트명"
+            bottomContent={
+              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+                {link.sourceTable || <span className="opacity-30">—</span>}
+              </div>
+            }
+          />
 
           {/* PAIRED: sourceColumn ↔ 시작 노드 고유키 */}
           <PairedField
@@ -298,21 +332,25 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             <ArrowRight className="w-4 h-4" />
           </div>
 
-          {/* TARGET TABLE (plain) */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
-            <Select defaultValue={link.targetTable}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="text-[10px] text-muted-foreground/50 mt-1">도착 시트명</div>
-            <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-              {link.targetTable || <span className="opacity-30">—</span>}
-            </div>
-          </div>
+          {/* TARGET TABLE (plain stacked — mirrors PairedField rhythm) */}
+          <PlainStackedField
+            topLabel={t("targetTable")}
+            topContent={
+              <Select defaultValue={link.targetTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            bottomLabel="도착 시트명"
+            bottomContent={
+              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+                {link.targetTable || <span className="opacity-30">—</span>}
+              </div>
+            }
+          />
 
           {/* PAIRED: targetColumn ↔ 도착 노드 고유키 */}
           <PairedField
