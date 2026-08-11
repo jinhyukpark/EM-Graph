@@ -198,22 +198,48 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
   const { t } = useLanguage();
   const dragControls = useDragControls();
 
-  // shared column grid: [table][key-col][arrow][table][key-col][divider][label][weight]
-  const grid = "grid grid-cols-[1fr_1fr_20px_1fr_1fr_1px_1fr_1fr] gap-x-3";
+  /** A paired box: stacks two fields (link-level + node-level) inside one visible border */
+  function PairedField({
+    topLabel, topContent,
+    bottomLabel, bottomContent,
+  }: {
+    topLabel: string; topContent: React.ReactNode;
+    bottomLabel: string; bottomContent: React.ReactNode;
+  }) {
+    return (
+      <div className="rounded-lg border-2 border-indigo-200 bg-indigo-50/40 overflow-hidden">
+        {/* link-level field */}
+        <div className="px-2.5 pt-2 pb-2">
+          <div className="text-[10px] font-bold text-indigo-700/70 uppercase tracking-wider mb-1">{topLabel}</div>
+          {topContent}
+        </div>
+        {/* divider with "≡" hint */}
+        <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-indigo-100/60 border-y border-indigo-200/60">
+          <div className="flex-1 h-px bg-indigo-300/40" />
+          <span className="text-[9px] font-semibold text-indigo-400 uppercase tracking-widest">노드 고유키</span>
+          <div className="flex-1 h-px bg-indigo-300/40" />
+        </div>
+        {/* node-level field */}
+        <div className="px-2.5 pt-2 pb-2.5">
+          <div className="text-[10px] font-medium text-indigo-500/80 mb-1">{bottomLabel}</div>
+          {bottomContent}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Reorder.Item
       value={link}
       dragListener={false}
       dragControls={dragControls}
-      className="rounded-lg border border-border bg-slate-50/50 shadow-sm overflow-hidden"
+      className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      {/* ── 링크 row ───────────────────────────────────────────── */}
-      <div className="flex items-end gap-3 px-4 pt-4 pb-3">
-        {/* drag handle */}
-        <div className="flex items-center h-9 shrink-0">
+      <div className="flex items-start gap-3">
+        {/* drag handle — centred vertically */}
+        <div className="flex items-center pt-10 shrink-0">
           <div
             className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
             onPointerDown={(e) => dragControls.start(e)}
@@ -223,14 +249,11 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
 
-        {/* row label */}
-        <div className="flex items-end pb-[9px] shrink-0">
-          <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest w-8">링크</span>
-        </div>
+        {/* main grid: [srcTable][PAIRED src][arrow][tgtTable][PAIRED tgt][divider][label][weight] */}
+        <div className="flex-1 grid grid-cols-[1fr_1.1fr_20px_1fr_1.1fr_1px_1fr_1fr] gap-x-3 items-start">
 
-        {/* fields */}
-        <div className={`flex-1 ${grid} items-end`}>
-          <div className="space-y-1.5">
+          {/* SOURCE TABLE (plain) */}
+          <div className="space-y-1.5 pt-1">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
             <Select defaultValue={link.sourceTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -239,22 +262,44 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
               </SelectContent>
             </Select>
+            {/* node sub-label: source sheet (read-only) */}
+            <div className="text-[10px] text-muted-foreground/50 mt-1">시작 시트명</div>
+            <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+              {link.sourceTable || <span className="opacity-30">—</span>}
+            </div>
           </div>
-          {/* sourceColumn — connected to 시작 노드 고유키 below via indigo left bar */}
-          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-tl-sm">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</div>
-            <Select defaultValue={link.sourceColumn}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="id">id</SelectItem>
-                <SelectItem value="suspect_id">suspect_id</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center h-9 justify-center text-muted-foreground">
+
+          {/* PAIRED: sourceColumn ↔ 시작 노드 고유키 */}
+          <PairedField
+            topLabel={t("sourceColumn")}
+            topContent={
+              <Select defaultValue={link.sourceColumn}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">id</SelectItem>
+                  <SelectItem value="suspect_id">suspect_id</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            bottomLabel="시작 노드 고유키"
+            bottomContent={
+              <Select defaultValue={link.sourceNodeKey || "none"}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            }
+          />
+
+          {/* ARROW */}
+          <div className="flex items-center justify-center pt-10 text-muted-foreground">
             <ArrowRight className="w-4 h-4" />
           </div>
-          <div className="space-y-1.5">
+
+          {/* TARGET TABLE (plain) */}
+          <div className="space-y-1.5 pt-1">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
             <Select defaultValue={link.targetTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -263,23 +308,43 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
               </SelectContent>
             </Select>
+            <div className="text-[10px] text-muted-foreground/50 mt-1">도착 시트명</div>
+            <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+              {link.targetTable || <span className="opacity-30">—</span>}
+            </div>
           </div>
-          {/* targetColumn — connected to 도착 노드 고유키 below via indigo left bar */}
-          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-tl-sm">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</div>
-            <Select defaultValue={link.targetColumn}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="id">id</SelectItem>
-                <SelectItem value="suspect_id">suspect_id</SelectItem>
-              </SelectContent>
-            </Select>
+
+          {/* PAIRED: targetColumn ↔ 도착 노드 고유키 */}
+          <PairedField
+            topLabel={t("targetColumn")}
+            topContent={
+              <Select defaultValue={link.targetColumn}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">id</SelectItem>
+                  <SelectItem value="suspect_id">suspect_id</SelectItem>
+                </SelectContent>
+              </Select>
+            }
+            bottomLabel="도착 노드 고유키"
+            bottomContent={
+              <Select defaultValue={link.targetNodeKey || "none"}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            }
+          />
+
+          {/* VERTICAL DIVIDER */}
+          <div className="flex items-center justify-center pt-10">
+            <div className="w-px h-8 bg-border" />
           </div>
-          {/* vertical divider */}
-          <div className="flex items-center h-9 justify-center">
-            <div className="w-px h-6 bg-border" />
-          </div>
-          <div className="space-y-1.5">
+
+          {/* LABEL */}
+          <div className="space-y-1.5 pt-1">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
             <Select defaultValue={link.labelField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -292,7 +357,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
+
+          {/* WEIGHT */}
+          <div className="space-y-1.5 pt-1">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</div>
             <Select defaultValue={link.weightField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -307,79 +374,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
 
-        {/* delete button */}
-        <div className="flex items-center h-9 shrink-0">
+        {/* DELETE */}
+        <div className="flex items-center pt-10 shrink-0">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
-      </div>
-
-      {/* ── 노드 row ───────────────────────────────────────────── */}
-      <div className="flex items-end gap-3 bg-indigo-50/60 border-t border-indigo-100/70 px-4 pt-3 pb-4">
-        {/* align with drag handle */}
-        <div className="w-4 shrink-0" />
-
-        {/* row label */}
-        <div className="flex items-end pb-[9px] shrink-0">
-          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest w-8">노드</span>
-        </div>
-
-        {/* fields — same grid, cols 1-5 only (label/weight cols left empty) */}
-        <div className={`flex-1 ${grid} items-end`}>
-          {/* 시작 시트명 — read-only display of sourceTable */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">시작 시트명</div>
-            <div className="flex h-9 items-center rounded-md border border-border/50 bg-white/60 px-3 text-xs text-muted-foreground truncate">
-              {link.sourceTable || <span className="opacity-40">—</span>}
-            </div>
-          </div>
-
-          {/* 시작 노드 고유키 — continues the indigo left bar from sourceColumn above */}
-          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-bl-sm">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">시작 노드 고유키</div>
-            <Select defaultValue={link.sourceNodeKey || "none"}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* arrow spacer */}
-          <div className="flex items-center h-9 justify-center text-muted-foreground/30">
-            <ArrowRight className="w-4 h-4" />
-          </div>
-
-          {/* 도착 시트명 — read-only */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">도착 시트명</div>
-            <div className="flex h-9 items-center rounded-md border border-border/50 bg-white/60 px-3 text-xs text-muted-foreground truncate">
-              {link.targetTable || <span className="opacity-40">—</span>}
-            </div>
-          </div>
-
-          {/* 도착 노드 고유키 — continues the indigo left bar from targetColumn above */}
-          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-bl-sm">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">도착 노드 고유키</div>
-            <Select defaultValue={link.targetNodeKey || "none"}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* fill remaining cols */}
-          <div />
-          <div />
-          <div />
-        </div>
-
-        {/* align with delete button */}
-        <div className="w-8 shrink-0" />
       </div>
     </Reorder.Item>
   );
