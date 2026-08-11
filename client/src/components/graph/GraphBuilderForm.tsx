@@ -1,11 +1,10 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag, ChevronDown, ChevronUp } from "lucide-react";
+import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/i18n";
 import {
@@ -280,108 +279,117 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       {showMapping && (
         <div className="border-t border-border/60 bg-slate-50/40">
           {/* pl-7 = drag handle(w-4) + pr-3(gap) = 28px → SOURCE TABLE 열과 정렬 */}
-          <div className="pl-7 pr-4 py-2.5 space-y-2">
+          <div className="pl-7 pr-4 py-2.5 space-y-1.5">
 
-            {/* 추가 정보 연결 */}
-            <div className="flex items-center gap-3 min-h-[36px]">
-              <div className="w-[150px] shrink-0">
-                <p className={`text-xs font-semibold leading-tight ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/50"}`}>추가 정보 연결</p>
-                <p className="text-[10px] text-muted-foreground/50 leading-tight">노드 속성 연결 키</p>
-              </div>
-              <Switch checked={nodeKeyEnabled} onCheckedChange={setNodeKeyEnabled} className="shrink-0" />
-              {nodeKeyEnabled && (
-                <div className="flex items-center gap-2">
-                  {/* SOURCE COLUMN → 시작 시트+고유키 */}
-                  <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border text-[11px] font-medium text-slate-600 shrink-0">
-                    {link.sourceColumn || "소스 컬럼"}
-                  </span>
-                  <div className="flex items-center shrink-0">
-                    <div className="w-4 h-px bg-muted-foreground/30" />
-                    <ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px" />
+            {/* ── 추가 정보 연결 ── */}
+            <div className="flex items-center gap-2 h-9">
+              <span className={`text-xs font-semibold w-[130px] shrink-0 ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                추가 정보 연결
+              </span>
+              {nodeKeyEnabled ? (
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border/60 text-[11px] font-medium text-slate-500 shrink-0">{link.sourceColumn || "—"}</span>
+                    <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/25"/><ArrowRight className="w-3 h-3 text-muted-foreground/25 -ml-px"/></div>
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[118px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.sourceNodeKey||"none"} disabled>
+                      <SelectTrigger className="h-7 text-xs w-[72px] opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
+                      <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <div className="w-px h-4 bg-border/50 mx-0.5 shrink-0"/>
+                    <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border/60 text-[11px] font-medium text-slate-500 shrink-0">{link.targetColumn || "—"}</span>
+                    <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/25"/><ArrowRight className="w-3 h-3 text-muted-foreground/25 -ml-px"/></div>
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[118px]"><SelectValue placeholder="도착 시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.targetNodeKey||"none"} disabled>
+                      <SelectTrigger className="h-7 text-xs w-[72px] opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
+                      <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+                    </Select>
                   </div>
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[120px]"><SelectValue placeholder="시작 시트명" /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.sourceNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs w-[76px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">{t("none")}</SelectItem>
-                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-
-                  {/* 구분 */}
-                  <div className="w-px h-5 bg-border/60 mx-1 shrink-0" />
-
-                  {/* TARGET COLUMN → 도착 시트+고유키 */}
-                  <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border text-[11px] font-medium text-slate-600 shrink-0">
-                    {link.targetColumn || "타깃 컬럼"}
-                  </span>
-                  <div className="flex items-center shrink-0">
-                    <div className="w-4 h-px bg-muted-foreground/30" />
-                    <ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px" />
-                  </div>
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[120px]"><SelectValue placeholder="도착 시트명" /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.targetNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs w-[76px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">{t("none")}</SelectItem>
-                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <button onClick={()=>setNodeKeyEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
+                    <X className="w-3 h-3"/>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={()=>setNodeKeyEnabled(true)}
+                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                >
+                  <Plus className="w-3 h-3"/> 설정
+                </button>
               )}
             </div>
 
-            {/* Label */}
-            <div className="flex items-center gap-3 min-h-[36px]">
-              <div className="w-[150px] shrink-0">
-                <p className={`text-xs font-medium leading-tight ${labelEnabled ? "text-foreground" : "text-muted-foreground/50"}`}>{t("label")}</p>
-                <p className="text-[10px] text-muted-foreground/50 leading-tight">링크 라벨 필드</p>
-              </div>
-              <Switch checked={labelEnabled} onCheckedChange={setLabelEnabled} className="shrink-0" />
-              {labelEnabled && (
-                <div className="flex items-center gap-1.5">
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[130px]"><SelectValue placeholder="시트명" /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.labelField !== "none" ? link.labelField : "color"}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[100px]"><SelectValue placeholder="color" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="color">color</SelectItem>
-                      {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* ── Label ── */}
+            <div className="flex items-center gap-2 h-9">
+              <span className={`text-xs font-medium w-[130px] shrink-0 ${labelEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                {t("label")}
+              </span>
+              {labelEnabled ? (
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.labelField!=="none"?link.labelField:"color"}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="color">color</SelectItem>
+                        {["type","relationship","status","category"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <button onClick={()=>setLabelEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
+                    <X className="w-3 h-3"/>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={()=>setLabelEnabled(true)}
+                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                >
+                  <Plus className="w-3 h-3"/> 설정
+                </button>
               )}
             </div>
 
-            {/* Weight */}
-            <div className="flex items-center gap-3 min-h-[36px]">
-              <div className="w-[150px] shrink-0">
-                <p className={`text-xs font-medium leading-tight ${weightEnabled ? "text-foreground" : "text-muted-foreground/50"}`}>{t("weight")}</p>
-                <p className="text-[10px] text-muted-foreground/50 leading-tight">링크 두께 필드</p>
-              </div>
-              <Switch checked={weightEnabled} onCheckedChange={setWeightEnabled} className="shrink-0" />
-              {weightEnabled && (
-                <div className="flex items-center gap-1.5">
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[130px]"><SelectValue placeholder="시트명" /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.weightField !== "none" ? link.weightField : "color"}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[100px]"><SelectValue placeholder="color" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="color">color</SelectItem>
-                      {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* ── Weight ── */}
+            <div className="flex items-center gap-2 h-9">
+              <span className={`text-xs font-medium w-[130px] shrink-0 ${weightEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                {t("weight")}
+              </span>
+              {weightEnabled ? (
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.weightField!=="none"?link.weightField:"color"}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="color">color</SelectItem>
+                        {["weight","severity","count","score"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <button onClick={()=>setWeightEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
+                    <X className="w-3 h-3"/>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={()=>setWeightEnabled(true)}
+                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                >
+                  <Plus className="w-3 h-3"/> 설정
+                </button>
               )}
             </div>
 
