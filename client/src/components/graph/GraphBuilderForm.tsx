@@ -287,12 +287,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1 text-xs font-semibold w-[130px] shrink-0 cursor-default ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-semibold w-[140px] shrink-0 cursor-default ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
                       추가 정보 연결
-                      <HelpCircle className="w-3 h-3 text-muted-foreground/40 shrink-0" />
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[240px] text-[11px] leading-snug whitespace-normal">
+                  <TooltipContent side="top" className="max-w-[260px] text-xs leading-relaxed whitespace-normal bg-popover text-popover-foreground border border-border shadow-md">
                     소스·타깃 컬럼이 연결된 노드의 속성 정보를 가져올 때, 관련 키(고유키)로 매핑하여 추가 속성 정보를 연결합니다.
                   </TooltipContent>
                 </Tooltip>
@@ -341,12 +341,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1 text-xs font-medium w-[130px] shrink-0 cursor-default ${labelEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default ${labelEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
                       링크 라벨
-                      <HelpCircle className="w-3 h-3 text-muted-foreground/40 shrink-0" />
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[220px] text-[11px] leading-snug whitespace-normal">
+                  <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed whitespace-normal bg-popover text-popover-foreground border border-border shadow-md">
                     그래프에서 링크(엣지) 위에 표시되는 텍스트 라벨을 지정합니다.
                   </TooltipContent>
                 </Tooltip>
@@ -385,12 +385,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1 text-xs font-medium w-[130px] shrink-0 cursor-default ${weightEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default ${weightEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
                       링크 웨이트
-                      <HelpCircle className="w-3 h-3 text-muted-foreground/40 shrink-0" />
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[220px] text-[11px] leading-snug whitespace-normal">
+                  <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed whitespace-normal bg-popover text-popover-foreground border border-border shadow-md">
                     그래프에서 링크(엣지)의 두께를 지정하는 필드를 설정합니다. 값이 클수록 링크가 굵게 표시됩니다.
                   </TooltipContent>
                 </Tooltip>
