@@ -332,14 +332,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             <ArrowRight className="w-4 h-4" />
           </div>
 
-          {/* TARGET TABLE — 셀렉트 없이 소스 테이블과 동일한 값을 읽기 전용으로 표시 */}
+          {/* TARGET TABLE — 레이블/셀렉트는 숨기고 공간만 유지, 도착 시트명만 표시 */}
           <PlainStackedField
-            topLabel={t("targetTable")}
-            topContent={
-              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-                {link.sourceTable || <span className="opacity-30">—</span>}
-              </div>
-            }
+            topLabel=""
+            topContent={<div className="h-8" />}
             bottomLabel="도착 시트명"
             bottomContent={
               <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
