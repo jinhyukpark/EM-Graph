@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag } from "lucide-react";
+import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -197,218 +197,159 @@ const KEY_OPTIONS = ["id", "suspect_id", "profile_id", "incident_id", "location_
 function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: string) => void }) {
   const { t } = useLanguage();
   const dragControls = useDragControls();
+  const [showMapping, setShowMapping] = useState(false);
 
-  /** A paired box: stacks two fields (link-level + node-level) inside one visible border */
-  function PairedField({
-    topLabel, topContent,
-    bottomLabel, bottomContent,
-  }: {
-    topLabel: string; topContent: React.ReactNode;
-    bottomLabel: string; bottomContent: React.ReactNode;
-  }) {
-    return (
-      <div className="rounded-lg border-2 border-indigo-200 bg-indigo-50/40 overflow-hidden">
-        {/* link-level field */}
-        <div className="px-2.5 pt-2 pb-2">
-          <div className="text-[10px] font-bold text-indigo-700/70 uppercase tracking-wider mb-1">{topLabel}</div>
-          {topContent}
-        </div>
-        {/* node-level field */}
-        <div className="px-2.5 pt-2 pb-2.5">
-          <div className="text-[10px] font-medium text-indigo-500/80 mb-1">{bottomLabel}</div>
-          {bottomContent}
-        </div>
-      </div>
-    );
-  }
-
-  /**
-   * Plain (no border) column that mirrors PairedField's vertical rhythm exactly:
-   *   top section (pt-2 pb-2) / invisible spacer same height as divider / bottom section (pt-2 pb-2.5)
-   */
-  function PlainStackedField({
-    topLabel, topContent,
-    bottomLabel, bottomContent,
-  }: {
-    topLabel: string; topContent: React.ReactNode;
-    bottomLabel: string; bottomContent: React.ReactNode;
-  }) {
-    return (
-      <div className="flex flex-col">
-        {/* top section — matches PairedField "px-2.5 pt-2 pb-2" */}
-        <div className="pt-2 pb-2">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{topLabel}</div>
-          {topContent}
-        </div>
-        {/* bottom section — matches PairedField "px-2.5 pt-2 pb-2.5" */}
-        <div className="pt-2 pb-2.5">
-          <div className="text-[10px] text-muted-foreground/60 mb-1">{bottomLabel}</div>
-          {bottomContent}
-        </div>
-      </div>
-    );
-  }
+  const TABLE_OPTIONS = ["crime_incidents_2024", "suspect_profiles"];
+  const COL_OPTIONS = ["id", "suspect_id"];
 
   return (
     <Reorder.Item
       value={link}
       dragListener={false}
       dragControls={dragControls}
-      className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm"
+      className="rounded-lg border border-border bg-slate-50/50 shadow-sm overflow-hidden"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
-      <div className="flex items-stretch gap-3">
-        {/* drag handle — centred vertically */}
-        <div className="flex items-center shrink-0">
-          <div
-            className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
-            onPointerDown={(e) => dragControls.start(e)}
-            data-testid={`drag-handle-link-${link.id}`}
-          >
-            <GripVertical className="w-4 h-4" />
-          </div>
+      {/* ── 메인 행 ── */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        {/* drag handle */}
+        <div
+          className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors shrink-0"
+          onPointerDown={(e) => dragControls.start(e)}
+          data-testid={`drag-handle-link-${link.id}`}
+        >
+          <GripVertical className="w-4 h-4" />
         </div>
 
-        {/* main grid: [srcTable][PAIRED src][arrow][tgtTable][PAIRED tgt][divider][label][weight] */}
-        <div className="flex-1 grid grid-cols-[1fr_1.1fr_20px_1fr_1.1fr_1px_1fr_1fr] gap-x-3 items-stretch">
-
-          {/* SOURCE TABLE (plain stacked — mirrors PairedField rhythm) */}
-          <PlainStackedField
-            topLabel={t("sourceTable")}
-            topContent={
-              <Select defaultValue={link.sourceTable}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-            bottomLabel="시작 시트명"
-            bottomContent={
-              <Select defaultValue={link.sourceTable}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          {/* PAIRED: sourceColumn ↔ 시작 노드 고유키 */}
-          <PairedField
-            topLabel={t("sourceColumn")}
-            topContent={
-              <Select defaultValue={link.sourceColumn}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="id">id</SelectItem>
-                  <SelectItem value="suspect_id">suspect_id</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-            bottomLabel="시작 노드 고유키"
-            bottomContent={
-              <Select defaultValue={link.sourceNodeKey || "none"} disabled>
-                <SelectTrigger className="h-8 text-xs opacity-60 cursor-not-allowed"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t("none")}</SelectItem>
-                  {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          {/* ARROW */}
-          <div className="flex items-center justify-center text-muted-foreground">
-            <ArrowRight className="w-4 h-4" />
-          </div>
-
-          {/* TARGET TABLE — 레이블/셀렉트는 숨기고 공간만 유지, 도착 시트명만 표시 */}
-          <PlainStackedField
-            topLabel=""
-            topContent={<div className="h-8" />}
-            bottomLabel="도착 시트명"
-            bottomContent={
-              <Select defaultValue={link.sourceTable}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          {/* PAIRED: targetColumn ↔ 도착 노드 고유키 */}
-          <PairedField
-            topLabel={t("targetColumn")}
-            topContent={
-              <Select defaultValue={link.targetColumn}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="id">id</SelectItem>
-                  <SelectItem value="suspect_id">suspect_id</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-            bottomLabel="도착 노드 고유키"
-            bottomContent={
-              <Select defaultValue={link.targetNodeKey || "none"} disabled>
-                <SelectTrigger className="h-8 text-xs opacity-60 cursor-not-allowed"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t("none")}</SelectItem>
-                  {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            }
-          />
-
-          {/* VERTICAL DIVIDER */}
-          <div className="flex items-center justify-center">
-            <div className="w-px h-full bg-border" />
-          </div>
-
-          {/* LABEL */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
-            <Select defaultValue={link.labelField}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                <SelectItem value="type">type</SelectItem>
-                <SelectItem value="relationship">relationship</SelectItem>
-                <SelectItem value="status">status</SelectItem>
-                <SelectItem value="category">category</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* WEIGHT */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</div>
-            <Select defaultValue={link.weightField}>
-              <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                <SelectItem value="weight">weight</SelectItem>
-                <SelectItem value="severity">severity</SelectItem>
-                <SelectItem value="count">count</SelectItem>
-                <SelectItem value="score">score</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* SOURCE TABLE */}
+        <div className="flex flex-col gap-1 min-w-[130px]">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</span>
+          <Select defaultValue={link.sourceTable}>
+            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+            <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
+
+        {/* SOURCE COLUMN */}
+        <div className="flex flex-col gap-1 min-w-[120px]">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</span>
+          <Select defaultValue={link.sourceColumn}>
+            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+            <SelectContent>{COL_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+
+        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 mt-4" />
+
+        {/* TARGET COLUMN */}
+        <div className="flex flex-col gap-1 min-w-[120px]">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</span>
+          <Select defaultValue={link.targetColumn}>
+            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+            <SelectContent>{COL_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+
+        {/* divider */}
+        <div className="w-px self-stretch bg-border mx-1" />
+
+        {/* LABEL */}
+        <div className="flex flex-col gap-1 flex-1 min-w-[100px]">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</span>
+          <Select defaultValue={link.labelField}>
+            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{t("none")}</SelectItem>
+              {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* WEIGHT */}
+        <div className="flex flex-col gap-1 flex-1 min-w-[100px]">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</span>
+          <Select defaultValue={link.weightField}>
+            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{t("none")}</SelectItem>
+              {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* 매핑 설정 토글 */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`h-8 px-2.5 gap-1.5 text-xs shrink-0 mt-4 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
+          onClick={() => setShowMapping(v => !v)}
+        >
+          {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          매핑
+        </Button>
 
         {/* DELETE */}
-        <div className="flex items-center shrink-0">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0 mt-4" onClick={() => onRemove(link.id)}>
+          <Trash2 className="w-4 h-4" />
+        </Button>
       </div>
+
+      {/* ── 매핑 상세 (토글) ── */}
+      {showMapping && (
+        <div className="border-t border-border/60 bg-indigo-50/30 px-4 py-3">
+          <p className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest mb-3">노드 매핑 설정</p>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+            {/* SOURCE 매핑 */}
+            <div className="space-y-2">
+              <p className="text-[10px] text-muted-foreground font-medium">소스 컬럼 매핑</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-foreground/70">시작 시트명</span>
+                  <Select defaultValue={link.sourceTable}>
+                    <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-foreground/70">시작 노드 고유키</span>
+                  <Select defaultValue={link.sourceNodeKey || "none"} disabled>
+                    <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t("none")}</SelectItem>
+                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* TARGET 매핑 */}
+            <div className="space-y-2">
+              <p className="text-[10px] text-muted-foreground font-medium">타깃 컬럼 매핑</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-foreground/70">도착 시트명</span>
+                  <Select defaultValue={link.sourceTable}>
+                    <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-foreground/70">도착 노드 고유키</span>
+                  <Select defaultValue={link.targetNodeKey || "none"} disabled>
+                    <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t("none")}</SelectItem>
+                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Reorder.Item>
   );
 }
