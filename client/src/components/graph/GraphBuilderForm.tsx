@@ -240,7 +240,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
+          {/* sourceColumn — connected to 시작 노드 고유키 below via indigo left bar */}
+          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-tl-sm">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</div>
             <Select defaultValue={link.sourceColumn}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -263,7 +264,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
+          {/* targetColumn — connected to 도착 노드 고유키 below via indigo left bar */}
+          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-tl-sm">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</div>
             <Select defaultValue={link.targetColumn}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -333,8 +335,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </div>
           </div>
 
-          {/* 시작 노드 고유키 */}
-          <div className="space-y-1.5">
+          {/* 시작 노드 고유키 — continues the indigo left bar from sourceColumn above */}
+          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-bl-sm">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">시작 노드 고유키</div>
             <Select defaultValue={link.sourceNodeKey || "none"}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
@@ -358,8 +360,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             </div>
           </div>
 
-          {/* 도착 노드 고유키 */}
-          <div className="space-y-1.5">
+          {/* 도착 노드 고유키 — continues the indigo left bar from targetColumn above */}
+          <div className="space-y-1.5 border-l-2 border-indigo-400/50 pl-2.5 rounded-bl-sm">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">도착 노드 고유키</div>
             <Select defaultValue={link.targetNodeKey || "none"}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
