@@ -3,6 +3,7 @@ import { Reorder, useDragControls } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Database, Network, ArrowRight, Plus, GripVertical, Trash2, Table as TableIcon, Eye, Image, MapPin, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/lib/i18n";
@@ -424,110 +425,143 @@ export default function GraphBuilderForm() {
     return { flowNodes: fNodes, flowEdges: fEdges };
   }, [nodes, links]);
 
+  const [activeTab, setActiveTab] = useState<"nodes" | "links">("nodes");
+
   return (
     <div className="space-y-6 pb-20">
+
+      {/* ── 1. Graph Preview (top) ───────────────────────────────────── */}
       <Card className="border-none shadow-sm overflow-hidden">
-        <div className="bg-indigo-600/5 px-6 py-4 border-b border-indigo-100/50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center">
-              <TableIcon className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">{t("nodeConfiguration")}</h3>
-              <p className="text-[10px] text-indigo-600/70 font-medium">{t("nodeConfigDesc")}</p>
-            </div>
-          </div>
-          <Button size="sm" onClick={addNode} className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
-            <Plus className="w-3.5 h-3.5" />
-            {t("addNode")}
-          </Button>
-        </div>
-        <CardContent className="p-6">
-          <Reorder.Group axis="y" values={nodes} onReorder={setNodes} className="space-y-4">
-            {nodes.map((node) => (
-              <DraggableNodeItem key={node.id} node={node} onRemove={removeNode} />
-            ))}
-          </Reorder.Group>
-        </CardContent>
-      </Card>
-
-      <Card className="border-none shadow-sm overflow-hidden">
-         <div className="bg-indigo-600/5 px-6 py-4 border-b border-indigo-100/50 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center">
-                <Database className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-tight">{t("dataLinks")}</h3>
-                <p className="text-[10px] text-indigo-600/70 font-medium">{t("dataLinksDesc")}</p>
-              </div>
-            </div>
-            <Button size="sm" onClick={addLink} className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
-              <Plus className="w-3.5 h-3.5" />
-              {t("addLink")}
-            </Button>
-         </div>
-         
-         <div className="p-6 bg-white min-h-[200px]">
-           <Reorder.Group axis="y" values={links} onReorder={setLinks} className="space-y-3">
-             {links.map((link) => (
-               <DraggableLinkItem key={link.id} link={link} onRemove={removeLink} />
-             ))}
-           </Reorder.Group>
-
-           {links.length === 0 && (
-             <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-slate-50/50">
-                <Network className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                <p className="text-sm">{t("noLinksDefinedDesc")}</p>
-             </div>
-           )}
-         </div>
-      </Card>
-
-      {flowNodes.length > 0 && (
-        <Card className="border-none shadow-sm overflow-hidden">
-          <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4 text-slate-500" />
-              <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">{t("graphPreview")}</h3>
+        <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Eye className="w-4 h-4 text-slate-500" />
+            <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">{t("graphPreview")}</h3>
+            {flowNodes.length > 0 && (
               <span className="text-[10px] text-slate-400 font-medium ml-2">
                 {flowNodes.length} {t("nodes")} · {flowEdges.length} {t("links")}
               </span>
+            )}
+          </div>
+        </div>
+
+        {flowNodes.length > 0 ? (
+          <>
+            <div className="bg-white" style={{ height: previewHeight }} data-testid="graph-preview">
+              <ReactFlow
+                key="default-preview"
+                nodes={flowNodes}
+                edges={flowEdges}
+                nodeTypes={previewNodeTypes}
+                fitView
+                fitViewOptions={{ padding: 0.5 }}
+                proOptions={{ hideAttribution: true }}
+                nodesDraggable={true}
+                nodesConnectable={false}
+                elementsSelectable={false}
+                panOnDrag={true}
+                zoomOnScroll={true}
+                minZoom={0.3}
+                maxZoom={2}
+              >
+                <Background color="#E2E8F0" gap={20} size={1} />
+              </ReactFlow>
             </div>
-          </div>
-          <div className="bg-white" style={{ height: previewHeight }} data-testid="graph-preview">
-            <ReactFlow
-              key="default-preview"
-              nodes={flowNodes}
-              edges={flowEdges}
-              nodeTypes={previewNodeTypes}
-              fitView
-              fitViewOptions={{ padding: 0.5 }}
-              proOptions={{ hideAttribution: true }}
-              nodesDraggable={true}
-              nodesConnectable={false}
-              elementsSelectable={false}
-              panOnDrag={true}
-              zoomOnScroll={true}
-              minZoom={0.3}
-              maxZoom={2}
+            <div
+              className="h-2 bg-slate-50 border-t border-slate-100 cursor-row-resize flex items-center justify-center hover:bg-slate-100 transition-colors"
+              onMouseDown={handleResizeStart}
+              data-testid="graph-preview-resize"
             >
-              <Background color="#E2E8F0" gap={20} size={1} />
-            </ReactFlow>
+              <div className="w-8 h-0.5 rounded-full bg-slate-300" />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-14 text-muted-foreground bg-white">
+            <Network className="w-10 h-10 mb-3 opacity-15" />
+            <p className="text-sm">노드를 추가하면 미리보기가 표시됩니다.</p>
           </div>
-          <div
-            className="h-2 bg-slate-50 border-t border-slate-100 cursor-row-resize flex items-center justify-center hover:bg-slate-100 transition-colors"
-            onMouseDown={handleResizeStart}
-            data-testid="graph-preview-resize"
-          >
-            <div className="w-8 h-0.5 rounded-full bg-slate-300" />
+        )}
+      </Card>
+
+      {/* ── 2. Nodes & Links (tabbed) ────────────────────────────────── */}
+      <Card className="border-none shadow-sm overflow-hidden">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "nodes" | "links")}>
+          {/* Tab bar + add button */}
+          <div className="bg-indigo-600/5 px-6 pt-4 border-b border-indigo-100/50 flex items-end justify-between">
+            <TabsList className="h-auto bg-transparent p-0 gap-0">
+              <TabsTrigger
+                value="nodes"
+                className="flex items-center gap-2 rounded-none border-b-2 border-transparent px-4 pb-3 pt-1 text-sm font-medium text-muted-foreground data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-700 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                <TableIcon className="w-3.5 h-3.5" />
+                {t("nodeConfiguration")}
+                <span className="ml-1 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-600">
+                  {nodes.length}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="links"
+                className="flex items-center gap-2 rounded-none border-b-2 border-transparent px-4 pb-3 pt-1 text-sm font-medium text-muted-foreground data-[state=active]:border-indigo-600 data-[state=active]:text-indigo-700 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                <Database className="w-3.5 h-3.5" />
+                {t("dataLinks")}
+                <span className="ml-1 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-600">
+                  {links.length}
+                </span>
+              </TabsTrigger>
+            </TabsList>
+
+            {activeTab === "nodes" ? (
+              <Button size="sm" onClick={addNode} className="mb-3 h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
+                <Plus className="w-3.5 h-3.5" />
+                {t("addNode")}
+              </Button>
+            ) : (
+              <Button size="sm" onClick={addLink} className="mb-3 h-8 bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-sm">
+                <Plus className="w-3.5 h-3.5" />
+                {t("addLink")}
+              </Button>
+            )}
           </div>
-        </Card>
-      )}
+
+          {/* Nodes tab */}
+          <TabsContent value="nodes" className="mt-0">
+            <CardContent className="p-6">
+              <Reorder.Group axis="y" values={nodes} onReorder={setNodes} className="space-y-4">
+                {nodes.map((node) => (
+                  <DraggableNodeItem key={node.id} node={node} onRemove={removeNode} />
+                ))}
+              </Reorder.Group>
+              {nodes.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-slate-50/50">
+                  <TableIcon className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">{t("nodeConfigDesc")}</p>
+                </div>
+              )}
+            </CardContent>
+          </TabsContent>
+
+          {/* Links tab */}
+          <TabsContent value="links" className="mt-0">
+            <div className="p-6 bg-white min-h-[200px]">
+              <Reorder.Group axis="y" values={links} onReorder={setLinks} className="space-y-3">
+                {links.map((link) => (
+                  <DraggableLinkItem key={link.id} link={link} onRemove={removeLink} />
+                ))}
+              </Reorder.Group>
+              {links.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg bg-slate-50/50">
+                  <Network className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">{t("noLinksDefinedDesc")}</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </Card>
 
       <div className="flex justify-end gap-3 pt-4 pb-10">
-         <Button variant="outline" size="lg" className="h-10">{t("reset")}</Button>
-         <Button size="lg" className="bg-black hover:bg-black/90 text-white px-8 h-10">{t("generateGraph")}</Button>
+        <Button variant="outline" size="lg" className="h-10">{t("reset")}</Button>
+        <Button size="lg" className="bg-black hover:bg-black/90 text-white px-8 h-10">{t("generateGraph")}</Button>
       </div>
     </div>
   );
