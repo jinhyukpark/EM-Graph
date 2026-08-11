@@ -287,7 +287,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1.5 text-sm font-semibold w-[140px] shrink-0 cursor-default ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-semibold w-[140px] shrink-0 cursor-default text-foreground`}>
                       노드 정보 연결
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
@@ -329,7 +329,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               ) : (
                 <button
                   onClick={()=>setNodeKeyEnabled(true)}
-                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
                 >
                   <Plus className="w-3 h-3"/> 설정
                 </button>
@@ -341,7 +341,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default ${labelEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default text-foreground`}>
                       링크 라벨
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
@@ -373,7 +373,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               ) : (
                 <button
                   onClick={()=>setLabelEnabled(true)}
-                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
                 >
                   <Plus className="w-3 h-3"/> 설정
                 </button>
@@ -385,7 +385,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default ${weightEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default text-foreground`}>
                       링크 웨이트
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
@@ -417,7 +417,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               ) : (
                 <button
                   onClick={()=>setWeightEnabled(true)}
-                  className="flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-indigo-500 border border-dashed border-border/50 hover:border-indigo-300 rounded px-2 h-7 transition-colors"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
                 >
                   <Plus className="w-3 h-3"/> 설정
                 </button>
