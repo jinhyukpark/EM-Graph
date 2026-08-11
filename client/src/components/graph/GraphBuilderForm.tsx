@@ -26,6 +26,10 @@ interface Link {
   targetColumn: string;
   labelField: string;
   weightField: string;
+  /** PK of the source-node table that sourceColumn references */
+  sourceNodeKey: string;
+  /** PK of the target-node table that targetColumn references */
+  targetNodeKey: string;
 }
 
 interface NodeConfig {
@@ -188,21 +192,28 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
   );
 }
 
+const KEY_OPTIONS = ["id", "suspect_id", "profile_id", "incident_id", "location_id", "node_id"];
+
 function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: string) => void }) {
   const { t } = useLanguage();
   const dragControls = useDragControls();
+
+  // shared column grid: [table][key-col][arrow][table][key-col][divider][label][weight]
+  const grid = "grid grid-cols-[1fr_1fr_20px_1fr_1fr_1px_1fr_1fr] gap-x-3";
 
   return (
     <Reorder.Item
       value={link}
       dragListener={false}
       dragControls={dragControls}
-      className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm"
+      className="rounded-lg border border-border bg-slate-50/50 shadow-sm overflow-hidden"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-start gap-3">
-        <div className="flex items-center h-9 mt-[22px]">
+      {/* ── 링크 row ───────────────────────────────────────────── */}
+      <div className="flex items-end gap-3 px-4 pt-4 pb-3">
+        {/* drag handle */}
+        <div className="flex items-center h-9 shrink-0">
           <div
             className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
             onPointerDown={(e) => dragControls.start(e)}
@@ -211,8 +222,14 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             <GripVertical className="w-4 h-4" />
           </div>
         </div>
-        
-        <div className="flex-1 grid grid-cols-[1fr_1fr_auto_1fr_1fr_auto_1fr_1fr] gap-3 items-end">
+
+        {/* row label */}
+        <div className="flex items-end pb-[9px] shrink-0">
+          <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest w-8">링크</span>
+        </div>
+
+        {/* fields */}
+        <div className={`flex-1 ${grid} items-end`}>
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
             <Select defaultValue={link.sourceTable}>
@@ -233,11 +250,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </SelectContent>
             </Select>
           </div>
-
-          <div className="flex items-center h-9 text-muted-foreground">
+          <div className="flex items-center h-9 justify-center text-muted-foreground">
             <ArrowRight className="w-4 h-4" />
           </div>
-
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
             <Select defaultValue={link.targetTable}>
@@ -258,11 +273,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </SelectContent>
             </Select>
           </div>
-
-          <div className="flex items-center h-9">
-            <div className="w-px h-8 bg-border"></div>
+          {/* vertical divider */}
+          <div className="flex items-center h-9 justify-center">
+            <div className="w-px h-6 bg-border" />
           </div>
-
           <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
             <Select defaultValue={link.labelField}>
@@ -291,11 +305,79 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
         </div>
 
-        <div className="flex items-center h-9 mt-[22px]">
+        {/* delete button */}
+        <div className="flex items-center h-9 shrink-0">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
+      </div>
+
+      {/* ── 노드 row ───────────────────────────────────────────── */}
+      <div className="flex items-end gap-3 bg-indigo-50/60 border-t border-indigo-100/70 px-4 pt-3 pb-4">
+        {/* align with drag handle */}
+        <div className="w-4 shrink-0" />
+
+        {/* row label */}
+        <div className="flex items-end pb-[9px] shrink-0">
+          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest w-8">노드</span>
+        </div>
+
+        {/* fields — same grid, cols 1-5 only (label/weight cols left empty) */}
+        <div className={`flex-1 ${grid} items-end`}>
+          {/* 시작 시트명 — read-only display of sourceTable */}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">시작 시트명</div>
+            <div className="flex h-9 items-center rounded-md border border-border/50 bg-white/60 px-3 text-xs text-muted-foreground truncate">
+              {link.sourceTable || <span className="opacity-40">—</span>}
+            </div>
+          </div>
+
+          {/* 시작 노드 고유키 */}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">시작 노드 고유키</div>
+            <Select defaultValue={link.sourceNodeKey || "none"}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("none")}</SelectItem>
+                {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* arrow spacer */}
+          <div className="flex items-center h-9 justify-center text-muted-foreground/30">
+            <ArrowRight className="w-4 h-4" />
+          </div>
+
+          {/* 도착 시트명 — read-only */}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">도착 시트명</div>
+            <div className="flex h-9 items-center rounded-md border border-border/50 bg-white/60 px-3 text-xs text-muted-foreground truncate">
+              {link.targetTable || <span className="opacity-40">—</span>}
+            </div>
+          </div>
+
+          {/* 도착 노드 고유키 */}
+          <div className="space-y-1.5">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">도착 노드 고유키</div>
+            <Select defaultValue={link.targetNodeKey || "none"}>
+              <SelectTrigger className="bg-white h-9"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("none")}</SelectItem>
+                {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* fill remaining cols */}
+          <div />
+          <div />
+          <div />
+        </div>
+
+        {/* align with delete button */}
+        <div className="w-8 shrink-0" />
       </div>
     </Reorder.Item>
   );
@@ -304,7 +386,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
 export default function GraphBuilderForm() {
   const { t } = useLanguage();
   const [links, setLinks] = useState<Link[]>([
-    { id: "1", sourceTable: "crime_incidents_2024", sourceColumn: "suspect_id", targetTable: "suspect_profiles", targetColumn: "id", labelField: "none", weightField: "none" }
+    { id: "1", sourceTable: "crime_incidents_2024", sourceColumn: "suspect_id", targetTable: "suspect_profiles", targetColumn: "id", labelField: "none", weightField: "none", sourceNodeKey: "id", targetNodeKey: "id" }
   ]);
 
   const [nodes, setNodes] = useState<NodeConfig[]>([
@@ -321,7 +403,9 @@ export default function GraphBuilderForm() {
       targetTable: "", 
       targetColumn: "",
       labelField: "none",
-      weightField: "none"
+      weightField: "none",
+      sourceNodeKey: "",
+      targetNodeKey: "",
     }]);
   };
 
