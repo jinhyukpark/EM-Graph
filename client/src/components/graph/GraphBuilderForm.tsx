@@ -95,7 +95,7 @@ function DraggableNodeItem({ node, onRemove }: { node: NodeConfig; onRemove: (id
       dragControls={dragControls}
       className="border p-4 rounded-lg bg-card/50"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
       <div className="flex items-start gap-3">
         <div className="flex items-center h-9 mt-[22px]">
@@ -266,7 +266,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       dragControls={dragControls}
       className="p-4 rounded-lg border border-border bg-slate-50/50 shadow-sm"
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
       <div className="flex items-stretch gap-3">
         {/* drag handle — centred vertically */}
