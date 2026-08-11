@@ -290,28 +290,44 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </div>
               <Switch checked={nodeKeyEnabled} onCheckedChange={setNodeKeyEnabled} className="shrink-0" />
               {nodeKeyEnabled && (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
+                  {/* SOURCE COLUMN → 시작 시트+고유키 */}
+                  <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border text-[11px] font-medium text-slate-600 shrink-0">
+                    {link.sourceColumn || "소스 컬럼"}
+                  </span>
+                  <div className="flex items-center shrink-0">
+                    <div className="w-4 h-px bg-muted-foreground/30" />
+                    <ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px" />
+                  </div>
                   <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[130px]"><SelectValue placeholder="시작 시트명" /></SelectTrigger>
+                    <SelectTrigger className="bg-white h-8 text-xs w-[120px]"><SelectValue placeholder="시작 시트명" /></SelectTrigger>
                     <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
                   </Select>
                   <Select defaultValue={link.sourceNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs w-[80px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-xs w-[76px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">{t("none")}</SelectItem>
                       {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
                     </SelectContent>
                   </Select>
+
+                  {/* 구분 */}
+                  <div className="w-px h-5 bg-border/60 mx-1 shrink-0" />
+
+                  {/* TARGET COLUMN → 도착 시트+고유키 */}
+                  <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border text-[11px] font-medium text-slate-600 shrink-0">
+                    {link.targetColumn || "타깃 컬럼"}
+                  </span>
                   <div className="flex items-center shrink-0">
-                    <div className="w-5 h-px bg-muted-foreground/25" />
+                    <div className="w-4 h-px bg-muted-foreground/30" />
                     <ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px" />
                   </div>
                   <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs w-[130px]"><SelectValue placeholder="도착 시트명" /></SelectTrigger>
+                    <SelectTrigger className="bg-white h-8 text-xs w-[120px]"><SelectValue placeholder="도착 시트명" /></SelectTrigger>
                     <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
                   </Select>
                   <Select defaultValue={link.targetNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs w-[80px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 text-xs w-[76px] opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">{t("none")}</SelectItem>
                       {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
