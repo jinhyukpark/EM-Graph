@@ -212,83 +212,54 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
       {/* ── 메인 행 ── */}
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div className="flex items-end gap-0 px-4 py-3">
         {/* drag handle */}
         <div
-          className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors shrink-0"
+          className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors shrink-0 pb-1.5 pr-3"
           onPointerDown={(e) => dragControls.start(e)}
           data-testid={`drag-handle-link-${link.id}`}
         >
           <GripVertical className="w-4 h-4" />
         </div>
 
-        {/* SOURCE TABLE */}
-        <div className="flex flex-col gap-1 w-[150px] shrink-0">
+        {/* SOURCE TABLE — 구분 영역 */}
+        <div className="flex flex-col gap-1 w-[160px] shrink-0 pr-4 mr-4 border-r border-border">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</span>
           <Select defaultValue={link.sourceTable}>
-            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+            <SelectTrigger className="bg-white h-9 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
             <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
           </Select>
         </div>
 
-        {/* SOURCE COLUMN */}
-        <div className="flex flex-col gap-1 w-[120px] shrink-0">
+        {/* SOURCE COLUMN — 크게 */}
+        <div className="flex flex-col gap-1 flex-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</span>
           <Select defaultValue={link.sourceColumn}>
-            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+            <SelectTrigger className="bg-white h-9 text-sm font-medium"><SelectValue placeholder={t("column")} /></SelectTrigger>
             <SelectContent>{COL_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
           </Select>
         </div>
 
-        {/* 연결 화살표 */}
-        <div className="flex items-center shrink-0 mt-4 px-1">
-          <div className="w-6 h-px bg-muted-foreground/40" />
-          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/60 -ml-px" />
+        {/* 연결 화살표 — 길게 */}
+        <div className="flex items-center shrink-0 pb-1.5 px-3">
+          <div className="w-10 h-px bg-muted-foreground/30" />
+          <ArrowRight className="w-4 h-4 text-muted-foreground/50 -ml-0.5" />
         </div>
 
-        {/* TARGET COLUMN */}
-        <div className="flex flex-col gap-1 w-[120px] shrink-0">
+        {/* TARGET COLUMN — 크게 */}
+        <div className="flex flex-col gap-1 flex-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</span>
           <Select defaultValue={link.targetColumn}>
-            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
+            <SelectTrigger className="bg-white h-9 text-sm font-medium"><SelectValue placeholder={t("column")} /></SelectTrigger>
             <SelectContent>{COL_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-
-        {/* divider */}
-        <div className="w-px self-stretch bg-border mx-2 shrink-0" />
-
-        {/* LABEL */}
-        <div className="flex flex-col gap-1 w-[100px] shrink-0">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</span>
-          <Select defaultValue={link.labelField}>
-            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">{t("none")}</SelectItem>
-              {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* WEIGHT */}
-        <div className="flex flex-col gap-1 w-[100px] shrink-0">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</span>
-          <Select defaultValue={link.weightField}>
-            <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">{t("none")}</SelectItem>
-              {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex-1" />
 
         {/* 정보 연결 토글 */}
         <Button
           variant="ghost"
           size="sm"
-          className={`h-8 px-2.5 gap-1 text-xs shrink-0 mt-4 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
+          className={`h-9 px-2.5 gap-1 text-xs shrink-0 ml-3 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
           onClick={() => setShowMapping(v => !v)}
         >
           {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -296,16 +267,16 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </Button>
 
         {/* DELETE */}
-        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0 mt-4" onClick={() => onRemove(link.id)}>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-9 w-9 shrink-0 ml-1" onClick={() => onRemove(link.id)}>
           <Trash2 className="w-4 h-4" />
         </Button>
       </div>
 
       {/* ── 정보 연결 상세 (토글) ── */}
       {showMapping && (
-        <div className="border-t border-border/60 bg-slate-50/60 px-4 py-3">
-          <div className="grid grid-cols-[1fr_28px_1fr] gap-x-2 items-end">
-            {/* SOURCE 매핑 */}
+        <div className="border-t border-border/60 bg-slate-50/60 px-4 py-3 space-y-3">
+          {/* 시트명·노드키 행 */}
+          <div className="grid grid-cols-[1fr_32px_1fr] gap-x-2 items-end">
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] text-muted-foreground/70">시작 시트명</span>
@@ -325,13 +296,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 </Select>
               </div>
             </div>
-
-            {/* 중간 화살표 */}
             <div className="flex items-center justify-center pb-1">
-              <ArrowRight className="w-4 h-4 text-muted-foreground/40" />
+              <ArrowRight className="w-4 h-4 text-muted-foreground/30" />
             </div>
-
-            {/* TARGET 매핑 */}
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] text-muted-foreground/70">도착 시트명</span>
@@ -350,6 +317,30 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+          </div>
+
+          {/* 라벨·웨이트 행 */}
+          <div className="grid grid-cols-2 gap-4 pt-1 border-t border-border/40">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</span>
+              <Select defaultValue={link.labelField}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</span>
+              <Select defaultValue={link.weightField}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
