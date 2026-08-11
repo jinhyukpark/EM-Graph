@@ -213,12 +213,6 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           <div className="text-[10px] font-bold text-indigo-700/70 uppercase tracking-wider mb-1">{topLabel}</div>
           {topContent}
         </div>
-        {/* divider — identical height used as reference for PlainStackedField spacer */}
-        <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-indigo-100/60 border-y border-indigo-200/60">
-          <div className="flex-1 h-px bg-indigo-300/40" />
-          <span className="text-[9px] font-semibold text-indigo-400 uppercase tracking-widest">노드 고유키</span>
-          <div className="flex-1 h-px bg-indigo-300/40" />
-        </div>
         {/* node-level field */}
         <div className="px-2.5 pt-2 pb-2.5">
           <div className="text-[10px] font-medium text-indigo-500/80 mb-1">{bottomLabel}</div>
@@ -245,10 +239,6 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         <div className="pt-2 pb-2">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{topLabel}</div>
           {topContent}
-        </div>
-        {/* invisible spacer — same structure as PairedField divider so heights match */}
-        <div className="flex items-center py-0.5 border-y border-transparent">
-          <span className="text-[9px] invisible select-none">노드 고유키</span>
         </div>
         {/* bottom section — matches PairedField "px-2.5 pt-2 pb-2.5" */}
         <div className="pt-2 pb-2.5">
