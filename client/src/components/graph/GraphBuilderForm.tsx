@@ -288,7 +288,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span className={`flex items-center gap-1.5 text-sm font-semibold w-[140px] shrink-0 cursor-default ${nodeKeyEnabled ? "text-foreground" : "text-muted-foreground/40"}`}>
-                      추가 정보 연결
+                      노드 정보 연결
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
                   </TooltipTrigger>
