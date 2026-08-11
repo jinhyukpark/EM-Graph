@@ -332,6 +332,22 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             <ArrowRight className="w-4 h-4" />
           </div>
 
+          {/* TARGET TABLE — 셀렉트 없이 소스 테이블과 동일한 값을 읽기 전용으로 표시 */}
+          <PlainStackedField
+            topLabel={t("targetTable")}
+            topContent={
+              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+                {link.sourceTable || <span className="opacity-30">—</span>}
+              </div>
+            }
+            bottomLabel="도착 시트명"
+            bottomContent={
+              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
+                {link.sourceTable || <span className="opacity-30">—</span>}
+              </div>
+            }
+          />
+
           {/* PAIRED: targetColumn ↔ 도착 노드 고유키 */}
           <PairedField
             topLabel={t("targetColumn")}
