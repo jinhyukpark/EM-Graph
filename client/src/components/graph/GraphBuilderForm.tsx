@@ -212,7 +212,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
       {/* ── 메인 행 ── */}
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex items-center gap-2 px-4 py-3">
         {/* drag handle */}
         <div
           className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors shrink-0"
@@ -223,7 +223,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* SOURCE TABLE */}
-        <div className="flex flex-col gap-1 min-w-[130px]">
+        <div className="flex flex-col gap-1 w-[150px] shrink-0">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</span>
           <Select defaultValue={link.sourceTable}>
             <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -232,7 +232,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* SOURCE COLUMN */}
-        <div className="flex flex-col gap-1 min-w-[120px]">
+        <div className="flex flex-col gap-1 w-[120px] shrink-0">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</span>
           <Select defaultValue={link.sourceColumn}>
             <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -240,10 +240,14 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 mt-4" />
+        {/* 연결 화살표 */}
+        <div className="flex items-center shrink-0 mt-4 px-1">
+          <div className="w-6 h-px bg-muted-foreground/40" />
+          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/60 -ml-px" />
+        </div>
 
         {/* TARGET COLUMN */}
-        <div className="flex flex-col gap-1 min-w-[120px]">
+        <div className="flex flex-col gap-1 w-[120px] shrink-0">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</span>
           <Select defaultValue={link.targetColumn}>
             <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -252,10 +256,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* divider */}
-        <div className="w-px self-stretch bg-border mx-1" />
+        <div className="w-px self-stretch bg-border mx-2 shrink-0" />
 
         {/* LABEL */}
-        <div className="flex flex-col gap-1 flex-1 min-w-[100px]">
+        <div className="flex flex-col gap-1 w-[100px] shrink-0">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</span>
           <Select defaultValue={link.labelField}>
             <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -267,7 +271,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* WEIGHT */}
-        <div className="flex flex-col gap-1 flex-1 min-w-[100px]">
+        <div className="flex flex-col gap-1 w-[100px] shrink-0">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</span>
           <Select defaultValue={link.weightField}>
             <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -278,15 +282,17 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* 매핑 설정 토글 */}
+        <div className="flex-1" />
+
+        {/* 정보 연결 토글 */}
         <Button
           variant="ghost"
           size="sm"
-          className={`h-8 px-2.5 gap-1.5 text-xs shrink-0 mt-4 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
+          className={`h-8 px-2.5 gap-1 text-xs shrink-0 mt-4 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
           onClick={() => setShowMapping(v => !v)}
         >
           {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          매핑
+          정보 연결
         </Button>
 
         {/* DELETE */}
@@ -295,56 +301,54 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </Button>
       </div>
 
-      {/* ── 매핑 상세 (토글) ── */}
+      {/* ── 정보 연결 상세 (토글) ── */}
       {showMapping && (
-        <div className="border-t border-border/60 bg-indigo-50/30 px-4 py-3">
-          <p className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest mb-3">노드 매핑 설정</p>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+        <div className="border-t border-border/60 bg-slate-50/60 px-4 py-3">
+          <div className="grid grid-cols-[1fr_28px_1fr] gap-x-2 items-end">
             {/* SOURCE 매핑 */}
-            <div className="space-y-2">
-              <p className="text-[10px] text-muted-foreground font-medium">소스 컬럼 매핑</p>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-muted-foreground/70">시작 시트명</span>
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-muted-foreground/70">시작 노드 고유키</span>
-                  <Select defaultValue={link.sourceNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">{t("none")}</SelectItem>
-                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-muted-foreground/70">시작 시트명</span>
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-muted-foreground/70">시작 노드 고유키</span>
+                <Select defaultValue={link.sourceNodeKey || "none"} disabled>
+                  <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("none")}</SelectItem>
+                    {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
+            {/* 중간 화살표 */}
+            <div className="flex items-center justify-center pb-1">
+              <ArrowRight className="w-4 h-4 text-muted-foreground/40" />
+            </div>
+
             {/* TARGET 매핑 */}
-            <div className="space-y-2">
-              <p className="text-[10px] text-muted-foreground font-medium">타깃 컬럼 매핑</p>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-muted-foreground/70">도착 시트명</span>
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-muted-foreground/70">도착 노드 고유키</span>
-                  <Select defaultValue={link.targetNodeKey || "none"} disabled>
-                    <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">{t("none")}</SelectItem>
-                      {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-muted-foreground/70">도착 시트명</span>
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-muted-foreground/70">도착 노드 고유키</span>
+                <Select defaultValue={link.targetNodeKey || "none"} disabled>
+                  <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("none")}</SelectItem>
+                    {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
