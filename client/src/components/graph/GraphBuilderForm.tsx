@@ -332,26 +332,6 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             <ArrowRight className="w-4 h-4" />
           </div>
 
-          {/* TARGET TABLE (plain stacked — mirrors PairedField rhythm) */}
-          <PlainStackedField
-            topLabel={t("targetTable")}
-            topContent={
-              <Select defaultValue={link.targetTable}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
-                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-            bottomLabel="도착 시트명"
-            bottomContent={
-              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-                {link.targetTable || <span className="opacity-30">—</span>}
-              </div>
-            }
-          />
-
           {/* PAIRED: targetColumn ↔ 도착 노드 고유키 */}
           <PairedField
             topLabel={t("targetColumn")}
