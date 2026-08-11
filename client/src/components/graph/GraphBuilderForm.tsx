@@ -322,25 +322,39 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
 
           {/* 라벨·웨이트 행 */}
           <div className="grid grid-cols-2 gap-4 pt-1 border-t border-border/40">
+            {/* LABEL: 시트명 + 필드 */}
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</span>
-              <Select defaultValue={link.labelField}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t("none")}</SelectItem>
-                  {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-1.5">
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs flex-1 min-w-0"><SelectValue placeholder="시트명" /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+                <Select defaultValue={link.labelField}>
+                  <SelectTrigger className="bg-white h-8 text-xs w-[100px] shrink-0"><SelectValue placeholder={t("none")} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("none")}</SelectItem>
+                    {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            {/* WEIGHT: 시트명 + 필드 */}
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</span>
-              <Select defaultValue={link.weightField}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("none")} /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t("none")}</SelectItem>
-                  {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-1.5">
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs flex-1 min-w-0"><SelectValue placeholder="시트명" /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+                <Select defaultValue={link.weightField}>
+                  <SelectTrigger className="bg-white h-8 text-xs w-[100px] shrink-0"><SelectValue placeholder={t("none")} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t("none")}</SelectItem>
+                    {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
