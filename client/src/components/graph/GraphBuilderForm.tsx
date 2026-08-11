@@ -255,7 +255,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* 정보 연결 토글 */}
+        {/* 추가 설정 토글 */}
         <Button
           variant="ghost"
           size="sm"
@@ -263,7 +263,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           onClick={() => setShowMapping(v => !v)}
         >
           {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          정보 연결
+          추가 설정
         </Button>
 
         {/* DELETE */}
@@ -272,81 +272,92 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </Button>
       </div>
 
-      {/* ── 정보 연결 상세 (토글) ── */}
+      {/* ── 추가 설정 패널 (토글) ── */}
       {showMapping && (
-        <div className="border-t border-border/60 bg-slate-50/60 px-4 py-3 space-y-3">
-          {/* 통합 그리드: [시트명1][필드1][화살표][시트명2][필드2] — 모든 행 동일 열폭 */}
-          <div className="grid grid-cols-[1fr_1fr_28px_1fr_1fr] gap-x-2">
+        <div className="border-t border-border/60 bg-slate-50/40">
+          {/* 패널 헤더 */}
+          <div className="px-4 pt-3 pb-2 border-b border-border/40">
+            <p className="text-xs font-semibold text-foreground">추가 정보 연결</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">지금 링크와 연결된 노드의 속성 정보를 연결하는 주요 키를 지정합니다.</p>
+          </div>
 
-            {/* 헤더 행 */}
-            <span className="text-[10px] text-muted-foreground/70 pb-0.5">시작 시트명</span>
-            <span className="text-[10px] text-muted-foreground/70 pb-0.5">시작 노드 고유키</span>
-            <span />
-            <span className="text-[10px] text-muted-foreground/70 pb-0.5">도착 시트명</span>
-            <span className="text-[10px] text-muted-foreground/70 pb-0.5">도착 노드 고유키</span>
+          {/* property 목록 */}
+          <div className="divide-y divide-border/40">
 
-            {/* 시트명·노드키 행 */}
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-              <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select defaultValue={link.sourceNodeKey || "none"} disabled>
-              <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <div className="flex items-center justify-center">
-              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30" />
+            {/* 노드 키 매핑 */}
+            <div className="px-4 py-3 grid grid-cols-[1fr_1fr_28px_1fr_1fr] gap-x-2 gap-y-1 items-end">
+              <span className="text-[10px] text-muted-foreground/60 col-span-5 mb-0.5">노드 고유키 매핑</span>
+              <Select defaultValue={link.sourceTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="시작 시트명" /></SelectTrigger>
+                <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+              </Select>
+              <Select defaultValue={link.sourceNodeKey || "none"} disabled>
+                <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <div className="flex items-center justify-center pb-0.5">
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30" />
+              </div>
+              <Select defaultValue={link.sourceTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="도착 시트명" /></SelectTrigger>
+                <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+              </Select>
+              <Select defaultValue={link.targetNodeKey || "none"} disabled>
+                <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("none")}</SelectItem>
+                  {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
-              <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select defaultValue={link.targetNodeKey || "none"} disabled>
-              <SelectTrigger className="h-8 text-xs opacity-50 cursor-not-allowed"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("none")}</SelectItem>
-                {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-              </SelectContent>
-            </Select>
 
-            {/* 구분선 (col-span-5) */}
-            <div className="col-span-5 border-t border-border/40 my-2" />
+            {/* Label property */}
+            <div className="px-4 py-3 grid grid-cols-[180px_1fr] gap-x-6 items-start">
+              <div>
+                <p className="text-xs font-medium text-foreground">{t("label")}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">소스 링크의 라벨을 설정합니다.</p>
+              </div>
+              <div className="grid grid-cols-[1fr_1fr_28px_1fr_1fr] gap-x-2 items-end">
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs col-span-2"><SelectValue placeholder="시트명" /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+                <div />
+                <Select defaultValue={link.labelField !== "none" ? link.labelField : "color"}>
+                  <SelectTrigger className="bg-white h-8 text-xs col-span-2"><SelectValue placeholder="color" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="color">color</SelectItem>
+                    {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-            {/* 라벨·웨이트 헤더 */}
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-0.5 col-span-2">{t("label")}</span>
-            <span />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-0.5 col-span-2">{t("weight")}</span>
+            {/* Weight property */}
+            <div className="px-4 py-3 grid grid-cols-[180px_1fr] gap-x-6 items-start">
+              <div>
+                <p className="text-xs font-medium text-foreground">{t("weight")}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">링크의 두께를 지정하는 필드를 지정합니다.</p>
+              </div>
+              <div className="grid grid-cols-[1fr_1fr_28px_1fr_1fr] gap-x-2 items-end">
+                <Select defaultValue={link.sourceTable}>
+                  <SelectTrigger className="bg-white h-8 text-xs col-span-2"><SelectValue placeholder="시트명" /></SelectTrigger>
+                  <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                </Select>
+                <div />
+                <Select defaultValue={link.weightField !== "none" ? link.weightField : "color"}>
+                  <SelectTrigger className="bg-white h-8 text-xs col-span-2"><SelectValue placeholder="color" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="color">color</SelectItem>
+                    {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-            {/* 라벨 시트명 + 필드 */}
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="시트명" /></SelectTrigger>
-              <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select defaultValue={link.labelField !== "none" ? link.labelField : "color"}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="color" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="color">color</SelectItem>
-                {["type","relationship","status","category"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-              </SelectContent>
-            </Select>
-
-            <div />
-
-            {/* 웨이트 시트명 + 필드 */}
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="시트명" /></SelectTrigger>
-              <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select defaultValue={link.weightField !== "none" ? link.weightField : "color"}>
-              <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="color" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="color">color</SelectItem>
-                {["weight","severity","count","score"].map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-              </SelectContent>
-            </Select>
           </div>
         </div>
       )}
