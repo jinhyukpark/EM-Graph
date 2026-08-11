@@ -237,9 +237,9 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-stretch gap-3">
         {/* drag handle — centred vertically */}
-        <div className="flex items-center pt-10 shrink-0">
+        <div className="flex items-center shrink-0">
           <div
             className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
             onPointerDown={(e) => dragControls.start(e)}
@@ -250,10 +250,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* main grid: [srcTable][PAIRED src][arrow][tgtTable][PAIRED tgt][divider][label][weight] */}
-        <div className="flex-1 grid grid-cols-[1fr_1.1fr_20px_1fr_1.1fr_1px_1fr_1fr] gap-x-3 items-start">
+        <div className="flex-1 grid grid-cols-[1fr_1.1fr_20px_1fr_1.1fr_1px_1fr_1fr] gap-x-3 items-stretch">
 
           {/* SOURCE TABLE (plain) */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</div>
             <Select defaultValue={link.sourceTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -294,12 +294,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           />
 
           {/* ARROW */}
-          <div className="flex items-center justify-center pt-10 text-muted-foreground">
+          <div className="flex items-center justify-center text-muted-foreground">
             <ArrowRight className="w-4 h-4" />
           </div>
 
           {/* TARGET TABLE (plain) */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetTable")}</div>
             <Select defaultValue={link.targetTable}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -339,12 +339,12 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           />
 
           {/* VERTICAL DIVIDER */}
-          <div className="flex items-center justify-center pt-10">
-            <div className="w-px h-8 bg-border" />
+          <div className="flex items-center justify-center">
+            <div className="w-px h-full bg-border" />
           </div>
 
           {/* LABEL */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("label")}</div>
             <Select defaultValue={link.labelField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -359,7 +359,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </div>
 
           {/* WEIGHT */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1.5">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("weight")}</div>
             <Select defaultValue={link.weightField}>
               <SelectTrigger className="bg-white h-9"><SelectValue placeholder={t("none")} /></SelectTrigger>
@@ -375,7 +375,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* DELETE */}
-        <div className="flex items-center pt-10 shrink-0">
+        <div className="flex items-center shrink-0">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-8 w-8" onClick={() => onRemove(link.id)}>
             <Trash2 className="w-4 h-4" />
           </Button>
