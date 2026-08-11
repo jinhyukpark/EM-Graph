@@ -276,7 +276,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       {showMapping && (
         <div className="border-t border-border/60 bg-slate-50/40">
           {/* property 목록 */}
-          <div className="divide-y divide-border/40">
+          <div>
 
             {/* 노드 고유키 매핑 */}
             <div className="px-4 py-2.5 flex items-center gap-4">
@@ -296,7 +296,10 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                     {KEY_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 shrink-0" />
+                <div className="flex items-center shrink-0">
+                  <div className="w-6 h-px bg-muted-foreground/25" />
+                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 -ml-px" />
+                </div>
                 <Select defaultValue={link.sourceTable}>
                   <SelectTrigger className="bg-white h-8 text-xs w-[140px]"><SelectValue placeholder="도착 시트명" /></SelectTrigger>
                   <SelectContent>{TABLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
