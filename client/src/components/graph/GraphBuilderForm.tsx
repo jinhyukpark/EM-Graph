@@ -297,9 +297,13 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             }
             bottomLabel="시작 시트명"
             bottomContent={
-              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-                {link.sourceTable || <span className="opacity-30">—</span>}
-              </div>
+              <Select defaultValue={link.sourceTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+                </SelectContent>
+              </Select>
             }
           />
 
@@ -317,8 +321,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             }
             bottomLabel="시작 노드 고유키"
             bottomContent={
-              <Select defaultValue={link.sourceNodeKey || "none"}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+              <Select defaultValue={link.sourceNodeKey || "none"} disabled>
+                <SelectTrigger className="h-8 text-xs opacity-60 cursor-not-allowed"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">{t("none")}</SelectItem>
                   {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
@@ -338,9 +342,13 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             topContent={<div className="h-8" />}
             bottomLabel="도착 시트명"
             bottomContent={
-              <div className="flex h-8 items-center rounded-md border border-border/40 bg-white/50 px-2.5 text-xs text-muted-foreground truncate">
-                {link.sourceTable || <span className="opacity-30">—</span>}
-              </div>
+              <Select defaultValue={link.sourceTable}>
+                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crime_incidents_2024">crime_incidents_2024</SelectItem>
+                  <SelectItem value="suspect_profiles">suspect_profiles</SelectItem>
+                </SelectContent>
+              </Select>
             }
           />
 
@@ -358,8 +366,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
             }
             bottomLabel="도착 노드 고유키"
             bottomContent={
-              <Select defaultValue={link.targetNodeKey || "none"}>
-                <SelectTrigger className="bg-white h-8 text-xs"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
+              <Select defaultValue={link.targetNodeKey || "none"} disabled>
+                <SelectTrigger className="h-8 text-xs opacity-60 cursor-not-allowed"><SelectValue placeholder="고유키 선택" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">{t("none")}</SelectItem>
                   {KEY_OPTIONS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
