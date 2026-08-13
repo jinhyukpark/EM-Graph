@@ -305,7 +305,11 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         {/* R2 C3: 소스 측 */}
         <div className="pt-2 pb-2.5 pl-4 flex items-center gap-1.5 min-w-0">
           <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.sourceColumn || "—"}</span>
-          <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/30"/><ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px"/></div>
+          {/* = 연결선 */}
+          <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
+            <div className="w-4 h-px bg-muted-foreground/40"/>
+            <div className="w-4 h-px bg-muted-foreground/40"/>
+          </div>
           <Select defaultValue={link.sourceTable}>
             <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
             <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
@@ -325,7 +329,11 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         {/* R2 C5: 타깃 측 */}
         <div className="pt-2 pb-2.5 flex items-center gap-1.5 min-w-0">
           <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.targetColumn || "—"}</span>
-          <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/30"/><ArrowRight className="w-3 h-3 text-muted-foreground/30 -ml-px"/></div>
+          {/* = 연결선 */}
+          <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
+            <div className="w-4 h-px bg-muted-foreground/40"/>
+            <div className="w-4 h-px bg-muted-foreground/40"/>
+          </div>
           <Select defaultValue={link.sourceTable}>
             <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="도착 시트명"/></SelectTrigger>
             <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
@@ -343,7 +351,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       {/* ── 추가 설정 패널 (링크 라벨 · 웨이트) ── */}
       {showMapping && (
         <div className="border-t border-border/60 bg-slate-50/40">
-          <div className="pl-7 pr-4 py-2 space-y-1">
+          {/* pl = px-4(16) + handle(28) + tableCol(160) + border(1) + pl-4(16) = 221px → SOURCE COLUMN 열 시작과 정렬 */}
+          <div className="pr-4 py-2 space-y-1" style={{ paddingLeft: "221px" }}>
 
             {/* 링크 라벨 */}
             <div className="flex items-center gap-3 h-9">
