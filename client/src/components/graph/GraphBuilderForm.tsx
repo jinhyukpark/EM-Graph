@@ -199,6 +199,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
   const { t } = useLanguage();
   const dragControls = useDragControls();
   const [showMapping, setShowMapping] = useState(false);
+  const [nodeKeyEnabled, setNodeKeyEnabled] = useState(true);
   const [labelEnabled, setLabelEnabled] = useState(false);
   const [weightEnabled, setWeightEnabled] = useState(false);
 
@@ -214,26 +215,19 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       whileDrag={{ scale: 1.02, boxShadow: "0 8px 25px rgba(0,0,0,0.12)", zIndex: 50 }}
       transition={{ duration: 0.2, layout: { duration: 0 } }}
     >
-      {/* ── 통합 그리드: 메인 행 + 노드 정보 연결 ──
-           col: [handle 28px] [sourceTable 160px | border-r] [sourceCol 1fr] [arrow auto] [targetCol 1fr] [buttons auto]
-      */}
-      <div
-        className="px-4 pt-3 pb-2"
-        style={{ display: "grid", gridTemplateColumns: "28px 160px 1fr auto 1fr auto", columnGap: 0 }}
-      >
-        {/* ── Row 1 ── */}
-
-        {/* R1 C1: drag handle */}
+      {/* ── 메인 행 ── */}
+      <div className="flex items-end gap-0 px-4 py-3">
+        {/* drag handle */}
         <div
-          className="self-end pb-1.5 pr-3 text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors"
+          className="text-muted-foreground/30 cursor-grab active:cursor-grabbing hover:text-muted-foreground/60 transition-colors shrink-0 pb-1.5 pr-3"
           onPointerDown={(e) => dragControls.start(e)}
           data-testid={`drag-handle-link-${link.id}`}
         >
           <GripVertical className="w-4 h-4" />
         </div>
 
-        {/* R1 C2: SOURCE TABLE */}
-        <div className="self-center flex flex-col gap-1 pr-4 border-r border-border py-3">
+        {/* SOURCE TABLE — 구분 영역 */}
+        <div className="flex flex-col gap-1 w-[160px] shrink-0 pr-4 mr-4 border-r border-border">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</span>
           <Select defaultValue={link.sourceTable}>
             <SelectTrigger className="bg-white h-9 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -241,8 +235,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* R1 C3: SOURCE COLUMN */}
-        <div className="self-end flex flex-col gap-1 pl-4 pb-0.5">
+        {/* SOURCE COLUMN — 크게 */}
+        <div className="flex flex-col gap-1 flex-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceColumn")}</span>
           <Select defaultValue={link.sourceColumn}>
             <SelectTrigger className="bg-white h-9 text-sm font-medium"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -250,14 +244,14 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* R1 C4: 화살표 */}
-        <div className="self-end flex items-center pb-1.5 px-3">
+        {/* 연결 화살표 — 길게 */}
+        <div className="flex items-center shrink-0 pb-1.5 px-3">
           <div className="w-10 h-px bg-muted-foreground/30" />
           <ArrowRight className="w-4 h-4 text-muted-foreground/50 -ml-0.5" />
         </div>
 
-        {/* R1 C5: TARGET COLUMN */}
-        <div className="self-end flex flex-col gap-1 pb-0.5">
+        {/* TARGET COLUMN — 크게 */}
+        <div className="flex flex-col gap-1 flex-1">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("targetColumn")}</span>
           <Select defaultValue={link.targetColumn}>
             <SelectTrigger className="bg-white h-9 text-sm font-medium"><SelectValue placeholder={t("column")} /></SelectTrigger>
@@ -265,101 +259,89 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* R1 C6: 버튼 — 두 행 스팬 + 수직 중앙 */}
-        <div className="flex items-center justify-end gap-1 pl-3" style={{ gridRow: "span 2", alignSelf: "center" }}>
-          <Button
-            variant="ghost" size="sm"
-            className={`h-9 px-2.5 gap-1 text-xs transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
-            onClick={() => setShowMapping(v => !v)}
-          >
-            {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            추가 설정
-          </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-9 w-9" onClick={() => onRemove(link.id)}>
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
+        {/* 추가 설정 토글 */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`h-9 px-2.5 gap-1 text-xs shrink-0 ml-3 transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
+          onClick={() => setShowMapping(v => !v)}
+        >
+          {showMapping ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          추가 설정
+        </Button>
 
-        {/* ── Row 2: 노드 정보 연결 ── */}
-
-        {/* R2 C1: 빈 공간 */}
-        <div className="pb-3" />
-
-        {/* R2 C2: 빈 공간 (소스 테이블 열) */}
-        <div className="pb-3 border-r border-border pr-4" />
-
-        {/* R2 C3: 노드 정보 연결 라벨 + 소스 측 */}
-        <div className="pb-3 pl-4 flex flex-col gap-1.5 justify-end min-w-0">
-          {/* 라벨 */}
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider cursor-default whitespace-nowrap w-fit">
-                  노드 정보 연결
-                  <HelpCircle className="w-3 h-3 text-indigo-400 shrink-0" />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[260px] text-xs leading-relaxed whitespace-normal">
-                소스·타깃 컬럼이 연결된 노드의 속성 정보를 가져올 때, 관련 키(고유키)로 매핑하여 추가 속성 정보를 연결합니다.
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {/* 소스 측 인풋 */}
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.sourceColumn || "—"}</span>
-            <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
-              <div className="w-4 h-px bg-muted-foreground/40"/>
-              <div className="w-4 h-px bg-muted-foreground/40"/>
-            </div>
-            <Select defaultValue={link.sourceTable}>
-              <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
-              <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select defaultValue={link.sourceNodeKey||"none"} disabled>
-              <SelectTrigger className="h-7 text-xs w-[68px] shrink-0 opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
-              <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-        </div>{/* /R2 C3 */}
-
-        {/* R2 C4: 중앙 화살표 */}
-        <div className="pb-3 flex items-end pb-3 px-3">
-          <div className="w-10 h-px bg-muted-foreground/30" />
-          <ArrowRight className="w-4 h-4 text-muted-foreground/40 -ml-0.5" />
-        </div>
-
-        {/* R2 C5: 타깃 측 */}
-        <div className="pb-3 flex items-end gap-1.5 min-w-0">
-          <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.targetColumn || "—"}</span>
-          <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
-            <div className="w-4 h-px bg-muted-foreground/40"/>
-            <div className="w-4 h-px bg-muted-foreground/40"/>
-          </div>
-          <Select defaultValue={link.sourceTable}>
-            <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="도착 시트명"/></SelectTrigger>
-            <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-          </Select>
-          <Select defaultValue={link.targetNodeKey||"none"} disabled>
-            <SelectTrigger className="h-7 text-xs w-[68px] shrink-0 opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
-            <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-
-        {/* R2 C6: span 2인 버튼이 이미 점유 — 추가 셀 불필요 */}
+        {/* DELETE */}
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive h-9 w-9 shrink-0 ml-1" onClick={() => onRemove(link.id)}>
+          <Trash2 className="w-4 h-4" />
+        </Button>
       </div>
 
-      {/* ── 추가 설정 패널 (링크 라벨 · 웨이트) ── */}
+      {/* ── 추가 설정 패널 (토글) ── */}
       {showMapping && (
         <div className="border-t border-border/60 bg-slate-50/40">
-          {/* pl = px-4(16) + handle(28) + tableCol(160) + border(1) + pl-4(16) = 221px → SOURCE COLUMN 열 시작과 정렬 */}
-          <div className="pr-4 py-2 space-y-1" style={{ paddingLeft: "221px" }}>
+          {/* pl-7 = drag handle(w-4) + pr-3(gap) = 28px → SOURCE TABLE 열과 정렬 */}
+          <div className="pl-7 pr-4 py-2.5 space-y-1.5">
 
-            {/* 링크 라벨 */}
-            <div className="flex items-center gap-3 h-9">
+            {/* ── 추가 정보 연결 ── */}
+            <div className="flex items-center gap-2 h-9">
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground w-[120px] shrink-0 cursor-default">
+                    <span className={`flex items-center gap-1.5 text-sm font-semibold w-[140px] shrink-0 cursor-default text-foreground`}>
+                      노드 정보 연결
+                      <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[260px] text-xs leading-relaxed whitespace-normal">
+                    소스·타깃 컬럼이 연결된 노드의 속성 정보를 가져올 때, 관련 키(고유키)로 매핑하여 추가 속성 정보를 연결합니다.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {nodeKeyEnabled ? (
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border/60 text-[11px] font-medium text-slate-500 shrink-0">{link.sourceColumn || "—"}</span>
+                    <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/25"/><ArrowRight className="w-3 h-3 text-muted-foreground/25 -ml-px"/></div>
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[118px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.sourceNodeKey||"none"} disabled>
+                      <SelectTrigger className="h-7 text-xs w-[72px] opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
+                      <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <div className="w-px h-4 bg-border/50 mx-0.5 shrink-0"/>
+                    <span className="inline-flex items-center rounded px-2 h-7 bg-slate-100 border border-border/60 text-[11px] font-medium text-slate-500 shrink-0">{link.targetColumn || "—"}</span>
+                    <div className="flex items-center shrink-0"><div className="w-3 h-px bg-muted-foreground/25"/><ArrowRight className="w-3 h-3 text-muted-foreground/25 -ml-px"/></div>
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[118px]"><SelectValue placeholder="도착 시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.targetNodeKey||"none"} disabled>
+                      <SelectTrigger className="h-7 text-xs w-[72px] opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
+                      <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <button onClick={()=>setNodeKeyEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
+                    <X className="w-3 h-3"/>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={()=>setNodeKeyEnabled(true)}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
+                >
+                  <Plus className="w-3 h-3"/> 설정
+                </button>
+              )}
+            </div>
+
+            {/* ── 링크 라벨 ── */}
+            <div className="flex items-center gap-2 h-9">
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default text-foreground`}>
                       링크 라벨
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
@@ -370,35 +352,40 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 </Tooltip>
               </TooltipProvider>
               {labelEnabled ? (
-                <div className="flex items-center gap-1.5">
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.labelField!=="none"?link.labelField:"color"}>
-                    <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="color">color</SelectItem>
-                      {["type","relationship","status","category"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <button onClick={()=>setLabelEnabled(false)} className="shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-destructive hover:bg-slate-100 transition-colors">
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.labelField!=="none"?link.labelField:"color"}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="color">color</SelectItem>
+                        {["type","relationship","status","category"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <button onClick={()=>setLabelEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
                     <X className="w-3 h-3"/>
                   </button>
-                </div>
+                </>
               ) : (
-                <button onClick={()=>setLabelEnabled(true)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium">
+                <button
+                  onClick={()=>setLabelEnabled(true)}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
+                >
                   <Plus className="w-3 h-3"/> 설정
                 </button>
               )}
             </div>
 
-            {/* 링크 웨이트 */}
-            <div className="flex items-center gap-3 h-9">
+            {/* ── 링크 웨이트 ── */}
+            <div className="flex items-center gap-2 h-9">
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground w-[120px] shrink-0 cursor-default">
+                    <span className={`flex items-center gap-1.5 text-sm font-medium w-[140px] shrink-0 cursor-default text-foreground`}>
                       링크 웨이트
                       <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                     </span>
@@ -409,24 +396,29 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
                 </Tooltip>
               </TooltipProvider>
               {weightEnabled ? (
-                <div className="flex items-center gap-1.5">
-                  <Select defaultValue={link.sourceTable}>
-                    <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
-                    <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-                  </Select>
-                  <Select defaultValue={link.weightField!=="none"?link.weightField:"color"}>
-                    <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="color">color</SelectItem>
-                      {["weight","severity","count","score"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <button onClick={()=>setWeightEnabled(false)} className="shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-destructive hover:bg-slate-100 transition-colors">
+                <>
+                  <div className="flex items-center gap-1.5">
+                    <Select defaultValue={link.sourceTable}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[130px]"><SelectValue placeholder="시트명"/></SelectTrigger>
+                      <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <Select defaultValue={link.weightField!=="none"?link.weightField:"color"}>
+                      <SelectTrigger className="bg-white h-7 text-xs w-[95px]"><SelectValue placeholder="color"/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="color">color</SelectItem>
+                        {["weight","severity","count","score"].map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <button onClick={()=>setWeightEnabled(false)} className="ml-1 shrink-0 rounded-full p-0.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-slate-100 transition-colors">
                     <X className="w-3 h-3"/>
                   </button>
-                </div>
+                </>
               ) : (
-                <button onClick={()=>setWeightEnabled(true)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium">
+                <button
+                  onClick={()=>setWeightEnabled(true)}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-indigo-600 border border-dashed border-border hover:border-indigo-400 rounded px-2.5 h-7 transition-colors font-medium"
+                >
                   <Plus className="w-3 h-3"/> 설정
                 </button>
               )}
