@@ -279,8 +279,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
       <div className="border-t border-border/60 bg-slate-50/60">
         <div className="flex items-center gap-0 px-4 py-2">
 
-          {/* drag handle 공간 — 메인 행 핸들과 동일 */}
-          <div className="w-4 shrink-0 pr-3" />
+          {/* drag handle 공간 — GripVertical w-4(16px) + pr-3(12px) = 28px */}
+          <div className="w-7 shrink-0" />
 
           {/* 라벨 — SOURCE TABLE 열과 동일: w-[160px] pr-4 mr-4 border-r */}
           <div className="w-[160px] shrink-0 pr-4 mr-4 border-r border-border flex items-center">
