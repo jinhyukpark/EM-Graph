@@ -233,7 +233,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         </div>
 
         {/* R1 C2: SOURCE TABLE */}
-        <div className="self-end flex flex-col gap-1 pr-4 border-r border-border pb-0.5">
+        <div className="self-center flex flex-col gap-1 pr-4 border-r border-border py-3">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("sourceTable")}</span>
           <Select defaultValue={link.sourceTable}>
             <SelectTrigger className="bg-white h-9 text-xs"><SelectValue placeholder={t("table")} /></SelectTrigger>
@@ -265,8 +265,8 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* R1 C6: 버튼 */}
-        <div className="self-end flex items-center gap-1 pl-3 pb-0.5">
+        {/* R1 C6: 버튼 — 두 행 스팬 + 수직 중앙 */}
+        <div className="flex items-center justify-end gap-1 pl-3" style={{ gridRow: "span 2", alignSelf: "center" }}>
           <Button
             variant="ghost" size="sm"
             className={`h-9 px-2.5 gap-1 text-xs transition-colors ${showMapping ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100" : "text-muted-foreground hover:text-foreground"}`}
@@ -283,16 +283,20 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
         {/* ── Row 2: 노드 정보 연결 ── */}
 
         {/* R2 C1: 빈 공간 */}
-        <div className="pt-2 pb-2.5" />
+        <div className="pb-3" />
 
-        {/* R2 C2: 라벨 */}
-        <div className="pt-2 pb-2.5 flex items-center pr-4 border-r border-border">
+        {/* R2 C2: 빈 공간 (소스 테이블 열) */}
+        <div className="pb-3 border-r border-border pr-4" />
+
+        {/* R2 C3: 노드 정보 연결 라벨 + 소스 측 */}
+        <div className="pb-3 pl-4 flex flex-col gap-1.5 justify-end min-w-0">
+          {/* 라벨 */}
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground cursor-default whitespace-nowrap">
+                <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider cursor-default whitespace-nowrap w-fit">
                   노드 정보 연결
-                  <HelpCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                  <HelpCircle className="w-3 h-3 text-indigo-400 shrink-0" />
                 </span>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[260px] text-xs leading-relaxed whitespace-normal">
@@ -300,36 +304,33 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </div>
-
-        {/* R2 C3: 소스 측 */}
-        <div className="pt-2 pb-2.5 pl-4 flex items-center gap-1.5 min-w-0">
-          <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.sourceColumn || "—"}</span>
-          {/* = 연결선 */}
-          <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
-            <div className="w-4 h-px bg-muted-foreground/40"/>
-            <div className="w-4 h-px bg-muted-foreground/40"/>
+          {/* 소스 측 인풋 */}
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.sourceColumn || "—"}</span>
+            <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
+              <div className="w-4 h-px bg-muted-foreground/40"/>
+              <div className="w-4 h-px bg-muted-foreground/40"/>
+            </div>
+            <Select defaultValue={link.sourceTable}>
+              <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
+              <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+            </Select>
+            <Select defaultValue={link.sourceNodeKey||"none"} disabled>
+              <SelectTrigger className="h-7 text-xs w-[68px] shrink-0 opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
+              <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
+            </Select>
           </div>
-          <Select defaultValue={link.sourceTable}>
-            <SelectTrigger className="bg-white h-7 text-xs flex-1 min-w-[90px]"><SelectValue placeholder="시작 시트명"/></SelectTrigger>
-            <SelectContent>{TABLE_OPTIONS.map(o=><SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
-          </Select>
-          <Select defaultValue={link.sourceNodeKey||"none"} disabled>
-            <SelectTrigger className="h-7 text-xs w-[68px] shrink-0 opacity-40 cursor-not-allowed"><SelectValue/></SelectTrigger>
-            <SelectContent><SelectItem value="none">{t("none")}</SelectItem>{KEY_OPTIONS.map(k=><SelectItem key={k} value={k}>{k}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
+        </div>{/* /R2 C3 */}
 
         {/* R2 C4: 중앙 화살표 */}
-        <div className="pt-2 pb-2.5 flex items-center px-3">
+        <div className="pb-3 flex items-end pb-3 px-3">
           <div className="w-10 h-px bg-muted-foreground/30" />
           <ArrowRight className="w-4 h-4 text-muted-foreground/40 -ml-0.5" />
         </div>
 
         {/* R2 C5: 타깃 측 */}
-        <div className="pt-2 pb-2.5 flex items-center gap-1.5 min-w-0">
+        <div className="pb-3 flex items-end gap-1.5 min-w-0">
           <span className="inline-flex items-center rounded px-2 h-7 bg-white border border-border text-[11px] font-medium text-slate-600 shrink-0 max-w-[90px] truncate">{link.targetColumn || "—"}</span>
-          {/* = 연결선 */}
           <div className="flex flex-col gap-[3px] shrink-0 mx-0.5">
             <div className="w-4 h-px bg-muted-foreground/40"/>
             <div className="w-4 h-px bg-muted-foreground/40"/>
@@ -344,8 +345,7 @@ function DraggableLinkItem({ link, onRemove }: { link: Link; onRemove: (id: stri
           </Select>
         </div>
 
-        {/* R2 C6: 빈 공간 */}
-        <div className="pt-2 pb-2.5" />
+        {/* R2 C6: span 2인 버튼이 이미 점유 — 추가 셀 불필요 */}
       </div>
 
       {/* ── 추가 설정 패널 (링크 라벨 · 웨이트) ── */}
